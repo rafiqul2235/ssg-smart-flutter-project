@@ -83,15 +83,23 @@ class AuthProvider with ChangeNotifier {
 
       Map map = apiResponse.response?.data;
 
-      print(map.toString());
+     // print(map.toString());
 
       if(map['success'] == 1) {
         String token = map['user']['AUTH_CODE'];
         UserInfoModel userInfoModel = UserInfoModel.fromJson(map['user']);
+
+        developer.log(
+            'log me for error',
+            name: 'User_Menu',
+            error: userInfoModel.toString()
+        );
+
         authRepo.saveUserToken(token);
-        authRepo.saveUserData(userInfoModel);
+        await authRepo.saveUserData(userInfoModel);
 
         callback(true, token);
+
       }else{
          String errorMessage = map['msg'][0];
          callback(false, errorMessage);
@@ -326,14 +334,21 @@ class AuthProvider with ChangeNotifier {
     return authRepo.getUserId() ?? "";
   }
 
-  String getUserCode() {
-    return authRepo.getUserCode() ?? "";
+  String getUserName() {
+    return authRepo.getUserName() ?? "";
+  }
+
+  String getOrgId() {
+    return authRepo.getOrgId() ?? "";
+  }
+
+  String getOrgName() {
+    return authRepo.getOrgName() ?? "";
   }
 
   String getUserPinCode() {
     return authRepo.getUserPinCode() ?? "";
   }
-
 
   String getUserEmail() {
     return authRepo.getUserEmail() ?? "";

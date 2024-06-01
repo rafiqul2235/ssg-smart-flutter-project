@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:ssg_smart2/data/model/body/login_model.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/auth_provider.dart';
+import 'package:ssg_smart2/provider/banner_provider.dart';
+import 'package:ssg_smart2/provider/notification_provider.dart';
+import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
@@ -10,6 +13,7 @@ import 'package:ssg_smart2/view/basewidget/textfield/custom_password_textfield.d
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:ssg_smart2/view/screen/auth/forget_password_screen.dart';
 import 'package:provider/provider.dart';
+import '../../../../data/repository/auth_repo.dart';
 import '../../../basewidget/animated_custom_dialog.dart';
 import '../../../basewidget/my_dialog.dart';
 import '../../home/dashboard_screen.dart';
@@ -88,6 +92,7 @@ class _SignInWidgetState extends State<SignInWidget> {
         loginBody?.userName = _user;
         loginBody?.password = _password;
 
+
         /* developer.log(
         'log me',
         name: 'my.app.category',
@@ -95,7 +100,33 @@ class _SignInWidgetState extends State<SignInWidget> {
        );*/
 
 
-        Provider.of<AuthProvider>(context,listen: false).login(context, loginBody!, loginCallback);
+       // var loginControlerObj = AuthProvider(AuthRepo(Dio(),Share));
+
+        Provider.of<AuthProvider>(context,listen: false).login(context, loginBody!, (bool isSuccess,String message){
+
+          if (isSuccess) {
+
+            AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
+
+            //Call User Menu API
+            Provider.of<UserProvider>(context,listen: false).getUserMenu(context, authProvider.getUserId(), authProvider.getOrgId());
+
+            Timer(const Duration(seconds: 1), () {
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>  DashBoardScreen()), (route) => false);
+            });
+
+          } else {
+            showAnimatedDialog(context, MyDialog(
+              icon: Icons.warning,
+              description: message,
+              rotateAngle: 0,
+              positionButtonTxt: 'Ok',
+              //negativeButtonTxt: 'cancel',
+              isFailed: true, title: '',
+            ), dismissible: false);
+
+          }
+        });
 
        /* Timer(const Duration(seconds: 1), () {
           Navigator.pushAndRemoveUntil(
@@ -116,7 +147,7 @@ class _SignInWidgetState extends State<SignInWidget> {
     ));
   }
 
-  loginCallback(bool isSuccess,String errorMessage) async {
+  loginCallback(bool isSuccess,String message) async {
 
     if (isSuccess) {
         //Provider.of<UserProvider>(context, listen: false).getUserDefault();
@@ -127,10 +158,10 @@ class _SignInWidgetState extends State<SignInWidget> {
     } else {
        showAnimatedDialog(context, MyDialog(
         icon: Icons.warning,
-        //title: 'Fail Login',
-        description: errorMessage,
+        description: message,
         rotateAngle: 0,
         positionButtonTxt: 'Ok',
+        //negativeButtonTxt: 'cancel',
         isFailed: true, title: '',
       ), dismissible: false);
 

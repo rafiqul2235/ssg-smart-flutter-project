@@ -6,21 +6,21 @@ import 'color_resources.dart';
 const titilliumRegular = TextStyle(
   fontFamily: 'TitilliumWeb',
   fontSize: Dimensions.FONT_SIZE_DEFAULT,
-  color: ColorResources.DARK_BLUE2
+  color: ColorResources.BLACK
 );
 
 const titilliumSemiBold = TextStyle(
   fontFamily: 'TitilliumWeb',
   fontSize: Dimensions.FONT_SIZE_DEFAULT,
   fontWeight: FontWeight.w600,
-  color: ColorResources.DARK_BLUE2
+  color: ColorResources.BLACK
 );
 
 const titilliumBold = TextStyle(
   fontFamily: 'TitilliumWeb',
   fontSize: Dimensions.FONT_SIZE_EXTRA_LARGE,
   fontWeight: FontWeight.w700,
-  color: ColorResources.DARK_BLUE2
+  color: ColorResources.BLACK
 );
 const titilliumItalic = TextStyle(
   fontFamily: 'TitilliumWeb',

@@ -14,6 +14,23 @@ class UserRepo {
 
   UserRepo({required this.dioClient, required this.sharedPreferences});
 
+  Future<ApiResponse> getUserMenu(String userId, String orgId) async {
+    try {
+
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['user_id'] = userId;
+      data['org_id']=  orgId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.USER_MENU_URI,
+         data:data
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getUserList() async {
     try {
       final response = await dioClient.get("AppConstants.USER_LIST_URI");

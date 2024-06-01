@@ -72,7 +72,11 @@ class AuthRepo {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
       if(userInfoModel!=null) {
-        prefs.setString(AppConstants.USER_CODE, userInfoModel.userName??'');
+        prefs.setString(AppConstants.USER_ID, userInfoModel.userId??'');
+        prefs.setString(AppConstants.USER_NAME, userInfoModel.userName??'');
+        prefs.setString(AppConstants.ORG_ID, userInfoModel.orgId??'');
+        prefs.setString(AppConstants.ORG_NAME, userInfoModel.orgName??'');
+
         prefs.setString(AppConstants.USER_DATA, jsonEncode(userInfoModel.toJson()));
       }else{
         prefs.setString(AppConstants.USER_DATA, '');
@@ -95,6 +99,22 @@ class AuthRepo {
       print(e.toString());
       return null;
     }
+  }
+
+  String getUserId() {
+    return sharedPreferences.getString(AppConstants.USER_ID) ?? "";
+  }
+
+  String getUserName() {
+    return sharedPreferences.getString(AppConstants.USER_NAME) ?? "";
+  }
+
+  String getOrgId() {
+    return sharedPreferences.getString(AppConstants.ORG_ID) ?? "";
+  }
+
+  String getOrgName() {
+    return sharedPreferences.getString(AppConstants.ORG_NAME) ?? "";
   }
 
   // for  user token
@@ -214,14 +234,6 @@ class AuthRepo {
     } catch (e) {
       throw e;
     }
-  }
-
-  String getUserId() {
-    return sharedPreferences.getString(AppConstants.USER_ID) ?? "";
-  }
-
-  String getUserCode() {
-    return sharedPreferences.getString(AppConstants.USER_CODE) ?? "";
   }
 
   String getUserPinCode() {

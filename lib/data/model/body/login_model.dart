@@ -34,7 +34,7 @@ class LoginModel {
       this.loginLocation});
 
   LoginModel.fromJson(Map<String, dynamic> json) {
-    pincode = json['pincode'];
+    pincode = json['USER_ID'];
     userName = json['userName'];
     password = json['password'];
     userType = json['userType'];

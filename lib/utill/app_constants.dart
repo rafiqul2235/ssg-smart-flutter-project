@@ -1,6 +1,7 @@
 import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
+
 class AppConstants {
 
   static const String APP_NAME = 'SMART';
@@ -17,7 +18,9 @@ class AppConstants {
 
   // API Methods
   static const String LOGIN_URI = 'login';
+  static const String USER_MENU_URI = 'menus';
 
+  //static const String LOGIN_USERID = 'USER_ID';
 
   // sharePreference
   static const String TOKEN = 'token';
@@ -26,7 +29,10 @@ class AppConstants {
   static const String NAME = 'name';
   static const String USER = 'user';
   static const String USER_ID = 'user_id';
-  static const String USER_CODE = 'user_code';
+  static const String USER_NAME = 'user_name';
+  static const String ORG_ID = 'org_id';
+  static const String ORG_NAME = 'org_name';
+
   static const String USER_PIN_CODE = 'user_pin_code';
   static const String USER_PASSWORD = 'user_password';
   static const String USER_EMAIL = 'user_mail';

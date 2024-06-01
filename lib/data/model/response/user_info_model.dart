@@ -5,7 +5,8 @@ class UserInfoModel {
   String? email;
   String? mobileNo;
   String? photoUrl;
-
+  String? orgId;
+  String? orgName;
   String? userId;
   String? salesRepId;
   String? salesPersonName;
@@ -22,7 +23,9 @@ class UserInfoModel {
       this.salesPersonName = '',
       this.employeeId = '',
       this.employeeName = '',
-      this.userName,
+      this.userName = '',
+      this.orgId = '',
+      this.orgName = '',
       this.password ,
       this.authCode ='',
       this.totalOrgs = 0,
@@ -38,6 +41,18 @@ class UserInfoModel {
     employeeName = json['EMPLOYEE_NAME'];
     userName = json['USER_NAME'];
     authCode = json['AUTH_CODE'];
+    try {
+      orgId = json['ORGS'][0]['id'];
+    }catch(e){
+      orgId = json['ORG_ID'];
+    }
+
+    try {
+      orgName = json['ORGS'][0]['name'];
+    }catch(e){
+      orgName = json['ORG_NAME'];
+    }
+
     totalOrgs = json['TOTAL_ORGS'];
 
   }
@@ -51,6 +66,8 @@ class UserInfoModel {
      json['EMPLOYEE_NAME'] = employeeName;
      json['USER_NAME'] = userName;
      json['AUTH_CODE'] = authCode;
+     json['ORG_ID'] = orgId;
+     json['ORG_NAME'] = orgName;
      json['TOTAL_ORGS'] = totalOrgs;
     return json;
   }

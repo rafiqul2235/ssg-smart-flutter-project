@@ -9,15 +9,19 @@ import 'package:ssg_smart2/helper/api_checker.dart';
 import 'package:http/http.dart' as http;
 import '../data/model/response/app_update_info.dart';
 import '../data/model/response/user_menu.dart';
+import 'dart:developer' as developer;
 
 class UserProvider extends ChangeNotifier {
 
   final UserRepo userRepo;
+
   UserProvider({required this.userRepo});
 
   UserInfoModel? _userInfoModel;
   List<UserInfoModel> _userList = [];
+
   List<UserMenu> _userMenuList = [];
+
   bool _isLoading = false;
   bool _hasData = false;
 
@@ -49,6 +53,53 @@ class UserProvider extends ChangeNotifier {
     _isLoading = false;
   }
 
+ void getUserMenu(BuildContext context, String userId, String orgId) async {
+
+   ApiResponse apiResponse = await userRepo.getUserMenu(userId, orgId);
+
+    print('getUserMenu ${userId +','+ orgId}');
+
+
+   if(apiResponse.response != null && apiResponse.response?.statusCode == 200){
+
+     developer.log(
+         'log me',
+         name: 'User_Menu',
+         error: apiResponse.response?.data.toString()
+     );
+
+     if(apiResponse.response?.data['success'] == 1){
+
+       _userMenuList = [];
+
+       apiResponse.response?.data['menus'].forEach((menu) {
+         _userMenuList.add(UserMenu.fromJson(menu));
+       });
+
+     }else{
+       String errorMessage = apiResponse.response?.data['msg'][0];
+
+       developer.log(
+           'log me for error',
+           name: 'User_Menu',
+           error: errorMessage
+       );
+
+      // callback(false, errorMessage);
+     }
+
+
+
+    // apiResponse.response.data
+
+
+   }else {
+     ApiChecker.checkApi(context, apiResponse);
+   }
+
+ }
+
+
   Future<void> getUserList(BuildContext context) async {
     ApiResponse apiResponse = await userRepo.getUserList();
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
@@ -77,7 +128,7 @@ class UserProvider extends ChangeNotifier {
     return userID;
   }
 
-  Future<UserMenu?> findAnUserMenu(String pageDescription) async {
+/*  Future<UserMenu?> findAnUserMenu(String pageDescription) async {
     UserMenu? userMenu;
     if(_userMenuList!=null && _userMenuList.isNotEmpty) {
       for (var value in _userMenuList) {
@@ -88,7 +139,7 @@ class UserProvider extends ChangeNotifier {
       }
     }
     return userMenu;
-  }
+  }*/
 
 
   Future<void> getUserDefault({bool reload = false}) async {
