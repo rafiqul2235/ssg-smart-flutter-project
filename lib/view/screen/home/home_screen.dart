@@ -38,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _initData() async {
-    Provider.of<UserProvider>(context, listen: false).getUserDefault();
-    Provider.of<UserProvider>(context, listen: false).getUserInfo(context);
+     await Provider.of<UserProvider>(context, listen: false).getUserInfoFromSharedPref();
+     Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
   }
 
   @override
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context,userProvider,child){
                       List<UserMenu> userMenus = userProvider.userMenuList;
                       if(userMenus == null || userMenus.isEmpty ){
-                        userProvider.getUserDefault(reload: true);
+                        userProvider.getUserMenu(this.context);
                       }
                       return GridView.builder(
                           primary: false,

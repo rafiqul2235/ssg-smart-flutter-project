@@ -31,6 +31,22 @@ class UserRepo {
     }
   }
 
+  Future<ApiResponse> getApplicationList(String empId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.EMP_Self_Service_List,
+          data:data
+      );
+
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getUserList() async {
     try {
       final response = await dioClient.get("AppConstants.USER_LIST_URI");
@@ -40,9 +56,15 @@ class UserRepo {
     }
   }
 
-  Future<ApiResponse> getUserInfo() async {
+  Future<ApiResponse> getEmployeeInfo(String empId) async {
     try {
-      final response = await dioClient.get("AppConstants.USER_PROFILE_URI");
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.EMP_INFO,
+          data:data
+      );
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));

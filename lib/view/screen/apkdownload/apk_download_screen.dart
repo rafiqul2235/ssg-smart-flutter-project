@@ -3,7 +3,9 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:android_path_provider/android_path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:ssg_smart2/utill/app_constants.dart';
+
 import 'package:ssg_smart2/view/screen/apkdownload/widget/download_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -50,7 +52,7 @@ class _ApkDownloadScreenState extends State<ApkDownloadScreen> {
   }
 
   void _initData() async {
-    await Provider.of<UserProvider>(context, listen: false).getUserDefault();
+   // await Provider.of<UserProvider>(context, listen: false).getUserDefault();
     await _removeExistingApk();
 
     _permissionReady =  await _checkPermission2();

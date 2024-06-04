@@ -48,8 +48,8 @@ class _MoreScreenState extends State<MoreScreen> {
       _loading = true;
     });
 
-    Provider.of<UserProvider>(context, listen: false).getUserDefault();
-    Provider.of<UserProvider>(context, listen: false).getUserInfo(context);
+    //Provider.of<UserProvider>(context, listen: false).getUserDefault();
+    Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
 
     Timer(const Duration(seconds: 4), () {
       setState(() {

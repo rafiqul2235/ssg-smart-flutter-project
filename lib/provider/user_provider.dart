@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/model/response/response_model.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
@@ -8,8 +10,11 @@ import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/helper/api_checker.dart';
 import 'package:http/http.dart' as http;
 import '../data/model/response/app_update_info.dart';
+import '../data/model/response/self_service.dart';
 import '../data/model/response/user_menu.dart';
 import 'dart:developer' as developer;
+import '../utill/app_constants.dart';
+import 'auth_provider.dart';
 
 class UserProvider extends ChangeNotifier {
 
@@ -17,10 +22,15 @@ class UserProvider extends ChangeNotifier {
 
   UserProvider({required this.userRepo});
 
+  /* User Or Employee Information */
   UserInfoModel? _userInfoModel;
   List<UserInfoModel> _userList = [];
 
+  /* User Menu List */
   List<UserMenu> _userMenuList = [];
+
+  /* Application List */
+  List<SelfServiceModel> _applicationList = [];
 
   bool _isLoading = false;
   bool _hasData = false;
@@ -28,6 +38,8 @@ class UserProvider extends ChangeNotifier {
   UserInfoModel? get userInfoModel => _userInfoModel;
   List<UserInfoModel> get userList => _userList?? [];
   List<UserMenu> get userMenuList => _userMenuList?? [];
+
+  List<SelfServiceModel> get applicationList => _applicationList?? [];
 
   AppUpdateInfo? _appUpdateInfo;
   AppUpdateInfo? get appUpdateInfo => _appUpdateInfo;
@@ -53,20 +65,32 @@ class UserProvider extends ChangeNotifier {
     _isLoading = false;
   }
 
- void getUserMenu(BuildContext context, String userId, String orgId) async {
+  Future<void> getUserInfoFromSharedPref({bool reload = false}) async {
 
-   ApiResponse apiResponse = await userRepo.getUserMenu(userId, orgId);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    try{
+      String? strUserData = prefs.getString(AppConstants.USER_DATA);
+      print('Data  $strUserData');
+      _userInfoModel =  UserInfoModel.fromJson(jsonDecode(strUserData??''));
+    }catch(e){
+      print("getUserData error ");
+      print(e.toString());
+    }
 
-    print('getUserMenu ${userId +','+ orgId}');
+  }
 
+ void getUserMenu(BuildContext context) async {
+
+   AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
+
+   ApiResponse apiResponse = await userRepo.getUserMenu(authProvider.getUserId(), authProvider.getOrgId());
 
    if(apiResponse.response != null && apiResponse.response?.statusCode == 200){
-
-     developer.log(
+     /*developer.log(
          'log me',
          name: 'User_Menu',
          error: apiResponse.response?.data.toString()
-     );
+     );*/
 
      if(apiResponse.response?.data['success'] == 1){
 
@@ -78,26 +102,54 @@ class UserProvider extends ChangeNotifier {
 
      }else{
        String errorMessage = apiResponse.response?.data['msg'][0];
-
        developer.log(
            'log me for error',
            name: 'User_Menu',
            error: errorMessage
        );
-
       // callback(false, errorMessage);
      }
-
-
-
-    // apiResponse.response.data
-
 
    }else {
      ApiChecker.checkApi(context, apiResponse);
    }
 
  }
+
+  Future<void> getEmployeeInfo(BuildContext context) async {
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    /*String? department =  Provider.of<UserProvider>(context, listen: false).userInfoModel?.department;*/
+
+    ApiResponse apiResponse = await userRepo.getEmployeeInfo(empId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _userInfoModel?.fromJsonAdditionalInfo(_userInfoModel!, apiResponse.response?.data['emp_info'][0]);
+
+    } else {
+      ApiChecker.checkApi(context, apiResponse);
+    }
+
+  }
+
+
+  Future<void> getApplicationList(BuildContext context) async {
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+
+    ApiResponse apiResponse = await userRepo.getApplicationList(empId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _applicationList = [];
+      apiResponse.response?.data['service_list'].forEach((application) => _applicationList.add(SelfServiceModel.fromJson(application)));
+
+    } else {
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    notifyListeners();
+  }
 
 
   Future<void> getUserList(BuildContext context) async {
@@ -114,19 +166,6 @@ class UserProvider extends ChangeNotifier {
 
 
 
-  Future<String> getUserInfo(BuildContext context) async {
-    String userID = '-1';
-    ApiResponse apiResponse = await userRepo.getUserInfo();
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-      _userInfoModel = UserInfoModel.fromJson(apiResponse.response?.data['result']);
-      print('getUserInfo ${_userInfoModel.toString()}');
-      userID = _userInfoModel!.userId.toString();
-    } else {
-      ApiChecker.checkApi(context, apiResponse);
-    }
-    notifyListeners();
-    return userID;
-  }
 
 /*  Future<UserMenu?> findAnUserMenu(String pageDescription) async {
     UserMenu? userMenu;
@@ -142,23 +181,7 @@ class UserProvider extends ChangeNotifier {
   }*/
 
 
-  Future<void> getUserDefault({bool reload = false}) async {
-    ApiResponse apiResponse = await userRepo.getUserDefault();
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-      _userInfoModel = UserInfoModel.fromJson(apiResponse.response?.data['result']['userInfo']);
-      if(apiResponse.response?.data['result']['userMenus']!=null && (apiResponse.response?.data['result']['userMenus']as List).isNotEmpty ){
-        _userMenuList = [];
-        apiResponse.response?.data['result']['userMenus']?.forEach((userMenu) => _userMenuList.add(UserMenu.fromJson(userMenu)));
-      }
-      _appUpdateInfo = AppUpdateInfo.fromJson(apiResponse.response?.data['result']['appUpdateInfo']);
-    } else {
-      //ApiChecker.checkApi(context, apiResponse);
-    }
 
-    if(reload){
-      notifyListeners();
-    }
-  }
 
   Future<ResponseModel> updateUserInfo(UserInfoModel updateUserModel, String pass, File? file, String token) async {
 

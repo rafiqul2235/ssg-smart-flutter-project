@@ -11,7 +11,6 @@ class Place {
   double? lat;
   double? lng;
 
-
   Place({
     this.streetNumber,
     this.street,

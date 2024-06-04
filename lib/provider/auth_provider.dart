@@ -77,11 +77,25 @@ class AuthProvider with ChangeNotifier {
 
     showLoading();
 
+       developer.log(
+        'log me for error',
+        name: 'User_Menu',
+        error: loginBody.toLoginBodyJson()
+    );
+
+
     ApiResponse apiResponse = await authRepo.login(loginBody);
+
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
       Map map = apiResponse.response?.data;
+
+      developer.log(
+          'log me for error',
+          name: 'User_Menu',
+          error: map.toString()
+      );
 
      // print(map.toString());
 
@@ -336,6 +350,10 @@ class AuthProvider with ChangeNotifier {
 
   String getUserName() {
     return authRepo.getUserName() ?? "";
+  }
+
+  String getEmpId() {
+    return authRepo.getEmpId() ?? "";
   }
 
   String getOrgId() {

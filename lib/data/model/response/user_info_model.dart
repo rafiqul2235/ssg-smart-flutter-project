@@ -17,6 +17,16 @@ class UserInfoModel {
   String? authCode;
   int? totalOrgs;
 
+  String? payrollId;
+  String? payrollName;
+  String? workLocation;
+  String? personId;
+  String? employeeNumber;
+  String? employmentCategory;
+  String? fullName;
+  String? designation;
+  String? department;
+
  UserInfoModel({
       this.userId = '',
       this.salesRepId = '',
@@ -37,10 +47,13 @@ class UserInfoModel {
     userId = json['USER_ID'];
     salesRepId = json['SALESREP_ID'];
     salesPersonName = json['SALES_PERSON_NAME'];
-    employeeId = json['EMPLOYEE_ID'];
+    //employeeId = json['EMPLOYEE_ID'];
     employeeName = json['EMPLOYEE_NAME'];
     userName = json['USER_NAME'];
     authCode = json['AUTH_CODE'];
+
+    employeeId = userName;
+
     try {
       orgId = json['ORGS'][0]['id'];
     }catch(e){
@@ -54,6 +67,22 @@ class UserInfoModel {
     }
 
     totalOrgs = json['TOTAL_ORGS'];
+
+  }
+
+
+  void fromJsonAdditionalInfo(UserInfoModel infoModel, Map<String, dynamic>? json) {
+    if(json == null) return;
+
+    infoModel.payrollId = json['PAYROLL_ID'];
+    infoModel.payrollName = json['PAYROLL_NAME'];
+    infoModel.workLocation = json['WORK_LOCATION'];
+    infoModel.personId = json['PERSON_ID'];
+    infoModel. employeeNumber = json['EMPLOYEE_NUMBER'];
+    infoModel.employmentCategory = json['EMPLOYMENT_CATEGORY'];
+    infoModel.fullName = json['FULL_NAME'];
+    infoModel.designation = json['DESIGNATION'];
+    infoModel.department = json['DEPARTMENT'];
 
   }
 
@@ -81,6 +110,6 @@ class UserInfoModel {
 
   @override
   String toString() {
-    return 'UserInfoModel{userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, authCode: $authCode, totalOrgs: $totalOrgs}';
+    return 'UserInfoModel{firstName: $firstName, lastName: $lastName, email: $email, mobileNo: $mobileNo, photoUrl: $photoUrl, orgId: $orgId, orgName: $orgName, userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, authCode: $authCode, totalOrgs: $totalOrgs, payrollId: $payrollId, payrollName: $payrollName, workLocation: $workLocation, personId: $personId, employeeNumber: $employeeNumber, employmentCategory: $employmentCategory, fullName: $fullName, designation: $designation, department: $department}';
   }
 }

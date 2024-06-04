@@ -109,6 +109,10 @@ class AuthRepo {
     return sharedPreferences.getString(AppConstants.USER_NAME) ?? "";
   }
 
+  String getEmpId() {
+    return sharedPreferences.getString(AppConstants.USER_NAME) ?? "";
+  }
+
   String getOrgId() {
     return sharedPreferences.getString(AppConstants.ORG_ID) ?? "";
   }

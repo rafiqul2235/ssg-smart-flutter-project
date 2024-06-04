@@ -26,7 +26,7 @@ class BannersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    _loadData(context, false);
+    //_loadData(context, false);
 
     return Column(
       children: [

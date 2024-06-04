@@ -106,10 +106,8 @@ class _SignInWidgetState extends State<SignInWidget> {
 
           if (isSuccess) {
 
-            AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
-
             //Call User Menu API
-            Provider.of<UserProvider>(context,listen: false).getUserMenu(context, authProvider.getUserId(), authProvider.getOrgId());
+            Provider.of<UserProvider>(context,listen: false).getUserMenu(context);
 
             Timer(const Duration(seconds: 1), () {
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>  DashBoardScreen()), (route) => false);

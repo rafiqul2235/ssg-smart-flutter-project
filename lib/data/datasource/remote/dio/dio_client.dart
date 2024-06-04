@@ -5,6 +5,7 @@ import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioClient {
+
   final String baseUrl;
   final LoggingInterceptor loggingInterceptor;
   final SharedPreferences sharedPreferences;

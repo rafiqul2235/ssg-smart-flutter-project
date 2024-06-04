@@ -19,6 +19,8 @@ class AppConstants {
   // API Methods
   static const String LOGIN_URI = 'login';
   static const String USER_MENU_URI = 'menus';
+  static const String EMP_Self_Service_List = 's_service_list';
+  static const String EMP_INFO = 'emp_info';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
