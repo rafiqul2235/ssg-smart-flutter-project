@@ -82,7 +82,7 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
                             showDropDownButton: true,
                             padding: EdgeInsets.zero,
                             showFlagMain: true,
-                            textStyle: TextStyle(color: Theme.of(context).textTheme.headline1?.color),
+                            textStyle: TextStyle(color: Theme.of(context).textTheme.displayLarge?.color),
 
                           ),
                           Expanded(child: CustomTextField(
