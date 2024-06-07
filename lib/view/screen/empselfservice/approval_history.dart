@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/info_row.dart';
-import '../../../data/model/response/self_service.dart';
-import '../../../utill/color_resources.dart';
-import '../../../utill/custom_themes.dart';
-import '../../../utill/dimensions.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
 
