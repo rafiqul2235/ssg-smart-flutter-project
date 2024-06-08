@@ -2,6 +2,14 @@ import 'package:intl/intl.dart';
 
 class DateConverter {
 
+  static int differanceTwoDate(String sfromDate, String stoDate){
+    var inputFormat = DateFormat("dd-MM-yyyy");
+    var  fromDate = inputFormat.parse(sfromDate);
+    var  toDate = inputFormat.parse(stoDate);
+    var difference = toDate.difference(fromDate).inDays;
+    return difference;
+  }
+
   static String checkDate(String strDateTime){
 
     var inputFormat = DateFormat("yyyy-MM-ddThh:mm:ss");

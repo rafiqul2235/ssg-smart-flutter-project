@@ -79,7 +79,7 @@ flutter:
   assets:
     - assets/images/
     - assets/language/
-    - assets/json/
+
 
   fonts:
     - family: TitilliumWeb

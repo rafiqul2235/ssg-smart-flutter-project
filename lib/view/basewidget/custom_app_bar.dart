@@ -6,7 +6,7 @@ import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:provider/provider.dart';
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
   final String title;
   final isBackButtonExist;
   final IconData? icon;
@@ -61,4 +61,7 @@ class CustomAppBar extends StatelessWidget {
       ),
     ]);
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
