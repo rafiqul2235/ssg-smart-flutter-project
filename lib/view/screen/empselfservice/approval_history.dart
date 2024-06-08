@@ -7,19 +7,17 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
-import '../notification/notification_screen.dart';
-import 'approval_history.dart';
 
-class SelfService extends StatefulWidget {
+class ApprovalHistory extends StatefulWidget {
   final bool isBackButtonExist;
-  const SelfService({Key? key, this.isBackButtonExist = true})
+  const ApprovalHistory({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<SelfService> createState() => _SelfServiceState();
+  State<ApprovalHistory> createState() => _ApprovalHistoryState();
 }
 
-class _SelfServiceState extends State<SelfService> {
+class _ApprovalHistoryState extends State<ApprovalHistory> {
 
 
   @override
@@ -40,13 +38,13 @@ class _SelfServiceState extends State<SelfService> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomAppBar(
-              title: 'Emp Self Service',
+              title: 'Approval History',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
+                /*Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        const DashBoardScreen()));
+                        const DashBoardScreen()));*/
               }),
 
             Expanded(child: SingleChildScrollView(child: Column(
@@ -79,7 +77,7 @@ class _SelfServiceState extends State<SelfService> {
 
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                      const NotificationScreen()));
+                                      const DashBoardScreen()));
 
                                 },
                                 child: Padding (
