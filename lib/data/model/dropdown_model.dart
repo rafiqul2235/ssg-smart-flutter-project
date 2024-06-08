@@ -10,8 +10,13 @@ class DropDownModel {
 
   DropDownModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return;
-    code = json['code'];
-    name = json['name'];
+    code = json[''];
+    name = json[''];
+  }
+  DropDownModel.fromJsonForLeaveType(Map<String, dynamic>? json) {
+    if (json == null) return;
+    code = json['LEAVE_TYPE_ID'];
+    name = json['LEAVE_TYPE'];
   }
 
   DropDownModel.fromJsonMasterKey(Map<String, dynamic>? json) {

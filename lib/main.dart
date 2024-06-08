@@ -1,4 +1,4 @@
-import 'package:connectivity/connectivity.dart';
+import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
 import 'package:ssg_smart2/provider/banner_provider.dart';
 import 'package:ssg_smart2/provider/location_provider.dart';
@@ -20,10 +20,8 @@ import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'data/datasource/remote/dio/dio_client.dart';
 import 'di_container.dart' as di;
 import 'helper/custom_delegate.dart';
-import 'helper/network_info.dart';
 import 'localization/app_localization.dart';
 import 'utill/global_context.dart';
 
@@ -77,6 +75,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<BannerProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LocationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<MasterDataProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<LeaveProvider>()),
     ],
     child: const MyApp(),
   ));
