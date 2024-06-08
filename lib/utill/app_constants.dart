@@ -21,6 +21,10 @@ class AppConstants {
   static const String USER_MENU_URI = 'menus';
   static const String EMP_Self_Service_List = 's_service_list';
   static const String EMP_INFO = 'emp_info';
+  static const String LEAVE_BALANCE = 'leave_balance';
+  static const String LEAVE_TYPE = 'leave_type';
+
+  static const String LEAVE_APPLY = 'leave-apply';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
