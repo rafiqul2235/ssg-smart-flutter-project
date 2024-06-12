@@ -24,6 +24,7 @@ class LeaveProvider with ChangeNotifier {
 
 
     print('Leve provider applyLeave');
+    print("leave type: $leaveTypeId startdate: $startDate, end date: $endDate , duration: $duration and comment:$comments");
 
 
 
