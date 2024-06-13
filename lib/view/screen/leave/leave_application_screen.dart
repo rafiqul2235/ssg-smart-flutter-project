@@ -9,6 +9,7 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
+import 'package:ssg_smart2/view/basewidget/dialog/single_text_alertdialog.dart';
 import 'package:ssg_smart2/view/basewidget/mandatory_text.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_password_textfield.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
@@ -19,9 +20,11 @@ import '../../../data/model/response/leave_balance.dart';
 import '../../../helper/date_converter.dart';
 import '../../../provider/leave_provider.dart';
 import '../../../utill/app_constants.dart';
+import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_text.dart';
+import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
@@ -110,18 +113,49 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   void _onClickSubmit (){
     if( _formKey.currentState!.validate()){
-      Provider.of<LeaveProvider>(context, listen: false).applyLeave(
+      if (selectedLeaveType == null) {
+        print("selected: $selectedLeaveType");
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please select a leave type'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+      if (_isLeaveBalanceSufficient()) {
+        Provider.of<LeaveProvider>(context, listen: false).applyLeave(
           context,
           selectedLeaveType!.code!,
           _startDateController.text,
           _endDateController.text,
           _durationController.text,
-          _leaveCommentsController.text
-      );
+          _leaveCommentsController.text,
+        );
+      } else {
+        showAnimatedDialog(context, MyDialog(
+          icon: Icons.error,
+          title: 'Alert!',
+          description: 'Unavailable leave balance.',
+          rotateAngle: 0,
+          positionButtonTxt: 'Ok',
+        ), dismissible: false);
+      }
     }
+  }
 
-
-
+  bool _isLeaveBalanceSufficient() {
+    int requestedDuration = int.tryParse(_durationController.text) ?? 0;
+    switch (selectedLeaveType?.code) {
+      case '61': // Casual Leave
+        return requestedDuration <= (_leaveBalance?.casual ?? 0);
+      case '64': // Sick Leave
+        return requestedDuration <= (_leaveBalance?.sick ?? 0);
+      case '68': // Compensatory Leave
+        return requestedDuration <= (_leaveBalance?.compensatory ?? 0);
+      case '70': // Earned Leave
+        return requestedDuration <= (_leaveBalance?.earned ?? 0);
+      default:
+        return false;
+    }
   }
 
   String? _validateLeaveComments(String? value){
@@ -535,4 +569,5 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   }*/
 
 }
+
 
