@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/datasource/remote/exception/api_error_handler.dart';
+import 'package:ssg_smart2/data/model/leave_data.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,11 +13,23 @@ class LeaveRepo {
 
   LeaveRepo({required this.dioClient, required this.sharedPreferences});
 
-  Future<ApiResponse> applyLeave(Map<String, dynamic> data) async {
+  // Future<ApiResponse> applyLeave(LeaveData leaveData) async {
+  //   try {
+  //     Response response = await dioClient.postWithFormData(
+  //       AppConstants.LEAVE_APPLY,
+  //       data:leaveData,
+  //     );
+  //     return ApiResponse.withSuccess(response);
+  //   } catch (e) {
+  //     print('Leave Repo getLeaveBalance ${e}');
+  //     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+  //   }
+  // }
+  Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
       Response response = await dioClient.postWithFormData(
         AppConstants.LEAVE_APPLY,
-        data:data,
+        data:leaveData.toJson(),
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {

@@ -13,4 +13,9 @@ class ApiResponse {
   ApiResponse.withSuccess(Response? responseValue)
       : response = responseValue,
         error = null;
+
+  @override
+  String toString() {
+    return 'ApiResponse{response: $response, error: $error}';
+  }
 }

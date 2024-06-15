@@ -24,7 +24,7 @@ class AppConstants {
   static const String LEAVE_BALANCE = 'leave_balance';
   static const String LEAVE_TYPE = 'leave_type';
 
-  static const String LEAVE_APPLY = 'leave-apply';
+  static const String LEAVE_APPLY = 'leave_save';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

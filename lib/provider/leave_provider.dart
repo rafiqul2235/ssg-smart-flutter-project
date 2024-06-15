@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/leave_data.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
@@ -19,30 +20,21 @@ class LeaveProvider with ChangeNotifier {
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
 
+  String? _error;
+  String? get error => _error;
 
-  Future<void> applyLeave(BuildContext context, String leaveTypeId, String startDate, String endDate, String duration, String comments) async {
+  String? _isSuccess;
+  String? get isSuccess => _isSuccess;
 
-
-    print('Leve provider applyLeave');
-    print("leave type: $leaveTypeId startdate: $startDate, end date: $endDate , duration: $duration and comment:$comments");
-
-
-
-    /*String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['emp_id'] = empId;
-    data['leave_type'] = empId;
-
-    ApiResponse apiResponse = await leaveRepo.applyLeave(data);
-
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+  bool _loading = false;
+  bool get loading => _loading;
 
 
-    }else{
-      ApiChecker.checkApi(context, apiResponse);
-    }*/
-
+  Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
+    showLoading();
+    // final response = await leaveRepo.applyLeave(leaveData);
+    // print("leave save response: ${response.toString()}");
+    // hideLoading();
   }
 
   Future<LeaveBalance?> getLeaveBalance(BuildContext context) async {
@@ -73,6 +65,19 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }else{
       ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+  void showLoading(){
+    if(!_loading){
+      _loading = true;
+      notifyListeners();
+    }
+  }
+  void hideLoading(){
+    if(_loading){
+      _loading = false;
+      notifyListeners();
     }
   }
 

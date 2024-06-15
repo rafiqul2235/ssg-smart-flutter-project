@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ssg_smart2/data/model/leave_data.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
@@ -112,6 +113,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   }
 
   void _onClickSubmit (){
+
     if( _formKey.currentState!.validate()){
       if (selectedLeaveType == null) {
         print("selected: $selectedLeaveType");
@@ -122,13 +124,16 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         return;
       }
       if (_isLeaveBalanceSufficient()) {
+        LeaveData leaveData = LeaveData(
+            leaveType: selectedLeaveType?.name,
+            startDate: _startDateController.text,
+            endDate: _endDateController.text,
+            duration: _durationController.text,
+            comment: _leaveCommentsController.text
+        );
         Provider.of<LeaveProvider>(context, listen: false).applyLeave(
           context,
-          selectedLeaveType!.code!,
-          _startDateController.text,
-          _endDateController.text,
-          _durationController.text,
-          _leaveCommentsController.text,
+          leaveData
         );
       } else {
         showAnimatedDialog(context, MyDialog(
@@ -515,7 +520,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                       margin: const EdgeInsets.symmetric(
                           horizontal: Dimensions.MARGIN_SIZE_LARGE,
                           vertical: Dimensions.MARGIN_SIZE_SMALL),
-                      child: !Provider.of<UserProvider>(context).isLoading
+                      child: !Provider.of<LeaveProvider>(context).loading
                           ? CustomButton(onTap: () {_onClickSubmit();}, buttonText: 'SUBMIT')
                           : Center(
                               child: CircularProgressIndicator(
@@ -529,45 +534,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
           ],
         ));
   }
-
-  /* //TableRow buildRow(String sl, String batterySl, {bool isHeader = false}) {
-  TableRow buildRow(LeaveBalance leaveBalance, {bool isHeader = false}) {
-    //int idx = isHeader?0: _leaveBalance.indexOf(serial!);
-    //int colorFlag = idx % 2;
-    int colorFlag = 0;
-    return TableRow (
-        decoration: BoxDecoration(color:isHeader? Colors.transparent:colorFlag==0?Colors.green.shade50:Colors.orange.shade50),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-            child: Center(child: Text(isHeader?'Leave Type':'Casual Leave',style: isHeader?titilliumSemiBold.copyWith(fontSize: 16):titilliumRegular)),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-            child: Center(child: Text(isHeader?'B/L':'${leaveBalance.casual}',style: isHeader?titilliumSemiBold.copyWith(fontSize: 16):titilliumRegular)),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-            child: Text(isHeader?'Leave Type':'${leaveBalance.casual}',style: isHeader?titilliumSemiBold.copyWith(fontSize: 16):titilliumRegular),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-            child: Text(isHeader?'Leave Type':serial!??'',style: isHeader?titilliumSemiBold.copyWith(fontSize: 16):titilliumRegular),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-            child: Text(isHeader?'B/L':serial!??'',style: isHeader?titilliumSemiBold.copyWith(fontSize: 16):titilliumRegular),
-          ),
-
-
-        ]
-    );
-  }*/
-
 }
 
 
