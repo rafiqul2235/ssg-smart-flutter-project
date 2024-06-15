@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/response/management_dashboard_model.dart';
+import 'package:ssg_smart2/data/model/response/pf_ledger_model.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
@@ -16,6 +18,13 @@ class LeaveProvider with ChangeNotifier {
   LeaveBalance? _leaveBalance;
   LeaveBalance get leaveBalance => _leaveBalance??LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
 
+  ManagementDashboardModel? _dashboardModel;
+  ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call_mon: 0,sscml_call_mon: 0,sscil_call_mon: 0);
+
+ /* PfLedgerModel? _pfLedgerModel;
+  PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_prof_total: 0,net_total: 0);
+*/
+
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
 
@@ -24,6 +33,7 @@ class LeaveProvider with ChangeNotifier {
 
 
     print('Leve provider applyLeave');
+    
 
 
 
@@ -60,6 +70,42 @@ class LeaveProvider with ChangeNotifier {
     }
 
     return LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
+
+  }
+
+  Future<ManagementDashboardModel?> getManageDashbData(BuildContext context) async {
+
+    //String soures =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    ApiResponse apiResponse = await leaveRepo.getManagementData("Monthly");
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _dashboardModel = ManagementDashboardModel.fromJson(apiResponse.response?.data['cust_master_data'][0]);
+
+      return _dashboardModel;
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+
+    return ManagementDashboardModel(scbl_call_mon: 0,sscml_call_mon: 0,sscil_call_mon: 0);
+
+  }
+
+  Future<List<PfLedgerModel>> getPfLedgerData(BuildContext context) async {
+
+    List<PfLedgerModel> _list = [];
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    ApiResponse apiResponse = await leaveRepo.getPfData(empId,"901");
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _list = [];
+      apiResponse.response?.data['service_list'].forEach((item) => _list.add(PfLedgerModel.fromJson(item)));
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    return _list;
 
   }
 

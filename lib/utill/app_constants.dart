@@ -22,6 +22,8 @@ class AppConstants {
   static const String EMP_Self_Service_List = 's_service_list';
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
+  static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
+  static const String PF_DATA = 'pf_ledger';
   static const String LEAVE_TYPE = 'leave_type';
 
   static const String LEAVE_APPLY = 'leave-apply';
