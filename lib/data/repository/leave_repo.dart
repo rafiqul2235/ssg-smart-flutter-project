@@ -13,21 +13,9 @@ class LeaveRepo {
 
   LeaveRepo({required this.dioClient, required this.sharedPreferences});
 
-  // Future<ApiResponse> applyLeave(LeaveData leaveData) async {
-  //   try {
-  //     Response response = await dioClient.postWithFormData(
-  //       AppConstants.LEAVE_APPLY,
-  //       data:leaveData,
-  //     );
-  //     return ApiResponse.withSuccess(response);
-  //   } catch (e) {
-  //     print('Leave Repo getLeaveBalance ${e}');
-  //     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-  //   }
-  // }
   Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
-      Response response = await dioClient.postWithFormData(
+      Response response = await dioClient.post(
         AppConstants.LEAVE_APPLY,
         data:leaveData.toJson(),
       );

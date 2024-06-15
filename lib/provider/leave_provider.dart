@@ -32,14 +32,15 @@ class LeaveProvider with ChangeNotifier {
 
   Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
     showLoading();
-    // final response = await leaveRepo.applyLeave(leaveData);
-    // print("leave save response: ${response.toString()}");
-    // hideLoading();
+    final response = await leaveRepo.applyLeave(leaveData);
+    print("leave save response: ${response.toString()}");
+    hideLoading();
   }
 
   Future<LeaveBalance?> getLeaveBalance(BuildContext context) async {
 
     String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    String empName =  Provider.of<AuthProvider>(context, listen: false).getUserName();
     ApiResponse apiResponse = await leaveRepo.getLeaveBalance(empId);
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
