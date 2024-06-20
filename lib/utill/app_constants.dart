@@ -20,6 +20,7 @@ class AppConstants {
   static const String LOGIN_URI = 'login';
   static const String USER_MENU_URI = 'menus';
   static const String EMP_Self_Service_List = 's_service_list';
+  static const String APPROVAL_List = 'leave_approval_flow';
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';

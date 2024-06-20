@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/management_dashboard_model.dart';
 import 'package:ssg_smart2/data/model/response/pf_ledger_model.dart';
 import '../data/model/dropdown_model.dart';
+import '../data/model/response/approval_list_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
 import '../data/repository/leave_repo.dart';
@@ -27,6 +28,9 @@ class LeaveProvider with ChangeNotifier {
 
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
+
+  List<ApprovalListModel> _applicationList = [];
+  List<ApprovalListModel> get applicationList => _applicationList?? [];
 
 
   Future<void> applyLeave(BuildContext context, String leaveTypeId, String startDate, String endDate, String duration, String comments) async {
@@ -108,6 +112,26 @@ class LeaveProvider with ChangeNotifier {
     return _list;
 
   }
+
+
+
+  Future<void> getApprovalListData(BuildContext context) async {
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+
+    ApiResponse apiResponse = await leaveRepo.getApprovalList(empId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _applicationList = [];
+      apiResponse.response?.data['service_list'].forEach((application) => _applicationList.add(ApprovalListModel.fromJson(application)));
+
+    } else {
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    notifyListeners();
+  }
+
 
   Future<void> getLeaveType(BuildContext context) async {
 
