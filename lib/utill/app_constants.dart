@@ -7,7 +7,7 @@ class AppConstants {
   static const String APP_NAME = 'SMART';
 
   //static const String BASE_URL = 'http://10.192.1.42:5055/'; // uat
-  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
   static const String BASE_URL = 'http://192.168.7.98/';
 
   static const int APP_VERSION_CODE = 1;
@@ -25,6 +25,7 @@ class AppConstants {
   static const String LEAVE_TYPE = 'leave_type';
 
   static const String LEAVE_APPLY = 'leave_save';
+  static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

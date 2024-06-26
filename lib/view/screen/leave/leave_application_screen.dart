@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ssg_smart2/data/model/leave_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ssg_smart2/data/model/body/leave_data.dart';
+import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
@@ -19,6 +21,7 @@ import 'package:provider/provider.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/leave_balance.dart';
 import '../../../helper/date_converter.dart';
+import '../../../provider/auth_provider.dart';
 import '../../../provider/leave_provider.dart';
 import '../../../utill/app_constants.dart';
 import '../../basewidget/animated_custom_dialog.dart';
@@ -71,7 +74,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   String workingAreaName = '';
 
   DropDownModel? selectedLeaveType;
- // List<DropDownModel> _leaveTypes = [] ;
 
   bool isLeaveTypeFieldError = false;
 
@@ -84,13 +86,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
    // Provider.of<UserProvider>(context, listen: false).resetLoading();
 
     Provider.of<LeaveProvider>(context, listen: false).getLeaveType(context);
-
-    /* have to get this data from api */
-    /*_leaveTypes = [DropDownModel(code: '61',name: 'Casual Leave'),
-      DropDownModel(code: '64',name: 'Sick Leave'),
-      DropDownModel(code: '68',name: 'Attendance Leave'),
-      DropDownModel(code: '70',name: 'Late Leave'),
-    ];*/
 
     _intData();
 
@@ -112,11 +107,10 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
 
-  void _onClickSubmit (){
+  void _onClickSubmit () async{
 
     if( _formKey.currentState!.validate()){
       if (selectedLeaveType == null) {
-        print("selected: $selectedLeaveType");
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please select a leave type'),
           backgroundColor: Colors.red,
@@ -124,17 +118,33 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         return;
       }
       if (_isLeaveBalanceSufficient()) {
+        UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
         LeaveData leaveData = LeaveData(
+            empName: userInfoModel?.fullName,
+            empNumber: userInfoModel?.employeeNumber,
+            department: userInfoModel?.department,
+            designation: userInfoModel?.designation,
+            orgId: userInfoModel?.orgId,
+            orgName: userInfoModel?.orgName,
+            personId: userInfoModel?.personId,
+            workLocation: userInfoModel?.workLocation,
             leaveType: selectedLeaveType?.name,
+            leaveId: selectedLeaveType?.code,
             startDate: _startDateController.text,
             endDate: _endDateController.text,
             duration: _durationController.text,
             comment: _leaveCommentsController.text
         );
-        Provider.of<LeaveProvider>(context, listen: false).applyLeave(
+        String? result = await Provider.of<LeaveProvider>(context, listen: false).applyLeave(
           context,
           leaveData
         );
+        print("Result: $result");
+        if ( result != null ){
+          _showSuccessDialog(result);
+        }else{
+          _showErrorDialog(result!);
+        }
       } else {
         showAnimatedDialog(context, MyDialog(
           icon: Icons.error,
@@ -533,6 +543,24 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
             ))
           ],
         ));
+  }
+  void _showSuccessDialog(String message){
+    showAnimatedDialog(context, MyDialog(
+      icon: Icons.check,
+      title: 'Success',
+      description: message,
+      rotateAngle: 0,
+      positionButtonTxt: 'Ok',
+    ), dismissible: false);
+  }
+  void _showErrorDialog(String message){
+    showAnimatedDialog(context, MyDialog(
+      icon: Icons.error,
+      title: 'Error',
+      description: message,
+      rotateAngle: 0,
+      positionButtonTxt: 'Ok',
+    ), dismissible: false);
   }
 }
 

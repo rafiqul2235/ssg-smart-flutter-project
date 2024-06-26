@@ -1,7 +1,9 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/data/model/leave_data.dart';
+import 'package:ssg_smart2/data/model/body/leave_data.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
@@ -29,12 +31,47 @@ class LeaveProvider with ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
+  bool _isDuplicateLeave = false;
+  bool get isDuplicateLeave => _isDuplicateLeave;
 
-  Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
+  bool _isSingleOccasionLeave = false;
+  bool get isSingleOccasionLeave => _isSingleOccasionLeave;
+
+  bool _isProbationPeriodEnd = false;
+  bool get isProbationPeriodEnd => _isProbationPeriodEnd;
+
+
+  Future<String?> applyLeave(BuildContext context, LeaveData leaveData) async {
     showLoading();
-    final response = await leaveRepo.applyLeave(leaveData);
-    print("leave save response: ${response.toString()}");
-    hideLoading();
+    try {
+      //check duplicate leave
+      final duplicateResponse = await leaveRepo.checkDuplicateLeave(leaveData.empNumber, leaveData.startDate);
+      Map<String, dynamic> duplicateData = jsonDecode(duplicateResponse.response.toString());
+      _isDuplicateLeave = duplicateData['isDuplicate'];
+      print("Duplicate leave: $_isDuplicateLeave");
+      
+      if (!_isDuplicateLeave) {
+        final response = await leaveRepo.applyLeave(leaveData);
+        if (response.response != null && response.response?.statusCode == 200) {
+          Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+          print("Response data: $responseData");
+          if (responseData['success'] == 1) {
+            return responseData['msg'][0];
+          } else {
+            return responseData['msg'][0];
+          }
+        } else {
+          return null;
+        }
+      }else{
+        _error = "Duplicate leave";
+        return _error;
+      }
+    } catch (e) {
+      return null;
+    } finally {
+      hideLoading();
+    }
   }
 
   Future<LeaveBalance?> getLeaveBalance(BuildContext context) async {

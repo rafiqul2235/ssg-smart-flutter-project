@@ -23,4 +23,8 @@ class LeaveBalance {
     return data;
   }
 
+   @override
+  String toString() {
+    return 'LeaveBalance{casual: $casual, compensatory: $compensatory, earned: $earned, sick: $sick}';
+  }
 }

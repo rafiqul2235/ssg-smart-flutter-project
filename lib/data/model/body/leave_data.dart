@@ -42,6 +42,7 @@ class LeaveData{
       'person_id': personId,
       'work_location': workLocation,
       'leave_type': leaveType,
+      'leave_id': leaveId,
       'leave_start_date': startDate,
       'leave_end_date': endDate,
       'leave_duration': duration,
@@ -49,4 +50,8 @@ class LeaveData{
     };
   }
 
+  @override
+  String toString() {
+    return 'LeaveData{empName: $empName, empNumber: $empNumber, department: $department, designation: $designation, orgId: $orgId, orgName: $orgName, personId: $personId, workLocation: $workLocation, leaveType: $leaveType, leaveId: $leaveId, startDate: $startDate, endDate: $endDate, duration: $duration, comment: $comment}';
+  }
 }
