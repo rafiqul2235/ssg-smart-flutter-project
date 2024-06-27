@@ -29,6 +29,38 @@ class LeaveRepo {
     }
   }
 
+  Future<ApiResponse> checkSingleOccasionLeave(String? empId, String? leaveType, String? startDate) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['leave_type'] = leaveType;
+      data['entry_date'] = startDate;
+
+      Response response = await dioClient.postWithFormData(
+        AppConstants.SINGLE_OCCASION_LEAVE,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> checkProbationStatus(String? empId, String? startDate) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['start_date'] = startDate;
+
+      Response response = await dioClient.postWithFormData(
+        AppConstants.PROBATION_STATUS,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
   Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
       Response response = await dioClient.post(

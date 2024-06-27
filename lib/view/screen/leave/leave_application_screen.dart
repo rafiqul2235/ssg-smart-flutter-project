@@ -107,7 +107,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
 
-  void _onClickSubmit () async{
+  void _onClickSubmit () {
 
     if( _formKey.currentState!.validate()){
       if (selectedLeaveType == null) {
@@ -135,15 +135,21 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
             duration: _durationController.text,
             comment: _leaveCommentsController.text
         );
-        String? result = await Provider.of<LeaveProvider>(context, listen: false).applyLeave(
+        Provider.of<LeaveProvider>(context, listen: false).applyLeave(
           context,
           leaveData
         );
-        print("Result: $result");
-        if ( result != null ){
-          _showSuccessDialog(result);
-        }else{
-          _showErrorDialog(result!);
+
+        final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
+
+        if ( leaveProvider.isSuccess != null ){
+          _showSuccessDialog(leaveProvider.isSuccess.toString());
+        }else if(leaveProvider.isDuplicateLeave){
+          _showErrorDialog("Duplicate leave");
+        }else if(leaveProvider.isSingleOccasionLeave){
+          _showErrorDialog("Single occasion leave");
+        }else if(leaveProvider.isProbationPeriodEnd){
+          _showErrorDialog("Casual leave not allow in probation period");
         }
       } else {
         showAnimatedDialog(context, MyDialog(
