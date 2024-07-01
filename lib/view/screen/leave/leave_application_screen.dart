@@ -107,59 +107,54 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
 
-  void _onClickSubmit () {
+  void _onClickSubmit () async {
 
-    if( _formKey.currentState!.validate()){
-      if (selectedLeaveType == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Please select a leave type'),
-          backgroundColor: Colors.red,
-        ));
-        return;
-      }
-      if (_isLeaveBalanceSufficient()) {
-        UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-        LeaveData leaveData = LeaveData(
-            empName: userInfoModel?.fullName,
-            empNumber: userInfoModel?.employeeNumber,
-            department: userInfoModel?.department,
-            designation: userInfoModel?.designation,
-            orgId: userInfoModel?.orgId,
-            orgName: userInfoModel?.orgName,
-            personId: userInfoModel?.personId,
-            workLocation: userInfoModel?.workLocation,
-            leaveType: selectedLeaveType?.name,
-            leaveId: selectedLeaveType?.code,
-            startDate: _startDateController.text,
-            endDate: _endDateController.text,
-            duration: _durationController.text,
-            comment: _leaveCommentsController.text
-        );
-        Provider.of<LeaveProvider>(context, listen: false).applyLeave(
-          context,
-          leaveData
-        );
+    if(!_formKey.currentState!.validate()){
+      return;
+    }
 
-        final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
+    if(selectedLeaveType == null ){
+      _showErrorDialog("Please select a leave type");
+      return;
+    }
 
-        if ( leaveProvider.isSuccess != null ){
-          _showSuccessDialog(leaveProvider.isSuccess.toString());
-        }else if(leaveProvider.isDuplicateLeave){
-          _showErrorDialog("Duplicate leave");
-        }else if(leaveProvider.isSingleOccasionLeave){
-          _showErrorDialog("Single occasion leave");
-        }else if(leaveProvider.isProbationPeriodEnd){
-          _showErrorDialog("Casual leave not allow in probation period");
-        }
-      } else {
-        showAnimatedDialog(context, MyDialog(
-          icon: Icons.error,
-          title: 'Alert!',
-          description: 'Unavailable leave balance.',
-          rotateAngle: 0,
-          positionButtonTxt: 'Ok',
-        ), dismissible: false);
-      }
+    if(!_isLeaveBalanceSufficient()){
+      _showErrorDialog("Unavailable leave balance");
+      return;
+    }
+
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    LeaveData leaveData = LeaveData(
+        empName: userInfoModel?.fullName,
+        empNumber: userInfoModel?.employeeNumber,
+        department: userInfoModel?.department,
+        designation: userInfoModel?.designation,
+        orgId: userInfoModel?.orgId,
+        orgName: userInfoModel?.orgName,
+        personId: userInfoModel?.personId,
+        workLocation: userInfoModel?.workLocation,
+        leaveType: selectedLeaveType?.name,
+        leaveId: selectedLeaveType?.code,
+        startDate: _startDateController.text,
+        endDate: _endDateController.text,
+        duration: _durationController.text,
+        comment: _leaveCommentsController.text
+    );
+    final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
+    await leaveProvider.applyLeave(context, leaveData);
+
+    if (leaveProvider.isDuplicateLeave) {
+      _showErrorDialog("Duplicate leave application detected");
+    } else if (leaveProvider.isSingleOccasionLeave) {
+      _showErrorDialog("Single occasion leave not allowed");
+    } else if (leaveProvider.isProbationPeriodEnd) {
+      _showErrorDialog("Casual leave not allowed during probation period");
+    } else if (leaveProvider.isSuccess != null) {
+      _showSuccessDialog(leaveProvider.isSuccess!);
+    } else if (leaveProvider.error != null) {
+      _showErrorDialog(leaveProvider.error!);
+    } else {
+      _showErrorDialog("An unknown error occurred");
     }
   }
 

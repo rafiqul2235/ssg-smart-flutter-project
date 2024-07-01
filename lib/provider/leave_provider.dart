@@ -41,52 +41,25 @@ class LeaveProvider with ChangeNotifier {
   bool get isProbationPeriodEnd => _isProbationPeriodEnd;
 
   Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
-    // showLoading();
-    // Check duplicate leave
-    final duplicateResponse = await leaveRepo.checkDuplicateLeave(
-        leaveData.empNumber, leaveData.startDate);
-    Map<String, dynamic> duplicateData = jsonDecode(duplicateResponse.response.toString());
-    _isDuplicateLeave = duplicateData['isDuplicate'];
+    _resetState();
+    showLoading();
 
-    // Check single occasion leave
-    if (!['Attendance Leave', 'Late Leave'].contains(leaveData.leaveType)) {
-      final occationLeaveResponse = await leaveRepo.checkSingleOccasionLeave(
-          leaveData.empNumber, leaveData.leaveType, leaveData.startDate);
-      Map<String, dynamic> occationLeaveData = jsonDecode(occationLeaveResponse.response.toString());
-      _isSingleOccasionLeave = occationLeaveData['isSingleOccasion'];
-    } else {
-      _isSingleOccasionLeave = false;
-    }
+    try{
+      await _checkDuplicateLeave(leaveData);
+      if(_isDuplicateLeave) return;
 
-    // Check probation status
-    if (leaveData.leaveType == "Casual Leave") {
-      final probationResponse = await leaveRepo.checkProbationStatus(
-          leaveData.empNumber, leaveData.startDate);
-      Map<String, dynamic> probationStatusData = jsonDecode(probationResponse.response.toString());
-      _isProbationPeriodEnd = probationStatusData['isProbationEnd'];
-    } else {
-      _isProbationPeriodEnd = false;
-    }
+      await _checkSingleOccasionLeave(leaveData);
+      if(_isSingleOccasionLeave) return;
 
-    if (!_isDuplicateLeave &&
-        !_isSingleOccasionLeave &&
-        !_isProbationPeriodEnd) {
-      try {
-        showLoading();
-        final response = await leaveRepo.applyLeave(leaveData);
-        if( response.response != null && response.response?.statusCode == 200){
-          Map<String, dynamic> responseData = jsonDecode(response.response.toString());
-          if( responseData['success'] == 1){
-            _isSuccess = responseData['msg'][0];
-            hideLoading();
-          }
-        }
-      } catch (e) {
-        print("Errorm message from e: $e");
-        _error = e.toString();
-      } finally {
-        hideLoading();
-      }
+      await _checkProbationStatus(leaveData);
+      if(_isProbationPeriodEnd) return;
+
+      await _submitLeaveApplication(leaveData);
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+    }finally{
+      hideLoading();
+      notifyListeners();
     }
   }
 
@@ -120,6 +93,51 @@ class LeaveProvider with ChangeNotifier {
     }else{
       ApiChecker.checkApi(context, apiResponse);
     }
+  }
+
+  Future<void> _checkDuplicateLeave(LeaveData leaveData) async {
+    final response = await leaveRepo.checkDuplicateLeave(leaveData.empNumber, leaveData.startDate);
+    Map<String, dynamic> data = jsonDecode(response.response.toString());
+    _isDuplicateLeave = data['isDuplicate'];
+  }
+
+  Future<void> _checkSingleOccasionLeave(LeaveData leaveData) async {
+    if (!['Attendance Leave', 'Late Leave'].contains(leaveData.leaveType)) {
+      final response = await leaveRepo.checkSingleOccasionLeave(
+          leaveData.empNumber, leaveData.leaveType, leaveData.startDate);
+      Map<String, dynamic> data = jsonDecode(response.response.toString());
+      _isSingleOccasionLeave = data['isSingleOccasion'];
+    }
+  }
+
+  Future<void> _checkProbationStatus(LeaveData leaveData) async {
+    if (leaveData.leaveType == "Casual Leave") {
+      final response = await leaveRepo.checkProbationStatus(leaveData.empNumber, leaveData.startDate);
+      Map<String, dynamic> data = jsonDecode(response.response.toString());
+      _isProbationPeriodEnd = data['isProbationEnd'];
+    }
+  }
+
+  Future<void> _submitLeaveApplication(LeaveData leaveData) async {
+    final response = await leaveRepo.applyLeave(leaveData);
+    if (response.response != null && response.response?.statusCode == 200) {
+      Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+      if (responseData['success'] == 1) {
+        _isSuccess = responseData['msg'][0];
+      } else {
+        _error = "Leave application failed";
+      }
+    } else {
+      _error = "Server error occurred";
+    }
+  }
+
+  void _resetState() {
+    _error = null;
+    _isSuccess = null;
+    _isDuplicateLeave = false;
+    _isSingleOccasionLeave = false;
+    _isProbationPeriodEnd = false;
   }
 
   void showLoading(){

@@ -22,6 +22,7 @@ class InfoRow extends StatelessWidget {
               ),
             ),
           ),
+          Text(":   ",style:TextStyle(fontWeight: FontWeight.bold)),
           Expanded(
             flex: 2,
             child: Text(
