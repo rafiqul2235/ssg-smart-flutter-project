@@ -89,6 +89,71 @@ class LeaveRepo {
     }
   }
 
+  Future<ApiResponse> getManagementData(String soures) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['soures'] = soures;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.MANAGEMENT_DATA,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('managementDashboard ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> getPfData(String empId,orgId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['org_id'] = orgId;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.PF_DATA,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('pfData ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> getAttendData(String empId,fromDate,toDate,status) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['fromDate'] = fromDate;
+      data['toDate'] = toDate;
+      data['status'] = status;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.ATTENDANCE_DATA,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('pfData ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> getApprovalList(String empId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.APPROVAL_List,
+          data:data
+      );
+
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getLeaveType() async {
     final Map<String, dynamic> data = <String, dynamic>{};
     try {

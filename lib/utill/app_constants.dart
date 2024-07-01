@@ -7,8 +7,10 @@ class AppConstants {
   static const String APP_NAME = 'SMART';
 
   //static const String BASE_URL = 'http://10.192.1.42:5055/'; // uat
-  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  static const String BASE_URL = 'http://192.168.7.98/';
+  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  //static const String BASE_URL = 'http://192.168.7.98/'; //test
+  static const String BASE_URL = 'http://10.25.4.120/';
+
 
   static const int APP_VERSION_CODE = 1;
   static const String APP_VERSION_NAME = '1.01';
@@ -20,10 +22,13 @@ class AppConstants {
   static const String LOGIN_URI = 'login';
   static const String USER_MENU_URI = 'menus';
   static const String EMP_Self_Service_List = 's_service_list';
+  static const String APPROVAL_List = 'leave_approval_flow';
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
+  static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
+  static const String PF_DATA = 'pf_ledger';
+  static const String ATTENDANCE_DATA = 'attendence_sheet';
   static const String LEAVE_TYPE = 'leave_type';
-
   static const String LEAVE_APPLY = 'leave_save';
   static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';

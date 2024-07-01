@@ -65,8 +65,6 @@ class _SignInWidgetState extends State<SignInWidget> {
 
     if (_formKeyLogin!.currentState!.validate()) {
 
-      // _userController!.text = '390';
-      // _passwordController!.text = '123456';
 
       String _user = _userController!.text.trim();
       String _password = _passwordController!.text.trim();

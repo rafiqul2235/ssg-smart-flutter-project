@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../empselfservice/self_service.dart';
+import '../leave/approval_list_screen.dart';
+import '../managementdashboard/management_dashbboard_screen.dart';
 import '../notification/notification_screen.dart';
 import '../pdf/pdf_list_screen.dart';
 import '../profile/profile_screen.dart';
@@ -159,14 +161,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:PDFListScreen(title: getTranslated('PDF_Report', context),platform: TargetPlatform.android),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
                             }else if(userMenu.id == '4'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '5'){
+                            }
+                            else if(userMenu.id == '8'){
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: ApprovalListPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            else if(userMenu.id == '5'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '10'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '11'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '13'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: ManagementDashboard(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '14'){

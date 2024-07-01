@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
+import 'package:ssg_smart2/view/screen/leave/pf_ledger_screen.dart';
 import '../../../data/model/response/self_service.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
+import '../leave/attendance_sheet_screen.dart';
 import '../leave/leave_application_screen.dart';
+import '../managementdashboard/managemrnt_d_menu.dart';
 import '../notification/notification_screen.dart';
 import 'approval_history.dart';
 
@@ -37,12 +40,12 @@ class _SelfServiceState extends State<SelfService> {
 
   _getMenuList(){
     _menuList = [];
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Attendance', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PaySlip', navigateTo: NotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Salary Adv.', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Salary Adv.', navigateTo: ManagementDMenu(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Loan', navigateTo: NotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Ledger', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
 
   }
 
@@ -106,7 +109,6 @@ class _SelfServiceState extends State<SelfService> {
                               return InkWell(
                                 onTap: (){
                                   print(' On Click Application Item $index');
-
                                   Navigator.push(context, MaterialPageRoute(builder: (_) => const ApprovalHistory()));
 
                                 },

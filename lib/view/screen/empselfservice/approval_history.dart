@@ -19,6 +19,7 @@ class _ApprovalHistoryState extends State<ApprovalHistory> {
   void initState() {
     super.initState();
     Provider.of<UserProvider>(context, listen: false).getApplicationList(context);
+
   }
 
   @override
@@ -122,5 +123,4 @@ class _ApprovalHistoryState extends State<ApprovalHistory> {
     );
   }
 }
-
 
