@@ -1,13 +1,19 @@
 
+import 'dart:convert';
+import 'dart:core';
+import 'dart:core';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/data/model/response/attendance_sheet_model.dart';
-import 'package:ssg_smart2/data/model/response/management_dashboard_model.dart';
-import 'package:ssg_smart2/data/model/response/pf_ledger_model.dart';
+import 'package:ssg_smart2/data/model/body/leave_data.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/approval_list_model.dart';
+import '../data/model/response/attendance_sheet_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
+import '../data/model/response/management_dashboard_model.dart';
+import '../data/model/response/pf_ledger_model.dart';
 import '../data/repository/leave_repo.dart';
 import '../helper/api_checker.dart';
 import 'auth_provider.dart';
@@ -23,45 +29,66 @@ class LeaveProvider with ChangeNotifier {
   ManagementDashboardModel? _dashboardModel;
   ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
 
- /* PfLedgerModel? _pfLedgerModel;
+  PfLedgerModel? _pfLedgerModel;
   PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_prof_total: 0,net_total: 0);
-*/
 
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
+  String? _error;
+  String? get error => _error;
 
-  List<ApprovalListModel> _applicationList = [];
-  List<ApprovalListModel> get applicationList => _applicationList?? [];
+  String? _isSuccess;
+  String? get isSuccess => _isSuccess;
 
+  bool _loading = false;
+  bool get loading => _loading;
 
-  Future<void> applyLeave(BuildContext context, String leaveTypeId, String startDate, String endDate, String duration, String comments) async {
+  bool _isDuplicateLeave = false;
+  bool get isDuplicateLeave => _isDuplicateLeave;
 
+  bool _isSingleOccasionLeave = false;
+  bool get isSingleOccasionLeave => _isSingleOccasionLeave;
 
-    print('Leve provider applyLeave');
-    
+  bool _isProbationPeriodEnd = false;
+  bool get isProbationPeriodEnd => _isProbationPeriodEnd;
 
-
-
-    /*String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['emp_id'] = empId;
-    data['leave_type'] = empId;
-
-    ApiResponse apiResponse = await leaveRepo.applyLeave(data);
-
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-
-
-    }else{
-      ApiChecker.checkApi(context, apiResponse);
-    }*/
-
+  Future<String?> applyLeave(BuildContext context, LeaveData leaveData) async {
+    showLoading();
+    try {
+      //check duplicate leave
+      final duplicateResponse = await leaveRepo.checkDuplicateLeave(leaveData.empNumber, leaveData.startDate);
+      Map<String, dynamic> duplicateData = jsonDecode(duplicateResponse.response.toString());
+      _isDuplicateLeave = duplicateData['isDuplicate'];
+      print("Duplicate leave: $_isDuplicateLeave");
+      
+      if (!_isDuplicateLeave) {
+        final response = await leaveRepo.applyLeave(leaveData);
+        if (response.response != null && response.response?.statusCode == 200) {
+          Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+          print("Response data: $responseData");
+          if (responseData['success'] == 1) {
+            return responseData['msg'][0];
+          } else {
+            return responseData['msg'][0];
+          }
+        } else {
+          return null;
+        }
+      }else{
+        _error = "Duplicate leave";
+        return _error;
+      }
+    } catch (e) {
+      return null;
+    } finally {
+      hideLoading();
+    }
   }
 
   Future<LeaveBalance?> getLeaveBalance(BuildContext context) async {
 
     String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    String empName =  Provider.of<AuthProvider>(context, listen: false).getUserName();
     ApiResponse apiResponse = await leaveRepo.getLeaveBalance(empId);
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
@@ -134,7 +161,7 @@ class LeaveProvider with ChangeNotifier {
 
 
 
-  Future<void> getApprovalListData(BuildContext context) async {
+  /*Future<void> getApprovalListData(BuildContext context) async {
 
     String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
 
@@ -150,7 +177,7 @@ class LeaveProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
+*/
 
   Future<void> getLeaveType(BuildContext context) async {
 
@@ -161,6 +188,19 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }else{
       ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+  void showLoading(){
+    if(!_loading){
+      _loading = true;
+      notifyListeners();
+    }
+  }
+  void hideLoading(){
+    if(_loading){
+      _loading = false;
+      notifyListeners();
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/datasource/remote/exception/api_error_handler.dart';
+import 'package:ssg_smart2/data/model/body/leave_data.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,11 +13,27 @@ class LeaveRepo {
 
   LeaveRepo({required this.dioClient, required this.sharedPreferences});
 
-  Future<ApiResponse> applyLeave(Map<String, dynamic> data) async {
+  Future<ApiResponse> checkDuplicateLeave(String? empId, String? startDate) async {
     try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['start_date'] = startDate;
       Response response = await dioClient.postWithFormData(
-        AppConstants.LEAVE_APPLY,
+        AppConstants.DUPLICATE_LEAVE,
         data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('Leave Repo getLeaveBalance ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> applyLeave(LeaveData leaveData) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.LEAVE_APPLY,
+        data:leaveData.toJson(),
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {

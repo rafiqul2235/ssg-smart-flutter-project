@@ -17,9 +17,10 @@ class CustomDateTimeTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final DateTime? minTime;
   final DateTime? maxTime;
+  final FormFieldValidator<String>? validator;
 
 
-  CustomDateTimeTextField({this.controller, this.hintTxt= '', this.focusNode,this.minTime,this.maxTime, this.nextNode, this.textInputAction,
+  CustomDateTimeTextField({this.controller, this.hintTxt= '', this.focusNode,this.minTime,this.maxTime, this.validator, this.nextNode, this.textInputAction,
     this.isTime = false,this.readyOnly = false, this.onChanged,this.isHideBackDate = false,this.borderColor = Colors.black12});
 
   @override
@@ -105,9 +106,10 @@ class _CustomDateTimeTextFieldState extends State<CustomDateTimeTextField> {
                 : FocusScope.of(context).requestFocus(widget.nextNode);
           });
         },
-        validator: (value) {
-          return null;
-        },
+        validator: widget.validator,
+        // validator: (value) {
+        //   return null;
+        // },
         /*onChanged: (v){if(widget.onChanged!=null){widget.onChanged(v);}},*/
         decoration: InputDecoration(
           suffixIcon: Icon(widget.isTime? Icons.access_time: Icons.date_range),

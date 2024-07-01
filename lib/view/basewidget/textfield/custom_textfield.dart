@@ -21,6 +21,8 @@ class CustomTextField extends StatelessWidget {
   final bool readOnly;
   final ValueChanged<String>? onChanged;
   final Function? onTab;
+  final FormFieldValidator<String>? validator;
+
 
    CustomTextField(
       {
@@ -41,7 +43,10 @@ class CustomTextField extends StatelessWidget {
       this.borderColor = Colors.black12,
       this.readOnly = false,
       this.onTab,
-      this.onChanged});
+      this.onChanged,
+      this.validator
+      });
+
 
   @override
   Widget build(context) {
@@ -76,14 +81,15 @@ class CustomTextField extends StatelessWidget {
         onTap:()=> onTab,
         //autovalidate: true,
         inputFormatters: [isPhoneNumber ? FilteringTextInputFormatter.digitsOnly : FilteringTextInputFormatter.singleLineFormatter],
-        validator: (input){
-          if(input!.isEmpty){
-            if(isValidator){
-              return validatorMessage??"";
-            }
-          }
-          return null;
-        },
+        // validator: (input){
+        //   if(input!.isEmpty){
+        //     if(isValidator){
+        //       return validatorMessage??"";
+        //     }
+        //   }
+        //   return null;
+        // },
+        validator: validator ,
         decoration: InputDecoration(
           hintText: hintText ?? '',
           filled: fillColor != null,

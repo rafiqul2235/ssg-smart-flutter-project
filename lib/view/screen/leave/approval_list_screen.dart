@@ -34,8 +34,8 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
   }
 
   _intData() async {
-    //_approvalListModel =  await Provider.of<LeaveProvider>(context, listen: false).getApprovalListData(context);
-    Provider.of<LeaveProvider>(context,listen: false).getApprovalListData(context);
+   /* //_approvalListModel =  await Provider.of<LeaveProvider>(context, listen: false).getApprovalListData(context);
+    Provider.of<LeaveProvider>(context,listen: false).getApprovalListData(context);*/
     setState(() {});
 
   }
@@ -85,7 +85,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                 //child: Text('Approval List',style: titilliumBold,),
               ),
 
-              Consumer<LeaveProvider>(
+             /* Consumer<LeaveProvider>(
                   builder: (context,userProvider,child){
 
                     List<ApprovalListModel> _approvalList = userProvider.applicationList;
@@ -138,7 +138,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                     );
 
                   }
-              )
+              )*/
             ],
           ),)),
         ],
