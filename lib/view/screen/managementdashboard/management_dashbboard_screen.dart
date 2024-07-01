@@ -23,11 +23,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
   GlobalKey<ScaffoldMessengerState>();
 
   ManagementDashboardModel? _dashboardModel = ManagementDashboardModel(
-      scbl_call_mon: 0,sscml_call_mon: 0,sscil_call_mon: 0,
-      so_amt_month_scbl:0,so_amt_month_sscml:0,so_amt_month_sscil:0,
-      scbl_received_mon:'',sscml_received_mon:'',sscil_received_mon:'',
-      so_mon_scbl:0,so_mon_sscml:0,so_mon_sscil:0
+      insert_date: '',month_date: '',year_date: '',date: '',
+      scbl_call: 0,sscml_call: 0,sscil_call: 0,sspil_call: 0,
+      so_amt_scbl:0,so_amt_sscml:0,so_amt_sscil:0,so_amt_sspil:0,
+      scbl_received:'',sscml_received:'',sscil_received:'',sspil_received:'',
+      so_scbl:0,so_sscml:0,so_sscil:0,so_sspil:0,
+      total_call:0,total_so_amt:0,total_so:0,total_call_per:'',
+      target_scbl:0,target_sscml:0,target_sscil:0,total_mon:'',
+      delivery_scbl:0,delivery_sscml:0,delivery_sscil:0,total_delivery:'',
+     achi_scbl:'',achi_sscml:'',achi_sscil:'',total_achi:'',
+     pending_scbl:0,pending_sscml:0,pending_sscil:0,total_pending:'',
+     pro_scbl:0,pro_sscml:0,pro_sscil:0,total_pro:'',
+     capa_scbl:0,capa_sscml:0,capa_sscil:0,total_capa:'',
+     uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
   );
+
 
   @override
   void initState() {
@@ -50,7 +60,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
         body: Column(
           children: [
             CustomAppBar(
-                title: 'Management Dashboard',
+                title: 'Snapshot : ${_dashboardModel?.date}',
                 isBackButtonExist: widget.isBackButtonExist,
                 icon: Icons.home,
                 onActionPressed: () {
@@ -109,23 +119,23 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('SCBL',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                              child: Center(child: Text('SCBL',style:titilliumSemiBold.copyWith(fontSize: 14))),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('SSCML',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                              child: Center(child: Text('SSCML',style:titilliumSemiBold.copyWith(fontSize: 14))),
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('SSCIL',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                              child: Center(child: Text('SSCIL',style:titilliumSemiBold.copyWith(fontSize: 14))),
                                             ),
+                                            /*Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('SSPIL',style:titilliumSemiBold.copyWith(fontSize: 12))),
+                                            ),*/
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('SSPIL',style:titilliumSemiBold.copyWith(fontSize: 16))),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('Total',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                              child: Center(child: Text('Total',style:titilliumSemiBold.copyWith(fontSize: 14))),
                                             ),
 
 
@@ -142,25 +152,25 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_scbl}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_amt_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscml}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_amt_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_amt_sscil}',style: titilliumRegular)),
                                             ),
+                                            /*Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sspil}',style: titilliumRegular)),
+                                            ),*/
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscil}',style: titilliumRegular)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.total_so_amt}',style: titilliumRegular)),
                                             ),
 
                                           ]
@@ -175,25 +185,25 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.scbl_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.scbl_call}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.sscml_call}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.sscil_call}',style: titilliumRegular)),
                                             ),
+                                           /* Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.sspil_call_mon}',style: titilliumRegular)),
+                                            ),*/
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_call_mon}',style: titilliumRegular)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.total_call}',style: titilliumRegular)),
                                             ),
                                           ]
                                       ),
@@ -207,25 +217,25 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                                child: Center(child: Text('${_dashboardModel?.scbl_received_mon}',style: titilliumRegular)),
+                                                child: Center(child: Text('${_dashboardModel?.scbl_received}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.sscml_received}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.sscil_received}',style: titilliumRegular)),
                                             ),
+                                           /* Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.sspil_received_mon}',style: titilliumRegular)),
+                                            ),*/
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_received_mon}',style: titilliumRegular)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.total_call_per}',style: titilliumRegular)),
                                             ),
 
                                           ]
@@ -233,7 +243,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                       ),
 
                                       TableRow (
-                                          decoration: BoxDecoration(color:Colors.orange.shade50),
+                                          decoration: BoxDecoration(color:Colors.green.shade50),
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
@@ -242,25 +252,25 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_scbl}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscml}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_sscil}',style: titilliumRegular)),
                                             ),
+                                            /*Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.so_mon_sspil}',style: titilliumRegular)),
+                                            ),*/
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscil}',style: titilliumRegular)),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.total_so}',style: titilliumRegular)),
                                             ),
 
                                           ]
@@ -306,6 +316,10 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('SSCIL',style:titilliumSemiBold.copyWith(fontSize: 16))),
                                             ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('Total',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            ),
 
 
                                           ]
@@ -321,17 +335,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_scbl}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.target_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscml}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.target_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.target_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_mon}',style: titilliumRegular)),
                                             ),
 
                                           ]
@@ -346,17 +364,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.scbl_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.delivery_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.delivery_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.delivery_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_delivery}',style: titilliumRegular)),
                                             ),
                                           ]
                                       ),
@@ -370,24 +392,28 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.scbl_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.achi_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.achi_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.achi_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_achi}',style: titilliumRegular)),
                                             ),
 
                                           ]
 
                                       ),
                                       TableRow (
-                                          decoration: BoxDecoration(color:Colors.orange.shade50),
+                                          decoration: BoxDecoration(color:Colors.green.shade50),
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
@@ -396,19 +422,22 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_scbl}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pending_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscml}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pending_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_mon_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pending_sscil}',style: titilliumRegular)),
                                             ),
-
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_pending}',style: titilliumRegular)),
+                                            ),
 
                                           ]
                                       ),
@@ -453,7 +482,10 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('SSCIL',style:titilliumSemiBold.copyWith(fontSize: 16))),
                                             ),
-
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('Total',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            ),
 
                                           ]
                                       ),
@@ -468,17 +500,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_scbl}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.capa_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscml}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.capa_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_month_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.capa_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_capa}',style: titilliumRegular)),
                                             ),
 
                                           ]
@@ -493,17 +529,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.scbl_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pro_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pro_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_call_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.pro_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_pro}',style: titilliumRegular)),
                                             ),
                                           ]
                                       ),
@@ -517,17 +557,21 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.scbl_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.uit_scbl}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscml_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.uit_sscml}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.sscil_received_mon}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.uit_sscil}',style: titilliumRegular)),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
+                                              child: Center(child: Text('${_dashboardModel?.total_uit}',style: titilliumRegular)),
                                             ),
 
                                           ]

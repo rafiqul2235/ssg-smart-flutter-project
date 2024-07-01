@@ -9,7 +9,9 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
+import '../leave/attendance_sheet_screen.dart';
 import '../leave/leave_application_screen.dart';
+import '../managementdashboard/managemrnt_d_menu.dart';
 import '../notification/notification_screen.dart';
 import 'approval_history.dart';
 
@@ -38,10 +40,10 @@ class _SelfServiceState extends State<SelfService> {
 
   _getMenuList(){
     _menuList = [];
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Attendance', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PaySlip', navigateTo: NotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Salary Adv.', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Salary Adv.', navigateTo: ManagementDMenu(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Loan', navigateTo: NotificationScreen(),));
     _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
 

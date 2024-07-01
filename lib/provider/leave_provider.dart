@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/response/attendance_sheet_model.dart';
 import 'package:ssg_smart2/data/model/response/management_dashboard_model.dart';
 import 'package:ssg_smart2/data/model/response/pf_ledger_model.dart';
 import '../data/model/dropdown_model.dart';
@@ -20,7 +21,7 @@ class LeaveProvider with ChangeNotifier {
   LeaveBalance get leaveBalance => _leaveBalance??LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
 
   ManagementDashboardModel? _dashboardModel;
-  ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call_mon: 0,sscml_call_mon: 0,sscil_call_mon: 0);
+  ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
 
  /* PfLedgerModel? _pfLedgerModel;
   PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_prof_total: 0,net_total: 0);
@@ -80,7 +81,7 @@ class LeaveProvider with ChangeNotifier {
   Future<ManagementDashboardModel?> getManageDashbData(BuildContext context) async {
 
     //String soures =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getManagementData("Monthly");
+    ApiResponse apiResponse = await leaveRepo.getManagementData("Yearly");
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
@@ -92,7 +93,7 @@ class LeaveProvider with ChangeNotifier {
       ApiChecker.checkApi(context, apiResponse);
     }
 
-    return ManagementDashboardModel(scbl_call_mon: 0,sscml_call_mon: 0,sscil_call_mon: 0);
+    return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
 
   }
 
@@ -113,6 +114,24 @@ class LeaveProvider with ChangeNotifier {
 
   }
 
+  Future<List<AttendanceSheetModel>> getAttendanceData(BuildContext context,String startDate,String endDate,String attendanceType) async {
+
+    List<AttendanceSheetModel> _list = [];
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    ApiResponse apiResponse = await leaveRepo.getAttendData(empId,startDate,endDate,'');
+    //ApiResponse apiResponse = await leaveRepo.getAttendData(empId,'2023-05-01','2023-05-30','');
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _list = [];
+      apiResponse.response?.data['attendance_sheet'].forEach((item) => _list.add(AttendanceSheetModel.fromJson(item)));
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    return _list;
+
+  }
+
 
 
   Future<void> getApprovalListData(BuildContext context) async {
@@ -124,7 +143,7 @@ class LeaveProvider with ChangeNotifier {
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
       _applicationList = [];
-      apiResponse.response?.data['service_list'].forEach((application) => _applicationList.add(ApprovalListModel.fromJson(application)));
+      apiResponse.response?.data['approval_flow'].forEach((application) => _applicationList.add(ApprovalListModel.fromJson(application)));
 
     } else {
       ApiChecker.checkApi(context, apiResponse);

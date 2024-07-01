@@ -71,6 +71,24 @@ class LeaveRepo {
     }
   }
 
+  Future<ApiResponse> getAttendData(String empId,fromDate,toDate,status) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['fromDate'] = fromDate;
+      data['toDate'] = toDate;
+      data['status'] = status;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.ATTENDANCE_DATA,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('pfData ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getApprovalList(String empId) async {
     try {
       final Map<String, dynamic> data = <String, dynamic>{};

@@ -22,7 +22,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
 
-  List<ApprovalListModel> _approvalListModel = [];
+  //List<ApprovalListModel> _approvalListModel = [];
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
 
   _intData() async {
     //_approvalListModel =  await Provider.of<LeaveProvider>(context, listen: false).getApprovalListData(context);
-    print('pfLedgerList  ${_approvalListModel.length}');
+    Provider.of<LeaveProvider>(context,listen: false).getApprovalListData(context);
     setState(() {});
 
   }
@@ -50,7 +50,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomAppBar(
-              title: 'Approval List Page',
+              title: 'Approval List ',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -82,21 +82,22 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
 
               Padding(
                 padding: const EdgeInsets.only(left: 16.0,right: 16.0,top: 10.0 ),
-                child: Text('Approval List',style: titilliumBold,),
+                //child: Text('Approval List',style: titilliumBold,),
               ),
 
               Consumer<LeaveProvider>(
                   builder: (context,userProvider,child){
 
-                    List<ApprovalListModel> _applicationList = userProvider.applicationList;
+                    List<ApprovalListModel> _approvalList = userProvider.applicationList;
+                    print('approvaList  ${_approvalList.length}');
 
                     return ListView.builder(
                         padding: EdgeInsets.all(0),
                         shrinkWrap: true,
-                        itemCount: _applicationList.length,
+                        itemCount: _approvalList.length,
                         itemBuilder: (context,index){
 
-                          ApprovalListModel approval = _applicationList[index];
+                          ApprovalListModel approval = _approvalList[index];
 
                           return InkWell(
                             onTap: (){
@@ -115,8 +116,8 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('${approval.headerId}',style: titilliumRegular,),
-                                        Text('${approval.fromRole}',style: titilliumRegular,)
+                                       Text('Notification Id : ${approval.notificationId}',style: titilliumRegular,),
+                                        //Text('${approval.subject}',style: titilliumRegular,)
                                       ],),
 
                                     Row(
@@ -125,7 +126,8 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                                         Text('${approval.subject}',style: titilliumRegular,),
                                         Container(
                                             //color: application.statusFlg! == 'In-Process'?Colors.blue : application.statusFlg! == 'Approved'?Colors.green:Colors.red,
-                                            child: Text('${approval.notificationId}',style: titilliumRegular,))
+                                           // child: Text('${approval.notificationId}',style: titilliumRegular,)
+                                          )
                                       ],)
                                   ],
                                 ),
