@@ -11,14 +11,14 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
-import 'managemrnt_d_menu.dart';
+
 
 class ManagementDashboard extends StatefulWidget {
   final bool isBackButtonExist;
+  final String data;
 
-  final String intentData;
 
-  const ManagementDashboard({Key? key, this.isBackButtonExist = true,required this.intentData})
+  const ManagementDashboard({Key? key, this.isBackButtonExist = true, required this.data})
       : super(key: key);
   @override
   State<ManagementDashboard> createState() => _ManagementDashboardState();
@@ -47,20 +47,16 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
      uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
   );
 
-  String? get intentData => '';
-
 
   @override
   void initState() {
     super.initState();
-
     _intData();
-
   }
 
-
   _intData() async {
-    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context,intentData!);
+    print("Pass value: ${widget.data}");
+    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context,widget.data);
     setState(() {});
   }
 
