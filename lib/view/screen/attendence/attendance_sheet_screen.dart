@@ -1,8 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../data/model/response/attendance_sheet_model.dart';
+import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/attendance_provider.dart';
+import '../../../provider/user_provider.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
@@ -34,6 +37,16 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
   @override
   void initState() {
     super.initState();
+
+    // DateTime now = DateTime.now();
+    DateTime now = DateFormat('dd-MM-yyyy').parse('01-07-2024');
+    _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
+    print("Date now: $now");
+    DateTime startDate = DateTime(now.year, now.month -1, 26);
+    if(now.day >= 26){
+      startDate = DateTime(now.year, now.month, 26);
+    }
+    _startDateController.text = DateFormat('dd-MM-yyyy').format(startDate);
   }
 
 
@@ -164,8 +177,9 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
             child: CustomButton(
               onTap: (){
                 final provider = Provider.of<AttendanceProvider>(context, listen: false);
+                UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
                 provider.fetchAttendanceSheet(
-                    '6928',
+                    userInfoModel!.employeeNumber!,
                     _startDateController.text,
                     _endDateController.text,
                     _selectedAttendanceType!
