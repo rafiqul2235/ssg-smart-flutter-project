@@ -5,11 +5,9 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
 
   static const String APP_NAME = 'SMART';
-
-  //static const String BASE_URL = 'http://10.192.1.42:5055/'; // uat
   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  //static const String BASE_URL = 'http://192.168.7.98/'; //test
-  static const String BASE_URL = 'http://10.25.4.120/';
+  static const String BASE_URL = 'http://192.168.7.98/'; //test
+  //static const String BASE_URL = 'http://10.25.4.120/';
 
 
   static const int APP_VERSION_CODE = 1;

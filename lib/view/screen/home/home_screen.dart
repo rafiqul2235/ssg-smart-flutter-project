@@ -9,6 +9,7 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../empselfservice/self_service.dart';
@@ -171,9 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '11'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '13'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: ManagementDashboard(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '19'){
+                            }
+                            else if(userMenu.id == '13'){
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: ManagementDMenu(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            
+                            else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '14'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);

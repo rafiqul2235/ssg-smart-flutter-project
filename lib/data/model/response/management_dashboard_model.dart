@@ -124,7 +124,7 @@ class ManagementDashboardModel {
       total_call = double.parse(json['TOTAL_COLL_DAY']??'0');
       total_so_amt = double.parse(json['TOTAL_SO_AMT_DAY']??'0');
       total_so = double.parse(json['TOTAL_SO_DAY']??'0');
-      total_call_per = json['TOTAL_COLL_PERT_DAY']??'';
+      //total_call_per = json['TOTAL_COLL_PERT_DAY']??'';
 
       target_scbl = double.parse(json['TARGET_DAY_SCBL']??'0');
       target_sscml = double.parse(json['TARGET_DAY_SSCML']??'0');
@@ -146,7 +146,7 @@ class ManagementDashboardModel {
       pending_sscil = double.parse(json['PENDING_DAY_SSCIL']??'0');
       total_pending = json['TOTAL_PENDING_DAY']??'';
 
-      pro_scbl = double.parse(json['PRO_DAYSCBL']??'0');
+      pro_scbl = double.parse(json['PRO_DAY_SCBL']??'0');
       pro_sscml = double.parse(json['PRO_DAY_SSCML']??'0');
       pro_sscil = double.parse(json['PRO_DAY_SSCIL']??'0');
       total_pro = json['TOTAL_PENDING_DAY']??'';
@@ -173,7 +173,7 @@ class ManagementDashboardModel {
       so_amt_scbl = double.parse(json['SO_AMT_MONTH_SCBL']??'0');
       so_amt_sscml = double.parse(json['SO_AMT_MONTH_SSCML']??'0');
       so_amt_sscil = double.parse(json['SO_AMT_MONTH_SSCIL']??'0');
-      so_amt_sscil = double.parse(json['SO_AMT_MONTH_SSPIL']??'0');
+      so_amt_sspil = double.parse(json['SO_AMT_MONTH_SSPIL']??'0');
 
       scbl_received = json['SCBL_RECEIVED_MON']??'';
       sscml_received = json['SSCML_RECEIVED_MON']??'';
@@ -188,7 +188,7 @@ class ManagementDashboardModel {
       total_call = double.parse(json['TOTAL_COLL_MON']??'0');
       total_so_amt = double.parse(json['TOTAL_SO_AMT_MON']??'0');
       total_so = double.parse(json['TOTAL_SO_MON']??'0');
-      total_call_per = json['TOTAL_COLL_PERT_MON']??'';
+      //total_call_per = json['TOTAL_COLL_PERT_MON']??'';
 
       target_scbl = double.parse(json['TARGET_MON_SCBL']??'0');
       target_sscml = double.parse(json['TARGET_MON_SSCML']??'0');

@@ -105,10 +105,10 @@ class LeaveProvider with ChangeNotifier {
 
   }
 
-  Future<ManagementDashboardModel?> getManageDashbData(BuildContext context) async {
+  Future<ManagementDashboardModel?> getManageDashbData(BuildContext context,String source) async {
 
     //String soures =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getManagementData("Yearly");
+    ApiResponse apiResponse = await leaveRepo.getManagementData(source);
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 

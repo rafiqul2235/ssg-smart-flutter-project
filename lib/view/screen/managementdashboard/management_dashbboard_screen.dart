@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,18 +11,25 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
+import 'managemrnt_d_menu.dart';
 
 class ManagementDashboard extends StatefulWidget {
   final bool isBackButtonExist;
-  const ManagementDashboard({Key? key, this.isBackButtonExist = true})
+
+  final String intentData;
+
+  const ManagementDashboard({Key? key, this.isBackButtonExist = true,required this.intentData})
       : super(key: key);
   @override
   State<ManagementDashboard> createState() => _ManagementDashboardState();
 }
 
+
 class _ManagementDashboardState extends State<ManagementDashboard> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
+
+  //late final String source;
 
   ManagementDashboardModel? _dashboardModel = ManagementDashboardModel(
       insert_date: '',month_date: '',year_date: '',date: '',
@@ -38,6 +47,8 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
      uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
   );
 
+  String? get intentData => '';
+
 
   @override
   void initState() {
@@ -47,8 +58,9 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
   }
 
+
   _intData() async {
-    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context);
+    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context,intentData!);
     setState(() {});
   }
 
