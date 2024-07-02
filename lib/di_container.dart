@@ -1,6 +1,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
+import 'package:ssg_smart2/data/repository/attendance_repo.dart';
 import 'package:ssg_smart2/data/repository/auth_repo.dart';
 import 'package:ssg_smart2/data/repository/banner_repo.dart';
 import 'package:ssg_smart2/data/repository/brand_repo.dart';
@@ -12,6 +13,7 @@ import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/data/repository/search_repo.dart';
 import 'package:ssg_smart2/data/repository/splash_repo.dart';
 import 'package:ssg_smart2/helper/network_info.dart';
+import 'package:ssg_smart2/provider/attendance_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
 import 'package:ssg_smart2/provider/auth_provider.dart';
@@ -63,6 +65,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SplashRepo(sharedPreferences: sl(), dioClient: sl()));
   sl.registerLazySingleton(() => LocationRepo(dioClient: sl(),sharedPreferences: sl()));
   sl.registerLazySingleton(() => LeaveRepo(dioClient: sl(),sharedPreferences: sl()));
+  sl.registerLazySingleton(() => AttendanceRepo(dioClient: sl(), sharedPreferences: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -82,6 +85,7 @@ Future<void> init() async {
   sl.registerFactory(() => LocationProvider(sharedPreferences: sl(), locationRepo: sl()));
   sl.registerLazySingleton(() => MasterDataProvider(masterDataRepo: sl()));
   sl.registerLazySingleton(() => LeaveProvider(leaveRepo: sl()));
+  sl.registerLazySingleton(() => AttendanceProvider(attendanceRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
