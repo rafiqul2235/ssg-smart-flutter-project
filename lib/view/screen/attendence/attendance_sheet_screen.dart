@@ -38,17 +38,14 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
   void initState() {
     super.initState();
 
-    // DateTime now = DateTime.now();
-    DateTime now = DateFormat('dd-MM-yyyy').parse('01-07-2024');
+    DateTime now = DateTime.now();
     _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
-    print("Date now: $now");
     DateTime startDate = DateTime(now.year, now.month -1, 26);
     if(now.day >= 26){
       startDate = DateTime(now.year, now.month, 26);
     }
     _startDateController.text = DateFormat('dd-MM-yyyy').format(startDate);
   }
-
 
   @override
   Widget build(BuildContext context) {

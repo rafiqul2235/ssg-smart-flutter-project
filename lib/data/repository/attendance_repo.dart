@@ -16,26 +16,6 @@ class AttendanceRepo{
     required this.sharedPreferences
 });
 
-  Future<ApiResponse> getAttendanceSheet(String empId, String fromDate, String toDate, String status) async {
-    try {
-      print("Starting api running.");
-      final Map<String, dynamic> data = <String, dynamic>{};
-      data['emp_id'] = empId;
-      data['fromDate'] = fromDate;
-      data['toDate'] = toDate;
-      data['status'] = status;
-      Response response = await dioClient.postWithFormData(
-        AppConstants.ATTENDANCE_DATA,
-        data:data,
-      );
-      print("response from repo: $response");
-      return ApiResponse.withSuccess(response);
-    } catch (e) {
-      print('pfData ${e}');
-      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-    }
-  }
-
   Future<List<AttendanceSheet>> fetchAttendanceSheet(String empId, String fromDate, String toDate, String status) async {
     try {
       final response = await dioClient.postWithFormData(
