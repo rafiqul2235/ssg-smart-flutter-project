@@ -13,7 +13,7 @@ import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dar
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../empselfservice/self_service.dart';
-import '../leave/approval_list_screen.dart';
+import '../approverlist/approval_list_screen.dart';
 import '../managementdashboard/management_dashbboard_screen.dart';
 import '../notification/notification_screen.dart';
 import '../pdf/pdf_list_screen.dart';

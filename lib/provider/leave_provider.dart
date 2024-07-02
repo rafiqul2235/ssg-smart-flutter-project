@@ -131,23 +131,23 @@ class LeaveProvider with ChangeNotifier {
 
   }
 
-  Future<List<AttendanceSheetModel>> getAttendanceData(BuildContext context,String startDate,String endDate,String attendanceType) async {
-
-    List<AttendanceSheetModel> _list = [];
-
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getAttendData(empId,startDate,endDate,'');
-    //ApiResponse apiResponse = await leaveRepo.getAttendData(empId,'2023-05-01','2023-05-30','');
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-      _list = [];
-      apiResponse.response?.data['attendance_sheet'].forEach((item) => _list.add(AttendanceSheetModel.fromJson(item)));
-
-    }else{
-      ApiChecker.checkApi(context, apiResponse);
-    }
-    return _list;
-
-  }
+  // Future<List<AttendanceSheetModel>> getAttendanceData(BuildContext context,String startDate,String endDate,String attendanceType) async {
+  //
+  //   List<AttendanceSheetModel> _list = [];
+  //
+  //   String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+  //   ApiResponse apiResponse = await leaveRepo.getAttendData(empId,startDate,endDate,'');
+  //   //ApiResponse apiResponse = await leaveRepo.getAttendData(empId,'2023-05-01','2023-05-30','');
+  //   if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+  //     _list = [];
+  //     apiResponse.response?.data['attendance_sheet'].forEach((item) => _list.add(AttendanceSheetModel.fromJson(item)));
+  //
+  //   }else{
+  //     ApiChecker.checkApi(context, apiResponse);
+  //   }
+  //   return _list;
+  //
+  // }
 
 
 

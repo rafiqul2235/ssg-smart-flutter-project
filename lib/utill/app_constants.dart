@@ -9,7 +9,6 @@ class AppConstants {
   static const String BASE_URL = 'http://192.168.7.98/'; //test
   //static const String BASE_URL = 'http://10.25.4.120/';
 
-
   static const int APP_VERSION_CODE = 1;
   static const String APP_VERSION_NAME = '1.01';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
