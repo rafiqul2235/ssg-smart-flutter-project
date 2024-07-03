@@ -34,6 +34,7 @@ class LeaveProvider with ChangeNotifier {
 
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
+
   String? _error;
   String? get error => _error;
 
@@ -96,21 +97,27 @@ class LeaveProvider with ChangeNotifier {
   }
 
   Future<ManagementDashboardModel?> getManageDashbData(BuildContext context,String source) async {
+    showLoading();
+    try{
+      ApiResponse apiResponse = await leaveRepo.getManagementData(source);
 
-    //String soures =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getManagementData(source);
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        _dashboardModel = ManagementDashboardModel.fromJson(apiResponse.response?.data['cust_master_data'][0]);
 
-      _dashboardModel = ManagementDashboardModel.fromJson(apiResponse.response?.data['cust_master_data'][0]);
+        return _dashboardModel;
 
-      return _dashboardModel;
-
-    }else{
-      ApiChecker.checkApi(context, apiResponse);
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      hideLoading();
+      return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
     }
+    hideLoading();
 
-    return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
+
 
   }
 
@@ -130,44 +137,6 @@ class LeaveProvider with ChangeNotifier {
     return _list;
 
   }
-
-  // Future<List<AttendanceSheetModel>> getAttendanceData(BuildContext context,String startDate,String endDate,String attendanceType) async {
-  //
-  //   List<AttendanceSheetModel> _list = [];
-  //
-  //   String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-  //   ApiResponse apiResponse = await leaveRepo.getAttendData(empId,startDate,endDate,'');
-  //   //ApiResponse apiResponse = await leaveRepo.getAttendData(empId,'2023-05-01','2023-05-30','');
-  //   if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-  //     _list = [];
-  //     apiResponse.response?.data['attendance_sheet'].forEach((item) => _list.add(AttendanceSheetModel.fromJson(item)));
-  //
-  //   }else{
-  //     ApiChecker.checkApi(context, apiResponse);
-  //   }
-  //   return _list;
-  //
-  // }
-
-
-
-  /*Future<void> getApprovalListData(BuildContext context) async {
-
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-
-    ApiResponse apiResponse = await leaveRepo.getApprovalList(empId);
-
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-
-      _applicationList = [];
-      apiResponse.response?.data['approval_flow'].forEach((application) => _applicationList.add(ApprovalListModel.fromJson(application)));
-
-    } else {
-      ApiChecker.checkApi(context, apiResponse);
-    }
-    notifyListeners();
-  }
-*/
 
   Future<void> getLeaveType(BuildContext context) async {
 
