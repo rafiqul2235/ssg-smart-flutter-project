@@ -32,6 +32,9 @@ class LeaveProvider with ChangeNotifier {
   PfLedgerModel? _pfLedgerModel;
   PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_prof_total: 0,net_total: 0);
 
+  List<ApprovalListModel> _approvalList = [];
+  List<ApprovalListModel> get approvalList => _approvalList?? [];
+
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
   String? _error;
@@ -151,7 +154,7 @@ class LeaveProvider with ChangeNotifier {
 
 
 
-  /*Future<void> getApprovalListData(BuildContext context) async {
+  Future<void> getApprovalListData(BuildContext context) async {
 
     String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
 
@@ -159,15 +162,14 @@ class LeaveProvider with ChangeNotifier {
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
-      _applicationList = [];
-      apiResponse.response?.data['approval_flow'].forEach((application) => _applicationList.add(ApprovalListModel.fromJson(application)));
+      _approvalList = [];
+      apiResponse.response?.data['approval_flow'].forEach((application) => _approvalList.add(ApprovalListModel.fromJson(application)));
 
     } else {
       ApiChecker.checkApi(context, apiResponse);
     }
     notifyListeners();
   }
-*/
 
   Future<void> getLeaveType(BuildContext context) async {
 
