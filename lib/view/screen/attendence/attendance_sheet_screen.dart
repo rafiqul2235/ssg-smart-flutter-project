@@ -1,7 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/screen/attendence/widget/attendance_summary_table.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/attendance_provider.dart';
 import '../../../provider/user_provider.dart';
@@ -23,9 +25,20 @@ class AttendanceSheetPage extends StatefulWidget {
 }
 
 class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
+      ScaffoldMessengerState>();
 
-  List<String> _attendanceTypes = ['All','Present', 'Absent', 'Late', 'Leave', 'Offday', 'Holiday'];
+  bool _showResult = false;
+
+  List<String> _attendanceTypes = [
+    'All',
+    'Present',
+    'Absent',
+    'Late',
+    'Leave',
+    'Offday',
+    'Holiday'
+  ];
   String? _selectedAttendanceType;
 
   final TextEditingController _startDateController = TextEditingController();
@@ -39,20 +52,24 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
 
     DateTime now = DateTime.now();
     _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
-    DateTime startDate = DateTime(now.year, now.month -1, 26);
-    if(now.day >= 26){
+    DateTime startDate = DateTime(now.year, now.month - 1, 26);
+    if (now.day >= 26) {
       startDate = DateTime(now.year, now.month, 26);
     }
     _startDateController.text = DateFormat('dd-MM-yyyy').format(startDate);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AttendanceProvider>(context, listen: false).clearAttendanceData();
+      Provider.of<AttendanceProvider>(context, listen: false)
+          .clearAttendanceData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -64,7 +81,8 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
               icon: Icons.home,
               onActionPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => const DashBoardScreen()));
+                    builder: (
+                        BuildContext context) => const DashBoardScreen()));
               }),
           // Attendance Type Dropdown
           Consumer<AttendanceProvider>(
@@ -76,9 +94,13 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                     Row(
                       children: [
                         Icon(Icons.streetview,
-                            color: ColorResources.getPrimary(context), size: 20),
-                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Attendance Type', mandatoryText: '*', textStyle: titilliumRegular),
+                            color: ColorResources.getPrimary(context),
+                            size: 20),
+                        const SizedBox(
+                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Attendance Type',
+                            mandatoryText: '*',
+                            textStyle: titilliumRegular),
                       ],
                     ),
                     const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
@@ -88,10 +110,11 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                       dropdownWidth: width - 40,
                       hint: Text('Select Attendance Type'),
                       items: _attendanceTypes
-                          .map((type) => DropdownMenuItem<String>(
-                        value: type == 'All' ? null : type,
-                        child: Text(type),
-                      ))
+                          .map((type) =>
+                          DropdownMenuItem<String>(
+                            value: type == 'All' ? null : type,
+                            child: Text(type),
+                          ))
                           .toList(),
                       value: _selectedAttendanceType,
                       onChanged: (value) {
@@ -120,9 +143,13 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                         Row(
                           children: [
                             Icon(Icons.date_range,
-                                color: ColorResources.getPrimary(context), size: 20),
-                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            MandatoryText(text: 'Start Date', mandatoryText: '*', textStyle: titilliumRegular),
+                                color: ColorResources.getPrimary(context),
+                                size: 20),
+                            const SizedBox(width: Dimensions
+                                .MARGIN_SIZE_EXTRA_SMALL),
+                            MandatoryText(text: 'Start Date',
+                                mandatoryText: '*',
+                                textStyle: titilliumRegular),
                           ],
                         ),
                         const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
@@ -148,9 +175,13 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                         Row(
                           children: [
                             Icon(Icons.date_range,
-                                color: ColorResources.getPrimary(context), size: 20),
-                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            MandatoryText(text: 'End Date', mandatoryText: '*', textStyle: titilliumRegular),
+                                color: ColorResources.getPrimary(context),
+                                size: 20),
+                            const SizedBox(width: Dimensions
+                                .MARGIN_SIZE_EXTRA_SMALL),
+                            MandatoryText(text: 'End Date',
+                                mandatoryText: '*',
+                                textStyle: titilliumRegular),
                           ],
                         ),
                         const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
@@ -169,64 +200,96 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
             ),
           ),
           // Submit Button
+
           Container(
             margin: const EdgeInsets.symmetric(
               horizontal: Dimensions.MARGIN_SIZE_LARGE,
               vertical: Dimensions.MARGIN_SIZE_SMALL,
             ),
             child: CustomButton(
-              onTap: (){
-                final provider = Provider.of<AttendanceProvider>(context, listen: false);
-                UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+              onTap: () {
+                final provider = Provider.of<AttendanceProvider>(
+                    context, listen: false);
+                UserInfoModel? userInfoModel = Provider
+                    .of<UserProvider>(context, listen: false)
+                    .userInfoModel;
                 provider.fetchAttendanceSheet(
                     userInfoModel!.employeeNumber!,
                     _startDateController.text,
                     _endDateController.text,
-                    _selectedAttendanceType?? ''
+                    _selectedAttendanceType ?? ''
                 );
+                setState(() {
+                  _showResult = true;
+                });
               },
               buttonText: 'SUBMIT',
             ),
           ),
-          Center(child: Text('Attendance Summary', style: titilliumBold.copyWith(fontSize: 18))),
-          Center(child: Text('Attendance Details', style: titilliumBold.copyWith(fontSize: 18))),
-          // Attendance Table
-          Expanded(
-            child: Consumer<AttendanceProvider>(
-              builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (provider.attendanceRecords.isEmpty) {
-                  return Center(child: Text('No records found'));
-                } else {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('SL', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('In-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Out-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('W_Hours', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        rows: provider.attendanceRecords.map((record) => DataRow(
-                          cells: [
-                            DataCell(Text(record.srlNum ?? '')),
-                            DataCell(Text(record.workingDate ?? '')),
-                            DataCell(Text(record.actInTime ?? '')),
-                            DataCell(Text(record.actOutTime ?? '')),
-                            DataCell(Text(record.wHour ?? '')),
-                            DataCell(Text(record.status ?? '')),
-                          ],
-                        )).toList(),
-                      ),
+          Visibility(
+            visible: _showResult,
+            child: Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(child: Text('Attendance Summary',
+                        style: titilliumBold.copyWith(fontSize: 18))),
+                    Consumer<AttendanceProvider>(
+                      builder: (context, provider, child){
+                        return AttendanceSummaryTable(
+                            attendanceSummary: provider.attendanceSummary
+                        );
+                      },
                     ),
-                  );
-                }
-              },
+                    Center(child: Text('Attendance Details',
+                        style: titilliumBold.copyWith(fontSize: 18))),
+                    // Attendance Table
+                    Consumer<AttendanceProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.isLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (provider.attendanceRecords.isEmpty) {
+                          return Center(child: Text('No records found'));
+                        } else {
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(label: Text('SL', style: TextStyle(
+                                    fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Date', style: TextStyle(
+                                    fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('In-Time',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Out-Time',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('W_Hours',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Status', style: TextStyle(
+                                    fontWeight: FontWeight.bold))),
+                              ],
+                              rows: provider.attendanceRecords.map((record) =>
+                                  DataRow(
+                                    cells: [
+                                      DataCell(Text(record.srlNum ?? '')),
+                                      DataCell(Text(record.workingDate ?? '')),
+                                      DataCell(Text(record.actInTime ?? '')),
+                                      DataCell(Text(record.actOutTime ?? '')),
+                                      DataCell(Text(record.wHour ?? '')),
+                                      DataCell(Text(record.status ?? '')),
+                                    ],
+                                  )).toList(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
