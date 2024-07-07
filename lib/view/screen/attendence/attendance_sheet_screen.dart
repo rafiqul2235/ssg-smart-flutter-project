@@ -26,7 +26,7 @@ class AttendanceSheetPage extends StatefulWidget {
 class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
 
-  List<String> _attendanceTypes = ['Present', 'Absent', 'Late', 'Leave', 'Offday', 'Holiday'];
+  List<String> _attendanceTypes = ['All', 'Present', 'Absent', 'Late', 'Leave', 'Offday', 'Holiday'];
   String? _selectedAttendanceType;
 
   final TextEditingController _startDateController = TextEditingController();
@@ -40,8 +40,8 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
 
     DateTime now = DateTime.now();
     _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
-    DateTime startDate = DateTime(now.year, now.month -1, 26);
-    if(now.day >= 26){
+    DateTime startDate = DateTime(now.year, now.month - 1, 26);
+    if (now.day >= 26) {
       startDate = DateTime(now.year, now.month, 26);
     }
     _startDateController.text = DateFormat('dd-MM-yyyy').format(startDate);
@@ -63,167 +63,167 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => const DashBoardScreen()));
               }),
-          // Attendance Type Dropdown
-          Consumer<AttendanceProvider>(
-            builder: (context, attendanceProvider, child) {
-              return Container(
-                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.streetview,
-                            color: ColorResources.getPrimary(context), size: 20),
-                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Attendance Type', mandatoryText: '*', textStyle: titilliumRegular),
-                      ],
-                    ),
-                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                    DropdownButton2<String>(
-                      buttonHeight: 45,
-                      buttonWidth: double.infinity,
-                      dropdownWidth: width - 40,
-                      hint: Text('Select Attendance Type'),
-                      items: _attendanceTypes
-                          .map((type) => DropdownMenuItem<String>(
-                        value: type,
-                        child: Text(type),
-                      ))
-                          .toList(),
-                      value: _selectedAttendanceType,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedAttendanceType = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          // Date Inputs
-          Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // Start Date
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 5.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.date_range,
-                                color: ColorResources.getPrimary(context), size: 20),
-                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            MandatoryText(text: 'Start Date', mandatoryText: '*', textStyle: titilliumRegular),
-                          ],
-                        ),
-                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                        CustomDateTimeTextField(
-                          controller: _startDateController,
-                          focusNode: _startDateFocus,
-                          nextNode: _endDateFocus,
-                          textInputAction: TextInputAction.next,
-                          isTime: false,
-                          readyOnly: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                // End Date
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 5.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.date_range,
-                                color: ColorResources.getPrimary(context), size: 20),
-                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            MandatoryText(text: 'End Date', mandatoryText: '*', textStyle: titilliumRegular),
-                          ],
-                        ),
-                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                        CustomDateTimeTextField(
-                          controller: _endDateController,
-                          focusNode: _endDateFocus,
-                          textInputAction: TextInputAction.next,
-                          isTime: false,
-                          readyOnly: false,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Submit Button
-          Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL,
-            ),
-            child: CustomButton(
-              onTap: (){
-                final provider = Provider.of<AttendanceProvider>(context, listen: false);
-                UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-                provider.fetchAttendanceSheet(
-                    userInfoModel!.employeeNumber!,
-                    _startDateController.text,
-                    _endDateController.text,
-                    _selectedAttendanceType!
-                );
-              },
-              buttonText: 'SUBMIT',
-            ),
-            ),
-          Center(child: Text('Attendance Summary', style: titilliumBold.copyWith(fontSize: 18))),
-          Center(child: Text('Attendance Details', style: titilliumBold.copyWith(fontSize: 18))),
-          // Attendance Table
           Expanded(
-            child: Consumer<AttendanceProvider>(
-              builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (provider.attendanceRecords.isEmpty) {
-                  return Center(child: Text('No records found'));
-                } else {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('SL', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('In-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Out-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('W_Hours', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        rows: provider.attendanceRecords.map((record) => DataRow(
-                          cells: [
-                            DataCell(Text(record.srlNum ?? '')),
-                            DataCell(Text(record.workingDate ?? '')),
-                            DataCell(Text(record.actInTime ?? '')),
-                            DataCell(Text(record.actOutTime ?? '')),
-                            DataCell(Text(record.wHour ?? '')),
-                            DataCell(Text(record.status ?? '')),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Consumer<AttendanceProvider>(
+                    builder: (context, attendanceProvider, child) {
+                      return Container(
+                        margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.streetview,
+                                    color: ColorResources.getPrimary(context), size: 20),
+                                const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                MandatoryText(text: 'Attendance Type', mandatoryText: '*', textStyle: titilliumRegular),
+                              ],
+                            ),
+                            const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                            DropdownButton2<String>(
+                              buttonHeight: 45,
+                              buttonWidth: double.infinity,
+                              dropdownWidth: width - 40,
+                              hint: Text('Select Attendance Type'),
+                              items: _attendanceTypes
+                                  .map((type) => DropdownMenuItem<String>(
+                                value: type == 'All' ? null : type,
+                                child: Text(type),
+                              ))
+                                  .toList(),
+                              value: _selectedAttendanceType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedAttendanceType = value;
+                                });
+                              },
+                            ),
                           ],
-                        )).toList(),
-                      ),
+                        ),
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.date_range,
+                                        color: ColorResources.getPrimary(context), size: 20),
+                                    const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                    MandatoryText(text: 'Start Date', mandatoryText: '*', textStyle: titilliumRegular),
+                                  ],
+                                ),
+                                const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                CustomDateTimeTextField(
+                                  controller: _startDateController,
+                                  focusNode: _startDateFocus,
+                                  nextNode: _endDateFocus,
+                                  textInputAction: TextInputAction.next,
+                                  isTime: false,
+                                  readyOnly: false,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.date_range,
+                                        color: ColorResources.getPrimary(context), size: 20),
+                                    const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                    MandatoryText(text: 'End Date', mandatoryText: '*', textStyle: titilliumRegular),
+                                  ],
+                                ),
+                                const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                CustomDateTimeTextField(
+                                  controller: _endDateController,
+                                  focusNode: _endDateFocus,
+                                  textInputAction: TextInputAction.next,
+                                  isTime: false,
+                                  readyOnly: false,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                }
-              },
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                      vertical: Dimensions.MARGIN_SIZE_SMALL,
+                    ),
+                    child: CustomButton(
+                      onTap: () {
+                        final provider = Provider.of<AttendanceProvider>(context, listen: false);
+                        UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+                        provider.fetchAttendanceSheet(
+                          userInfoModel!.employeeNumber!,
+                          _startDateController.text,
+                          _endDateController.text,
+                          _selectedAttendanceType ?? '',
+                        );
+                      },
+                      buttonText: 'SUBMIT',
+                    ),
+                  ),
+                  Center(child: Text('Attendance Summary', style: titilliumBold.copyWith(fontSize: 18))),
+                  Center(child: Text('Attendance Details', style: titilliumBold.copyWith(fontSize: 18))),
+                  Consumer<AttendanceProvider>(
+                    builder: (context, provider, child) {
+                      if (provider.isLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (provider.attendanceRecords.isEmpty) {
+                        return Center(child: Text('No records found'));
+                      } else {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(label: Text('SL', style: TextStyle(fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('In-Time', style: TextStyle(fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Out-Time', style: TextStyle(fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('W_Hours', style: TextStyle(fontWeight: FontWeight.bold))),
+                                DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
+                              ],
+                              rows: provider.attendanceRecords.map((record) => DataRow(
+                                cells: [
+                                  DataCell(Text(record.srlNum ?? '')),
+                                  DataCell(Text(record.workingDate ?? '')),
+                                  DataCell(Text(record.actInTime ?? '')),
+                                  DataCell(Text(record.actOutTime ?? '')),
+                                  DataCell(Text(record.wHour ?? '')),
+                                  DataCell(Text(record.status ?? '')),
+                                ],
+                              )).toList(),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
