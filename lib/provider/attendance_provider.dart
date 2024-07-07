@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:core';
 import 'dart:core';
 
 import 'package:flutter/cupertino.dart';
 import 'package:ssg_smart2/data/model/response/attendance_sheet_model.dart';
-import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/repository/attendance_repo.dart';
 
 class AttendanceProvider with ChangeNotifier{
@@ -31,4 +28,9 @@ class AttendanceProvider with ChangeNotifier{
     _isLoading = false;
     notifyListeners();
   }
+  void clearAttendanceData(){
+    _attendanceRecords = [];
+    notifyListeners();
+  }
+
 }
