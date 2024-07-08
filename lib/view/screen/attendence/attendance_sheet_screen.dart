@@ -175,25 +175,34 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
               onTap: (){
                 final provider = Provider.of<AttendanceProvider>(context, listen: false);
                 UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+
                 provider.fetchAttendanceSheet(
                     userInfoModel!.employeeNumber!,
                     _startDateController.text,
                     _endDateController.text,
                     _selectedAttendanceType!
                 );
+
+                provider.fetchAttendanceSummary(
+                    userInfoModel!.employeeNumber!,
+                    _startDateController.text,
+                    _endDateController.text,
+                    _selectedAttendanceType!
+                );
+
+
               },
+
               buttonText: 'SUBMIT',
             ),
             ),
           Center(child: Text('Attendance Summary', style: titilliumBold.copyWith(fontSize: 18))),
-          Center(child: Text('Attendance Details', style: titilliumBold.copyWith(fontSize: 18))),
-          // Attendance Table
           Expanded(
             child: Consumer<AttendanceProvider>(
               builder: (context, provider, child) {
                 if (provider.isLoading) {
                   return Center(child: CircularProgressIndicator());
-                } else if (provider.attendanceRecords.isEmpty) {
+                } else if (provider.attendanceSummary.isEmpty) {
                   return Center(child: Text('No records found'));
                 } else {
                   return SingleChildScrollView(
@@ -202,21 +211,13 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
                         columns: const [
-                          DataColumn(label: Text('SL', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('In-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Out-Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('W_Hours', style: TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Status Details', style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Status Values', style: TextStyle(fontWeight: FontWeight.bold))),
                         ],
-                        rows: provider.attendanceRecords.map((record) => DataRow(
+                        rows: provider.attendanceSummary.map((record) => DataRow(
                           cells: [
-                            DataCell(Text(record.srlNum ?? '')),
-                            DataCell(Text(record.workingDate ?? '')),
-                            DataCell(Text(record.actInTime ?? '')),
-                            DataCell(Text(record.actOutTime ?? '')),
-                            DataCell(Text(record.wHour ?? '')),
-                            DataCell(Text(record.status ?? '')),
+                            DataCell(Text(record.sValue ?? '')),
+                            DataCell(Text(record.sDetails ?? '')),
                           ],
                         )).toList(),
                       ),
@@ -224,6 +225,49 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                   );
                 }
               },
+            ),
+          ),
+          Center(child: Text('Attendance Details', style: titilliumBold.copyWith(fontSize: 18))),
+          // Attendance Table
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Expanded(
+              child: Consumer<AttendanceProvider>(
+                builder: (context, provider, child) {
+                  if (provider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (provider.attendanceRecords.isEmpty) {
+                    return Center(child: Text('No records found'));
+                  } else {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columns: const [
+                            DataColumn(label: Text('SL', style: TextStyle(fontWeight: FontWeight.bold))),
+                            DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
+                            DataColumn(label: Text('In-Time', style: TextStyle(fontWeight: FontWeight.bold))),
+                            DataColumn(label: Text('Out-Time', style: TextStyle(fontWeight: FontWeight.bold))),
+                            DataColumn(label: Text('W_Hours', style: TextStyle(fontWeight: FontWeight.bold))),
+                            DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
+                          ],
+                          rows: provider.attendanceRecords.map((record) => DataRow(
+                            cells: [
+                              DataCell(Text(record.srlNum ?? '')),
+                              DataCell(Text(record.workingDate ?? '')),
+                              DataCell(Text(record.actInTime ?? '')),
+                              DataCell(Text(record.actOutTime ?? '')),
+                              DataCell(Text(record.wHour ?? '')),
+                              DataCell(Text(record.status ?? '')),
+                            ],
+                          )).toList(),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],

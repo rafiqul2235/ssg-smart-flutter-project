@@ -11,14 +11,14 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
-import 'managemrnt_d_menu.dart';
+
 
 class ManagementDashboard extends StatefulWidget {
   final bool isBackButtonExist;
+  final String data;
 
-  final String intentData;
 
-  const ManagementDashboard({Key? key, this.isBackButtonExist = true,required this.intentData})
+  const ManagementDashboard({Key? key, this.isBackButtonExist = true, required this.data})
       : super(key: key);
   @override
   State<ManagementDashboard> createState() => _ManagementDashboardState();
@@ -32,44 +32,41 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
   //late final String source;
 
   ManagementDashboardModel? _dashboardModel = ManagementDashboardModel(
-      insert_date: '',month_date: '',year_date: '',date: '',
-      scbl_call: 0,sscml_call: 0,sscil_call: 0,sspil_call: 0,
-      so_amt_scbl:0,so_amt_sscml:0,so_amt_sscil:0,so_amt_sspil:0,
-      scbl_received:'',sscml_received:'',sscil_received:'',sspil_received:'',
-      so_scbl:0,so_sscml:0,so_sscil:0,so_sspil:0,
-      total_call:0,total_so_amt:0,total_so:0,total_call_per:'',
-      target_scbl:0,target_sscml:0,target_sscil:0,total_mon:'',
-      delivery_scbl:0,delivery_sscml:0,delivery_sscil:0,total_delivery:'',
-     achi_scbl:'',achi_sscml:'',achi_sscil:'',total_achi:'',
-     pending_scbl:0,pending_sscml:0,pending_sscil:0,total_pending:'',
-     pro_scbl:0,pro_sscml:0,pro_sscil:0,total_pro:'',
-     capa_scbl:0,capa_sscml:0,capa_sscil:0,total_capa:'',
-     uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
+    insert_date: '',month_date: '',year_date: '',date: '',
+    scbl_call: 0,sscml_call: 0,sscil_call: 0,sspil_call: 0,
+    so_amt_scbl:0,so_amt_sscml:0,so_amt_sscil:0,so_amt_sspil:0,
+    scbl_received:'',sscml_received:'',sscil_received:'',sspil_received:'',
+    so_scbl:0,so_sscml:0,so_sscil:0,so_sspil:0,
+    total_call:0,total_so_amt:0,total_so:0,total_call_per:'',
+    target_scbl:0,target_sscml:0,target_sscil:0,total_mon:'',
+    delivery_scbl:0,delivery_sscml:0,delivery_sscil:0,total_delivery:'',
+    achi_scbl:'',achi_sscml:'',achi_sscil:'',total_achi:'',
+    pending_scbl:0,pending_sscml:0,pending_sscil:0,total_pending:'',
+    pro_scbl:0,pro_sscml:0,pro_sscil:0,total_pro:'',
+    capa_scbl:0,capa_sscml:0,capa_sscil:0,total_capa:'',
+    uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
   );
-
-  String? get intentData => '';
 
 
   @override
   void initState() {
     super.initState();
-
     _intData();
-
   }
 
-
   _intData() async {
-    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context,intentData!);
+    print("Pass value: ${widget.data}");
+    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbData(context,widget.data);
     setState(() {});
   }
 
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = Provider.of<LeaveProvider>(context).loading;
     return Scaffold(
         key: _scaffoldKey,
-        body: Column(
+        body:Column(
           children: [
             CustomAppBar(
                 title: 'Snapshot : ${_dashboardModel?.date}',
@@ -209,7 +206,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('${_dashboardModel?.sscil_call}',style: titilliumRegular)),
                                             ),
-                                           /* Padding(
+                                            /* Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('${_dashboardModel?.sspil_call_mon}',style: titilliumRegular)),
                                             ),*/
@@ -229,7 +226,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                                child: Center(child: Text('${_dashboardModel?.scbl_received}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.scbl_received}',style: titilliumRegular)),
                                             ),
 
                                             Padding(
@@ -241,7 +238,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('${_dashboardModel?.sscil_received}',style: titilliumRegular)),
                                             ),
-                                           /* Padding(
+                                            /* Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
                                               child: Center(child: Text('${_dashboardModel?.sspil_received_mon}',style: titilliumRegular)),
                                             ),*/
