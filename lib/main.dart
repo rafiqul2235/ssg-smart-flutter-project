@@ -1,3 +1,4 @@
+import 'package:ssg_smart2/provider/approval_hisotry_provider.dart';
 import 'package:ssg_smart2/provider/attendance_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
@@ -79,7 +80,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<LocationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<MasterDataProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LeaveProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>())
+      ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<ApprovalHistoryProvider>())
     ],
     child: const MyApp(),
   ));

@@ -30,6 +30,7 @@ class AppConstants {
   static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';
   static const String PROBATION_STATUS = 'check_probation_status';
+  static const String APPROVAL_HISTORY = 'leave_approval_history';
   //static const String LOGIN_USERID = 'USER_ID';
 
   // sharePreference

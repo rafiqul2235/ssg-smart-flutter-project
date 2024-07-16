@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/provider/user_provider.dart';
-import 'package:ssg_smart2/view/screen/empselfservice/widget/info_row.dart';
-import '../../basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+
+import '../../../data/model/response/leaveapproval/application_info.dart';
+import '../../../data/model/response/leaveapproval/pending_so.dart';
+import '../../../provider/approval_hisotry_provider.dart';
 import '../home/dashboard_screen.dart';
 
-
-class ApprovalHistory extends StatefulWidget {
+class ApprovalHistoryScreen extends StatefulWidget {
   final bool isBackButtonExist;
-  const ApprovalHistory({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  final String invoiceId;
+
+  const ApprovalHistoryScreen(
+      {Key? key, this.isBackButtonExist = true, required this.invoiceId})
+      : super(key: key);
 
   @override
-  State<ApprovalHistory> createState() => _ApprovalHistoryState();
+  _ApprovalHistoryScreenState createState() => _ApprovalHistoryScreenState();
 }
 
-class _ApprovalHistoryState extends State<ApprovalHistory> {
+class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<UserProvider>(context, listen: false).getApplicationList(context);
-
+    Provider.of<ApprovalHistoryProvider>(context, listen: false)
+        .fetchLeaveApprovalHistory(widget.invoiceId);
   }
 
   @override
@@ -34,24 +39,36 @@ class _ApprovalHistoryState extends State<ApprovalHistory> {
               builder: (BuildContext context) => const DashBoardScreen()));
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoCard(context),
-              SizedBox(height: 16),
-              _buildDataTable(),
-            ],
-          ),
-        ),
+      body: Consumer<ApprovalHistoryProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (provider.error != null) {
+            return Center(child: Text('Error: ${provider.error}'));
+          } else if (provider.leaveApprovalHistory != null) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInfoCard(
+                      provider.leaveApprovalHistory!.applicationInfo[0]),
+                  SizedBox(height: 16),
+                  Expanded(
+                    child: _buildDataTable(provider.leaveApprovalHistory!.pendingSO),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(child: Text('No data available'));
+          }
+        },
       ),
     );
   }
 
-  Widget _buildInfoCard(BuildContext context) {
+  Widget _buildInfoCard(ApplicationInfo applicationInfo) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -61,66 +78,102 @@ class _ApprovalHistoryState extends State<ApprovalHistory> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            InfoRow(label: 'Emp Id', value: '12345'),
-            InfoRow(label: 'Name', value: 'John Doe'),
-            InfoRow(label: 'Department', value: 'HR'),
-            InfoRow(label: 'Location', value: 'New York'),
-            InfoRow(label: 'Header Id', value: '98765'),
-            InfoRow(label: 'Leave type', value: 'Sick Leave'),
-            InfoRow(label: 'Start Date', value: '2024-06-01'),
-            InfoRow(label: 'End Date', value: '2024-06-07'),
-            InfoRow(label: 'Duration', value: '7 days'),
+            _buildInfoRow('Leave Type', applicationInfo.leaveType),
+            _buildInfoRow('Start Date', applicationInfo.leaveStartDate),
+            _buildInfoRow('End Date', applicationInfo.leaveEndDate),
+            _buildInfoRow('Duration', applicationInfo.leaveDuration),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDataTable() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: DataTable(
-            columns: const [
-              DataColumn(label: Text('SL')),
-              DataColumn(label: Text('Approver Name')),
-              DataColumn(label: Text('Status')),
-              DataColumn(label: Text('Note')),
-              DataColumn(label: Text('Date Time')),
-            ],
-            rows: [
-              DataRow(cells: [
-                DataCell(Text('1')),
-                DataCell(Text('Alice Smith')),
-                DataCell(Text('Approved')),
-                DataCell(Text('Approved quickly')),
-                DataCell(Text('2024-06-01 09:00')),
-              ]),
-              DataRow(cells: [
-                DataCell(Text('2')),
-                DataCell(Text('Bob Johnson')),
-                DataCell(Text('Pending')),
-                DataCell(Text('Waiting for review')),
-                DataCell(Text('2024-06-02 10:30')),
-              ]),
-              DataRow(cells: [
-                DataCell(Text('3')),
-                DataCell(Text('Charlie Brown')),
-                DataCell(Text('Rejected')),
-                DataCell(Text('Not sufficient reasons')),
-                DataCell(Text('2024-06-03 11:00')),
-              ]),
-            ],
-          ),
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(value),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataTable(List<PendingSO> pendingSOList) {
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: ListView.builder(
+        itemCount: pendingSOList.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _buildHeader();
+          }
+          final pendingSO = pendingSOList[index - 1];
+          return _buildDataRow(pendingSO);
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Card(
+      color: Colors.grey[200],
+      child: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: Row(
+          children: [
+            Expanded(flex: 1, child: _buildHeaderCell("SL")),
+            Expanded(flex: 3, child: _buildHeaderCell("Approver\nName")),
+            Expanded(flex: 2, child: _buildHeaderCell("Status")),
+            Expanded(flex: 2, child: _buildHeaderCell("Note")),
+            Expanded(flex: 2, child: _buildHeaderCell("Date &\nTime"))
+          ],
         ),
       ),
     );
   }
-}
 
+  Widget _buildDataRow(PendingSO pendingSO) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Row(
+          children: [
+            Expanded(flex: 1, child: _buildDataCell(pendingSO.srlNum.toString())),
+            Expanded(flex: 3, child: _buildDataCell(pendingSO.approverName)),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.approverAction)),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.note)),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.actionDate)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderCell(String text) {
+    return Container(
+      padding: EdgeInsets.all(3.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return Container(
+      padding: EdgeInsets.all(3.0),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 14),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}

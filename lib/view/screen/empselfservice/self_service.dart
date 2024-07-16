@@ -108,7 +108,8 @@ class _SelfServiceState extends State<SelfService> {
                               return InkWell(
                                 onTap: (){
                                   print(' On Click Application Item $index');
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ApprovalHistory()));
+                                  String value="1234";
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
 
                                 },
                                 child: Padding (
