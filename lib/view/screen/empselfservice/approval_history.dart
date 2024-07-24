@@ -70,7 +70,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
 
   Widget _buildInfoCard(ApplicationInfo applicationInfo) {
     return Card(
-      elevation: 4,
+      elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
