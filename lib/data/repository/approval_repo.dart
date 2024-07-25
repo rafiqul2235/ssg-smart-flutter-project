@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/model/response/approval_flow.dart';
 
 import '../../utill/app_constants.dart';
+import '../datasource/remote/exception/api_error_handler.dart';
+import '../model/response/base/api_response.dart';
 
 class ApprovalRepo{
   final DioClient dioClient;
@@ -36,4 +39,25 @@ class ApprovalRepo{
       throw Exception('Error fetching approval flow: $e');
     }
   }
+
+
+  Future<ApiResponse> handleApproval(String notificationId, String action, String comments) async {
+    print("noti_id: $notificationId, action: $action, comments: $comments");
+    try {
+      Response response = await dioClient.post(
+        AppConstants.CHUTI_APPROVAL,
+        data: {
+          'notification_id': notificationId,
+          'action': action,
+          'comment': comments,
+          'result': "",
+        },
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('Leave Repo getLeaveBalance ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/approval_flow.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
+import 'package:ssg_smart2/view/screen/approval/widget/confirmation_dialog.dart';
+import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
 
@@ -36,11 +38,6 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
   _intData() async {
     setState(() {});
     Provider.of<ApprovalProvider>(context, listen: false).fetchApprovalFlow("76");
-  }
-
-  void handleApproval(String notificationId, String action){
-    print("notificationId: $notificationId, Comment: ${_commentControllers[notificationId]?.text} and action: $action");
-
   }
 
   @override
@@ -228,7 +225,15 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
               ElevatedButton(
                 onPressed: () {
                   String notificationId = approvalFlow.notificationId;
-                  handleApproval(notificationId, "REJECT");
+                  showAnimatedDialog(
+                      context,
+                      ConfirmationDialog(
+                        notificationId: notificationId,
+                        action: "REJECT",
+                        comment: _commentControllers[notificationId]!.text,
+                        isApprove: false,
+                      ),
+                      isFlip: true);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -247,7 +252,15 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
               ElevatedButton(
                 onPressed: () {
                   String notificationId = approvalFlow.notificationId;
-                  handleApproval(notificationId, "APPROVED");
+                  showAnimatedDialog(
+                      context,
+                      ConfirmationDialog(
+                        notificationId: notificationId,
+                        action: "APPROVED",
+                        comment: _commentControllers[notificationId]!.text,
+                        isApprove: true,
+                      ),
+                      isFlip: true);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

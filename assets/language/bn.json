@@ -211,6 +211,8 @@
   "sent": "Sent",
   "recovery_link_sent": "A recovery link sent to your email address. Please check your email.",
   "want_to_sign_out": "Are you sure you want to log out?",
+  "want_to_approve": "Are you sure you want to approve?",
+  "want_to_reject": "Are you sure you want to reject?",
   "payment_done": "Payment Done",
   "payment_failed": "Payment Failed",
   "payment_cancelled": "Payment Cancelled",

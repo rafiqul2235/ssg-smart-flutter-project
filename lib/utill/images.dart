@@ -78,4 +78,14 @@ class Images {
   static const String facebook = 'assets/images/facebook.png';
   static const String google = 'assets/images/google.png';
   static const String term_condition = 'assets/images/terms-and-conditions.png';
+
+  static const String attendance = 'assets/images/icon_attendance.png';
+  static const String leave = 'assets/images/icon_leave.png';
+  static const String pay_slip = 'assets/images/icon_payslip.png';
+  static const String salary_advance = 'assets/images/icon_sal_loan.png';
+  static const String pf_loan = 'assets/images/icon_pf_loan.png';
+  static const String pf_ledger = 'assets/images/icon_ledger.png';
+
+
+
 }
