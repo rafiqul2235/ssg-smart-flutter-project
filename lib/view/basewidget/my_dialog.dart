@@ -14,9 +14,16 @@ class MyDialog extends StatelessWidget {
   final String description;
   final String? positionButtonTxt;
   final String? negativeButtonTxt;
+  final VoidCallback? onPositiveButtonPressed;
 
-  MyDialog({this.isFailed = false,this.isWarning=false, this.rotateAngle = 0, this.icon, this.title, required this.description,
-    this.positionButtonTxt,this.negativeButtonTxt});
+  MyDialog({this.isFailed = false,
+  this.isWarning=false,
+  this.rotateAngle = 0,
+  this.icon, this.title,
+  required this.description,
+  this.positionButtonTxt,
+  this.negativeButtonTxt,
+  this.onPositiveButtonPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +64,14 @@ class MyDialog extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_SMALL),
-                      child: CustomButton(buttonText:positionButtonTxt??'Ok',
-                          onTap: () => Navigator.pop(context,true)
+                      child: CustomButton(
+                          buttonText:positionButtonTxt??'Ok',
+                          onTap: () {
+                            Navigator.pop(context,true);
+                            if(onPositiveButtonPressed != null){
+                              onPositiveButtonPressed!();
+                            }
+                          }
                       ),
                     ),
                   ),

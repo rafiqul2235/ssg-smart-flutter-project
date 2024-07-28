@@ -1,6 +1,8 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
+import 'package:ssg_smart2/data/repository/approval_history_repo.dart';
+import 'package:ssg_smart2/data/repository/approval_repo.dart';
 import 'package:ssg_smart2/data/repository/attendance_repo.dart';
 import 'package:ssg_smart2/data/repository/auth_repo.dart';
 import 'package:ssg_smart2/data/repository/banner_repo.dart';
@@ -13,6 +15,8 @@ import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/data/repository/search_repo.dart';
 import 'package:ssg_smart2/data/repository/splash_repo.dart';
 import 'package:ssg_smart2/helper/network_info.dart';
+import 'package:ssg_smart2/provider/approval_hisotry_provider.dart';
+import 'package:ssg_smart2/provider/approval_provider.dart';
 import 'package:ssg_smart2/provider/attendance_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
@@ -66,6 +70,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LocationRepo(dioClient: sl(),sharedPreferences: sl()));
   sl.registerLazySingleton(() => LeaveRepo(dioClient: sl(),sharedPreferences: sl()));
   sl.registerLazySingleton(() => AttendanceRepo(dioClient: sl(), sharedPreferences: sl()));
+  sl.registerLazySingleton(() => ApprovalHistoryRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => ApprovalRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -86,6 +92,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => MasterDataProvider(masterDataRepo: sl()));
   sl.registerLazySingleton(() => LeaveProvider(leaveRepo: sl()));
   sl.registerLazySingleton(() => AttendanceProvider(attendanceRepo: sl()));
+  sl.registerLazySingleton(() => ApprovalHistoryProvider(approvalHistoryRepo: sl()));
+  sl.registerLazySingleton(() => ApprovalProvider(approvalRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

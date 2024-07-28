@@ -1,3 +1,5 @@
+import 'package:ssg_smart2/provider/approval_hisotry_provider.dart';
+import 'package:ssg_smart2/provider/approval_provider.dart';
 import 'package:ssg_smart2/provider/attendance_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
@@ -36,11 +38,6 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  //await Firebase.initializeApp();
-  /*await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );*/
-
   await di.init();
 
  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -48,21 +45,6 @@ Future<void> main() async {
   if (!kIsWeb) {
    // await setupFlutterNotifications();
   }
-
-  /*await FlutterDownloader.initialize(debug: true, ignoreSsl: true);*/
-  /*final NotificationAppLaunchDetails? notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  int? _orderID;
-  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    _orderID = (notificationAppLaunchDetails?.payload != null && notificationAppLaunchDetails!.payload!.isNotEmpty)
-        ? int.parse(notificationAppLaunchDetails.payload!) : null;
-  }*/
-
-  //await MyNotification.initialize(flutterLocalNotificationsPlugin);
- // FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler as BackgroundMessageHandler);
-  //FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
- // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  //FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(MultiProvider(
     providers: [
@@ -79,7 +61,9 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<LocationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<MasterDataProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LeaveProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>())
+      ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<ApprovalHistoryProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<ApprovalProvider>()),
     ],
     child: const MyApp(),
   ));
@@ -101,38 +85,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-
-    /*final firebaseMessaging = FCM();
-    firebaseMessaging.setNotifications();
-
-    FirebaseMessaging.instance.getInitialMessage().then (
-          (value) => setState(
-            () {
-          _resolved = true;
-          //showFlutterNotification(value!);
-          initialMessage = value?.data.toString();
-          if (initialMessage != null) {
-            // var route = NavigationHistoryObserver().top;
-            // if(route!=null && route.settings.name!=NotificationScreen.routeName){
-            //   NavigationService.navigatorKey.currentState?.pushNamed(NotificationScreen.routeName);
-            // }
-          }
-        },
-      ),
-    );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      showFlutterNotification(message);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      //showFlutterNotification(message);
-
-      // var route = NavigationHistoryObserver().top;
-      // if(route!=null && route.settings.name!=NotificationScreen.routeName){
-      //   NavigationService.navigatorKey.currentState?.pushNamed(NotificationScreen.routeName);
-      // }
-    });*/
 
     init();
 

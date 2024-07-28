@@ -140,6 +140,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         duration: _durationController.text,
         comment: _leaveCommentsController.text
     );
+    print("Leave data: $leaveData");
     final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
     await leaveProvider.applyLeave(context, leaveData);
 
@@ -160,6 +161,8 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   bool _isLeaveBalanceSufficient() {
     int requestedDuration = int.tryParse(_durationController.text) ?? 0;
+    print("leave duration: $requestedDuration");
+    print("Selected leave: $selectedLeaveType");
     switch (selectedLeaveType?.code) {
       case '61': // Casual Leave
         return requestedDuration <= (_leaveBalance?.casual ?? 0);

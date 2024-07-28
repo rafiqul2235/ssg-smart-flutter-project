@@ -39,13 +39,12 @@ class _SelfServiceState extends State<SelfService> {
 
   _getMenuList(){
     _menuList = [];
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PaySlip', navigateTo: NotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'Salary Adv.', navigateTo: ManagementDMenu(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Loan', navigateTo: NotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.ic_communication_email, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
-
+    _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
+    _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'PaySlip', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.salary_advance, menuName: 'Salary Adv.', navigateTo: ManagementDMenu(),));
+    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
   }
 
 
@@ -108,7 +107,8 @@ class _SelfServiceState extends State<SelfService> {
                               return InkWell(
                                 onTap: (){
                                   print(' On Click Application Item $index');
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ApprovalHistory()));
+                                  String value="1234";
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
 
                                 },
                                 child: Padding (
