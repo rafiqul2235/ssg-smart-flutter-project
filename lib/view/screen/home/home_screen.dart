@@ -1,7 +1,6 @@
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
-import 'package:ssg_smart2/provider/auth_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
@@ -174,13 +173,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '13'){
-                              return HomeMenuItemCircle(image: Images.dashboard, title:  userMenu.name!, navigateTo: ManagementDMenu(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.dashbaord3, title:  userMenu.name!, navigateTo: ManagementDMenu(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             
                             else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '14'){
-                              return HomeMenuItemCircle(image: Images.self_service, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.self_service1, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '37'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '40'){
