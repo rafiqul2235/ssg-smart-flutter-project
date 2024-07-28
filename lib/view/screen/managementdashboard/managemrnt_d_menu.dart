@@ -77,7 +77,7 @@ class _ManagementDMenuState extends State<ManagementDMenu> {
               child:
               !Provider.of<UserProvider>(context).isLoading
                   ? CustomButton(onTap: () {_onClickSubmit(context,"Daily");},
-                  buttonText: 'Day')
+                  buttonText: 'Business Status :: Day')
                   : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(

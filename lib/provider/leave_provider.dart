@@ -7,6 +7,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/leave_data.dart';
+import 'package:ssg_smart2/data/model/response/pf_ledger_summary_model.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/approval_list_model.dart';
 import '../data/model/response/attendance_sheet_model.dart';
@@ -29,8 +30,16 @@ class LeaveProvider with ChangeNotifier {
   ManagementDashboardModel? _dashboardModel;
   ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
 
+  PfLedgerSummaryModel? _pfSummaryModel;
+  PfLedgerSummaryModel get pfSummaryModel => _pfSummaryModel??PfLedgerSummaryModel();
+
+
   PfLedgerModel? _pfLedgerModel;
-  PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_prof_total: 0,net_total: 0);
+  PfLedgerModel get pfLedgerModel => _pfLedgerModel??PfLedgerModel(period_name: '',con_employee: '',con_employer: '',
+      con_total: '',pro_employee: '',pro_employer: '',pro_total: '',con_with_prof: '',loan_amt: '',recovery: '',outstanding: '',net_total: '');
+
+  List<ApprovalListModel> _approvalList = [];
+  List<ApprovalListModel> get approvalList => _approvalList?? [];
 
   List<DropDownModel> _leaveTypes = [] ;
   List<DropDownModel> get leaveTypes => _leaveTypes??[] ;
@@ -100,13 +109,9 @@ class LeaveProvider with ChangeNotifier {
     showLoading();
     try{
       ApiResponse apiResponse = await leaveRepo.getManagementData(source);
-
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-
         _dashboardModel = ManagementDashboardModel.fromJson(apiResponse.response?.data['cust_master_data'][0]);
-
         return _dashboardModel;
-
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
@@ -116,9 +121,6 @@ class LeaveProvider with ChangeNotifier {
       return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
     }
     hideLoading();
-
-
-
   }
 
   Future<List<PfLedgerModel>> getPfLedgerData(BuildContext context) async {
@@ -136,6 +138,65 @@ class LeaveProvider with ChangeNotifier {
     }
     return _list;
 
+  }
+
+  /*Future<List<PfLedgerSummaryModel>> getPfLedgerSummaryData(BuildContext context) async {
+
+    //List<PfLedgerSummaryModel> _list = [];
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+    ApiResponse apiResponse = await leaveRepo.getPfSummaryData(empId,"901");
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _list = [];
+      apiResponse.response?.data['service_list'].forEach((item) => _list.add(PfLedgerSummaryModel.fromJson(item)));
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    return _list;
+
+  }*/
+
+  Future<PfLedgerSummaryModel?> getPfLedgerSummaryData(BuildContext context) async {
+    showLoading();
+    try{
+      String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+      ApiResponse apiResponse = await leaveRepo.getPfSummaryData(empId,"901");
+
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+        _pfSummaryModel = PfLedgerSummaryModel.fromJson(apiResponse.response?.data['service_list'][0]);
+        return _pfSummaryModel;
+
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      hideLoading();
+      return PfLedgerSummaryModel(total_contribute: '',total_interest: '',total_loan: '',total_recovered: '',total_outstanding: '',total_balance: '');
+    }
+    hideLoading();
+
+
+
+  }
+
+  Future<void> getApprovalListData(BuildContext context) async {
+
+    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+
+    ApiResponse apiResponse = await leaveRepo.getApprovalList(empId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _approvalList = [];
+      apiResponse.response?.data['approval_flow'].forEach((application) => _approvalList.add(ApprovalListModel.fromJson(application)));
+
+    } else {
+      ApiChecker.checkApi(context, apiResponse);
+    }
+    notifyListeners();
   }
 
   Future<void> getLeaveType(BuildContext context) async {

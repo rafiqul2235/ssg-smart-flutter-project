@@ -121,6 +121,22 @@ class LeaveRepo {
     }
   }
 
+  Future<ApiResponse> getPfSummaryData(String empId,orgId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      data['org_id'] = orgId;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.PF_SUMMARY_DATA,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('pfSummaryData ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
 
   Future<ApiResponse> getApprovalList(String empId) async {

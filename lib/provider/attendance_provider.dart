@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:ssg_smart2/data/model/response/attendance_sheet_model.dart';
 import 'package:ssg_smart2/data/repository/attendance_repo.dart';
 
+import '../data/model/response/attendance_summary_model.dart';
+
 class AttendanceProvider with ChangeNotifier{
   final AttendanceRepo attendanceRepo;
   AttendanceProvider({required this.attendanceRepo});
