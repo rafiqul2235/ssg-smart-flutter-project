@@ -41,18 +41,19 @@ class ApprovalRepo{
   }
 
 
+
   Future<ApiResponse> handleApproval(String notificationId, String action, String comments) async {
     print("noti_id: $notificationId, action: $action, comments: $comments");
     try {
-      Response response = await dioClient.post(
+      Response response = await dioClient.postWithFormData(
         AppConstants.CHUTI_APPROVAL,
         data: {
           'notification_id': notificationId,
           'action': action,
           'comment': comments,
-          'result': "",
         },
       );
+      print("Response: $response");
       return ApiResponse.withSuccess(response);
     } catch (e) {
       print('Leave Repo getLeaveBalance ${e}');

@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/approval_flow.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
 import 'package:ssg_smart2/view/screen/approval/widget/confirmation_dialog.dart';
+import '../../../data/model/response/user_info_model.dart';
+import '../../../provider/user_provider.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
@@ -29,6 +31,11 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     _intData();
   }
 
+  void _reloadPage() {
+    setState(() {
+      _intData();
+    });
+  }
   @override
   void dispose() {
     _commentControllers.values.forEach((controller) => controller.dispose());
@@ -37,7 +44,9 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
 
   _intData() async {
     setState(() {});
-    Provider.of<ApprovalProvider>(context, listen: false).fetchApprovalFlow("76");
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    String employeeNumber = userInfoModel?.employeeNumber ?? '';
+    Provider.of<ApprovalProvider>(context, listen: false).fetchApprovalFlow(employeeNumber);
   }
 
   @override
@@ -232,6 +241,10 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                         action: "REJECT",
                         comment: _commentControllers[notificationId]!.text,
                         isApprove: false,
+                        onConfirmed: () {
+                          _reloadPage();
+                          _commentControllers[notificationId]!.clear();
+                        },
                       ),
                       isFlip: true);
                 },
@@ -259,6 +272,10 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                         action: "APPROVED",
                         comment: _commentControllers[notificationId]!.text,
                         isApprove: true,
+                        onConfirmed: () {
+                          _reloadPage();
+                          _commentControllers[notificationId]!.clear();
+                        },
                       ),
                       isFlip: true);
                 },

@@ -14,7 +14,7 @@ class ApprovalHistoryRepo{
   Future<LeaveApprovalHistory> getLeaveApprovalHistory(String invoiceId) async {
     try {
       final response = await dioClient.postWithFormData(
-        AppConstants.APPROVAL_HISTORY,
+        AppConstants.APPLICATION_HISTORY,
         data: {
           'invoice_id': invoiceId
         },

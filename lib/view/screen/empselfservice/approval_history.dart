@@ -12,7 +12,9 @@ class ApprovalHistoryScreen extends StatefulWidget {
   final String invoiceId;
 
   const ApprovalHistoryScreen(
-      {Key? key, this.isBackButtonExist = true, required this.invoiceId})
+      {Key? key,
+        this.isBackButtonExist = true,
+        required this.invoiceId})
       : super(key: key);
 
   @override

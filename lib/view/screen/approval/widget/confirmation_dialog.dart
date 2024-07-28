@@ -14,12 +14,14 @@ class ConfirmationDialog extends StatelessWidget {
   final String action;
   final String comment;
   final bool isApprove;
+  final VoidCallback onConfirmed;
 
   const ConfirmationDialog({Key? key,
     required this.notificationId,
     required this.action,
     required this.comment,
-    required this.isApprove
+    required this.isApprove,
+    required this.onConfirmed
   }) : super(key: key);
 
   @override
@@ -41,17 +43,17 @@ class ConfirmationDialog extends StatelessWidget {
 
           Expanded(child: InkWell(
             onTap: () async {
+              Navigator.pop(context);
               final approvalProvider = Provider.of<ApprovalProvider>(context, listen: false);
               await approvalProvider.handleApproval(context, notificationId, action, comment);
-              Navigator.pop(context);
               if (approvalProvider.isSuccess != null) {
+                onConfirmed();
                 _showSuccessDialog(context, approvalProvider.isSuccess!);
               } else if (approvalProvider.error != null) {
                 _showErrorDialog(context, approvalProvider.error!);
               } else {
                 _showErrorDialog(context,"An unknown error occurred");
               }
-
             },
             child: Container(
               padding: const EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
@@ -70,11 +72,11 @@ class ConfirmationDialog extends StatelessWidget {
               child: Text(getTranslated('NO', context), style: titilliumBold.copyWith(color:Theme.of(context).primaryColor)),
             ),
           )),
-
         ]),
       ]),
     );
   }
+
   void _showSuccessDialog(BuildContext context, String message){
     showAnimatedDialog(context, MyDialog(
       icon: Icons.check,

@@ -85,6 +85,9 @@ class Images {
   static const String salary_advance = 'assets/images/icon_sal_loan.png';
   static const String pf_loan = 'assets/images/icon_pf_loan.png';
   static const String pf_ledger = 'assets/images/icon_ledger.png';
+  static const String self_service = 'assets/images/self-service.png';
+  static const String approval = 'assets/images/approval.png';
+  static const String dashboard = 'assets/images/icons_dashboard.png';
 
 
 
