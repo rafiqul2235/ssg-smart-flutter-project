@@ -1,27 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/response/payslip_model.dart';
+import 'package:ssg_smart2/helper/date_converter.dart';
+import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 
+import '../../../data/model/response/user_info_model.dart';
+import '../../../provider/user_provider.dart';
 import '../home/dashboard_screen.dart';
 
 class PayslipScreen extends StatefulWidget {
   final bool isBackButtonExist;
-  const PayslipScreen({Key? key, this.isBackButtonExist = true}): super(key: key);
+
+  const PayslipScreen({Key? key, this.isBackButtonExist = true})
+      : super(key: key);
 
   @override
   State<PayslipScreen> createState() => _PayslipScreen();
 }
 
 class _PayslipScreen extends State<PayslipScreen> {
-  int salary = 50000;
 
   bool showSalary = false;
 
-  int earnings = 55000;
-  int deductions = 10;
+  @override
+  void initState() {
+    super.initState();
+    _intData();
+  }
 
-  void _toggleSalary(){
+  void _intData() async{
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    String employeeNumber = userInfoModel?.employeeNumber ?? '';
+    Provider.of<PaySlipProvider>(context, listen: false).loadEmployeePaySlip(employeeNumber);
+  }
+  void _toggleSalary() {
     setState(() {
       showSalary = !showSalary;
     });
@@ -36,44 +51,63 @@ class _PayslipScreen extends State<PayslipScreen> {
           icon: Icons.home,
           onActionPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (
-                    BuildContext context) => const DashBoardScreen()));
+                builder: (BuildContext context) => const DashBoardScreen()));
           }),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCircularChart(),
-              SizedBox(height: 20),
-              _buildActionButtons(),
-              SizedBox(height: 20),
-              _buildEarningsSection(),
-              SizedBox(height: 20),
-              _buildDeductionsSection(),
-
-            ],
-          ),
-        ),
+      body: Consumer<PaySlipProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (provider.error.isNotEmpty) {
+            return Center(
+              child: Text(provider.error),
+            );
+          } else if (provider.employeePaySlip != null) {
+            EmployeePaySlip employeePaySlip = provider.employeePaySlip!;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCircularChart(employeePaySlip),
+                    SizedBox(height: 20),
+                    _buildActionButtons(employeePaySlip.grossSal),
+                    SizedBox(height: 20),
+                    _buildEarningsSection(employeePaySlip),
+                    SizedBox(height: 20),
+                    _buildDeductionsSection(employeePaySlip),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: Text('No pay slip data available'),
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _buildCircularChart() {
-    int netPay = earnings - deductions;
+  Widget _buildCircularChart(EmployeePaySlip employeePaySlip) {
+    String netPay = employeePaySlip.netPayable;
+    int earnings = int.parse(employeePaySlip.totalEarning.replaceAll(',', ''));
+    int deductions = int.parse(employeePaySlip.totalDeduction.replaceAll(',', ''));
     double percent = earnings / (earnings + deductions);
     final formatter = NumberFormat('#,###');
     return CircularPercentIndicator(
       radius: 120.0,
       lineWidth: 15.0,
-      percent: percent, // 67500 / (67500 + 5500)
+      percent: percent,
       center: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            formatter.format(netPay),
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            '৳$netPay',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Text('Net Pay'),
         ],
@@ -84,7 +118,7 @@ class _PayslipScreen extends State<PayslipScreen> {
       header: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
-          'Payroll Month : Mar-2024',
+          '${DateConverter.convertStringToStringDateTime1(employeePaySlip.doj)}',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
@@ -93,9 +127,9 @@ class _PayslipScreen extends State<PayslipScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLegend('$earnings', Colors.purple[200]!, 'Earnings'),
+            _buildLegend('${employeePaySlip.totalEarning}', Colors.purple[200]!, 'Earnings'),
             SizedBox(width: 20),
-            _buildLegend('$deductions', Colors.deepOrange, 'Deductions'),
+            _buildLegend('${employeePaySlip.totalDeduction}', Colors.deepOrange, 'Deductions'),
           ],
         ),
       ),
@@ -117,49 +151,24 @@ class _PayslipScreen extends State<PayslipScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value, style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+            Text(value,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text(label, style: TextStyle(fontSize: 12)),
           ],
         ),
       ],
     );
   }
-  // Widget _buildLegend(String value, Color color, String label) {
-  //   return Row(
-  //     crossAxisAlignment: CrossAxisAlignment.start,  // Align items to the top
-  //     children: [
-  //       Padding(
-  //         padding: EdgeInsets.only(top: 4),  // Adjust this value as needed
-  //         child: Container(
-  //           width: 15,
-  //           height: 15,
-  //           decoration: BoxDecoration(
-  //             color: color,
-  //             shape: BoxShape.circle,
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(width: 10),
-  //       Align(
-  //         alignment: Alignment.topLeft,
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-  //             Text(label, style: TextStyle(fontSize: 12)),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-  Widget _buildActionButtons() {
+
+  Widget _buildActionButtons(String grossSalary) {
     return Row(
       children: [
-
         Expanded(
           child: ElevatedButton(
-            child: Text('Download', style: TextStyle(color: Colors.white),),
+            child: Text(
+              'Download',
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.deepOrange,
@@ -172,10 +181,11 @@ class _PayslipScreen extends State<PayslipScreen> {
         SizedBox(width: 16),
         Expanded(
           child: OutlinedButton(
-            child: Text(showSalary ? '$salary':'Gross Salary'),
+            child: Text(showSalary ? '$grossSalary' : 'Gross Salary'),
             onPressed: _toggleSalary,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.black, side: BorderSide(color: Colors.grey),
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.grey),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -186,30 +196,38 @@ class _PayslipScreen extends State<PayslipScreen> {
     );
   }
 
-  Widget _buildEarningsSection() {
+  Widget _buildEarningsSection(EmployeePaySlip employeePaySlip) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Earnings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        _buildEarningItem('Basic', '₹30,000.00'),
-        _buildEarningItem('Leave Encashment', '₹2,980.00'),
-        _buildEarningItem('HRA', '₹15,000.00'),
-        _buildEarningItem('Other Allowance', '₹10,000.00'),
-        _buildEarningItem('SPL Allowance', '₹15,000.00'),
+        Text('Earnings',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        _buildEarningItem('Basic', '৳${employeePaySlip.basic}'),
+        _buildEarningItem('House Rent', '৳${employeePaySlip.houseRent}'),
+        _buildEarningItem('Medical Allowance', '৳${employeePaySlip.medicalAllowance}'),
+        _buildEarningItem('Conveyance', '৳${employeePaySlip.conveyance}'),
+        _buildEarningItem('Entertainment', '৳${employeePaySlip.entertainment}'),
+        _buildEarningItem('Others Allowance', '৳${employeePaySlip.otherAllowance}'),
+        _buildEarningItem('TA and TD', '৳${employeePaySlip.taAndTD}'),
+        _buildEarningItem('Other Payment', '৳${employeePaySlip.otherPayment}')
       ],
     );
   }
 
-  Widget _buildDeductionsSection() {
+  Widget _buildDeductionsSection(EmployeePaySlip employeePaySlip) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Deductions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        _buildDeductionItem('Employee PF Contribution', '₹3,000.00'),
-        _buildDeductionItem('Income Tax', '₹1,000.00'),
-        _buildDeductionItem('Insurance', '₹1,500.00'),
+        Text('Deductions',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        _buildDeductionItem('Income Tax', '৳${employeePaySlip.incomeTax}'),
+        _buildDeductionItem('Loan Installation', '৳${employeePaySlip.loanInstallment}'),
+        _buildDeductionItem('Mobile Bill Adjustment', '৳${employeePaySlip.excessMobileBill}'),
+        _buildDeductionItem('PF Recovery', '৳${employeePaySlip.pfLoanRecovery}'),
+        _buildDeductionItem('PF Contribution', '৳${employeePaySlip.pfEmployee}'),
+        _buildDeductionItem('Other Deduction', '৳${employeePaySlip.otherDeduction}'),
         Divider(color: Colors.grey),
-        _buildDeductionItem('Gross Deductions', '₹5,500.00', isTotal: true),
+        _buildDeductionItem('Gross Deductions', '৳${employeePaySlip.totalDeduction}', isTotal: true),
       ],
     );
   }
@@ -227,14 +245,19 @@ class _PayslipScreen extends State<PayslipScreen> {
     );
   }
 
-  Widget _buildDeductionItem(String title, String amount, {bool isTotal = false}) {
+  Widget _buildDeductionItem(String title, String amount,
+      {bool isTotal = false}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
-          Text(amount, style: TextStyle(color: isTotal ? Colors.deepOrange : Colors.black)),
+          Text(title,
+              style: TextStyle(
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
+          Text(amount,
+              style:
+                  TextStyle(color: isTotal ? Colors.deepOrange : Colors.black)),
         ],
       ),
     );

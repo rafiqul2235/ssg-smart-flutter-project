@@ -11,6 +11,7 @@ import 'package:ssg_smart2/data/repository/category_repo.dart';
 import 'package:ssg_smart2/data/repository/chat_repo.dart';
 import 'package:ssg_smart2/data/repository/notification_repo.dart';
 import 'package:ssg_smart2/data/repository/onboarding_repo.dart';
+import 'package:ssg_smart2/data/repository/payslip_repo.dart';
 import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/data/repository/search_repo.dart';
 import 'package:ssg_smart2/data/repository/splash_repo.dart';
@@ -28,6 +29,7 @@ import 'package:ssg_smart2/provider/localization_provider.dart';
 import 'package:ssg_smart2/provider/location_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/onboarding_provider.dart';
+import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
@@ -72,6 +74,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AttendanceRepo(dioClient: sl(), sharedPreferences: sl()));
   sl.registerLazySingleton(() => ApprovalHistoryRepo(dioClient: sl()));
   sl.registerLazySingleton(() => ApprovalRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => PaySlipRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -94,6 +97,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AttendanceProvider(attendanceRepo: sl()));
   sl.registerLazySingleton(() => ApprovalHistoryProvider(approvalHistoryRepo: sl()));
   sl.registerLazySingleton(() => ApprovalProvider(approvalRepo: sl()));
+  sl.registerLazySingleton(() => PaySlipProvider(paySlipRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

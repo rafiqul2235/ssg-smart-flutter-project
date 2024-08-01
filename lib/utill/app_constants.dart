@@ -35,6 +35,7 @@ class AppConstants {
   static const String APPLICATION_HISTORY = 'leave_approval_history';
   static const String APPROVAL_HISTORY = 'flutter_approval_history';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
+  static const String PAY_SLIP = 'emp_pay_slip';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

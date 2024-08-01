@@ -205,6 +205,16 @@ class DateConverter {
     return '';
   }
 
+  static String convertStringToStringDateTime1(String dateTime) {
+    if(dateTime == null) return '';
+    try{
+      var inputFormat = DateFormat("dd-MM-yyyy hh:mm a");
+      var outputFormat = DateFormat("MMMM yyyy");
+      return outputFormat.format(inputFormat.parse(dateTime));
+    }catch(e){}
+    return '';
+  }
+
   static String reverseStringToStringDateTime2(String? dateTime) {
     if(dateTime == null || dateTime.isEmpty) return '';
     try{
