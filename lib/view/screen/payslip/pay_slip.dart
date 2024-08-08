@@ -121,7 +121,7 @@ class _PayslipScreen extends State<PayslipScreen> {
       header: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Text(
-          '${DateConverter.convertStringToStringDateTime1(employeePaySlip.doj)}',
+          '${employeePaySlip.payrollMonth}',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
