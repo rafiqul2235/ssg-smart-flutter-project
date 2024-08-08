@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/payslip_model.dart';
 import 'package:ssg_smart2/helper/date_converter.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/payslip/payslip_generator.dart';
 
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
@@ -24,6 +26,7 @@ class PayslipScreen extends StatefulWidget {
 class _PayslipScreen extends State<PayslipScreen> {
 
   bool showSalary = false;
+  UserInfoModel? userInfoModel;
 
   @override
   void initState() {
@@ -32,7 +35,7 @@ class _PayslipScreen extends State<PayslipScreen> {
   }
 
   void _intData() async{
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
     Provider.of<PaySlipProvider>(context, listen: false).loadEmployeePaySlip(employeeNumber);
   }
@@ -73,7 +76,7 @@ class _PayslipScreen extends State<PayslipScreen> {
                   children: [
                     _buildCircularChart(employeePaySlip),
                     SizedBox(height: 20),
-                    _buildActionButtons(employeePaySlip.grossSal),
+                    _buildActionButtons(employeePaySlip, userInfoModel!),
                     SizedBox(height: 20),
                     _buildEarningsSection(employeePaySlip),
                     SizedBox(height: 20),
@@ -160,7 +163,7 @@ class _PayslipScreen extends State<PayslipScreen> {
     );
   }
 
-  Widget _buildActionButtons(String grossSalary) {
+  Widget _buildActionButtons(EmployeePaySlip employeePaySlip, UserInfoModel userInfoModel) {
     return Row(
       children: [
         Expanded(
@@ -169,7 +172,13 @@ class _PayslipScreen extends State<PayslipScreen> {
               'Download',
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () {},
+            onPressed: () async {
+              final file = await PayslipGenerator(
+                employeePaySlip: employeePaySlip,
+                userInfoModel: userInfoModel
+              ).generatePayslip();
+              OpenFile.open(file.path);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.deepOrange,
               shape: RoundedRectangleBorder(
@@ -181,7 +190,7 @@ class _PayslipScreen extends State<PayslipScreen> {
         SizedBox(width: 16),
         Expanded(
           child: OutlinedButton(
-            child: Text(showSalary ? '$grossSalary' : 'Gross Salary'),
+            child: Text(showSalary ? '${employeePaySlip.grossSal}' : 'Gross Salary'),
             onPressed: _toggleSalary,
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.black,
