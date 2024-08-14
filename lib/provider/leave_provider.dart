@@ -14,6 +14,7 @@ import '../data/model/response/attendance_sheet_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
 import '../data/model/response/management_dashboard_model.dart';
+import '../data/model/response/management_dashboard_model_gcf.dart';
 import '../data/model/response/pf_ledger_model.dart';
 import '../data/repository/leave_repo.dart';
 import '../helper/api_checker.dart';
@@ -29,6 +30,9 @@ class LeaveProvider with ChangeNotifier {
 
   ManagementDashboardModel? _dashboardModel;
   ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
+
+  ManagementDashboardModelGCF? _dashboardModelGcf;
+  ManagementDashboardModelGCF get dashboardModelGcf => _dashboardModelGcf??ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
 
   PfLedgerSummaryModel? _pfSummaryModel;
   PfLedgerSummaryModel get pfSummaryModel => _pfSummaryModel??PfLedgerSummaryModel();
@@ -119,6 +123,24 @@ class LeaveProvider with ChangeNotifier {
       print("error: $e");
       hideLoading();
       return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
+    }
+    hideLoading();
+  }
+
+  Future<ManagementDashboardModelGCF?> getManageDashbDataGcf(BuildContext context,String source) async {
+    showLoading();
+    try{
+      ApiResponse apiResponse = await leaveRepo.getManagementDataGcf(source);
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        _dashboardModelGcf = ManagementDashboardModelGCF.fromJson(apiResponse.response?.data['cust_master_data'][0]);
+        return _dashboardModelGcf;
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      hideLoading();
+      return ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
     }
     hideLoading();
   }

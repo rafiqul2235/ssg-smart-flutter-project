@@ -15,6 +15,7 @@ class AppConstants {
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
 
+
   // API Methods
   static const String LOGIN_URI = 'login';
   static const String USER_MENU_URI = 'menus';
@@ -23,6 +24,7 @@ class AppConstants {
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
+  static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
   static const String PF_DATA = 'pf_ledger';
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
