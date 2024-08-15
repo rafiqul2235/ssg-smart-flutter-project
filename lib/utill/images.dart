@@ -91,6 +91,7 @@ class Images {
   static const String dashboard = 'assets/images/icons_dashboard.png';
   static const String dashbaord2 = 'assets/images/dashboard.png';
   static const String dashbaord3 = 'assets/images/dashboard3.png';
+  static const String money_bag = 'assets/images/icon-money-bag.png';
 
 
 
