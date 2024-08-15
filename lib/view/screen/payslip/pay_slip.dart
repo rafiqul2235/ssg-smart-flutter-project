@@ -4,7 +4,6 @@ import 'package:open_file/open_file.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/payslip_model.dart';
-import 'package:ssg_smart2/helper/date_converter.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/screen/payslip/payslip_generator.dart';
@@ -102,8 +101,8 @@ class _PayslipScreen extends State<PayslipScreen> {
     double percent = earnings / (earnings + deductions);
     final formatter = NumberFormat('#,###');
     return CircularPercentIndicator(
-      radius: 120.0,
-      lineWidth: 15.0,
+      radius: 80.0,
+      lineWidth: 20.0,
       percent: percent,
       center: Column(
         mainAxisSize: MainAxisSize.min,
@@ -119,14 +118,14 @@ class _PayslipScreen extends State<PayslipScreen> {
       backgroundColor: Colors.deepOrange,
       circularStrokeCap: CircularStrokeCap.round,
       header: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.only(bottom: 2.0),
         child: Text(
           '${employeePaySlip.payrollMonth}',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       footer: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: const EdgeInsets.only(top: 2.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

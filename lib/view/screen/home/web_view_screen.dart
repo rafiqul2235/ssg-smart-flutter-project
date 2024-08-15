@@ -6,6 +6,7 @@ import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+
 class WebViewScreen extends StatefulWidget {
   final String title;
   final String url;

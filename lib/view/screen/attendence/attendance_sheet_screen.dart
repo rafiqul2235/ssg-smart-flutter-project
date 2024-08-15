@@ -106,16 +106,19 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
                     ),
                     const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                     DropdownButton2<String>(
-                      buttonHeight: 45,
-                      buttonWidth: double.infinity,
-                      dropdownWidth: width - 40,
+                      buttonStyleData: ButtonStyleData(
+                        height: 45,
+                        width: double.infinity,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: width - 40,
+                      ),
                       hint: Text('Select Attendance Type'),
                       items: _attendanceTypes
-                          .map((type) =>
-                          DropdownMenuItem<String>(
-                            value: type == 'All' ? null : type,
-                            child: Text(type),
-                          ))
+                          .map((type) => DropdownMenuItem<String>(
+                        value: type == 'All' ? null : type,
+                        child: Text(type),
+                      ))
                           .toList(),
                       value: _selectedAttendanceType,
                       onChanged: (value) {

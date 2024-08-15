@@ -1,4 +1,4 @@
-import 'package:country_code_picker/country_code.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/auth_provider.dart';
