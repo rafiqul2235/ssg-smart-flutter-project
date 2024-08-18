@@ -104,7 +104,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              color: Colors.grey.shade100,
+              color: Colors.grey.shade200,
               elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -168,7 +168,7 @@ class LoanInfoCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Color(0xFFF1F1FA),
+        color: Color(0xFFE5E5FA),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
