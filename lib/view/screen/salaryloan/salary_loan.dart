@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent.dart';
 
-import '../home/dashboard_screen.dart';
 class SalaryAdvanceScreen extends StatefulWidget {
   final bool isBackButtonExist;
   const SalaryAdvanceScreen({Key? key, this.isBackButtonExist = true}) : super(key: key);
@@ -126,7 +127,9 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
                     SizedBox(height: 20),
                     Center(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showBottomSheet(context);
+                        },
                         icon: Icon(Icons.add),
                         label: Text("Create Application"),
                         style: ElevatedButton.styleFrom(
@@ -154,6 +157,30 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
       ),
     );
   }
+  //
+  // void _showBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+  //     ),
+  //     builder: (BuildContext context) {
+  //       return BottomSheetContent();
+  //     },
+  //   );
+  // }
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return BottomSheetContent();
+      },
+    );
+  }
+
+
 }
 
 
