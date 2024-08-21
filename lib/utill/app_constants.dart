@@ -1,3 +1,4 @@
+
 import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -26,6 +27,7 @@ class AppConstants {
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
   static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
   static const String PF_DATA = 'pf_ledger';
+  static const String PAY_SLIP = 'emp_pay_slip';
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
@@ -84,3 +86,4 @@ class AppConstants {
     LanguageModel(imageUrl: '', languageName: 'বাংলা', countryCode: 'BD', languageCode: 'bn'),
   ];
 }
+
