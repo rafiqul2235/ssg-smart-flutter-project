@@ -20,11 +20,11 @@ class DioClient {
       }) {
     token = sharedPreferences.getString(AppConstants.TOKEN);
     //print("NNNN $token");
-    dio = dioC ?? Dio();
+    dio = dioC;
     dio
       ..options.baseUrl = baseUrl
-      ..options.connectTimeout = 30000
-      ..options.receiveTimeout = 30000
+      ..options.connectTimeout = const Duration(milliseconds: 30000)
+      ..options.receiveTimeout = const Duration(milliseconds: 30000)
       ..httpClientAdapter
       ..options.headers = {
         'Content-Type': 'application/json; charset=UTF-8',
