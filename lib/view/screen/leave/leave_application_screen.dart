@@ -168,10 +168,10 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         return requestedDuration <= (_leaveBalance?.casual ?? 0);
       case '64': // Sick Leave
         return requestedDuration <= (_leaveBalance?.sick ?? 0);
-      case '68': // Compensatory Leave
-        return requestedDuration <= (_leaveBalance?.compensatory ?? 0);
-      case '70': // Earned Leave
-        return requestedDuration <= (_leaveBalance?.earned ?? 0);
+      case '68': // Attendance Leave
+        return true;
+      case '70': // Late Leave
+        return true;
       default:
         return false;
     }
