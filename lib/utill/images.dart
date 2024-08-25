@@ -93,6 +93,7 @@ class Images {
   static const String dashbaord2 = 'assets/images/dashboard.png';
   static const String dashbaord3 = 'assets/images/dashboard3.png';
   static const String money_bag = 'assets/images/icon-money-bag.png';
+  static const String gcf_global = 'assets/images/icon_global.png';
 
 
 
