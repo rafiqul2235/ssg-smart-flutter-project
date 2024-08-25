@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/approval_flow.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
+import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/approval/widget/confirmation_dialog.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
@@ -67,7 +68,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
           if (provider.isLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (provider.error.isNotEmpty) {
-            return Center(child: Text(provider.error));
+            return NoInternetOrDataScreen(isNoInternet: false);
           } else {
             return ListView.builder(
               itemCount: provider.approvalFlows.length,

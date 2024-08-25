@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/attendence/widget/attendance_summary_table.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/attendance_provider.dart';
@@ -71,7 +72,6 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
         .of(context)
         .size
         .width;
-
     return Scaffold(
       key: _scaffoldKey,
       body: Column(
@@ -234,68 +234,63 @@ class _AttendanceSheetPageState extends State<AttendanceSheetPage> {
             visible: _showResult,
             child: Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Center(child: Text('Attendance Summary',
-                        style: titilliumBold.copyWith(fontSize: 18))),
-                    Consumer<AttendanceProvider>(
-                      builder: (context, provider, child){
-                        return AttendanceSummaryTable(
-                            attendanceSummary: provider.attendanceSummary
-                        );
-                      },
-                    ),
-                    Center(child: Text('Attendance Details',
-                        style: titilliumBold.copyWith(fontSize: 18))),
-                    // Attendance Table
-                    Consumer<AttendanceProvider>(
+                child: Consumer<AttendanceProvider>(
                       builder: (context, provider, child) {
                         if (provider.isLoading) {
                           return Center(child: CircularProgressIndicator());
                         } else if (provider.attendanceRecords.isEmpty) {
-                          return Center(child: Text('No records found'));
+                          // return Center(child: Text('No records found'));
+                          return NoInternetOrDataScreen(isNoInternet: false);
                         } else {
                           return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: DataTable(
-                              columns: const [
-                                DataColumn(label: Text('SL', style: TextStyle(
-                                    fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('Date', style: TextStyle(
-                                    fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('In-Time',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('Out-Time',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('W_Hours',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                DataColumn(label: Text('Status', style: TextStyle(
-                                    fontWeight: FontWeight.bold))),
-                              ],
-                              rows: provider.attendanceRecords.map((record) =>
-                                  DataRow(
-                                    cells: [
-                                      DataCell(Text(record.srlNum ?? '')),
-                                      DataCell(Text(record.workingDate ?? '')),
-                                      DataCell(Text(record.actInTime ?? '')),
-                                      DataCell(Text(record.actOutTime ?? '')),
-                                      DataCell(Text(record.wHour ?? '')),
-                                      DataCell(Text(record.status ?? '')),
+                            child: Column(
+                              children: [
+                                Center(child: Text("Attendance Summary", style: TextStyle(fontSize: 18),)),
+                                AttendanceSummaryTable(attendanceSummary: provider.attendanceSummary),
+                                Center(child: Text("Attendance Details", style: TextStyle(fontSize: 18),)),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: DataTable(
+                                    columns: const [
+                                      DataColumn(label: Text('SL', style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                                      DataColumn(label: Text('Date', style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                                      DataColumn(label: Text('In-Time',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                      DataColumn(label: Text('Out-Time',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                      DataColumn(label: Text('W_Hours',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                      DataColumn(label: Text('Status', style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
                                     ],
-                                  )).toList(),
+                                    rows: provider.attendanceRecords.map((record) =>
+                                        DataRow(
+                                          cells: [
+                                            DataCell(Text(record.srlNum ?? '')),
+                                            DataCell(Text(record.workingDate ?? '')),
+                                            DataCell(Text(record.actInTime ?? '')),
+                                            DataCell(Text(record.actOutTime ?? '')),
+                                            DataCell(Text(record.wHour ?? '')),
+                                            DataCell(Text(record.status ?? '')),
+                                          ],
+                                        )).toList(),
+                                  ),
+                                )
+                              ],
                             ),
+
                           );
                         }
                       },
                     ),
-                  ],
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
