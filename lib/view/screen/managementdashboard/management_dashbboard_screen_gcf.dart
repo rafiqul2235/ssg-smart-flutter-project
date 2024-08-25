@@ -653,9 +653,9 @@ class _ManagementDashboardGCFState extends State<ManagementDashboardGCF> {
                                 ),
 
                               ),
-                              Text('*Currency AED For GCF',style: titilliumRegular.copyWith(fontSize: 8)),
-                              Text('*Figure in Thousand',style: titilliumRegular.copyWith(fontSize: 8)),
-                              Text('*UOM -- MT',style: titilliumRegular.copyWith(fontSize: 8)),
+                              Text('*Currency AED For GCF',style: titilliumRegular.copyWith(fontSize: 12)),
+                              Text('*Figure in Thousand',style: titilliumRegular.copyWith(fontSize: 12)),
+                              Text('*UOM -- MT',style: titilliumRegular.copyWith(fontSize: 12)),
                             ],
                           ),
                         ),

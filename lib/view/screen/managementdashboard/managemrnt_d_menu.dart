@@ -60,15 +60,17 @@ class _ManagementDMenuState extends State<ManagementDMenu> {
         key: _scaffoldKey,
         body: Column(
           children: [
-            CustomAppBar(
-                title: 'Business Status',
-                isBackButtonExist: widget.isBackButtonExist,
-                icon: Icons.home,
-                onActionPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                      const DashBoardScreen()));
-                }),
+            Center(
+              child: CustomAppBar(
+                  title: 'Business Status',
+                  isBackButtonExist: widget.isBackButtonExist,
+                  icon: Icons.home,
+                  onActionPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        const DashBoardScreen()));
+                  }),
+            ),
 
             Container(
               margin: const EdgeInsets.symmetric(
@@ -90,7 +92,7 @@ class _ManagementDMenuState extends State<ManagementDMenu> {
               child:
               !Provider.of<UserProvider>(context).isLoading
                   ? CustomButton(onTap: () {_onClickSubmit(context, "Monthly");},
-                  buttonText: 'Month')
+                  buttonText: 'Business Status :: Month')
                   : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
@@ -103,7 +105,7 @@ class _ManagementDMenuState extends State<ManagementDMenu> {
               child:
               !Provider.of<UserProvider>(context).isLoading
                   ? CustomButton(onTap: () {_onClickSubmit(context, "Yearly");},
-                  buttonText: 'Year')
+                  buttonText: 'Business Status :: Year')
                   : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(

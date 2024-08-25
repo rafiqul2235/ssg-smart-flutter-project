@@ -29,7 +29,7 @@ class LeaveProvider with ChangeNotifier {
   LeaveBalance get leaveBalance => _leaveBalance??LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
 
   ManagementDashboardModel? _dashboardModel;
-  ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
+  ManagementDashboardModel get dashboardModel => _dashboardModel??ManagementDashboardModel(scbl_call: '',sscml_call: '',sscil_call: '');
 
   ManagementDashboardModelGCF? _dashboardModelGcf;
   ManagementDashboardModelGCF get dashboardModelGcf => _dashboardModelGcf??ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
@@ -122,7 +122,7 @@ class LeaveProvider with ChangeNotifier {
     }catch(e){
       print("error: $e");
       hideLoading();
-      return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
+      return ManagementDashboardModel(scbl_call: '',sscml_call: '',sscil_call: '');
     }
     hideLoading();
   }

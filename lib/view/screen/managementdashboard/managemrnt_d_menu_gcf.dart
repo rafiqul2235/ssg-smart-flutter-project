@@ -91,7 +91,7 @@ class _ManagementDMenuGCFState extends State<ManagementDMenuGCF> {
               child:
               !Provider.of<UserProvider>(context).isLoading
                   ? CustomButton(onTap: () {_onClickSubmit(context, "Monthly");},
-                  buttonText: 'Month')
+                  buttonText: 'Business Status :: Month')
                   : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
@@ -104,7 +104,7 @@ class _ManagementDMenuGCFState extends State<ManagementDMenuGCF> {
               child:
               !Provider.of<UserProvider>(context).isLoading
                   ? CustomButton(onTap: () {_onClickSubmit(context, "Yearly");},
-                  buttonText: 'Year')
+                  buttonText: 'Business Status :: Year')
                   : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(

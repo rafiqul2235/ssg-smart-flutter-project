@@ -33,17 +33,17 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
   ManagementDashboardModel? _dashboardModel = ManagementDashboardModel(
     insert_date: '',month_date: '',year_date: '',date: '',
-    scbl_call: 0,sscml_call: 0,sscil_call: 0,sspil_call: 0,
-    so_amt_scbl:0,so_amt_sscml:0,so_amt_sscil:0,so_amt_sspil:0,
+    scbl_call: '',sscml_call: '',sscil_call: '',sspil_call: '',
+    so_amt_scbl:'',so_amt_sscml:'',so_amt_sscil:'',so_amt_sspil:'',
     scbl_received:'',sscml_received:'',sscil_received:'',sspil_received:'',
-    so_scbl:0,so_sscml:0,so_sscil:0,so_sspil:0,
-    total_call:0,total_so_amt:0,total_so:0,total_call_per:'',
-    target_scbl:0,target_sscml:0,target_sscil:0,total_mon:'',
-    delivery_scbl:0,delivery_sscml:0,delivery_sscil:0,total_delivery:'',
+    so_scbl:'',so_sscml:'',so_sscil:'',so_sspil:'',
+    total_call:'',total_so_amt:'',total_so:'',total_call_per:'',
+    target_scbl:'',target_sscml:'',target_sscil:'',total_mon:'',
+    delivery_scbl:'',delivery_sscml:'',delivery_sscil:'',total_delivery:'',
     achi_scbl:'',achi_sscml:'',achi_sscil:'',total_achi:'',
-    pending_scbl:0,pending_sscml:0,pending_sscil:0,total_pending:'',
-    pro_scbl:0,pro_sscml:0,pro_sscil:0,total_pro:'',
-    capa_scbl:0,capa_sscml:0,capa_sscil:0,total_capa:'',
+    pending_scbl:'',pending_sscml:'',pending_sscil:'',total_pending:'',
+    pro_scbl:'',pro_sscml:'',pro_sscil:'',total_pro:'',
+    capa_scbl:'',capa_sscml:'',capa_sscil:'',total_capa:'',
     uit_scbl:'',uit_sscml:'',uit_sscil:'',total_uit:'',
   );
 
@@ -590,6 +590,8 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
                                     ]
                                 ),
                               ),
+                              Text('*Figure in Thousand',style: titilliumRegular.copyWith(fontSize: 12)),
+                              Text('*UOM -- MT',style: titilliumRegular.copyWith(fontSize: 12)),
                             ],
                           ),
                         ),
