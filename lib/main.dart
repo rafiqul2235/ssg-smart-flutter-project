@@ -26,6 +26,7 @@ import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dar
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'di_container.dart' as di;
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';

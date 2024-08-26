@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
+import 'package:ssg_smart2/view/screen/home/web_view_screen.dart';
 import 'package:ssg_smart2/view/screen/more/widget/about_us.dart';
 import 'package:ssg_smart2/view/screen/more/widget/contact_us.dart';
 import 'package:ssg_smart2/view/screen/more/widget/currency_dialog.dart';
@@ -179,7 +180,7 @@ class _MoreScreenState extends State<MoreScreen> {
                       // url: Provider.of<SplashProvider>(context, listen: false).configModel.staticUrls.faq,
                     )),*/
 
-                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
+                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: WebViewScreen(url: 'https://sevenringscement.com/about-page/', title: 'Seven Rings Cement')),
 
                       TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
                       /*TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
