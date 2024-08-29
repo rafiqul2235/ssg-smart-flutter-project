@@ -125,6 +125,7 @@ class LeaveProvider with ChangeNotifier {
       return ManagementDashboardModel(scbl_call: 0,sscml_call: 0,sscil_call: 0);
     }
     hideLoading();
+    return null;
   }
 
   Future<ManagementDashboardModelGCF?> getManageDashbDataGcf(BuildContext context,String source) async {
@@ -143,6 +144,7 @@ class LeaveProvider with ChangeNotifier {
       return ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
     }
     hideLoading();
+    return null;
   }
 
   Future<List<PfLedgerModel>> getPfLedgerData(BuildContext context) async {
@@ -184,6 +186,7 @@ class LeaveProvider with ChangeNotifier {
       return PfLedgerSummaryModel(total_contribute: '',total_interest: '',total_loan: '',total_recovered: '',total_outstanding: '',total_balance: '');
     }
     hideLoading();
+    return null;
 
 
 
@@ -220,6 +223,7 @@ class LeaveProvider with ChangeNotifier {
 
   Future<void> _checkDuplicateLeave(LeaveData leaveData) async {
     final response = await leaveRepo.checkDuplicateLeave(leaveData.empNumber, leaveData.startDate);
+    print("duplicate leave(Provider): $response");
     Map<String, dynamic> data = jsonDecode(response.response.toString());
     _isDuplicateLeave = data['isDuplicate'];
   }
@@ -275,6 +279,4 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 }

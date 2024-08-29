@@ -10,6 +10,10 @@ class ApprovalFlow {
   final String leaveEndDate;
   final String leaveDuration;
   final String reason;
+  final String casual;
+  final String sick;
+  final String earn;
+  final String compensatory;
 
   ApprovalFlow({
     required this.notificationId,
@@ -23,6 +27,10 @@ class ApprovalFlow {
     required this.leaveEndDate,
     required this.leaveDuration,
     required this.reason,
+    required this.casual,
+    required this.sick,
+    required this.earn,
+    required this.compensatory
   });
 
   factory ApprovalFlow.fromJson(Map<String, dynamic> json) {
@@ -38,11 +46,15 @@ class ApprovalFlow {
       leaveEndDate: json['LEAVE_END_DATE'],
       leaveDuration: json['LEAVE_DURATION'],
       reason: json['REASON'],
+      casual: json['CASUAL_LEAVE_BAL'],
+      sick: json['SICK_LEAVE_BAL'],
+      earn: json['EARNED_LEAVE_BAL'],
+      compensatory: json['COMP_LEAVE_BAL']
     );
   }
 
   @override
   String toString() {
-    return 'ApprovalFlow{notificationId: $notificationId, reportHeaderId: $reportHeaderId, statusFlg: $statusFlg, employeeNumber: $employeeNumber, employeeName: $employeeName, designation: $designation, leaveStartDate: $leaveStartDate, leaveEndDate: $leaveEndDate, leaveDuration: $leaveDuration, reason: $reason}';
+    return 'ApprovalFlow{notificationId: $notificationId, reportHeaderId: $reportHeaderId, statusFlg: $statusFlg, employeeNumber: $employeeNumber, employeeName: $employeeName, designation: $designation, leaveType: $leaveType, leaveStartDate: $leaveStartDate, leaveEndDate: $leaveEndDate, leaveDuration: $leaveDuration, reason: $reason, casual: $casual, sick: $sick, earn: $earn, compensatory: $compensatory}';
   }
 }

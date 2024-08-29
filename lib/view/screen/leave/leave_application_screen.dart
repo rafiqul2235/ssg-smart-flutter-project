@@ -155,7 +155,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     } else if (leaveProvider.error != null) {
       _showErrorDialog(leaveProvider.error!);
     } else {
-      _showErrorDialog("An unknown error occurred");
+      _showErrorDialog("An unknown error occurred habibi");
     }
   }
 

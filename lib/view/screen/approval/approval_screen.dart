@@ -107,45 +107,103 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.orange[50]!, Colors.orange[50]!],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
           ),
-          color: Colors.orange[50]
+        ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "${approvalFlow.leaveType}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${approvalFlow.leaveType}",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.orange[800]),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "${approvalFlow.leaveDuration} day  •  ${approvalFlow.leaveStartDate} - ${approvalFlow.leaveEndDate}",
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: 4),
-              Text(
-                "${approvalFlow.leaveDuration} day  *  ${approvalFlow.leaveStartDate} - ${approvalFlow.leaveEndDate}",
-                style: TextStyle(fontSize: 14),
-              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.orange[400],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "${approvalFlow.statusFlg}",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              )
             ],
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.orange[100],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              "${approvalFlow.statusFlg}",
-              style: TextStyle(color: Colors.orange[800], fontWeight: FontWeight.bold),
-            ),
-          )
+          SizedBox(height: 8),
+          Text(
+            "Leave Balance",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange[800]),
+          ),
+          SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: _leaveTypeBox("Casual", approvalFlow.casual)),
+              SizedBox(width: 8),
+              Expanded(child: _leaveTypeBox("Sick", approvalFlow.sick)),
+              SizedBox(width: 8),
+              Expanded(child: _leaveTypeBox("Earn", approvalFlow.earn)),
+              SizedBox(width: 8),
+              Expanded(child: _leaveTypeBox("Comp.", approvalFlow.compensatory)),
+            ],
+          ),
         ],
       ),
     );
   }
 
+  Widget _leaveTypeBox(String leaveType, String days) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: Colors.orange[200]!),
+      ),
+      child: Column(
+        children: [
+          Text(
+            leaveType,
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            "$days",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange[800]),
+          ),
+        ],
+      ),
+    );
+  }
   Widget bottom(ApprovalFlow approvalFlow, TextEditingController _commentController) {
     return Container(
       padding: const EdgeInsets.all(16),
