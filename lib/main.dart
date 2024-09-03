@@ -8,6 +8,7 @@ import 'package:ssg_smart2/provider/location_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
+import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/user_dashboard_provider.dart';
@@ -65,7 +66,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ApprovalHistoryProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ApprovalProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<PaySlipProvider>())
+      ChangeNotifierProvider(create: (context) => di.sl<PaySlipProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<SalaryAdvProvider>())
     ],
     child: const MyApp(),
   ));

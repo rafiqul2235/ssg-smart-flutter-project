@@ -12,6 +12,7 @@ import 'package:ssg_smart2/data/repository/chat_repo.dart';
 import 'package:ssg_smart2/data/repository/notification_repo.dart';
 import 'package:ssg_smart2/data/repository/onboarding_repo.dart';
 import 'package:ssg_smart2/data/repository/payslip_repo.dart';
+import 'package:ssg_smart2/data/repository/salaryAdv_repo.dart';
 import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/data/repository/search_repo.dart';
 import 'package:ssg_smart2/data/repository/splash_repo.dart';
@@ -31,6 +32,7 @@ import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/onboarding_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
+import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/splash_provider.dart';
@@ -75,6 +77,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ApprovalHistoryRepo(dioClient: sl()));
   sl.registerLazySingleton(() => ApprovalRepo(dioClient: sl()));
   sl.registerLazySingleton(() => PaySlipRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => SalaryAdvRepo(dioClient: sl()));
+
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -98,6 +102,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ApprovalHistoryProvider(approvalHistoryRepo: sl()));
   sl.registerLazySingleton(() => ApprovalProvider(approvalRepo: sl()));
   sl.registerLazySingleton(() => PaySlipProvider(paySlipRepo: sl()));
+  sl.registerLazySingleton(() => SalaryAdvProvider(salaryAdvRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -105,4 +110,5 @@ Future<void> init() async {
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => LoggingInterceptor());
   sl.registerLazySingleton(() => Connectivity());
+
 }

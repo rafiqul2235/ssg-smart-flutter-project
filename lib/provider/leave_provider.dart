@@ -140,23 +140,6 @@ class LeaveProvider with ChangeNotifier {
 
   }
 
-  /*Future<List<PfLedgerSummaryModel>> getPfLedgerSummaryData(BuildContext context) async {
-
-    //List<PfLedgerSummaryModel> _list = [];
-
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getPfSummaryData(empId,"901");
-    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-      _list = [];
-      apiResponse.response?.data['service_list'].forEach((item) => _list.add(PfLedgerSummaryModel.fromJson(item)));
-
-    }else{
-      ApiChecker.checkApi(context, apiResponse);
-    }
-    return _list;
-
-  }*/
-
   Future<PfLedgerSummaryModel?> getPfLedgerSummaryData(BuildContext context) async {
     showLoading();
     try{
@@ -249,6 +232,7 @@ class LeaveProvider with ChangeNotifier {
   }
 
   void _resetState() {
+    _loading = false;
     _error = null;
     _isSuccess = null;
     _isDuplicateLeave = false;
@@ -262,6 +246,7 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   void hideLoading(){
     if(_loading){
       _loading = false;
