@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 class LoanData extends StatelessWidget {
-  final double totalLoan = 100000;
-  final double paidLoan = 50000;
-  final int totalInstallment = 10;
+  final double totalLoan;
+  final double paidLoan;
+  final int totalInstallment;
 
   final Color paidColor = Colors.green;
   final Color dueColor = Colors.orange;
 
-  const LoanData({Key? key}) : super(key: key);
+  const LoanData({
+    Key? key,
+    required this.totalLoan,
+    required this.paidLoan,
+    required this.totalInstallment
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +97,7 @@ class SemicircularIndicator extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "$remainingInstallments/10",
+              "$remainingInstallments/$totalInstallment",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
             const Text(

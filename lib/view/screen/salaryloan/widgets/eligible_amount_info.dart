@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EligibleAmountInfo extends StatelessWidget {
-  const EligibleAmountInfo({super.key});
+  final double eligibleAmount;
+  EligibleAmountInfo({
+    required this.eligibleAmount
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,7 @@ class EligibleAmountInfo extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '৳ 50,000',
+                      '৳ $eligibleAmount',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -102,11 +105,6 @@ class MoneyBagIcon extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Icon(
-        //   Icons.attach_money,
-        //   size: 80,
-        //   color: Colors.amber,
-        // ),
         Container(
           height: 80,
           child: Image.asset(

@@ -5,6 +5,7 @@ import 'package:ssg_smart2/data/repository/salaryAdv_repo.dart';
 class SalaryAdvProvider with ChangeNotifier{
   final SalaryAdvRepo salaryAdvRepo;
   SalaryEligibleInfo? salaryEligibleInfo;
+  Map<String, dynamic>? salaryLoanData;
   bool isLoading = false;
   String error = '';
 
@@ -16,6 +17,17 @@ class SalaryAdvProvider with ChangeNotifier{
     try{
       setLoading(true);
       salaryEligibleInfo = await salaryAdvRepo.fetchSalaryInfo(empId);
+      setLoading(false);
+    }catch(e) {
+      setLoading(false);
+      error = e.toString();
+    }
+  }
+
+  Future<void> getSalaryLoanInfo(String empId) async {
+    try{
+      setLoading(true);
+      salaryLoanData = await salaryAdvRepo.fetchSalLoanInfo(empId);
       setLoading(false);
     }catch(e) {
       setLoading(false);
