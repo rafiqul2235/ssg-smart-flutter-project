@@ -7,6 +7,8 @@ import 'package:ssg_smart2/utill/images.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../utill/custom_themes.dart';
+
 class BannersView extends StatelessWidget {
 
   Future<void> _loadData(BuildContext context, bool reload) async {
@@ -90,7 +92,8 @@ class BannersView extends StatelessWidget {
                     ),
                   ),
                 ],
-              ) : Center(child: Text('No banner available')) : Shimmer.fromColors(
+               // Text('Piloting on SMARTApps for IOS',style: titilliumRegular.copyWith(fontSize: 16)),
+              ) : Center(child: Text('Piloting on SMARTApps for iOS',style: titilliumBold.copyWith(fontSize: 14))) : Shimmer.fromColors(
                 baseColor: Colors.grey,
                 highlightColor: Colors.grey,
                 enabled: bannerProvider.mainBannerList == null,

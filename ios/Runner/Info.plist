@@ -8,6 +8,8 @@
 	<string>When a user submits a sick leave request for more than 3 days, they need to provide an attachment for justification. </string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>We need access to your location to show nearby places on the map.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app uses your location to provide personalized services and content based on your current location.</string>
     
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
