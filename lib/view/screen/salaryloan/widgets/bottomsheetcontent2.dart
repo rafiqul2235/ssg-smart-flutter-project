@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/data/model/body/saladv_info.dart';
-import 'package:ssg_smart2/data/model/body/salary_data.dart';
-import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
-import 'package:ssg_smart2/provider/user_provider.dart';
 
-class BottomSheetContent extends StatefulWidget {
+import '../../../../data/model/body/saladv_info.dart';
+import '../../../../data/model/body/salary_data.dart';
+import '../../../../data/model/response/user_info_model.dart';
+import '../../../../provider/salaryAdv_provider.dart';
+import '../../../../provider/user_provider.dart';
+
+
+class BottomSheetContentTest extends StatefulWidget {
   final SalaryAdvInfo salaryAdvInfo;
 
-  const BottomSheetContent({Key? key, required this.salaryAdvInfo}) : super(key: key);
+  const BottomSheetContentTest({Key? key, required this.salaryAdvInfo}) : super(key: key);
 
   @override
-  _BottomSheetContentState createState() => _BottomSheetContentState();
+  _BottomSheetContentTestState createState() => _BottomSheetContentTestState();
 }
 
-class _BottomSheetContentState extends State<BottomSheetContent> {
+class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -23,14 +26,14 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
   late TextEditingController _loanAmountController;
   late double _loanAmount;
   int _installmentNumber = 4;
+  bool _isSubmitting = false;
+  DateTime? _lastSubmissionTime;
 
   @override
   void initState() {
     super.initState();
-    _loanAmount = widget.salaryAdvInfo.maxLoanAmount.clamp(
-        0, widget.salaryAdvInfo.maxLoanAmount);
-    _loanAmountController =
-        TextEditingController(text: _loanAmount.round().toString());
+    _loanAmount = widget.salaryAdvInfo.maxLoanAmount.clamp(0, widget.salaryAdvInfo.maxLoanAmount);
+    _loanAmountController = TextEditingController(text: _loanAmount.round().toString());
   }
 
   @override
@@ -45,10 +48,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery
-            .of(context)
-            .viewInsets
-            .bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: DraggableScrollableSheet(
           expand: false,
           initialChildSize: 0.75,
@@ -111,10 +111,14 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
           controller: _loanAmountController,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             prefixText: '৳ ',
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.symmetric(horizontal: 10),
+            suffixIcon: Tooltip(
+              message: 'Enter the loan amount you need',
+              child: Icon(Icons.info_outline),
+            ),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -124,13 +128,15 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
             if (parsedValue == null || parsedValue <= 0) {
               return 'Enter a valid loan amount';
             }
+            if (parsedValue > widget.salaryAdvInfo.maxLoanAmount) {
+              return 'Amount exceeds maximum limit';
+            }
             return null;
           },
           onChanged: (value) {
             setState(() {
               _loanAmount = double.tryParse(value) ?? 0;
-              _loanAmount =
-                  _loanAmount.clamp(0, widget.salaryAdvInfo.maxLoanAmount);
+              _loanAmount = _loanAmount.clamp(0, widget.salaryAdvInfo.maxLoanAmount);
               _loanAmountController.text = _loanAmount.round().toString();
             });
           },
@@ -168,9 +174,18 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Select Installment Number',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            const Text(
+              'Select Installment Number',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 5),
+            Tooltip(
+              message: 'Choose the number of installments for repayment',
+              child: Icon(Icons.info_outline, size: 18),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         SizedBox(
@@ -189,18 +204,14 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                   width: 50,
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   decoration: BoxDecoration(
-                    color: _installmentNumber == index + 1
-                        ? Colors.blue
-                        : Colors.grey[300],
+                    color: _installmentNumber == index + 1 ? Colors.blue : Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
                       '${index + 1}',
                       style: TextStyle(
-                        color: _installmentNumber == index + 1
-                            ? Colors.white
-                            : Colors.black,
+                        color: _installmentNumber == index + 1 ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -218,15 +229,24 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Provide Reason',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            const Text(
+              'Provide Reason',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 5),
+            Tooltip(
+              message: 'Briefly explain why you need this loan',
+              child: Icon(Icons.info_outline, size: 18),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: _reasonController,
           decoration: const InputDecoration(
-            hintText: 'Reason',
+            hintText: 'Reason for loan application',
             border: OutlineInputBorder(),
           ),
           maxLines: 2,
@@ -249,36 +269,19 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () async {
+            onPressed: (_isSubmitting || _isOnCooldown()) ? null : () async {
               if (_formKey.currentState!.validate()) {
-                SalaryAdvanceData salaryAdvanceData = SalaryAdvanceData(
-                    empId: userInfoModel!.employeeNumber!,
-                    empName: userInfoModel.fullName!,
-                    designation: userInfoModel.designation!,
-                    department: userInfoModel.department!,
-                    location: userInfoModel.workLocation!,
-                    eligibilityStatus: salProvider.salaryEligibleInfo!.eligibilityStatus,
-                    eligibilityAmount: salProvider.salaryEligibleInfo!.eligibilityAmount,
-                    amount: _loanAmount,
-                    installment: _installmentNumber,
-                    reason: _reasonController.text,
-                    applicationType: "SALLOAN",
-                    statusFlg: "Initiated",
-                    lastUpdateBy: userInfoModel.employeeNumber!,
-                    lastUpdateLogin: userInfoModel.employeeNumber!
-                );
-                await salProvider.submitData(
-                  salaryAdvanceData
-                );
-                Navigator.pop(context); // Close bottom sheet after submission
+                _showConfirmationDialog(context, salProvider, userInfoModel!);
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               padding: const EdgeInsets.symmetric(vertical: 15),
             ),
-            child: const Text(
-              'Submit',
+            child: _isSubmitting
+                ? CircularProgressIndicator(color: Colors.white)
+                : Text(
+              _isOnCooldown() ? 'Please wait...' : 'Submit',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -287,9 +290,93 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
     );
   }
 
+  void _showConfirmationDialog(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Submission'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Please confirm the following details:'),
+              SizedBox(height: 10),
+              Text('Loan Amount: ৳${_loanAmount.round()}'),
+              Text('Installments: $_installmentNumber'),
+              Text('Reason: ${_reasonController.text}'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _submitApplication(context, salProvider, userInfoModel);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _submitApplication(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) async {
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      SalaryAdvanceData salaryAdvanceData = SalaryAdvanceData(
+          empId: userInfoModel.employeeNumber!,
+          empName: userInfoModel.fullName!,
+          designation: userInfoModel.designation!,
+          department: userInfoModel.department!,
+          location: userInfoModel.workLocation!,
+          eligibilityStatus: salProvider.salaryEligibleInfo!.eligibilityStatus,
+          eligibilityAmount: salProvider.salaryEligibleInfo!.eligibilityAmount,
+          amount: _loanAmount,
+          installment: _installmentNumber,
+          reason: _reasonController.text,
+          applicationType: "SALLOAN",
+          statusFlg: "Initiated",
+          lastUpdateBy: userInfoModel.employeeNumber!,
+          lastUpdateLogin: userInfoModel.employeeNumber!
+      );
+
+      await salProvider.submitData(salaryAdvanceData);
+
+      _lastSubmissionTime = DateTime.now();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Application submitted successfully!'), backgroundColor: Colors.green),
+      );
+
+      Navigator.pop(context); // Close bottom sheet after submission
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit application. Please try again.'), backgroundColor: Colors.red),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  bool _isOnCooldown() {
+    if (_lastSubmissionTime == null) return false;
+    return DateTime.now().difference(_lastSubmissionTime!) < Duration(minutes: 5);
+  }
+
   void _scrollToField(int fieldIndex) {
-    final targetPosition = fieldIndex == 0 ? 0.0 : _scrollController.position
-        .maxScrollExtent;
+    final targetPosition = fieldIndex == 0 ? 0.0 : _scrollController.position.maxScrollExtent;
     _scrollController.animateTo(
       targetPosition,
       duration: const Duration(milliseconds: 300),

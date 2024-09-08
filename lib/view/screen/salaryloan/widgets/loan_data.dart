@@ -80,8 +80,12 @@ class SemicircularIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = paidLoan / totalLoan;
-    final remainingInstallments = ((totalLoan - paidLoan) / (totalLoan / totalInstallment)).ceil();
+    // final progress = paidLoan / totalLoan;
+    // final remainingInstallments = ((totalLoan - paidLoan) / (totalLoan / totalInstallment)).ceil();
+    final progress = totalLoan > 0 ? (paidLoan / totalLoan).clamp(0.0, 1.0) : 0.0;
+    final remainingInstallments = totalLoan > 0 && totalInstallment > 0
+        ? ((totalLoan - paidLoan) / (totalLoan / totalInstallment)).ceil().clamp(0, totalInstallment)
+        : 0;
 
     return Stack(
       alignment: Alignment.center,

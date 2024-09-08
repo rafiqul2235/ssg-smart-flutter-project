@@ -38,6 +38,7 @@ class AppConstants {
   static const String PAY_SLIP = 'emp_pay_slip';
   static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
   static const String SAL_LOAN_INFO = 'salary_loan_info';
+  static const String SAL_LOAN = 'save_loan_data';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

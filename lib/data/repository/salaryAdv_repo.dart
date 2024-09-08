@@ -1,8 +1,9 @@
 
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
+import 'package:ssg_smart2/data/model/body/salary_data.dart';
 import 'package:ssg_smart2/data/model/response/SalaryEligibleInfo.dart';
+import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 
 class SalaryAdvRepo {
@@ -46,6 +47,18 @@ class SalaryAdvRepo {
       }else{
         throw Exception('Failed to load data');
       }
+    }catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<ApiResponse> submitData(SalaryAdvanceData salaryAdvData) async {
+    try{
+      Response response = await dioClient.post(
+        AppConstants.SAL_LOAN,
+        data: salaryAdvData.toJson()
+      );
+      return ApiResponse.withSuccess(response);
     }catch (e) {
       throw Exception('Error: $e');
     }
