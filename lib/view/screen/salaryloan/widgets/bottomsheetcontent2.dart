@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 
 import '../../../../data/model/body/saladv_info.dart';
 import '../../../../data/model/body/salary_data.dart';
 import '../../../../data/model/response/user_info_model.dart';
 import '../../../../provider/salaryAdv_provider.dart';
 import '../../../../provider/user_provider.dart';
+import '../../../basewidget/animated_custom_dialog.dart';
+import '../../../basewidget/my_dialog.dart';
 
 
-class BottomSheetContentTest extends StatefulWidget {
+class BottomSheetContentTest1 extends StatefulWidget {
   final SalaryAdvInfo salaryAdvInfo;
 
-  const BottomSheetContentTest({Key? key, required this.salaryAdvInfo}) : super(key: key);
+  const BottomSheetContentTest1({Key? key, required this.salaryAdvInfo}) : super(key: key);
 
   @override
-  _BottomSheetContentTestState createState() => _BottomSheetContentTestState();
+  _BottomSheetContentTest1State createState() => _BottomSheetContentTest1State();
 }
 
-class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
+class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -27,7 +30,6 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
   late double _loanAmount;
   int _installmentNumber = 4;
   bool _isSubmitting = false;
-  DateTime? _lastSubmissionTime;
 
   @override
   void initState() {
@@ -269,9 +271,15 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: (_isSubmitting || _isOnCooldown()) ? null : () async {
+            onPressed: (_isSubmitting ) ? null : () async {
               if (_formKey.currentState!.validate()) {
-                _showConfirmationDialog(context, salProvider, userInfoModel!);
+                bool success = await _submitApplication(context, salProvider, userInfoModel!);
+                if (success) {
+                  Navigator.of(context).pop();
+                  await _showSuccessDialog(context);
+                } else {
+                  _showErrorDialog(context, 'error');
+                }
               }
             },
             style: ElevatedButton.styleFrom(
@@ -279,10 +287,10 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
               padding: const EdgeInsets.symmetric(vertical: 15),
             ),
             child: _isSubmitting
-                ? CircularProgressIndicator(color: Colors.white)
+                ? CircularProgressIndicator(color: Colors.blue)
                 : Text(
-              _isOnCooldown() ? 'Please wait...' : 'Submit',
-              style: TextStyle(color: Colors.white),
+                    'Submit',
+                    style: TextStyle(color: Colors.green),
             ),
           ),
         );
@@ -290,44 +298,44 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Submission'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Please confirm the following details:'),
-              SizedBox(height: 10),
-              Text('Loan Amount: ৳${_loanAmount.round()}'),
-              Text('Installments: $_installmentNumber'),
-              Text('Reason: ${_reasonController.text}'),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _submitApplication(context, salProvider, userInfoModel);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showConfirmationDialog(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Confirm Submission'),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text('Please confirm the following details:'),
+  //             SizedBox(height: 10),
+  //             Text('Loan Amount: ৳${_loanAmount.round()}'),
+  //             Text('Installments: $_installmentNumber'),
+  //             Text('Reason: ${_reasonController.text}'),
+  //           ],
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('Cancel'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //           TextButton(
+  //             child: Text('Confirm'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               _submitApplication(context, salProvider, userInfoModel);
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
-  Future<void> _submitApplication(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) async {
+  Future<bool> _submitApplication(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) async {
     setState(() {
       _isSubmitting = true;
     });
@@ -351,28 +359,19 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
       );
 
       await salProvider.submitData(salaryAdvanceData);
+      // Navigator.of(context).pop();
+      // _showSuccessDialog(context,'Salary Adv submitted successfully');
+      return true;
 
-      _lastSubmissionTime = DateTime.now();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Application submitted successfully!'), backgroundColor: Colors.green),
-      );
-
-      Navigator.pop(context); // Close bottom sheet after submission
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit application. Please try again.'), backgroundColor: Colors.red),
-      );
+      // Navigator.of(context).pop();
+      // _showErrorDialog(context, 'Error occurred');
+      return false;
     } finally {
       setState(() {
         _isSubmitting = false;
       });
     }
-  }
-
-  bool _isOnCooldown() {
-    if (_lastSubmissionTime == null) return false;
-    return DateTime.now().difference(_lastSubmissionTime!) < Duration(minutes: 5);
   }
 
   void _scrollToField(int fieldIndex) {
@@ -381,6 +380,50 @@ class _BottomSheetContentTestState extends State<BottomSheetContentTest> {
       targetPosition,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
+    );
+  }
+
+  Future<void> _showSuccessDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Success'),
+          content: Text('Your request has been submitted successfully.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Go Home'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => SelfService())
+                ); // Navigate to self-service screen
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

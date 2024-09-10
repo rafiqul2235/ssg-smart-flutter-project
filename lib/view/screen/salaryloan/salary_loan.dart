@@ -4,12 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/saladv_info.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
 
-import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
 
 class SalaryAdvanceScreen extends StatefulWidget {
@@ -56,9 +54,9 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
 
             bool isEligible = (eligibilityStatus == 'Yes' && eligiblityAmount > 0);
             final loanInfo = salProvider.salaryLoanData;
-            double loanAmt = loanInfo?['taken_loan'].toDouble();
-            double paidAmt = loanInfo?['loan_adjusted'].toDouble();
-            int totalInstallment = loanInfo?['total_installment'];
+            double loanAmt = loanInfo?['taken_loan'].toDouble() ?? 0;
+            double paidAmt = loanInfo?['loan_adjusted'].toDouble() ?? 0;
+            int totalInstallment = loanInfo?['total_installment'] ?? 0;
 
             if (salProvider.isLoading) {
               return Center(child: CircularProgressIndicator(),);
@@ -167,7 +165,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return BottomSheetContentTest(
+        return BottomSheetContentTest1(
           salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: totalInstallment),
         );
       },
