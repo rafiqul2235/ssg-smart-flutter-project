@@ -57,7 +57,7 @@ class _ManagementDashboardGCFState extends State<ManagementDashboardGCF> {
 
   _intData() async {
     print("Pass value: ${widget.data}");
-    _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbDataGcf(context,widget.data);
+    // _dashboardModel =  await Provider.of<LeaveProvider>(context, listen: false).getManageDashbDataGcf(context,widget.data);
     setState(() {});
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -6,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
 
   static const String APP_NAME = 'SMART';
-  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  //static const String BASE_URL = 'http://192.168.7.98/'; //test
+  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  static const String BASE_URL = 'http://192.168.7.98/'; //test
   //static const String BASE_URL = 'http://10.25.4.120/';
 
   static const int APP_VERSION_CODE = 1;
@@ -15,7 +14,6 @@ class AppConstants {
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
-
 
   // API Methods
   static const String LOGIN_URI = 'login';
@@ -25,9 +23,7 @@ class AppConstants {
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
-  static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
   static const String PF_DATA = 'pf_ledger';
-  static const String PAY_SLIP = 'emp_pay_slip';
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
@@ -39,6 +35,10 @@ class AppConstants {
   static const String APPLICATION_HISTORY = 'leave_approval_history';
   static const String APPROVAL_HISTORY = 'flutter_approval_history';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
+  static const String PAY_SLIP = 'emp_pay_slip';
+  static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
+  static const String SAL_LOAN_INFO = 'salary_loan_info';
+  static const String SAL_LOAN = 'save_loan_data';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -86,4 +86,3 @@ class AppConstants {
     LanguageModel(imageUrl: '', languageName: 'বাংলা', countryCode: 'BD', languageCode: 'bn'),
   ];
 }
-

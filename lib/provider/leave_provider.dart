@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:core';
 import 'dart:core';
@@ -127,25 +126,25 @@ class LeaveProvider with ChangeNotifier {
     hideLoading();
     return null;
   }
-
-  Future<ManagementDashboardModelGCF?> getManageDashbDataGcf(BuildContext context,String source) async {
-    showLoading();
-    try{
-      ApiResponse apiResponse = await leaveRepo.getManagementDataGcf(source);
-      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-        _dashboardModelGcf = ManagementDashboardModelGCF.fromJson(apiResponse.response?.data['cust_master_data'][0]);
-        return _dashboardModelGcf;
-      }else{
-        ApiChecker.checkApi(context, apiResponse);
-      }
-    }catch(e){
-      print("error: $e");
-      hideLoading();
-      return ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
-    }
-    hideLoading();
-    return null;
-  }
+  //
+  // Future<ManagementDashboardModelGCF?> getManageDashbDataGcf(BuildContext context,String source) async {
+  //   showLoading();
+  //   try{
+  //     ApiResponse apiResponse = await leaveRepo.getManagementDataGcf(source);
+  //     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+  //       _dashboardModelGcf = ManagementDashboardModelGCF.fromJson(apiResponse.response?.data['cust_master_data'][0]);
+  //       return _dashboardModelGcf;
+  //     }else{
+  //       ApiChecker.checkApi(context, apiResponse);
+  //     }
+  //   }catch(e){
+  //     print("error: $e");
+  //     hideLoading();
+  //     return ManagementDashboardModelGCF(scbl_call: '',sscml_call: '',sscil_call: '');
+  //   }
+  //   hideLoading();
+  //   return null;
+  // }
 
   Future<List<PfLedgerModel>> getPfLedgerData(BuildContext context) async {
 
