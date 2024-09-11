@@ -5,6 +5,7 @@ import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import '../../../data/model/response/leaveapproval/application_info.dart';
 import '../../../data/model/response/leaveapproval/pending_so.dart';
 import '../../../provider/approval_hisotry_provider.dart';
+import '../../basewidget/no_internet_screen.dart';
 import '../home/dashboard_screen.dart';
 
 class ApprovalHistoryScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
           if (provider.isLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (provider.error != null) {
-            return Center(child: Text('Error: ${provider.error}'));
+            return NoInternetOrDataScreen(isNoInternet: false);
           } else if (provider.leaveApprovalHistory != null) {
             return Padding(
               padding: const EdgeInsets.all(8.0),

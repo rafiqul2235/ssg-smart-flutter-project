@@ -33,8 +33,6 @@ class _SelfServiceState extends State<SelfService> {
   @override
   void initState() {
     super.initState();
-
-    Provider.of<UserProvider>(context,listen: false).getApplicationList(context);
     _getMenuList();
 
   }
@@ -52,7 +50,7 @@ class _SelfServiceState extends State<SelfService> {
 
   @override
   Widget build(BuildContext context) {
-
+    Provider.of<UserProvider>(context,listen: false).getApplicationList(context);
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -109,7 +107,6 @@ class _SelfServiceState extends State<SelfService> {
                               return InkWell(
                                 onTap: (){
                                   print(' On Click Application Item $index');
-                                  String value="1234";
                                   Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
 
                                 },

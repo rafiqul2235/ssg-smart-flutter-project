@@ -276,9 +276,9 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
                 bool success = await _submitApplication(context, salProvider, userInfoModel!);
                 if (success) {
                   Navigator.of(context).pop();
-                  await _showSuccessDialog(context);
+                  await _showSuccessDialog(context, "Salary adv. application submitted successfully!");
                 } else {
-                  _showErrorDialog(context, 'error');
+                  _showErrorDialog(context, "${salProvider.error}");
                 }
               }
             },
@@ -383,7 +383,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
     );
   }
 
-  Future<void> _showSuccessDialog(BuildContext context) {
+  Future<void> _showSuccessDialog(BuildContext context, String message) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -396,34 +396,58 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
               child: Text('Go Home'),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => SelfService())
-                ); // Navigate to self-service screen
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => SelfService(isBackButtonExist: false,))
+                );
               },
             ),
           ],
         );
       },
     );
+    // return showAnimatedDialog(context, MyDialog(
+    //   icon: Icons.check,
+    //   title: 'Success',
+    //   description: message,
+    //   rotateAngle: 0,
+    //   positionButtonTxt: 'Go to Home',
+    //   onPositiveButtonPressed: () {
+    //     Navigator.of(context).pop(); // Close the dialog
+    //     Navigator.of(context).pop();
+    //     Navigator.pushReplacement(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => SelfService(isBackButtonExist: false,))
+    //     );
+    //   },
+    // ), dismissible: false);
   }
   void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text('Error'),
+    //       content: Text(message),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           child: Text('OK'),
+    //           onPressed: () {
+    //             Navigator.of(context).pop(); // Close the dialog
+    //           },
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
+    showAnimatedDialog(context, MyDialog(
+      icon: Icons.error,
+      title: 'Error',
+      description: message,
+      rotateAngle: 0,
+      positionButtonTxt: 'Ok',
+    ), dismissible: false);
   }
 }

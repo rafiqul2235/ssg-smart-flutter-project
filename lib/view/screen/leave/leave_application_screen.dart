@@ -30,6 +30,7 @@ import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_text.dart';
 import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
+import '../empselfservice/self_service.dart';
 import '../home/dashboard_screen.dart';
 
 class LeaveApplicationScreen extends StatefulWidget {
@@ -554,7 +555,14 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
       title: 'Success',
       description: message,
       rotateAngle: 0,
-      positionButtonTxt: 'Ok',
+      positionButtonTxt: 'Go to Home',
+      onPositiveButtonPressed: () {
+        Navigator.of(context).pop(); // Close the dialog
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SelfService(isBackButtonExist: false,))
+        );
+      },
     ), dismissible: false);
   }
   void _showErrorDialog(String message){
