@@ -2,24 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/approval_flow.dart';
+import 'package:ssg_smart2/data/model/response/cashpayment_model.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
+import 'package:ssg_smart2/provider/cashpayment_provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/approval/widget/confirmation_dialog.dart';
+import 'package:ssg_smart2/view/screen/cashpayment/widget/confirmation_dialog_cashP.dart';
+import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
 
-class ApprovalListPage extends StatefulWidget {
+class CashPaymentAkgPage extends StatefulWidget {
   final bool isBackButtonExist;
-  const ApprovalListPage({Key? key, this.isBackButtonExist = true})
+  const CashPaymentAkgPage({Key? key, this.isBackButtonExist = true})
       : super(key: key);
   @override
-  State<ApprovalListPage> createState() => _ApprovalListPageState();
+  State<CashPaymentAkgPage> createState() => _CashPaymentAkgPageState();
 }
 
-class _ApprovalListPageState extends State<ApprovalListPage> {
+class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
 
@@ -47,7 +51,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     setState(() {});
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<ApprovalProvider>(context, listen: false).fetchApprovalFlow(employeeNumber);
+    Provider.of<CashPaymentProvider>(context, listen: false).fetchCashPayData(employeeNumber);
   }
 
   @override
@@ -55,15 +59,18 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
 
     return Scaffold(
       appBar: CustomAppBar(
-          title: 'Approval',
+          title: 'Payment Acknowledgment',
           isBackButtonExist: widget.isBackButtonExist,
           icon: Icons.home,
+
           onActionPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => const DashBoardScreen()));
+                builder: (BuildContext context) => const ManagementDMenu()));
           }
       ),
-      body: Consumer<ApprovalProvider>(
+
+
+      body: Consumer<CashPaymentProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
             return Center(child: CircularProgressIndicator());
@@ -71,10 +78,10 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
             return NoInternetOrDataScreen(isNoInternet: false);
           } else {
             return ListView.builder(
-              itemCount: provider.approvalFlows.length,
+              itemCount: provider.cashPaymentModel.length,
               itemBuilder: (context, index) {
-                final approval = provider.approvalFlows[index];
-                _commentControllers.putIfAbsent(approval.notificationId, () => TextEditingController());
+                final approval = provider.cashPaymentModel[index];
+                //_commentControllers.putIfAbsent(approval.notificationId, () => TextEditingController());
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                   child: Card(
@@ -88,8 +95,8 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          top(context, approval),
-                          bottom(approval, _commentControllers[approval.notificationId]!),
+                          top(context,approval),
+                          bottom(approval),
                         ],
                       ),
                     ),
@@ -103,7 +110,8 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     );
   }
 
-  Widget top(BuildContext context, ApprovalFlow approvalFlow) {
+  Widget top(BuildContext context,CashPaymentModel cashPayModel) {
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -133,12 +141,18 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${approvalFlow.leaveType}",
+                      //"iExpense",
+                      "${cashPayModel.reportType}",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.orange[800]),
                     ),
-                    SizedBox(height: 8),
                     Text(
-                      "${approvalFlow.leaveDuration} day  •  ${approvalFlow.leaveStartDate} - ${approvalFlow.leaveEndDate}",
+                      //"iExpense",
+                      "TransId: ${cashPayModel.transactionId}",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.orange[800]),
+                    ),
+                    SizedBox(height: 14),
+                    Text(
+                      "Sent Date : ${cashPayModel.sentTime}",
                       style: TextStyle(fontSize: 14, color: Colors.black),
                     ),
                   ],
@@ -151,19 +165,19 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "${approvalFlow.statusFlg}",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                 "৳${cashPayModel.amount}",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 16),
                 ),
               )
             ],
           ),
           SizedBox(height: 8),
           Text(
-            "Leave Balance",
+            "Invoice Number: ${cashPayModel.invoice_num}",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange[800]),
           ),
           SizedBox(height: 6),
-          Row(
+          /*Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: _leaveTypeBox("Casual", approvalFlow.casual)),
@@ -174,7 +188,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
               SizedBox(width: 8),
               Expanded(child: _leaveTypeBox("Comp.", approvalFlow.compensatory)),
             ],
-          ),
+          ),*/
         ],
       ),
     );
@@ -196,19 +210,15 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 4),
-          Text(
-            "$days",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange[800]),
-          ),
         ],
       ),
     );
   }
-  Widget bottom(ApprovalFlow approvalFlow, TextEditingController _commentController) {
+  Widget bottom(CashPaymentModel approvalFlow) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange[100],
+        color: Colors.orange[30],
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(8),
           bottomRight: Radius.circular(8),
@@ -223,24 +233,24 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${approvalFlow.employeeName}',
+                   /* Text(
+                      '',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
-                    ),
+                    ),*/
                     SizedBox(height: 4),
                     Text(
-                      "${approvalFlow.designation}(${approvalFlow.employeeNumber})",
-                      style: TextStyle(color: Colors.black, fontSize: 14),
+                      "Accept to proceed payment, else Reject please",
+                      style: TextStyle(color: Colors.black87, fontSize: 15),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 16),
-              Expanded(
+              /*Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -254,7 +264,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "${approvalFlow.reason}",
+                      "${approvalFlow.status}",
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -263,42 +273,43 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                     ),
                   ],
                 ),
-              ),
+              ),*/
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 36,
-                  child: TextField(
-                    controller: _commentController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter comment...',
-                      hintStyle: TextStyle(fontSize: 14),
-                      fillColor: Colors.white,
-                      filled: true,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   flex: 2,
+              //   child: SizedBox(
+              //     height: 36,
+              //     child: TextField(
+              //      // controller: _commentController,
+              //       decoration: InputDecoration(
+              //         hintText: 'Enter comment...',
+              //         hintStyle: TextStyle(fontSize: 14),
+              //         fillColor: Colors.white,
+              //         filled: true,
+              //         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              //         border: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(8),
+              //           borderSide: BorderSide.none,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
-                  String notificationId = approvalFlow.notificationId;
+                  String notificationId = approvalFlow.transactionId;
+                  String empId = approvalFlow.employeeNumber;
                   showAnimatedDialog(
                       context,
-                      ConfirmationDialog(
+                      ConfirmationDialogCashP(
                         notificationId: notificationId,
-                        action: "REJECT",
-                        comment: _commentControllers[notificationId]!.text,
+                        action: "Rejected",
+                        empId: empId,
                         isApprove: false,
                         onConfirmed: () {
                           _reloadPage();
@@ -312,24 +323,26 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                   minimumSize: Size(0, 36),
                 ),
                 child: const Text(
                   'Reject',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
-                  String notificationId = approvalFlow.notificationId;
+                  String notificationId = approvalFlow.transactionId;
+                  String empId = approvalFlow.employeeNumber;
                   showAnimatedDialog(
                       context,
-                      ConfirmationDialog(
+                      ConfirmationDialogCashP(
                         notificationId: notificationId,
-                        action: "APPROVED",
-                        comment: _commentControllers[notificationId]!.text,
+                        action: "Accepted",
+                        empId: empId,
+                        //comment: _commentControllers[notificationId]!.text,
                         isApprove: true,
                         onConfirmed: () {
                           _reloadPage();
@@ -343,12 +356,12 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                   minimumSize: Size(0, 36),
                 ),
                 child: const Text(
-                  'Approve',
-                  style: TextStyle(color: Colors.white),
+                  'Accept',
+                  style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),
                 ),
               ),
             ],

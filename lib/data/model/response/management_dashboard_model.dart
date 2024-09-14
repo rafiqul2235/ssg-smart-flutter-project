@@ -307,10 +307,10 @@ else {
       data['COLL_DAY_SSCIL'] = sscil_call;
       data['COLL_DAY_SSPIL'] = sspil_call;
 
-      data['COLL_DAY_SCBL'] = so_amt_scbl;
-      data['COLL_DAY_SSCML'] = so_amt_sscml;
-      data['COLL_DAY_SSCIL'] = so_amt_sscil;
-      data['COLL_DAY_SSPIL'] = so_amt_sspil;
+      data['SO_AMT_DAY_SCBL'] = so_amt_scbl;
+      data['SO_AMT_DAY_SSCML'] = so_amt_sscml;
+      data['SO_AMT_DAY_SSCIL'] = so_amt_sscil;
+      data['SO_AMT_DAY_SSPIL'] = so_amt_sspil;
 
       data['SCBL_RECEIVED_DAY'] = scbl_received;
       data['SSCML_RECEIVED_DAY'] = sscml_received;

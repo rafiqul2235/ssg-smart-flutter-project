@@ -15,6 +15,7 @@ import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu_gcf
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
+import '../cashpayment/cash_payment_akg_screen.dart';
 import '../empselfservice/self_service.dart';
 import '../managementdashboard/management_dashbboard_screen.dart';
 import '../notification/notification_screen.dart';
@@ -193,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             }else if(userMenu.id == '40'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '41'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: CashPaymentAkgPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else{
                               return HomeMenuItemCircle(image: Images.ic_service_req, title: 'TBD',count: 0,hasCount: false,navigateTo:null, bgColor: ColorResources.DARK_BLUE,);
                             }

@@ -25,7 +25,6 @@ class LeaveRepo {
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
-      print('Leave Repo getLeaveBalance ${e}');
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }

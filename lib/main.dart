@@ -1,6 +1,7 @@
 import 'package:ssg_smart2/provider/approval_hisotry_provider.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
 import 'package:ssg_smart2/provider/attendance_provider.dart';
+import 'package:ssg_smart2/provider/cashpayment_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
 import 'package:ssg_smart2/provider/banner_provider.dart';
@@ -21,11 +22,10 @@ import 'package:ssg_smart2/provider/localization_provider.dart';
 import 'package:ssg_smart2/provider/splash_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
-import 'package:ssg_smart2/view/screen/managementdashboard/management_dashbboard_screen.dart';
-import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'di_container.dart' as di;
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
@@ -65,7 +65,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ApprovalHistoryProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ApprovalProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<PaySlipProvider>())
+      ChangeNotifierProvider(create: (context) => di.sl<PaySlipProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<CashPaymentProvider>()),
     ],
     child: const MyApp(),
   ));

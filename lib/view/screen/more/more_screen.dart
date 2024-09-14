@@ -20,8 +20,6 @@ import '../../../data/model/response/app_update_info.dart';
 import '../../../utill/app_constants.dart';
 import '../../basewidget/my_dialog.dart';
 import '../apkdownload/apk_download_screen.dart';
-import '../home/web_view_screen.dart';
-import '../notification/notification_screen.dart';
 import '../profile/profile_screen.dart';
 
 class MoreScreen extends StatefulWidget {
@@ -181,14 +179,12 @@ class _MoreScreenState extends State<MoreScreen> {
                       // url: Provider.of<SplashProvider>(context, listen: false).configModel.staticUrls.faq,
                     )),*/
 
-                      //TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
-                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: NotificationScreen()),
+                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
 
-                      //TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
-                      TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: NotificationScreen()),
+                      TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
                       /*TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
                       title: getTranslated('contact_us', context),
-                      url: 'https://www.google.com/',
+                      url: 'https://www.rahimafrooz.com/contact-us/',
                     )),*/
 
                       TitleButton2(

@@ -6,8 +6,8 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
 
   static const String APP_NAME = 'SMART';
-  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  //static const String BASE_URL = 'http://192.168.7.98/'; //test
+   static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+   //static const String BASE_URL = 'http://192.168.7.98/'; //test
   //static const String BASE_URL = 'http://10.25.4.120/';
 
   static const int APP_VERSION_CODE = 1;
@@ -38,6 +38,9 @@ class AppConstants {
   static const String PROBATION_STATUS = 'check_probation_status';
   static const String APPLICATION_HISTORY = 'leave_approval_history';
   static const String APPROVAL_HISTORY = 'flutter_approval_history';
+  static const String CASH_PAYMENT_AKG = 'cash_payment_akg';
+  static const String CASH_PAYMENT_HISTORY = 'cash_payment_akg_history';
+  static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
 
   //static const String LOGIN_USERID = 'USER_ID';

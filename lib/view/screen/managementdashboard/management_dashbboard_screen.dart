@@ -171,7 +171,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
 
                                             Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                              child: Center(child: Text('${_dashboardModel?.so_amt_sscil}',style: titilliumRegular)),
+                                              child: Center(child: Text('${_dashboardModel?.so_amt_sscil }',style: titilliumRegular)),
                                             ),
                                             /*Padding(
                                               padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),

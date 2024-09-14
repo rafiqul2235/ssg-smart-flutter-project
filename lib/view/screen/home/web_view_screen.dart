@@ -1,70 +1,63 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
 
 class WebViewScreen extends StatefulWidget {
   final String title;
   final String url;
-  WebViewScreen({required this.url, required this.title});
+
+  const WebViewScreen({Key? key, required this.url, required this.title}) : super(key: key);
 
   @override
-  _WebViewScreenState createState() => _WebViewScreenState();
+  WebViewScreenState createState() => WebViewScreenState();
 }
 
-class _WebViewScreenState extends State<WebViewScreen> {
-  final Completer<WebViewController> _controller = Completer<WebViewController>();
-  WebViewController? controllerGlobal;
+class WebViewScreenState extends State<WebViewScreen> {
+  late final WebViewController _controller;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            setState(() => _isLoading = true);
+          },
+          onPageFinished: (String url) {
+            setState(() => _isLoading = false);
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _exitApp,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        if (await _controller.canGoBack()) {
+          _controller.goBack();
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: Column(
           children: [
-
             CustomAppBar(title: widget.title),
-
             Expanded(
               child: Stack(
                 children: [
-                  WebView(
-                    javascriptMode: JavascriptMode.unrestricted,
-                    initialUrl: widget.url,
-                    gestureNavigationEnabled: true,
-                    onWebViewCreated: (WebViewController webViewController) {
-                      _controller.future.then((value) => controllerGlobal = value);
-                      _controller.complete(webViewController);
-                    },
-                    onPageStarted: (String url) {
-                      print('Page started loading: $url');
-                      setState(() {
-                        _isLoading = true;
-                      });
-                    },
-                    onPageFinished: (String url) {
-                      print('Page finished loading: $url');
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    },
-                  ),
-
-                  _isLoading ? CustomLoader(color: Theme.of(context).primaryColor) : SizedBox.shrink(),
+                  WebViewWidget(controller: _controller),
+                  if (_isLoading)
+                    CustomLoader(color: Theme.of(context).primaryColor),
                 ],
               ),
             ),
@@ -72,18 +65,5 @@ class _WebViewScreenState extends State<WebViewScreen> {
         ),
       ),
     );
-  }
-
-  Future<bool> _exitApp() async {
-    if(controllerGlobal != null) {
-      if (await controllerGlobal!.canGoBack()) {
-        controllerGlobal!.goBack();
-        return Future.value(false);
-      } else {
-        return Future.value(true);
-      }
-    }else {
-      return Future.value(true);
-    }
   }
 }
