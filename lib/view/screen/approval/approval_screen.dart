@@ -37,6 +37,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
       _intData();
     });
   }
+
   @override
   void dispose() {
     _commentControllers.values.forEach((controller) => controller.dispose());
