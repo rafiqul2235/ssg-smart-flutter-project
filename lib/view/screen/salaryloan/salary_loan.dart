@@ -52,11 +52,13 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
             String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
             double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
 
+
             bool isEligible = (eligibilityStatus == 'Yes' && eligiblityAmount > 0);
             final loanInfo = salProvider.salaryLoanData;
-            double loanAmt = loanInfo?['taken_loan'].toDouble() ?? 0;
-            double paidAmt = loanInfo?['loan_adjusted'].toDouble() ?? 0;
+            double loanAmt = (loanInfo?['taken_loan'] ?? 0).toDouble();
+            double paidAmt = (loanInfo?['loan_adjusted'] ?? 0).toDouble();
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
+
 
             if (salProvider.isLoading) {
               return Center(child: CircularProgressIndicator(),);
