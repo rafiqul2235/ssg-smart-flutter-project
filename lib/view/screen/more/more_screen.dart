@@ -20,6 +20,7 @@ import '../../../data/model/response/app_update_info.dart';
 import '../../../utill/app_constants.dart';
 import '../../basewidget/my_dialog.dart';
 import '../apkdownload/apk_download_screen.dart';
+import '../home/web_view_screen.dart';
 import '../profile/profile_screen.dart';
 
 class MoreScreen extends StatefulWidget {
@@ -181,11 +182,11 @@ class _MoreScreenState extends State<MoreScreen> {
 
                       TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
 
-                      TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
-                      /*TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
+                      //TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
+                      TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
                       title: getTranslated('contact_us', context),
-                      url: 'https://www.rahimafrooz.com/contact-us/',
-                    )),*/
+                      url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
+                    )),
 
                       TitleButton2(
                         image: Images.language,

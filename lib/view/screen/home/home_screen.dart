@@ -12,12 +12,14 @@ import 'package:ssg_smart2/utill/images.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu_gcf.dart';
+import 'package:ssg_smart2/view/screen/more/more_screen.dart';
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
 import '../cashpayment/cash_payment_akg_screen.dart';
 import '../empselfservice/self_service.dart';
 import '../managementdashboard/management_dashbboard_screen.dart';
+import '../more/web_view_screen.dart';
 import '../notification/notification_screen.dart';
 import '../pdf/pdf_list_screen.dart';
 import '../profile/profile_screen.dart';
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MoreScreen()));
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end,
@@ -195,7 +197,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '41'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: CashPaymentAkgPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else{
+                            }else if(userMenu.id == '42'){
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: WebViewScreen(
+                                title: getTranslated('Apply Form for Visiting Card', context),
+                                url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
+                              )
+                                ,count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            else{
                               return HomeMenuItemCircle(image: Images.ic_service_req, title: 'TBD',count: 0,hasCount: false,navigateTo:null, bgColor: ColorResources.DARK_BLUE,);
                             }
                           }

@@ -93,7 +93,7 @@ class BannersView extends StatelessWidget {
                   ),
                 ],
                // Text('Piloting on SMARTApps for IOS',style: titilliumRegular.copyWith(fontSize: 16)),
-              ) : Center(child: Text('Piloting on SMARTApps for iOS',style: titilliumBold.copyWith(fontSize: 14))) : Shimmer.fromColors(
+              ) : Center(child: Text('SMARTApps on iOS Beta',style: titilliumBold.copyWith(fontSize: 14))) : Shimmer.fromColors(
                 baseColor: Colors.grey,
                 highlightColor: Colors.grey,
                 enabled: bannerProvider.mainBannerList == null,

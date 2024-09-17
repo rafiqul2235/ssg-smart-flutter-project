@@ -297,7 +297,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
                       context,
                       ConfirmationDialog(
                         notificationId: notificationId,
-                        action: "REJECT",
+                        action: "REJECTED",
                         comment: _commentControllers[notificationId]!.text,
                         isApprove: false,
                         onConfirmed: () {

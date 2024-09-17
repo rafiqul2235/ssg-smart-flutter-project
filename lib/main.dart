@@ -9,6 +9,7 @@ import 'package:ssg_smart2/provider/location_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
+import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/user_dashboard_provider.dart';
@@ -22,10 +23,10 @@ import 'package:ssg_smart2/provider/localization_provider.dart';
 import 'package:ssg_smart2/provider/splash_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
+import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'di_container.dart' as di;
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
@@ -67,6 +68,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<ApprovalProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<PaySlipProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<CashPaymentProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<SalaryAdvProvider>())
     ],
     child: const MyApp(),
   ));
@@ -167,6 +169,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).darkTheme ? dark : light,
       locale: Provider.of<LocalizationProvider>(context).locale,
+      routes: routes,
       localizationsDelegates: [
         AppLocalization.delegate,
        /* GlobalMaterialLocalizations.delegate,
@@ -266,5 +269,10 @@ Future<void> setupFlutterNotifications() async {
   isFlutterLocalNotificationsInitialized = true;
 
 }
+
+final Map<String, WidgetBuilder> routes = {
+  '/self-service': (context) => SelfService(),
+  // ... other routes
+};
 
 

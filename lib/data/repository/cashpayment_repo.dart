@@ -41,7 +41,7 @@ class CashPaymentRepo{
     }
   }
 
-  Future<List<CashPaymentModel>> fetchCashPaymentHistory(String empId) async {
+ /* Future<List<CashPaymentModel>> fetchCashPaymentHistory(String empId) async {
     try {
       final response = await dioClient.postWithFormData(
         AppConstants.CASH_PAYMENT_HISTORY,
@@ -65,7 +65,24 @@ class CashPaymentRepo{
     } catch (e) {
       throw Exception('Error fetching approval flow: $e');
     }
+  }*/
+
+
+  Future<ApiResponse> fetchCashPaymentHistory(String empId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['emp_id'] = empId;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.CASH_PAYMENT_HISTORY,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('pfData ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
   }
+
 
   Future<ApiResponse> handleCashPayment(String transactionId,String action, empId) async {
     print("trans_id: $transactionId");

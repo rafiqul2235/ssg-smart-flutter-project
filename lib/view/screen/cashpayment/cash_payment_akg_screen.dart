@@ -11,9 +11,11 @@ import 'package:ssg_smart2/view/screen/cashpayment/widget/confirmation_dialog_ca
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
+import '../../../utill/images.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../home/dashboard_screen.dart';
+import 'cash_pay_akg_history_screen.dart';
 
 class CashPaymentAkgPage extends StatefulWidget {
   final bool isBackButtonExist;
@@ -61,11 +63,11 @@ class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
       appBar: CustomAppBar(
           title: 'Payment Acknowledgment',
           isBackButtonExist: widget.isBackButtonExist,
-          icon: Icons.home,
+          icon: Icons.history,
 
           onActionPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => const ManagementDMenu()));
+                builder: (BuildContext context) => const CashPaymentHistory()));
           }
       ),
 

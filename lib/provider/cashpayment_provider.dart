@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/cashpayment_model.dart';
 import 'package:ssg_smart2/data/repository/approval_repo.dart';
 import 'package:ssg_smart2/data/repository/cashpayment_repo.dart';
 
 import '../data/model/response/approval_flow.dart';
+import '../data/model/response/base/api_response.dart';
+import '../helper/api_checker.dart';
+import 'auth_provider.dart';
 
 class CashPaymentProvider with ChangeNotifier{
   final CashPaymentRepo cashPaymentRepo;
@@ -63,21 +67,20 @@ class CashPaymentProvider with ChangeNotifier{
     }
   }
 
- /*Future<List<CashPaymentModel>> getPaymentHistory(BuildContext context) async {
-
+ Future<List<CashPaymentModel>> getPaymentHistory(BuildContext context) async {
     List<CashPaymentModel> _list = [];
-
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    ApiResponse apiResponse = await leaveRepo.getPfData(empId,"901");
+    String empId = Provider.of <AuthProvider> (context, listen: false).getEmpId();
+    ApiResponse apiResponse = await cashPaymentRepo.fetchCashPaymentHistory(empId);
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
       _list = [];
-      apiResponse.response?.data['service_list'].forEach((item) => _list.add(PfLedgerModel.fromJson(item)));
+      apiResponse.response?.data['get_cash_pay_his'].forEach((item) => _list.add(CashPaymentModel.fromJson(item)));
 
     }else{
       ApiChecker.checkApi(context, apiResponse);
     }
     return _list;
 
-  }*/
+  }
+
 
 }

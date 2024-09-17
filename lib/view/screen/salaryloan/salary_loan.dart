@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/body/saladv_info.dart';
+import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
+import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
+import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
 
-import '../home/dashboard_screen.dart';
+import '../../../provider/user_provider.dart';
+
 class SalaryAdvanceScreen extends StatefulWidget {
   final bool isBackButtonExist;
   const SalaryAdvanceScreen({Key? key, this.isBackButtonExist = true}) : super(key: key);
@@ -11,8 +18,22 @@ class SalaryAdvanceScreen extends StatefulWidget {
   _SalaryAdvanceScreenState createState() => _SalaryAdvanceScreenState();
 }
 
-
 class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  _initData() async {
+    final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+    if (userInfoModel != null) {
+      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryInfo(userInfoModel.employeeNumber!);
+      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryLoanInfo(userInfoModel.employeeNumber!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,178 +45,133 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
           // Your action here
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Eligibility and Balance Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue[400]!, Colors.blue[600]!],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
+
+      body: Consumer<SalaryAdvProvider>(
+          builder: (context, salProvider, child) {
+            // Check if salaryEligibleInfo is null, if so, set default values
+            String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
+            double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
+
+            bool isEligible = (eligibilityStatus == 'Yes' && eligiblityAmount > 0);
+            final loanInfo = salProvider.salaryLoanData;
+            double loanAmt = loanInfo?['taken_loan'].toDouble() ?? 0;
+            double paidAmt = loanInfo?['loan_adjusted'].toDouble() ?? 0;
+            int totalInstallment = loanInfo?['total_installment'] ?? 0;
+
+            if (salProvider.isLoading) {
+              return Center(child: CircularProgressIndicator(),);
+            } else if (salProvider.salaryEligibleInfo != null){
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //Eligibility and Balance Card
+                    if(isEligible)
+                      EligibleAmountInfo(eligibleAmount: eligiblityAmount,)
+                    else
+                      LoanData(totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
+                    SizedBox(height: 20,),
+                    Row(
+                      children: [
+                        Expanded(child: LoanInfoCard(title: 'Eligibility Status', amount: isEligible?'Yes':'No')),
+                        SizedBox(width: 10),
+                        Expanded(child: LoanInfoCard(title: 'Eligibility Percentage', amount: isEligible?'200%':'0%')),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    // Make a Loan Card
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      color: Colors.grey.shade200,
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Get money, Instantly',
+                              "Make a Loan",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
                               ),
                             ),
                             SizedBox(height: 8),
                             Text(
-                              'Loanable Amount',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
+                              "Request your loan and get your money\nin your balance in just a easy way.",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              '₹50,000',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
+                            SizedBox(height: 20),
+                            Center(
+                              child: ElevatedButton.icon(
+                                onPressed: isEligible? () {
+                                  _showBottomSheet(context, eligiblityAmount, totalInstallment);
+                                }
+                                    :null,
+                                icon: Icon(Icons.add),
+                                label: Text("Create Application"),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white, backgroundColor: Colors.red,
+                                  textStyle: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: MoneyBagIcon(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(child: LoanInfoCard(title: 'Eligibility Status', amount: 'Yes')),
-                SizedBox(width: 10),
-                Expanded(child: LoanInfoCard(title: 'Eligibility Percentage', amount: '90%')),
-              ],
-            ),
-            SizedBox(height: 20),
-            // Make a Loan Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              color: Colors.grey.shade200,
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Make a Loan",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Request your loan and get your money\nin your balance in just a second.",
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                    SizedBox(height: 20),
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.add),
-                        label: Text("Create Application"),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white, backgroundColor: Colors.red,
-                          textStyle: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
+              );
+            } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Failed to load Salary adv info"),
+                    ElevatedButton(
+                        onPressed: () {
+                          final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+                          if (userInfoModel != null){
+                            salProvider.getSalaryInfo(userInfoModel.employeeNumber!);
+                          }
+                        },
+                        child: Text("Retry"))
+                  ],
+                ),
+              );
+            }
+          }
       ),
     );
   }
-}
 
-
-class LoanInfoCard extends StatelessWidget {
-  final String title;
-  final String amount;
-
-  LoanInfoCard({required this.title, required this.amount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Color(0xFFE5E5FA),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-          SizedBox(height: 5),
-          Text(amount, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        ],
-      ),
+  void _showBottomSheet(BuildContext context, double maxAmount, int totalInstallment) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return BottomSheetContentTest1(
+          salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: totalInstallment),
+        );
+      },
     );
   }
-}
 
 
-class MoneyBagIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Icon(
-          Icons.account_balance_wallet,
-          size: 80,
-          color: Colors.amber,
-        ),
-      ],
-    );
-  }
 }
+
