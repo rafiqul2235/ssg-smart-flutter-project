@@ -196,9 +196,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             }else if(userMenu.id == '40'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '41'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: CashPaymentAkgPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.cash_payment, title:  userMenu.name!, navigateTo: CashPaymentAkgPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '42'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: WebViewScreen(
+                              return HomeMenuItemCircle(image: Images.visiting_card, title:  userMenu.name!, navigateTo: WebViewScreen(
                                 title: getTranslated('Apply Form for Visiting Card', context),
                                 url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
                               )

@@ -94,6 +94,9 @@ class Images {
   static const String dashbaord3 = 'assets/images/dashboard3.png';
   static const String money_bag = 'assets/images/icon-money-bag.png';
   static const String gcf_global = 'assets/images/icon_global.png';
+  static const String visiting_card = 'assets/images/business.png';
+  static const String cash_payment = 'assets/images/receivecash.png';
+
 
 
 
