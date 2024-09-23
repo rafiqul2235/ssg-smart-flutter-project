@@ -551,10 +551,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: c500d5d9e7e553f06b61877ca6b9c8b92c570a4c8db371038702e8ce57f8a50f
+      sha256: "49eeef364fddb71515bc78d5a8c51435a68bccd6e4d68e25a942c5e47761ae71"
       url: "https://pub.dev"
     source: hosted
-    version: "17.2.2"
+    version: "17.2.3"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -785,10 +785,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_android
-      sha256: "075f550650a907a85d00d1e48f135e9cc326f1519652eb5f8caafebacabf7727"
+      sha256: "36e75af1d0bd4c7391eacdaedf9ca7632c5b9709c5ec618b04489b79ea2b3f82"
       url: "https://pub.dev"
     source: hosted
-    version: "2.14.5"
+    version: "2.14.6"
   google_maps_flutter_ios:
     dependency: transitive
     description:
@@ -801,10 +801,10 @@ packages:
     dependency: transitive
     description:
       name: google_maps_flutter_platform_interface
-      sha256: "8ba5daee8b5d2230fea17a7903047ce4dc45fb1f0726356a1d8eb541e30c7d05"
+      sha256: "099874463dc4c9bff04fe4b2b8cf7284d2455c2deead8f9a59a87e1b9f028c69"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   google_maps_flutter_web:
     dependency: transitive
     description:
@@ -1049,10 +1049,10 @@ packages:
     dependency: "direct main"
     description:
       name: open_file
-      sha256: de371f549b1320a48980952473fae1903d4927975506534c8ea4643642eb5f98
+      sha256: "3bd408a9ab3dc4f0e6a3906fe635519b2ff0dd3a3547c9a99acdf73a73949587"
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.3"
+    version: "3.5.5"
   open_file_android:
     dependency: transitive
     description:
@@ -1097,10 +1097,10 @@ packages:
     dependency: transitive
     description:
       name: open_file_web
-      sha256: ba35c6f38c21c2bb4268a80927bb828353dda0edfce92e274e0b9639e4f31360
+      sha256: cfc9d6091a844e305a3698c45f47f5cd88aabb143665dcfb0f5fd6f7524d357e
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   open_file_windows:
     dependency: transitive
     description:
@@ -1806,10 +1806,10 @@ packages:
     dependency: transitive
     description:
       name: win32_registry
-      sha256: "723b7f851e5724c55409bb3d5a32b203b3afe8587eaf5dafb93a5fed8ecda0d6"
+      sha256: "21ec76dfc731550fd3e2ce7a33a9ea90b828fdf19a5c3bcf556fa992cfa99852"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.4"
+    version: "1.1.5"
   xdg_directories:
     dependency: transitive
     description:

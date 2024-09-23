@@ -58,6 +58,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
             double loanAmt = (loanInfo?['taken_loan'] ?? 0).toDouble();
             double paidAmt = (loanInfo?['loan_adjusted'] ?? 0).toDouble();
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
+            // int totalInstallment = 10;
 
 
             if (salProvider.isLoading) {
