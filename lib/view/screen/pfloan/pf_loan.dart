@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/saladv_info.dart';
+import 'package:ssg_smart2/provider/pfloan_provider.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/eligible_amount_info.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
@@ -29,8 +31,8 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
   _initData() async {
     final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     if (userInfoModel != null) {
-      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryInfo(userInfoModel.employeeNumber!);
-      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryLoanInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfLoanInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfLoanInfo(userInfoModel.employeeNumber!);
     }
   }
 
@@ -38,7 +40,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Salary Advanced',
+        title: 'PF Loan',
         isBackButtonExist: widget.isBackButtonExist,
         icon: Icons.home,
         onActionPressed: () {
@@ -46,24 +48,29 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
         },
       ),
 
-      body: Consumer<SalaryAdvProvider>(
-          builder: (context, salProvider, child) {
+      body: Consumer<PfLoanProvider>(
+          builder: (context, pfProvider, child) {
             // Check if salaryEligibleInfo is null, if so, set default values
-            String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
-            double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
+            // String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
+            double pfBalance = double.tryParse(pfProvider.pfEligibleInfo?.pfBalance ?? '0') ?? 0;
+            String? eligibilityStatus = pfProvider.pfEligibleInfo?.eligibilityStatus ?? 'No';
+            String? eligibilityPercent = pfProvider.pfEligibleInfo?.eligibilityPercent ?? '0';
+            // double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
+            double eligibilityAmount = double.tryParse(pfProvider.pfEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
 
 
-            bool isEligible = (eligibilityStatus == 'Yes' && eligiblityAmount > 0);
-            final loanInfo = salProvider.salaryLoanData;
+
+            bool isEligible = (eligibilityStatus == 'Yes' && eligibilityAmount > 0);
+            final loanInfo = pfProvider.salaryLoanData;
             double loanAmt = (loanInfo?['taken_loan'] ?? 0).toDouble();
             double paidAmt = (loanInfo?['loan_adjusted'] ?? 0).toDouble();
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
             // int totalInstallment = 10;
 
 
-            if (salProvider.isLoading) {
+            if (pfProvider.isLoading) {
               return Center(child: CircularProgressIndicator(),);
-            } else if (salProvider.salaryEligibleInfo != null){
+            } else if (pfProvider.pfEligibleInfo != null){
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -71,15 +78,15 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                   children: [
                     //Eligibility and Balance Card
                     if(isEligible)
-                      EligibleAmountInfo(eligibleAmount: eligiblityAmount,)
+                      PfEligibleAmountInfo(pfBalance: pfBalance, eligibleAmount: eligibilityAmount,)
                     else
                       LoanData(totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
                     SizedBox(height: 20,),
                     Row(
                       children: [
-                        Expanded(child: LoanInfoCard(title: 'Eligibility Status', amount: isEligible?'Yes':'No')),
+                        Expanded(child: PfLoanInfoCard(title: 'Eligibility Status', amount: isEligible?'Yes':'No')),
                         SizedBox(width: 10),
-                        Expanded(child: LoanInfoCard(title: 'Eligibility Percentage', amount: isEligible?'200%':'0%')),
+                        Expanded(child: PfLoanInfoCard(title: 'Eligibility Percentage', amount: isEligible? eligibilityPercent:'0%')),
                       ],
                     ),
                     SizedBox(height: 20),
@@ -111,7 +118,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                             Center(
                               child: ElevatedButton.icon(
                                 onPressed: isEligible? () {
-                                  _showBottomSheet(context, eligiblityAmount, totalInstallment);
+                                  _showBottomSheet(context, eligibilityAmount, totalInstallment);
                                 }
                                     :null,
                                 icon: Icon(Icons.add),
@@ -149,7 +156,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                         onPressed: () {
                           final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
                           if (userInfoModel != null){
-                            salProvider.getSalaryInfo(userInfoModel.employeeNumber!);
+                            pfProvider.getPfLoanInfo(userInfoModel.employeeNumber!);
                           }
                         },
                         child: Text("Retry"))

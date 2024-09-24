@@ -12,16 +12,16 @@ import '../../../basewidget/animated_custom_dialog.dart';
 import '../../../basewidget/my_dialog.dart';
 
 
-class BottomSheetContentTest1 extends StatefulWidget {
+class BottomSheetContentForPF extends StatefulWidget {
   final SalaryAdvInfo salaryAdvInfo;
 
-  const BottomSheetContentTest1({Key? key, required this.salaryAdvInfo}) : super(key: key);
+  const BottomSheetContentForPF({Key? key, required this.salaryAdvInfo}) : super(key: key);
 
   @override
-  _BottomSheetContentTest1State createState() => _BottomSheetContentTest1State();
+  _BottomSheetContentForPFState createState() => _BottomSheetContentForPFState();
 }
 
-class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
+class _BottomSheetContentForPFState extends State<BottomSheetContentForPF> {
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
   final ScrollController _scrollController = ScrollController();

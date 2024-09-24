@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class EligibleAmountInfo extends StatelessWidget {
+class PfEligibleAmountInfo extends StatelessWidget {
+  final double pfBalance;
   final double eligibleAmount;
-  EligibleAmountInfo({
+
+  PfEligibleAmountInfo({
+    required this.pfBalance,
     required this.eligibleAmount
   });
 
@@ -57,6 +60,15 @@ class EligibleAmountInfo extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Balance: ৳$pfBalance',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -72,11 +84,11 @@ class EligibleAmountInfo extends StatelessWidget {
   }
 }
 
-class LoanInfoCard extends StatelessWidget {
+class PfLoanInfoCard extends StatelessWidget {
   final String title;
   final String amount;
 
-  LoanInfoCard({required this.title, required this.amount});
+  PfLoanInfoCard({required this.title, required this.amount});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoanData extends StatelessWidget {
+class PfLoanData extends StatelessWidget {
   final double totalLoan;
   final double paidLoan;
   final int totalInstallment;
@@ -8,7 +8,7 @@ class LoanData extends StatelessWidget {
   final Color paidColor = Colors.green;
   final Color dueColor = Colors.orange;
 
-  const LoanData({
+  const PfLoanData({
     Key? key,
     required this.totalLoan,
     required this.paidLoan,
