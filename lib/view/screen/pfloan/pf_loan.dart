@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/body/pf_installment.dart';
 import 'package:ssg_smart2/data/model/body/saladv_info.dart';
 import 'package:ssg_smart2/provider/pfloan_provider.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/screen/pfloan/widgets/eligible_amount_info.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/loan_data.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
 
 import '../../../provider/user_provider.dart';
 
@@ -31,8 +31,9 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
   _initData() async {
     final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     if (userInfoModel != null) {
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfEligibilityInfo(userInfoModel.employeeNumber!);
       await Provider.of<PfLoanProvider>(context, listen: false).getPfLoanInfo(userInfoModel.employeeNumber!);
-      await Provider.of<PfLoanProvider>(context, listen: false).getPfLoanInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfInstallment();
     }
   }
 
@@ -55,17 +56,21 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
             double pfBalance = double.tryParse(pfProvider.pfEligibleInfo?.pfBalance ?? '0') ?? 0;
             String? eligibilityStatus = pfProvider.pfEligibleInfo?.eligibilityStatus ?? 'No';
             String? eligibilityPercent = pfProvider.pfEligibleInfo?.eligibilityPercent ?? '0';
-            // double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
             double eligibilityAmount = double.tryParse(pfProvider.pfEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
 
 
 
             bool isEligible = (eligibilityStatus == 'Yes' && eligibilityAmount > 0);
-            final loanInfo = pfProvider.salaryLoanData;
+            final loanInfo = pfProvider.pfLoanData;
             double loanAmt = (loanInfo?['taken_loan'] ?? 0).toDouble();
-            double paidAmt = (loanInfo?['loan_adjusted'] ?? 0).toDouble();
+            double paidAmt = (loanInfo?['paid_loan'] ?? 0).toDouble();
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
             // int totalInstallment = 10;
+
+            print("installment: ${pfProvider.installment}");
+            PfInstallment? maxInstallment = pfProvider.installment.reduce((current, next) => int.parse(current.code) > int.parse(next.code) ? current : next);
+            print("max installment: ${maxInstallment.description}");
+            int? hightestInstallment = int.tryParse(maxInstallment.description);
 
 
             if (pfProvider.isLoading) {
@@ -80,7 +85,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                     if(isEligible)
                       PfEligibleAmountInfo(pfBalance: pfBalance, eligibleAmount: eligibilityAmount,)
                     else
-                      LoanData(totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
+                      PfLoanData(balance: pfBalance,totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
                     SizedBox(height: 20,),
                     Row(
                       children: [
@@ -118,7 +123,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                             Center(
                               child: ElevatedButton.icon(
                                 onPressed: isEligible? () {
-                                  _showBottomSheet(context, eligibilityAmount, totalInstallment);
+                                  _showBottomSheet(context, eligibilityAmount, hightestInstallment!);
                                 }
                                     :null,
                                 icon: Icon(Icons.add),
@@ -151,7 +156,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Failed to load Salary adv info"),
+                    Text("Failed to load Pf loan info"),
                     ElevatedButton(
                         onPressed: () {
                           final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
@@ -169,19 +174,17 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
     );
   }
 
-  void _showBottomSheet(BuildContext context, double maxAmount, int totalInstallment) {
+  void _showBottomSheet(BuildContext context, double maxAmount, int highestInstallment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return BottomSheetContentTest1(
-          salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: totalInstallment),
+          salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: highestInstallment),
         );
       },
     );
   }
-
-
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PfLoanData extends StatelessWidget {
+  final double balance;
   final double totalLoan;
   final double paidLoan;
   final int totalInstallment;
@@ -10,6 +11,7 @@ class PfLoanData extends StatelessWidget {
 
   const PfLoanData({
     Key? key,
+    required this.balance,
     required this.totalLoan,
     required this.paidLoan,
     required this.totalInstallment
@@ -41,6 +43,14 @@ class PfLoanData extends StatelessWidget {
                 _buildAmountDisplay("\৳ ${paidLoan.toStringAsFixed(2)}", "Paid Loan", paidColor),
                 _buildAmountDisplay("\৳ ${(totalLoan - paidLoan).toStringAsFixed(2)}", "Due Loan", dueColor),
               ],
+            ),
+            SizedBox(height: 4,),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'PF Balance: \৳ $balance',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),
