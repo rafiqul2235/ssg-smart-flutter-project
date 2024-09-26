@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/pf_installment.dart';
-import 'package:ssg_smart2/data/model/body/saladv_info.dart';
+import 'package:ssg_smart2/data/model/body/pfloan_info.dart';
+
 import 'package:ssg_smart2/provider/pfloan_provider.dart';
-import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
+
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/bottomsheetcontent.dart';
 import 'package:ssg_smart2/view/screen/pfloan/widgets/eligible_amount_info.dart';
 import 'package:ssg_smart2/view/screen/pfloan/widgets/loan_data.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
+
 
 import '../../../provider/user_provider.dart';
 
@@ -180,8 +182,8 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return BottomSheetContentTest1(
-          salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: highestInstallment),
+        return BottomSheetContentForPF(
+          pfLoanInfo: PfLoanInfo(maxLoanAmount: maxAmount, maxInstallments: highestInstallment),
         );
       },
     );

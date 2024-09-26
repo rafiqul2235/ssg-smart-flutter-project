@@ -35,6 +35,7 @@ class AppConstants {
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';
   static const String PROBATION_STATUS = 'check_probation_status';
   static const String APPLICATION_HISTORY = 'leave_approval_history';
+  static const String LOAN_APPLICATION_HISTORY = 'salary_pf_approval_history';
   static const String APPROVAL_HISTORY = 'flutter_approval_history';
   static const String CASH_PAYMENT_AKG = 'cash_payment_akg';
   static const String CASH_PAYMENT_HISTORY = 'cash_payment_akg_history';
@@ -46,7 +47,7 @@ class AppConstants {
   static const String PF_ELIGIBLE_INFO = 'pf_eligible_info';
   static const String PF_LOAN_INFO = 'pf_loan_info';
   static const String PF_INSTALLMENT = 'pf_installment';
-  static const String SAL_LOAN = 'save_loan_data';
+  static const String SAVE_LOAN_DATA = 'save_loan_data';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

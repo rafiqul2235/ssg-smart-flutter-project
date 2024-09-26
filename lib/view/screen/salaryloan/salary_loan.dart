@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/saladv_info.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent2.dart';
+import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
 
@@ -168,7 +168,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return BottomSheetContentTest1(
+        return BottomSheetContentForSalaryAdv(
           salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: totalInstallment),
         );
       },

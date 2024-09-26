@@ -55,7 +55,7 @@ class SalaryAdvRepo {
   Future<ApiResponse> submitData(SalaryAdvanceData salaryAdvData) async {
     try{
       Response response = await dioClient.post(
-        AppConstants.SAL_LOAN,
+        AppConstants.SAVE_LOAN_DATA,
         data: salaryAdvData.toJson()
       );
       return ApiResponse.withSuccess(response);

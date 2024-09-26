@@ -2,6 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/model/body/pf_installment.dart';
+import 'package:ssg_smart2/data/model/body/pfloan_data.dart';
 import 'package:ssg_smart2/data/model/body/salary_data.dart';
 import 'package:ssg_smart2/data/model/response/SalaryEligibleInfo.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
@@ -76,17 +77,17 @@ class PfLoanRepo {
     }
   }
 
-  // Future<ApiResponse> submitData(SalaryAdvanceData salaryAdvData) async {
-  //   try{
-  //     Response response = await dioClient.post(
-  //       AppConstants.SAL_LOAN,
-  //       data: salaryAdvData.toJson()
-  //     );
-  //     return ApiResponse.withSuccess(response);
-  //   }catch (e) {
-  //     throw Exception('Error: $e');
-  //   }
-  // }
+  Future<ApiResponse> submitData(PfLoanData pfLoanData) async {
+    try{
+      Response response = await dioClient.post(
+        AppConstants.SAVE_LOAN_DATA,
+        data: pfLoanData.toJson()
+      );
+      return ApiResponse.withSuccess(response);
+    }catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
 
 }
 
