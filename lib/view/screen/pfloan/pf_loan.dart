@@ -69,11 +69,13 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
             // int totalInstallment = 10;
 
-            print("installment: ${pfProvider.installment}");
-            PfInstallment? maxInstallment = pfProvider.installment.reduce((current, next) => int.parse(current.code) > int.parse(next.code) ? current : next);
-            print("max installment: ${maxInstallment.description}");
-            int? hightestInstallment = int.tryParse(maxInstallment.description);
+            PfInstallment? maxInstallment;
 
+            if(pfProvider.installment.isNotEmpty){
+              maxInstallment = pfProvider.installment.reduce((current, next) => int.parse(current.code) > int.parse(next.code) ? current : next);
+            }
+            // int? hightestInstallment = int.tryParse(maxInstallment!.description);
+            int? highestInstallment = maxInstallment != null ? int.tryParse(maxInstallment.description) : null;
 
             if (pfProvider.isLoading) {
               return Center(child: CircularProgressIndicator(),);
@@ -125,7 +127,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
                             Center(
                               child: ElevatedButton.icon(
                                 onPressed: isEligible? () {
-                                  _showBottomSheet(context, eligibilityAmount, hightestInstallment!);
+                                  _showBottomSheet(context, eligibilityAmount, highestInstallment!);
                                 }
                                     :null,
                                 icon: Icon(Icons.add),
