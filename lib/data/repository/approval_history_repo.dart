@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
+import 'package:ssg_smart2/data/model/response/loan_approval_history.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 
 import '../model/response/leaveapproval/leave_approval_history.dart';
@@ -11,6 +12,7 @@ class ApprovalHistoryRepo{
   ApprovalHistoryRepo({
     required this.dioClient,
 });
+
   Future<LeaveApprovalHistory> getLeaveApprovalHistory(String invoiceId) async {
     try {
       final response = await dioClient.postWithFormData(
@@ -23,6 +25,26 @@ class ApprovalHistoryRepo{
         final Map<String, dynamic> responseData = response.data;
         print("Response data of history: $responseData");
         return LeaveApprovalHistory.fromJson(responseData);
+      } else {
+        throw Exception('Failed to load leave approval history');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<LoanApprovalHistory> getLoanApprovalHistory(String headerId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.LOAN_APPLICATION_HISTORY,
+        data: {
+          'header_id': headerId
+        },
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("Response data of history: $responseData");
+        return LoanApprovalHistory.fromJson(responseData);
       } else {
         throw Exception('Failed to load leave approval history');
       }

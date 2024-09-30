@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
+import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
+import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/salary_loan.dart';
 import '../../../data/model/response/self_service.dart';
 import '../../../utill/color_resources.dart';
@@ -15,7 +17,7 @@ import '../attendence/attendance_sheet_screen.dart';
 import '../leave/leave_application_screen.dart';
 import '../managementdashboard/managemrnt_d_menu.dart';
 import '../notification/notification_screen.dart';
-import 'approval_history.dart';
+import 'leave_approval_history.dart';
 
 class SelfService extends StatefulWidget {
   final bool isBackButtonExist;
@@ -43,7 +45,7 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'PaySlip', navigateTo: PayslipScreen(),));
     _menuList.add(TopMenuItem(image: Images.salary_advance, menuName: 'Salary Adv.', navigateTo: SalaryAdvanceScreen(),));
-    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: NotificationScreen(),));
+    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: PfLoanScreen(),));
     _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
   }
 
@@ -107,7 +109,11 @@ class _SelfServiceState extends State<SelfService> {
                               return InkWell(
                                 onTap: (){
                                   print(' On Click Application Item $index');
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
+                                  if ( application.applicationType!.contains("Leave")){
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
+                                  }else {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>  LoanApprovalHistoryScreen(headerId: application.reportHeaderId!)));
+                                  }
 
                                 },
                                 child: Padding (

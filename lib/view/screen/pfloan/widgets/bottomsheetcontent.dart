@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/body/pfloan_data.dart';
+import 'package:ssg_smart2/data/model/body/pfloan_info.dart';
+import 'package:ssg_smart2/provider/pfloan_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 
-import '../../../../data/model/body/saladv_info.dart';
 import '../../../../data/model/body/salary_data.dart';
 import '../../../../data/model/response/user_info_model.dart';
 import '../../../../provider/salaryAdv_provider.dart';
@@ -12,16 +15,16 @@ import '../../../basewidget/animated_custom_dialog.dart';
 import '../../../basewidget/my_dialog.dart';
 
 
-class BottomSheetContentTest1 extends StatefulWidget {
-  final SalaryAdvInfo salaryAdvInfo;
+class BottomSheetContentForPF extends StatefulWidget {
+  final PfLoanInfo pfLoanInfo;
 
-  const BottomSheetContentTest1({Key? key, required this.salaryAdvInfo}) : super(key: key);
+  const BottomSheetContentForPF({Key? key, required this.pfLoanInfo}) : super(key: key);
 
   @override
-  _BottomSheetContentTest1State createState() => _BottomSheetContentTest1State();
+  _BottomSheetContentForPFState createState() => _BottomSheetContentForPFState();
 }
 
-class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
+class _BottomSheetContentForPFState extends State<BottomSheetContentForPF> {
   final _formKey = GlobalKey<FormState>();
   final _reasonController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -30,12 +33,21 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
   late double _loanAmount;
   int _installmentNumber = 4;
   bool _isSubmitting = false;
+  late DateTime _realizationDate;
 
   @override
   void initState() {
     super.initState();
-    _loanAmount = widget.salaryAdvInfo.maxLoanAmount.clamp(0, widget.salaryAdvInfo.maxLoanAmount);
+    _loanAmount = widget.pfLoanInfo.maxLoanAmount.clamp(0, widget.pfLoanInfo.maxLoanAmount);
     _loanAmountController = TextEditingController(text: _loanAmount.round().toString());
+    _calculateRealizationDate();
+  }
+
+  void _calculateRealizationDate() {
+    final now = DateTime.now();
+    final nextMonth = DateTime(now.year, now.month + 1);
+    final payrollEndDate = DateTime(nextMonth.year, nextMonth.month, 25);
+    _realizationDate = payrollEndDate;
   }
 
   @override
@@ -74,6 +86,8 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
                     const SizedBox(height: 20),
                     _buildInstallmentSection(),
                     const SizedBox(height: 20),
+                    _buildRealizationDateSection(),
+                    const SizedBox(height: 20,),
                     _buildReasonSection(),
                     const SizedBox(height: 20),
                     _buildSubmitButton(context),
@@ -130,7 +144,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
             if (parsedValue == null || parsedValue <= 0) {
               return 'Enter a valid loan amount';
             }
-            if (parsedValue > widget.salaryAdvInfo.maxLoanAmount) {
+            if (parsedValue > widget.pfLoanInfo.maxLoanAmount) {
               return 'Amount exceeds maximum limit';
             }
             return null;
@@ -138,7 +152,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
           onChanged: (value) {
             setState(() {
               _loanAmount = double.tryParse(value) ?? 0;
-              _loanAmount = _loanAmount.clamp(0, widget.salaryAdvInfo.maxLoanAmount);
+              _loanAmount = _loanAmount.clamp(0, widget.pfLoanInfo.maxLoanAmount);
               _loanAmountController.text = _loanAmount.round().toString();
             });
           },
@@ -150,7 +164,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
           children: [
             const Text('৳0', style: TextStyle(color: Colors.grey)),
             Text(
-              '৳${widget.salaryAdvInfo.maxLoanAmount.toStringAsFixed(0)}',
+              '৳${widget.pfLoanInfo.maxLoanAmount.toStringAsFixed(0)}',
               style: const TextStyle(color: Colors.grey),
             ),
           ],
@@ -158,8 +172,8 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
         Slider(
           value: _loanAmount,
           min: 0,
-          max: widget.salaryAdvInfo.maxLoanAmount,
-          divisions: widget.salaryAdvInfo.maxLoanAmount.round(),
+          max: widget.pfLoanInfo.maxLoanAmount,
+          divisions: widget.pfLoanInfo.maxLoanAmount.round(),
           label: '৳${_loanAmount.round()}',
           onChanged: (value) {
             setState(() {
@@ -194,7 +208,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
           height: 50,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: widget.salaryAdvInfo.maxInstallments,
+            itemCount: widget.pfLoanInfo.maxInstallments,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -227,6 +241,39 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
     );
   }
 
+  Widget _buildRealizationDateSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text(
+              'Realization Date',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 5),
+            Tooltip(
+              message: 'The date when the loan will be realized',
+              child: Icon(Icons.info_outline, size: 18),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            DateFormat('MMMM dd, yyyy').format(_realizationDate),
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildReasonSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,7 +281,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
         Row(
           children: [
             const Text(
-              'Provide Reason',
+              'Reason',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(width: 5),
@@ -265,20 +312,20 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
   }
 
   Widget _buildSubmitButton(BuildContext context) {
-    return Consumer<SalaryAdvProvider>(
-      builder: (context, salProvider, child) {
+    return Consumer<PfLoanProvider>(
+      builder: (context, pfProvider, child) {
         final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
             onPressed: (_isSubmitting ) ? null : () async {
               if (_formKey.currentState!.validate()) {
-                bool success = await _submitApplication(context, salProvider, userInfoModel!);
+                bool success = await _submitApplication(context, pfProvider, userInfoModel!);
                 if (success) {
                   Navigator.of(context).pop();
                   await _showSuccessDialog(context, "Salary adv. application submitted successfully!");
                 } else {
-                  _showErrorDialog(context, "${salProvider.error}");
+                  _showErrorDialog(context, "${pfProvider.error}");
                 }
               }
             },
@@ -290,7 +337,7 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
                 ? CircularProgressIndicator(color: Colors.blue)
                 : Text(
                     'Submit',
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: Colors.white),
             ),
           ),
         );
@@ -335,30 +382,31 @@ class _BottomSheetContentTest1State extends State<BottomSheetContentTest1> {
   //   );
   // }
 
-  Future<bool> _submitApplication(BuildContext context, SalaryAdvProvider salProvider, UserInfoModel userInfoModel) async {
+  Future<bool> _submitApplication(BuildContext context, PfLoanProvider pfLoanProvider, UserInfoModel userInfoModel) async {
     setState(() {
       _isSubmitting = true;
     });
 
     try {
-      SalaryAdvanceData salaryAdvanceData = SalaryAdvanceData(
+      PfLoanData pfLoanData = PfLoanData(
           empId: userInfoModel.employeeNumber!,
           empName: userInfoModel.fullName!,
           designation: userInfoModel.designation!,
           department: userInfoModel.department!,
           location: userInfoModel.workLocation!,
-          eligibilityStatus: salProvider.salaryEligibleInfo!.eligibilityStatus,
-          eligibilityAmount: salProvider.salaryEligibleInfo!.eligibilityAmount,
+          eligibilityStatus: pfLoanProvider.pfEligibleInfo!.eligibilityStatus,
+          eligibilityAmount: pfLoanProvider.pfEligibleInfo!.eligibilityAmount,
           amount: _loanAmount,
           installment: _installmentNumber,
+          realizationDate: _realizationDate.toString(),
           reason: _reasonController.text,
-          applicationType: "SALLOAN",
+          applicationType: "PFLOAN",
           statusFlg: "Initiated",
           lastUpdateBy: userInfoModel.employeeNumber!,
-          lastUpdateLogin: userInfoModel.employeeNumber!
+          lastUpdateLogin: userInfoModel.employeeNumber!,
       );
 
-      await salProvider.submitData(salaryAdvanceData);
+      await pfLoanProvider.submitData(pfLoanData);
       // Navigator.of(context).pop();
       // _showSuccessDialog(context,'Salary Adv submitted successfully');
       return true;

@@ -1,24 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/data/model/body/saladv_info.dart';
-import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
+import 'package:ssg_smart2/data/model/body/pf_installment.dart';
+import 'package:ssg_smart2/data/model/body/pfloan_info.dart';
+
+import 'package:ssg_smart2/provider/pfloan_provider.dart';
+
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/bottomsheetcontent.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.dart';
-import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/bottomsheetcontent.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/eligible_amount_info.dart';
+import 'package:ssg_smart2/view/screen/pfloan/widgets/loan_data.dart';
+
 
 import '../../../provider/user_provider.dart';
 
-class SalaryAdvanceScreen extends StatefulWidget {
+class PfLoanScreen extends StatefulWidget {
   final bool isBackButtonExist;
-  const SalaryAdvanceScreen({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const PfLoanScreen({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  _SalaryAdvanceScreenState createState() => _SalaryAdvanceScreenState();
+  _PfLoanScreenState createState() => _PfLoanScreenState();
 }
 
-class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
+class _PfLoanScreenState extends State<PfLoanScreen> {
 
   @override
   void initState() {
@@ -29,8 +33,9 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
   _initData() async {
     final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     if (userInfoModel != null) {
-      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryInfo(userInfoModel.employeeNumber!);
-      await Provider.of<SalaryAdvProvider>(context, listen: false).getSalaryLoanInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfEligibilityInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfLoanInfo(userInfoModel.employeeNumber!);
+      await Provider.of<PfLoanProvider>(context, listen: false).getPfInstallment();
     }
   }
 
@@ -38,7 +43,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Salary Advanced',
+        title: 'PF Loan',
         isBackButtonExist: widget.isBackButtonExist,
         icon: Icons.home,
         onActionPressed: () {
@@ -46,24 +51,35 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
         },
       ),
 
-      body: Consumer<SalaryAdvProvider>(
-          builder: (context, salProvider, child) {
+      body: Consumer<PfLoanProvider>(
+          builder: (context, pfProvider, child) {
             // Check if salaryEligibleInfo is null, if so, set default values
-            String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
-            double eligiblityAmount = double.tryParse(salProvider.salaryEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
+            // String? eligibilityStatus = salProvider.salaryEligibleInfo?.eligibilityStatus ?? 'No';
+            double pfBalance = double.tryParse(pfProvider.pfEligibleInfo?.pfBalance ?? '0') ?? 0;
+            String? eligibilityStatus = pfProvider.pfEligibleInfo?.eligibilityStatus ?? 'No';
+            String? eligibilityPercent = pfProvider.pfEligibleInfo?.eligibilityPercent ?? '0';
+            double eligibilityAmount = double.tryParse(pfProvider.pfEligibleInfo?.eligibilityAmount ?? '0') ?? 0;
 
 
-            bool isEligible = (eligibilityStatus == 'Yes' && eligiblityAmount > 0);
-            final loanInfo = salProvider.salaryLoanData;
+
+            bool isEligible = (eligibilityStatus == 'Yes' && eligibilityAmount > 0);
+            final loanInfo = pfProvider.pfLoanData;
             double loanAmt = (loanInfo?['taken_loan'] ?? 0).toDouble();
-            double paidAmt = (loanInfo?['loan_adjusted'] ?? 0).toDouble();
+            double paidAmt = (loanInfo?['paid_loan'] ?? 0).toDouble();
             int totalInstallment = loanInfo?['total_installment'] ?? 0;
             // int totalInstallment = 10;
 
+            PfInstallment? maxInstallment;
 
-            if (salProvider.isLoading) {
+            if(pfProvider.installment.isNotEmpty){
+              maxInstallment = pfProvider.installment.reduce((current, next) => int.parse(current.code) > int.parse(next.code) ? current : next);
+            }
+            // int? hightestInstallment = int.tryParse(maxInstallment!.description);
+            int? highestInstallment = maxInstallment != null ? int.tryParse(maxInstallment.description) : null;
+
+            if (pfProvider.isLoading) {
               return Center(child: CircularProgressIndicator(),);
-            } else if (salProvider.salaryEligibleInfo != null){
+            } else if (pfProvider.pfEligibleInfo != null){
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -71,15 +87,15 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
                   children: [
                     //Eligibility and Balance Card
                     if(isEligible)
-                      EligibleAmountInfo(eligibleAmount: eligiblityAmount,)
+                      PfEligibleAmountInfo(pfBalance: pfBalance, eligibleAmount: eligibilityAmount,)
                     else
-                      LoanData(totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
+                      PfLoanData(balance: pfBalance,totalLoan: loanAmt,paidLoan: paidAmt, totalInstallment: totalInstallment,),
                     SizedBox(height: 20,),
                     Row(
                       children: [
-                        Expanded(child: LoanInfoCard(title: 'Eligibility Status', amount: isEligible?'Yes':'No')),
+                        Expanded(child: PfLoanInfoCard(title: 'Eligibility Status', amount: isEligible?'Yes':'No')),
                         SizedBox(width: 10),
-                        Expanded(child: LoanInfoCard(title: 'Eligibility Percentage', amount: isEligible?'200%':'0%')),
+                        Expanded(child: PfLoanInfoCard(title: 'Eligibility Percentage', amount: isEligible? eligibilityPercent:'0%')),
                       ],
                     ),
                     SizedBox(height: 20),
@@ -111,7 +127,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
                             Center(
                               child: ElevatedButton.icon(
                                 onPressed: isEligible? () {
-                                  _showBottomSheet(context, eligiblityAmount, totalInstallment);
+                                  _showBottomSheet(context, eligibilityAmount, highestInstallment!);
                                 }
                                     :null,
                                 icon: Icon(Icons.add),
@@ -144,12 +160,12 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Failed to load Salary adv info"),
+                    Text("Failed to load Pf loan info"),
                     ElevatedButton(
                         onPressed: () {
                           final userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
                           if (userInfoModel != null){
-                            salProvider.getSalaryInfo(userInfoModel.employeeNumber!);
+                            pfProvider.getPfLoanInfo(userInfoModel.employeeNumber!);
                           }
                         },
                         child: Text("Retry"))
@@ -162,19 +178,17 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
     );
   }
 
-  void _showBottomSheet(BuildContext context, double maxAmount, int totalInstallment) {
+  void _showBottomSheet(BuildContext context, double maxAmount, int highestInstallment) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return BottomSheetContentForSalaryAdv(
-          salaryAdvInfo: SalaryAdvInfo(maxLoanAmount: maxAmount, maxInstallments: totalInstallment),
+        return BottomSheetContentForPF(
+          pfLoanInfo: PfLoanInfo(maxLoanAmount: maxAmount, maxInstallments: highestInstallment),
         );
       },
     );
   }
-
-
 }
 
