@@ -16,6 +16,7 @@ import 'package:ssg_smart2/view/screen/more/more_screen.dart';
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
+import '../auth/reset_password_screen.dart';
 import '../cashpayment/cash_payment_akg_screen.dart';
 import '../empselfservice/self_service.dart';
 import '../managementdashboard/management_dashbboard_screen.dart';
@@ -167,6 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:PDFListScreen(title: getTranslated('PDF_Report', context),platform: TargetPlatform.android),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
                             }else if(userMenu.id == '4'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            else if(userMenu.id == '7'){
+                              return HomeMenuItemCircle(image: Images.approval, title:  userMenu.name!, navigateTo: ResetPasswordScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '8'){
                               return HomeMenuItemCircle(image: Images.approval, title:  userMenu.name!, navigateTo: ApprovalListPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
