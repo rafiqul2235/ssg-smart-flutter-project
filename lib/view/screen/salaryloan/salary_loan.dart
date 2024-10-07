@@ -9,6 +9,7 @@ import 'package:ssg_smart2/view/screen/salaryloan/widgets/eligible_amount_info.d
 import 'package:ssg_smart2/view/screen/salaryloan/widgets/loan_data.dart';
 
 import '../../../provider/user_provider.dart';
+import '../home/dashboard_screen.dart';
 
 class SalaryAdvanceScreen extends StatefulWidget {
   final bool isBackButtonExist;
@@ -43,6 +44,7 @@ class _SalaryAdvanceScreenState extends State<SalaryAdvanceScreen> {
         icon: Icons.home,
         onActionPressed: () {
           // Your action here
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
         },
       ),
 

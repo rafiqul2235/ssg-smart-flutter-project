@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
+import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
@@ -63,9 +64,7 @@ class _SelfServiceState extends State<SelfService> {
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
-               /* Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        const ApprovalHistory()));*/
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
               }),
 
             Expanded(child: SingleChildScrollView(child: Column(

@@ -79,7 +79,9 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
             CustomAppBar(
                 title: getTranslated('Report', context),
                 isBackButtonExist: widget.isBackButtonExist,
-                icon: Icons.home, onActionPressed:(){Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));}),
+                icon: Icons.home, onActionPressed:(){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
+                }),
             const SizedBox(height: 10,),
             _reportMenus(context)
           ],

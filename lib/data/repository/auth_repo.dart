@@ -74,8 +74,10 @@ class AuthRepo {
         prefs.setString(AppConstants.USER_NAME, userInfoModel.userName??'');
         prefs.setString(AppConstants.ORG_ID, userInfoModel.orgId??'');
         prefs.setString(AppConstants.ORG_NAME, userInfoModel.orgName??'');
+        prefs.setString(AppConstants.CHANGE_PASSWORD_FLUG, userInfoModel.changePasswordFlag??'');
 
         prefs.setString(AppConstants.USER_DATA, jsonEncode(userInfoModel.toJson()));
+        print("Userinfo from auth repo: $prefs");
       }else{
         prefs.setString(AppConstants.USER_DATA, '');
       }
@@ -268,6 +270,21 @@ class AuthRepo {
   Future<ApiResponse> resetPassword(String email, int otp, String newPassword) async {
     try {
       Response response = await dioClient.put('AppConstants.RESET_PASSWORD_URI', data: {"email": email,"otp": otp,"newPassword": newPassword});
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> changePassword(String userId,String oldPassword, String newPassword) async {
+    try {
+      Response response = await dioClient.postWithFormData(
+          AppConstants.CHANGE_PASSWORD,
+          data: {
+            "user_id": userId,
+            "old_password": oldPassword,
+            "new_password": newPassword
+          });
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));

@@ -4,6 +4,7 @@ import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/model/response/base/error_response.dart';
 import 'package:ssg_smart2/data/model/response/response_model.dart';
 import 'package:ssg_smart2/data/repository/auth_repo.dart';
+import 'package:ssg_smart2/utill/user_data_storage.dart';
 import '../data/model/response/user_info_model.dart';
 import 'dart:developer' as developer;
 
@@ -108,9 +109,10 @@ class AuthProvider with ChangeNotifier {
             name: 'User_Menu',
             error: userInfoModel.toString()
         );
-
+        print("Userinfo from auth_provider: $userInfoModel");
         authRepo.saveUserToken(token);
         await authRepo.saveUserData(userInfoModel);
+        await UserDataStorage.saveUserInfo(userInfoModel);
 
         callback(true, token);
 
@@ -427,5 +429,35 @@ class AuthProvider with ChangeNotifier {
       responseModel = ResponseModel(errorMessage, false);
     }
     return responseModel;
+  }
+
+  Future<ResponseModel> changePassword(String userId,String oldPassword, String newPassword) async {
+    _isLoading = true;
+    notifyListeners();
+    print("Change password data: $oldPassword and $newPassword");
+    try {
+      ApiResponse apiResponse = await authRepo.changePassword(userId,oldPassword, newPassword);
+      _isLoading = false;
+      notifyListeners();
+
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        var responseData = apiResponse.response?.data;
+        if (responseData['success'] == 1) {
+          return ResponseModel(responseData['msg']?.toString() ?? "Password changed successfully", true);
+        } else {
+          String errorMessage = responseData['msg'] is List
+              ? responseData['msg'].join(', ')
+              : responseData['msg']?.toString() ?? "Failed to change password";
+          return ResponseModel(errorMessage, false);
+        }
+      } else {
+        return ResponseModel("Failed to connect to the server", false);
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print("Error in changePassword: $e");
+      return ResponseModel("An unexpected error occurred", false);
+    }
   }
 }

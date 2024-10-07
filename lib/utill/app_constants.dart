@@ -2,6 +2,7 @@ import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 
+
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
@@ -48,6 +49,7 @@ class AppConstants {
   static const String PF_LOAN_INFO = 'pf_loan_info';
   static const String PF_INSTALLMENT = 'pf_installment';
   static const String SAVE_LOAN_DATA = 'save_loan_data';
+  static const String CHANGE_PASSWORD = 'change_password_flutter';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -61,6 +63,7 @@ class AppConstants {
   static const String USER_NAME = 'user_name';
   static const String ORG_ID = 'org_id';
   static const String ORG_NAME = 'org_name';
+  static const String CHANGE_PASSWORD_FLUG = 'password_flag';
 
   static const String USER_PIN_CODE = 'user_pin_code';
   static const String USER_PASSWORD = 'user_password';

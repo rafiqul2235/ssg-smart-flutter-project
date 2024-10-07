@@ -165,24 +165,6 @@ class UserProvider extends ChangeNotifier {
   }
 
 
-
-
-/*  Future<UserMenu?> findAnUserMenu(String pageDescription) async {
-    UserMenu? userMenu;
-    if(_userMenuList!=null && _userMenuList.isNotEmpty) {
-      for (var value in _userMenuList) {
-        if (value.pageDescription == pageDescription) {
-          userMenu = value;
-          break;
-        }
-      }
-    }
-    return userMenu;
-  }*/
-
-
-
-
   Future<ResponseModel> updateUserInfo(UserInfoModel updateUserModel, String pass, File? file, String token) async {
 
     _isLoading = true;

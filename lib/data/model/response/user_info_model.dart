@@ -14,6 +14,7 @@ class UserInfoModel {
   String? employeeName;
   String? userName;
   String? password;
+  String? changePasswordFlag;
   String? authCode;
   int? totalOrgs;
 
@@ -36,7 +37,8 @@ class UserInfoModel {
       this.userName = '',
       this.orgId = '',
       this.orgName = '',
-      this.password ,
+      this.password = '',
+      this.changePasswordFlag = '',
       this.authCode ='',
       this.totalOrgs = 0,
  });
@@ -51,6 +53,7 @@ class UserInfoModel {
     employeeName = json['EMPLOYEE_NAME'];
     userName = json['USER_NAME'];
     authCode = json['AUTH_CODE'];
+    changePasswordFlag = json['CHANGE_PASSW_FLG'];
 
     employeeId = userName;
 
@@ -78,6 +81,7 @@ class UserInfoModel {
     infoModel.payrollName = json['PAYROLL_NAME'];
     infoModel.workLocation = json['WORK_LOCATION'];
     infoModel.personId = json['PERSON_ID'];
+    infoModel.changePasswordFlag = json['CHANGE_PASSW_FLG'];
     infoModel. employeeNumber = json['EMPLOYEE_NUMBER'];
     infoModel.employmentCategory = json['EMPLOYMENT_CATEGORY'];
     infoModel.fullName = json['FULL_NAME'];
@@ -94,6 +98,7 @@ class UserInfoModel {
      json['EMPLOYEE_ID'] = employeeId;
      json['EMPLOYEE_NAME'] = employeeName;
      json['USER_NAME'] = userName;
+     json['CHANGE_PASSW_FLG'] = changePasswordFlag;
      json['AUTH_CODE'] = authCode;
      json['ORG_ID'] = orgId;
      json['ORG_NAME'] = orgName;
@@ -110,6 +115,6 @@ class UserInfoModel {
 
   @override
   String toString() {
-    return 'UserInfoModel{firstName: $firstName, lastName: $lastName, email: $email, mobileNo: $mobileNo, photoUrl: $photoUrl, orgId: $orgId, orgName: $orgName, userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, authCode: $authCode, totalOrgs: $totalOrgs, payrollId: $payrollId, payrollName: $payrollName, workLocation: $workLocation, personId: $personId, employeeNumber: $employeeNumber, employmentCategory: $employmentCategory, fullName: $fullName, designation: $designation, department: $department}';
+    return 'UserInfoModel{firstName: $firstName, lastName: $lastName, email: $email, mobileNo: $mobileNo, photoUrl: $photoUrl, orgId: $orgId, orgName: $orgName, userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, changePasswordFlug: $changePasswordFlag, authCode: $authCode, totalOrgs: $totalOrgs, payrollId: $payrollId, payrollName: $payrollName, workLocation: $workLocation, personId: $personId, employeeNumber: $employeeNumber, employmentCategory: $employmentCategory, fullName: $fullName, designation: $designation, department: $department}';
   }
 }

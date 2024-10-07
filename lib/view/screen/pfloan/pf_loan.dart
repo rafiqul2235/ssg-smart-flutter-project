@@ -13,6 +13,7 @@ import 'package:ssg_smart2/view/screen/pfloan/widgets/loan_data.dart';
 
 
 import '../../../provider/user_provider.dart';
+import '../home/dashboard_screen.dart';
 
 class PfLoanScreen extends StatefulWidget {
   final bool isBackButtonExist;
@@ -48,6 +49,7 @@ class _PfLoanScreenState extends State<PfLoanScreen> {
         icon: Icons.home,
         onActionPressed: () {
           // Your action here
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
         },
       ),
 
