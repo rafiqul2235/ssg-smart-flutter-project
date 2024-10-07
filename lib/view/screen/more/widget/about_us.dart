@@ -25,10 +25,10 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    var info1 = 'A man of strict religious values, yet a believer in progressive dynamism, and a dreamer who thought nothing is impossible – Late A C Abdur Rahim overcame numerous challenges and obstacles to become one of the most accomplished entrepreneurs of this country. Born on the 20th of January 1915, he lost both his parents by the time he was seven years of age. Deprived of formal schooling and a typically comfortable childhood, he grew up as a man with strong determination, hardworking diligence, and humane compassion.';
-    var info2 = 'By the early 1940s, Mr. Rahim started small scale commercial trading on his own. He moved to Chittagong in 1947 and stared afresh with very little capital in hand, but with a whole world of courage and faith. In 1950, he established the small trading concern dealing in various items. This proprietary business was formally incorporated on April 15, 1954 as Rahimafrooz & Co. Till date, Rahimafrooz Group commemorates this as its “Foundation Day”.';
-    var info3 = 'The childhood hardship and the struggle in his young years only made Mr. Rahim a strong individual, a faithful human being, and a leader full of compassion and humanity. He was a caring father and an affectionate person throughout his life. Whoever, in his lifetime, came in touch with Mr. Rahim, fondly remembers him as a man of tremendous humility, dignity, and trustworthiness. His passion for continuously improving himself and his religious and ethical righteousness, and his dedication to please his customers – are still prevalent in today’s Rahimafrooz culture – shaping the Group’s present and its future.';
-    var info4 = 'Today’s Rahimafrooz is a dream that Mr. A C Abdur Rahim turned into reality. The business growth, the social commitment, and the great diversity in today’s Rahimafrooz are the outcome of one lifetime of hard work and compassion from Mr. Rahim. He breathed his last on March 14, 1982 in London. But his work and his virtue have kept him alive forever. May Allah grant him with eternal peace.';
+    var info1 = 'Shun Shing Group was established in Hong Kong in the year 1988 and since then Group has involved in international import and export trading business dealing with Cement, Clinker, Gypsum, Limestone, Rock Phosphate and Iron ore. They also set up a strong ocean-going dry cargo ship’s operating division to handle own cargo transportation for on-time delivery to all overseas customers.';
+    var info2 = 'The first factory of Seven Rings Cement was established at Kaligong, Gazipur, Dhaka in the name of Seven Circle Bangladesh Ltd. (SCBL) on the bank of the river Shitalakha which is only 38 KM away from Dhaka city with the current production capacity of 1.9 Million M/tons per annum to cover the demand of Greater Dhaka, Mymensingh, Sylhet and Cumilla.';
+    var info3 = 'The second factory of Seven Rings Cement was established in 2014 in Labanchara, KDA Industrial Area, Khulna under the name Shun Shing Cement Mills Ltd (SSCML) on the bank of Rupsha River which is only 7 KM away from Khulna City Center with production capacity of 1.5 Million M/tons per annum to cover the demand of southwest zone and northern districts of the country.';
+    var info4 = 'Another greenfield VRM project construction has been installed on the bank of Shikolbha River mouth towards Karnafuly River at Shikolbha, Chattogram with the capacity of 1.5 Million Tons per annum under a new company Shun Shing Cement Industries Limited to cover the demand of Greater Chattogram and Noakhali.';
 
 
     return WillPopScope(
@@ -48,7 +48,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     color: Provider.of<ThemeProvider>(context).darkTheme ? Colors.black : null,
                   ),
 
-                  Center(child: Text('A.C. Abdur Rahim', style: titilliumBold.copyWith(fontSize: 18, color: Colors.black))),
+                  Center(child: Text('Seven Rings Cement', style: titilliumBold.copyWith(fontSize: 18, color: Colors.black))),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(info1, style: titilliumRegular.copyWith(fontSize: 14, color: Colors.black87)),

@@ -34,7 +34,7 @@ class ConfirmationDialogCashP extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_LARGE, vertical: 50),
           child: Text(
-              getTranslated(isApprove? 'want_to_approve':'want_to_reject', context),
+              getTranslated(isApprove? 'want_to_accept':'want_to_reject', context),
               style: robotoBold,
               textAlign: TextAlign.center),
         ),

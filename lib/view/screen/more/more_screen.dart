@@ -180,12 +180,14 @@ class _MoreScreenState extends State<MoreScreen> {
                       // url: Provider.of<SplashProvider>(context, listen: false).configModel.staticUrls.faq,
                     )),*/
 
-                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
-
+                      //TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
+                      TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: WebViewScreen(
+                          title: getTranslated('contact_us', context),
+                          url: 'https://sevenringscement.com/about-page/')),
                       //TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
                       TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
                       title: getTranslated('contact_us', context),
-                      url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
+                      url: 'https://sevenringscement.com/our-offices/',
                     )),
 
                       TitleButton2(
@@ -194,19 +196,19 @@ class _MoreScreenState extends State<MoreScreen> {
                         onTap: () { showAnimatedDialog(context, CurrencyDialog(isCurrency: false));},
                       ),
 
-                      TitleButton2(
+                      /*TitleButton2(
                         image: Images.ic_refresh_stock,
                         title: getTranslated('Reload', context),
                         onTap: () => _onClickReload(context),
-                      ),
+                      ),*/
 
                       ListTile(
                         leading: Icon(Icons.app_shortcut, size: 25, color: ColorResources.getPrimary(context)),
                         title: Text(getTranslated('app_info', context), style: titilliumRegular.copyWith(fontSize: Dimensions.FONT_SIZE_LARGE)),
                         trailing: const Text('v-${AppConstants.APP_VERSION_NAME}'),
-                        onTap: () => {
+                        /*onTap: () => {
                           Navigator.push(context, MaterialPageRoute(builder: (_) => ApkDownloadScreen(title: "Apk Downloader", platform: Theme.of(context).platform)))
-                        },
+                        },*/
                       ),
 
                       ListTile(
