@@ -1,0 +1,216 @@
+import 'package:ssg_smart2/view/basewidget/textfield/custom_password_textfield.dart';
+import 'package:flutter/material.dart';
+import 'package:ssg_smart2/localization/language_constrants.dart';
+import 'package:ssg_smart2/provider/auth_provider.dart';
+import 'package:ssg_smart2/provider/theme_provider.dart';
+import 'package:ssg_smart2/utill/custom_themes.dart';
+import 'package:ssg_smart2/utill/dimensions.dart';
+import 'package:ssg_smart2/utill/images.dart';
+import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
+import 'package:provider/provider.dart';
+import '../../../data/model/response/user_info_model.dart';
+import '../../../provider/user_provider.dart';
+import '../../../utill/user_data_storage.dart';
+import '../../basewidget/animated_custom_dialog.dart';
+import '../../basewidget/my_dialog.dart';
+import 'auth_screen.dart';
+
+class ChangePasswordScreen extends StatefulWidget {
+
+  final String? email;
+  final String? otp;
+
+  ChangePasswordScreen({this.email, this.otp});
+
+  @override
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+
+  final GlobalKey<ScaffoldMessengerState> _key = GlobalKey();
+
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rePasswordController = TextEditingController();
+
+  final FocusNode _oldPasswordNode = FocusNode();
+  final FocusNode _passwordNode = FocusNode();
+  final FocusNode _rePasswordNode = FocusNode();
+
+  bool isReadOnlyEmailField = false;
+  String otpValue = '';
+
+  Future<void> resetPassword() async {
+
+    print(' click sendOtpToMail');
+    if(_oldPasswordController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(getTranslated('ENTER_YOUR_OLD_PASSWORD', context)),
+        backgroundColor: Colors.red,
+      ));
+    }else if(_passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(getTranslated('ENTER_YOUR_PASSWORD', context)),
+        backgroundColor: Colors.red,
+      ));
+
+    }else if(_rePasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(getTranslated('RE_ENTER_PASSWORD', context)),
+        backgroundColor: Colors.red,
+      ));
+
+    }else if(_passwordController.text != _rePasswordController.text){
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(getTranslated('PASSWORD_DID_NOT_MATCH', context)),
+        backgroundColor: Colors.red,
+      ));
+
+    }else if (!isPasswordValid(_passwordController.text)){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(getTranslated('PASSWORD_RULES_MESSAGE', context)),
+        backgroundColor: Colors.red,
+      ));
+    } else {
+      print(' Reset Password Call');
+      UserInfoModel? userInfo = await UserDataStorage.getUserInfo();
+      Provider.of<AuthProvider>(context, listen: false).changePassword(userInfo!.userId!,_oldPasswordController.text,_passwordController.text).then((value) async {
+
+        if(value.isSuccess) {
+
+          await showAnimatedDialog(context, MyDialog(
+            icon: Icons.done,
+            title: ''/*getTranslated('RESET', context)*/,
+            description: getTranslated('RESET_SUCCESS', context),
+            rotateAngle: 0,
+          ), dismissible: false);
+
+          _passwordController.clear();
+          _rePasswordController.clear();
+
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>  AuthScreen()), (route) => false);
+
+        }else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(value.message),
+            backgroundColor: Colors.red,
+          ));
+
+        }
+      });
+    }
+  }
+
+  bool isPasswordValid(String password) {
+    if (password.length < 8) return false;
+    if (!password.contains(RegExp(r'\d'))) return false;
+    if (!password.contains(RegExp(r'[a-z]'))) return false;
+    if (!password.contains(RegExp(r'[A-Z]'))) return false;
+    if (!password.contains(RegExp(r'[!$@%]'))) return false;
+
+    return true;
+  }
+
+  @override
+  void dispose() {
+    _oldPasswordController.dispose();
+    _passwordController.dispose();
+    _rePasswordController.dispose();
+
+    _oldPasswordNode.dispose();
+    _passwordNode.dispose();
+    _rePasswordNode.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      key: _key,
+      body: Container(
+        decoration: BoxDecoration(
+          image: Provider.of<ThemeProvider>(context).darkTheme ? null : DecorationImage(image: AssetImage(Images.background), fit: BoxFit.fill),
+        ),
+        child: Column(
+          children: [
+
+            SafeArea(child: Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back_ios_outlined),
+                onPressed: () => Navigator.pop(context),
+              ),
+            )),
+
+            Expanded(
+              child: ListView(padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE), children: [
+
+                Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Image.asset(Images.durti_left, height: 120, width: 180),
+                ),
+
+                Text(getTranslated('change_password', context), style: titilliumSemiBold),
+
+                Row(children: [
+                  Expanded(flex: 1, child: Divider(thickness: 1, color: Theme.of(context).primaryColor)),
+                  Expanded(flex: 2, child: Divider(thickness: 0.2, color: Theme.of(context).primaryColor)),
+                ]),
+
+                SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                Text(
+                    'Your password must be at least 8 characters\n'+
+                        'and should include a combination of\n'+
+                        'numbers, letters and special characters\n'+
+                        '(\!\$\@\%)'
+                ),
+                SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                CustomPasswordTextField(
+                  controller: _oldPasswordController,
+                  focusNode: _oldPasswordNode,
+                  nextNode: _passwordNode,
+                  hintTxt: getTranslated('ENTER_YOUR_OLD_PASSWORD', context),
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: 10),
+
+                CustomPasswordTextField(
+                  controller: _passwordController,
+                  focusNode: _passwordNode,
+                  nextNode: _rePasswordNode,
+                  hintTxt: getTranslated('ENTER_YOUR_PASSWORD', context),
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: 10),
+
+                CustomPasswordTextField(
+                  controller: _rePasswordController,
+                  focusNode: _rePasswordNode,
+                  hintTxt: getTranslated('RE_ENTER_PASSWORD', context),
+                  textInputAction: TextInputAction.done,
+                ),
+
+                SizedBox(height: 30),
+
+                Builder(
+                  builder: (context) => !Provider.of<AuthProvider>(context).isLoading! ? CustomButton(
+                    buttonText: getTranslated('RESET', context),
+                    onTap: () {
+
+                      resetPassword();
+
+                    },
+                  ) : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor))),
+                ),
+              ]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

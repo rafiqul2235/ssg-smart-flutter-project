@@ -27,9 +27,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   final GlobalKey<ScaffoldMessengerState> _key = GlobalKey();
 
+  final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _rePasswordController = TextEditingController();
 
+  final FocusNode _oldPasswordNode = FocusNode();
   final FocusNode _passwordNode = FocusNode();
   final FocusNode _rePasswordNode = FocusNode();
 
@@ -39,8 +41,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void resetPassword() {
 
     print(' click sendOtpToMail');
-
-    if(_passwordController.text.isEmpty) {
+    if(_oldPasswordController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(getTranslated('ENTER_YOUR_OLD_PASSWORD', context)),
+        backgroundColor: Colors.red,
+      ));
+    }else if(_passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(getTranslated('ENTER_YOUR_PASSWORD', context)),
         backgroundColor: Colors.red,
@@ -92,9 +98,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   void dispose() {
-
+    _oldPasswordController.dispose();
     _passwordController.dispose();
     _rePasswordController.dispose();
+
+    _oldPasswordNode.dispose();
     _passwordNode.dispose();
     _rePasswordNode.dispose();
 
@@ -125,7 +133,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: ListView(padding: EdgeInsets.all(Dimensions.PADDING_SIZE_LARGE), children: [
 
                 Padding(
-                  padding: EdgeInsets.all(50),
+                  padding: EdgeInsets.all(30),
                   child: Image.asset(Images.durti_left, height: 120, width: 180),
                 ),
 
@@ -137,6 +145,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ]),
 
                 SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                Text(
+                  'Your password must be at least 8 characters\n'+
+                      'and should include a combination of\n'+
+                      'numbers, letters and special characters\n'+
+                      '(\!\$\@\%)'
+                ),
+                SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                CustomPasswordTextField(
+                  controller: _oldPasswordController,
+                  focusNode: _oldPasswordNode,
+                  nextNode: _passwordNode,
+                  hintTxt: getTranslated('ENTER_YOUR_OLD_PASSWORD', context),
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: 10),
 
                 CustomPasswordTextField(
                   controller: _passwordController,

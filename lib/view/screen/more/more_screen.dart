@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
+import 'package:ssg_smart2/view/screen/auth/change_password_screen.dart';
+import 'package:ssg_smart2/view/screen/auth/reset_password_screen.dart';
 import 'package:ssg_smart2/view/screen/more/widget/about_us.dart';
 import 'package:ssg_smart2/view/screen/more/widget/contact_us.dart';
 import 'package:ssg_smart2/view/screen/more/widget/currency_dialog.dart';
@@ -184,6 +186,7 @@ class _MoreScreenState extends State<MoreScreen> {
                       TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: WebViewScreen(
                           title: getTranslated('contact_us', context),
                           url: 'https://sevenringscement.com/about-page/')),
+
                       //TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),
                       TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: WebViewScreen(
                       title: getTranslated('contact_us', context),
@@ -196,11 +199,16 @@ class _MoreScreenState extends State<MoreScreen> {
                         onTap: () { showAnimatedDialog(context, CurrencyDialog(isCurrency: false));},
                       ),
 
-                      /*TitleButton2(
+                      TitleButton(
+                          image: Images.reset_password,
+                          title: getTranslated('change_password', context),
+                          navigateTo: ChangePasswordScreen()),
+
+                      TitleButton2(
                         image: Images.ic_refresh_stock,
                         title: getTranslated('Reload', context),
                         onTap: () => _onClickReload(context),
-                      ),*/
+                      ),
 
                       ListTile(
                         leading: Icon(Icons.app_shortcut, size: 25, color: ColorResources.getPrimary(context)),
