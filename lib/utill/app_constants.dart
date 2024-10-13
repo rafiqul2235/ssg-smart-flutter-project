@@ -2,7 +2,6 @@ import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 
-
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
@@ -98,3 +97,4 @@ class AppConstants {
     LanguageModel(imageUrl: '', languageName: 'বাংলা', countryCode: 'BD', languageCode: 'bn'),
   ];
 }
+

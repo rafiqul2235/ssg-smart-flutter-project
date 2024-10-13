@@ -2,13 +2,9 @@ import 'dart:async';
 
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
 import 'package:ssg_smart2/view/screen/auth/change_password_screen.dart';
-import 'package:ssg_smart2/view/screen/auth/reset_password_screen.dart';
-import 'package:ssg_smart2/view/screen/more/widget/about_us.dart';
-import 'package:ssg_smart2/view/screen/more/widget/contact_us.dart';
 import 'package:ssg_smart2/view/screen/more/widget/currency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
-import 'package:ssg_smart2/provider/auth_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
@@ -200,6 +196,7 @@ class _MoreScreenState extends State<MoreScreen> {
                           image: Images.reset_password,
                           title: getTranslated('change_password', context),
                           navigateTo: ChangePasswordScreen()),
+
                       TitleButton2(
                         image: Images.ic_refresh_stock,
                         title: getTranslated('Reload', context),
