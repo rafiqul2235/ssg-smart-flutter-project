@@ -9,6 +9,7 @@ import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
+import '../../basewidget/my_dialog.dart';
 import '../home/dashboard_screen.dart';
 
 class ApprovalListPage extends StatefulWidget {
@@ -49,6 +50,40 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
     Provider.of<ApprovalProvider>(context, listen: false).fetchApprovalFlow(employeeNumber);
+  }
+
+  void _showResultDialog(BuildContext context, bool isSuccess, String message) {
+    showAnimatedDialog(
+      context,
+      MyDialog(
+        icon: isSuccess ? Icons.check : Icons.error,
+        title: isSuccess ? 'Success' : 'Error',
+        description: message,
+        rotateAngle: 0,
+        positionButtonTxt: 'Ok',
+      ),
+      dismissible: false,
+    );
+  }
+
+  void _handleApprovalAction(BuildContext context, ApprovalFlow approvalFlow, bool isApprove) {
+    String notificationId = approvalFlow.notificationId;
+    String action = isApprove ? "APPROVED" : "REJECTED";
+    showAnimatedDialog(
+        context,
+        ConfirmationDialog(
+            notificationId: notificationId,
+            action: action,
+            comment: _commentControllers[notificationId]!.text,
+            isApprove: isApprove,
+            onResult: (isSuccess, message) {
+              _showResultDialog(context, isSuccess, message);
+              _reloadPage();
+              _commentControllers[notificationId]!.clear();
+            }
+        ),
+      isFlip: true,
+    );
   }
 
   @override
@@ -292,22 +327,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () {
-                  String notificationId = approvalFlow.notificationId;
-                  showAnimatedDialog(
-                      context,
-                      ConfirmationDialog(
-                        notificationId: notificationId,
-                        action: "REJECTED",
-                        comment: _commentControllers[notificationId]!.text,
-                        isApprove: false,
-                        onConfirmed: () {
-                          _reloadPage();
-                          _commentControllers[notificationId]!.clear();
-                        },
-                      ),
-                      isFlip: true);
-                },
+                onPressed: () => _handleApprovalAction(context, approvalFlow, false),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
@@ -323,22 +343,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () {
-                  String notificationId = approvalFlow.notificationId;
-                  showAnimatedDialog(
-                      context,
-                      ConfirmationDialog(
-                        notificationId: notificationId,
-                        action: "APPROVED",
-                        comment: _commentControllers[notificationId]!.text,
-                        isApprove: true,
-                        onConfirmed: () {
-                          _reloadPage();
-                          _commentControllers[notificationId]!.clear();
-                        },
-                      ),
-                      isFlip: true);
-                },
+                onPressed: () => _handleApprovalAction(context, approvalFlow, true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(
