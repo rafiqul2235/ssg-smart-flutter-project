@@ -16,8 +16,6 @@ import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
 import '../leave/leave_application_screen.dart';
-import '../managementdashboard/managemrnt_d_menu.dart';
-import '../notification/notification_screen.dart';
 import 'leave_approval_history.dart';
 
 class SelfService extends StatefulWidget {
