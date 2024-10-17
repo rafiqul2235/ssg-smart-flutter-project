@@ -14,6 +14,7 @@ import '../../../provider/user_provider.dart';
 import '../../../utill/images.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
+import '../../basewidget/my_dialog.dart';
 import '../home/dashboard_screen.dart';
 import 'cash_pay_akg_history_screen.dart';
 
@@ -55,6 +56,44 @@ class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
     Provider.of<CashPaymentProvider>(context, listen: false).fetchCashPayData(employeeNumber);
   }
+
+
+
+  void _showResultDialog(BuildContext context, bool isSuccess, String message) {
+    showAnimatedDialog(
+      context,
+      MyDialog(
+        icon: isSuccess ? Icons.check : Icons.error,
+        title: isSuccess ? 'Success' : 'Error',
+        description: message,
+        rotateAngle: 0,
+        positionButtonTxt: 'Ok',
+      ),
+      dismissible: false,
+    );
+  }
+
+  void _handleApprovalAction(BuildContext context, CashPaymentModel cashPayment, bool isApprove) {
+    print("Handle data: $cashPayment");
+    String transactionId = cashPayment.transactionId;
+    String empId = cashPayment.employeeNumber;
+    String action = isApprove ? "Accepted" : "Rejected";
+    showAnimatedDialog(
+      context,
+      ConfirmationDialogCashP(
+          transactionId: transactionId,
+          action: action,
+          empId: empId,
+          isApprove: isApprove,
+          onResult: (isSuccess, message) {
+            _showResultDialog(context, isSuccess, message);
+            _reloadPage();
+          }
+      ),
+      isFlip: true,
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,27 +235,7 @@ class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
     );
   }
 
-  Widget _leaveTypeBox(String leaveType, String days) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: Colors.orange[200]!),
-      ),
-      child: Column(
-        children: [
-          Text(
-            leaveType,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 4),
-        ],
-      ),
-    );
-  }
-  Widget bottom(CashPaymentModel approvalFlow) {
+  Widget bottom(CashPaymentModel cashPayment) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -281,45 +300,9 @@ class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
           const SizedBox(height: 16),
           Row(
             children: [
-              // Expanded(
-              //   flex: 2,
-              //   child: SizedBox(
-              //     height: 36,
-              //     child: TextField(
-              //      // controller: _commentController,
-              //       decoration: InputDecoration(
-              //         hintText: 'Enter comment...',
-              //         hintStyle: TextStyle(fontSize: 14),
-              //         fillColor: Colors.white,
-              //         filled: true,
-              //         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              //         border: OutlineInputBorder(
-              //           borderRadius: BorderRadius.circular(8),
-              //           borderSide: BorderSide.none,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () {
-                  String notificationId = approvalFlow.transactionId;
-                  String empId = approvalFlow.employeeNumber;
-                  showAnimatedDialog(
-                      context,
-                      ConfirmationDialogCashP(
-                        notificationId: notificationId,
-                        action: "Rejected",
-                        empId: empId,
-                        isApprove: false,
-                        onConfirmed: () {
-                          _reloadPage();
-                          _commentControllers[notificationId]!.clear();
-                        },
-                      ),
-                      isFlip: true);
-                },
+                onPressed: () => _handleApprovalAction(context, cashPayment, false),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
@@ -335,24 +318,7 @@ class _CashPaymentAkgPageState extends State<CashPaymentAkgPage> {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () {
-                  String notificationId = approvalFlow.transactionId;
-                  String empId = approvalFlow.employeeNumber;
-                  showAnimatedDialog(
-                      context,
-                      ConfirmationDialogCashP(
-                        notificationId: notificationId,
-                        action: "Accepted",
-                        empId: empId,
-                        //comment: _commentControllers[notificationId]!.text,
-                        isApprove: true,
-                        onConfirmed: () {
-                          _reloadPage();
-                          _commentControllers[notificationId]!.clear();
-                        },
-                      ),
-                      isFlip: true);
-                },
+                onPressed: () => _handleApprovalAction(context, cashPayment, true),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(

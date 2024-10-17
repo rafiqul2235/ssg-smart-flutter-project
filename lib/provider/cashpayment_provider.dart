@@ -42,13 +42,13 @@ class CashPaymentProvider with ChangeNotifier{
     }
   }
 
-  Future<void> updateCashPaymentAkg(BuildContext context, String notificationId, String action, String empId) async {
+  Future<void> updateCashPaymentAkg(BuildContext context, String transactionId, String action, String empId) async {
     _isLoading = true;
     _error = '';
     notifyListeners();
 
     try {
-      final response = await cashPaymentRepo.handleCashPayment(notificationId, action,empId);
+      final response = await cashPaymentRepo.handleCashPayment(transactionId, action,empId);
       if (response.response != null && response.response?.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.response.toString());
         if (responseData['success'] == 1) {

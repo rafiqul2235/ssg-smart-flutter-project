@@ -7,19 +7,19 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 
 class ConfirmationDialogCashP extends StatefulWidget {
-  final String notificationId;
+  final String transactionId;
   final String action;
   final String empId;
   final bool isApprove;
-  final VoidCallback onConfirmed;
+  final Function(bool isSuccess, String message) onResult;
 
   const ConfirmationDialogCashP({
     Key? key,
-    required this.notificationId,
+    required this.transactionId,
     required this.action,
     required this.empId,
     required this.isApprove,
-    required this.onConfirmed
+    required this.onResult
   }) : super(key: key);
 
   @override
@@ -42,7 +42,8 @@ class _ConfirmationDialogCashPState extends State<ConfirmationDialogCashP> {
         const Divider(height: 0, color: ColorResources.HINT_TEXT_COLOR),
         Row(children: [
           Expanded(child: InkWell(
-            onTap: _handleYesButton,
+            onTap: () => _handleConfirmation(context),
+            //onTap: _handleYesButton,
             child: Container(
               padding: const EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
               alignment: Alignment.center,
@@ -64,13 +65,21 @@ class _ConfirmationDialogCashPState extends State<ConfirmationDialogCashP> {
     );
   }
 
-  Future<void> _handleYesButton() async {
+  Future<void> _handleConfirmation(BuildContext context) async {
     Navigator.pop(context);
     final cashProvider = Provider.of<CashPaymentProvider>(context, listen: false);
-    await cashProvider.updateCashPaymentAkg(context, widget.notificationId, widget.action, widget.empId);
+    await cashProvider.updateCashPaymentAkg(context, widget.transactionId, widget.action, widget.empId);
     print("working handle function");
 
-    if (mounted) {
+    if (cashProvider.isSuccess != null) {
+      widget.onResult(true, cashProvider.isSuccess!);
+    } else if (cashProvider.error != null) {
+      widget.onResult(false, cashProvider.error!);
+    } else {
+      widget.onResult(false, "An unknown error occurred");
+    }
+
+    /*if (mounted) {
       setState(() {
         if (cashProvider.isSuccess != null) {
           widget.onConfirmed();
@@ -81,46 +90,7 @@ class _ConfirmationDialogCashPState extends State<ConfirmationDialogCashP> {
           _showErrorDialog("An unknown error occurred");
         }
       });
-    }
+    }*/
   }
 
-  void _showSuccessDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Success'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
