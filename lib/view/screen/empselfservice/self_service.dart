@@ -8,6 +8,8 @@ import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/salary_loan.dart';
+import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen.dart';
+import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen1.dart';
 import '../../../data/model/response/self_service.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
@@ -46,6 +48,7 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.salary_advance, menuName: 'Salary Adv.', navigateTo: SalaryAdvanceScreen(),));
     _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: PfLoanScreen(),));
     _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
+    _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'WPPF Ledger', navigateTo: WppfLedgerScreen()));
   }
 
 

@@ -18,6 +18,7 @@ import 'package:ssg_smart2/data/repository/salaryAdv_repo.dart';
 import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/data/repository/search_repo.dart';
 import 'package:ssg_smart2/data/repository/splash_repo.dart';
+import 'package:ssg_smart2/data/repository/wppf_repo.dart';
 import 'package:ssg_smart2/helper/network_info.dart';
 import 'package:ssg_smart2/provider/approval_hisotry_provider.dart';
 import 'package:ssg_smart2/provider/approval_provider.dart';
@@ -43,6 +44,7 @@ import 'package:ssg_smart2/provider/splash_provider.dart';
 import 'package:ssg_smart2/provider/support_ticket_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/provider/user_dashboard_provider.dart';
+import 'package:ssg_smart2/provider/wppf_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,6 +86,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CashPaymentRepo(dioClient: sl()));
   sl.registerLazySingleton(() => SalaryAdvRepo(dioClient: sl()));
   sl.registerLazySingleton(() => PfLoanRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => WppfRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -110,6 +113,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CashPaymentProvider(cashPaymentRepo: sl()));
   sl.registerLazySingleton(() => SalaryAdvProvider(salaryAdvRepo: sl()));
   sl.registerLazySingleton(() => PfLoanProvider(pfLoanRepo: sl()));
+  sl.registerLazySingleton(() => WppfProvider(wppfRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

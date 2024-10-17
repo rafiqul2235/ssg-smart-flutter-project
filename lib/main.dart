@@ -14,6 +14,7 @@ import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/user_dashboard_provider.dart';
+import 'package:ssg_smart2/provider/wppf_provider.dart';
 import 'package:ssg_smart2/theme/dark_theme.dart';
 import 'package:ssg_smart2/theme/light_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -71,6 +72,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<CashPaymentProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SalaryAdvProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<PfLoanProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<WppfProvider>()),
     ],
     child: const MyApp(),
   ));
