@@ -5,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
-  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
+  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  // static const String BASE_URL = 'http://192.168.7.98/'; //test
 
   //static const String BASE_URL = 'http://10.25.4.120/';
 
@@ -49,6 +49,7 @@ class AppConstants {
   static const String PF_INSTALLMENT = 'pf_installment';
   static const String SAVE_LOAN_DATA = 'save_loan_data';
   static const String CHANGE_PASSWORD = 'change_password_flutter';
+  static const String WPPF_LEDGER = 'wppf_ledger';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

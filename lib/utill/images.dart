@@ -97,6 +97,8 @@ class Images {
   static const String gcf_global = 'assets/images/icon_global.png';
   static const String visiting_card = 'assets/images/business.png';
   static const String cash_payment = 'assets/images/receivecash.png';
+  static const String wppf_ledger = 'assets/images/icons-wppf-ledger.png';
+  static const String wppf_ledger1 = 'assets/images/icon-wppf-ledger.png';
 
 
 
