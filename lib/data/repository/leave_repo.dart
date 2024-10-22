@@ -64,9 +64,28 @@ class LeaveRepo {
 
   Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
+      FormData formData = FormData.fromMap(leaveData.toJson());
+      if (leaveData.attachment != null){
+        formData.files.add(
+          MapEntry(
+            'attachment',
+            await MultipartFile.fromFile(
+              leaveData.attachment!.path,
+              filename: leaveData.attachment!.name,
+              contentType: DioMediaType.parse('application/octet-stream'),
+            )
+          )
+        );
+      }
+      print("data from repo: $formData");
       Response response = await dioClient.post(
         AppConstants.LEAVE_APPLY,
-        data:leaveData.toJson(),
+        data:formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        )
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {

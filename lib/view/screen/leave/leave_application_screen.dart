@@ -68,8 +68,9 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
-  File? file;
-  final _picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
+  XFile? _attachmentFile;
+
   bool firstTime = true;
 
   String workingAreaName = '';
@@ -107,6 +108,59 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
       }
     }
   }
+  // Method to show image source selection dialog
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+// Add this method to handle file picking
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+          source: source,
+          maxHeight: 1800,
+          maxWidth: 1800,
+          imageQuality: 85,
+      );
+      if (pickedFile != null) {
+        setState(() {
+          _attachmentFile = pickedFile;
+        });
+      }
+    } catch(e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error picking image: $e"))
+      );
+    }
+
+  }
 
   void _onClickSubmit () async {
 
@@ -139,6 +193,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         startDate: _startDateController.text,
         endDate: _endDateController.text,
         duration: _durationController.text,
+        attachment: _attachmentFile,
         comment: _leaveCommentsController.text
     );
     print("Leave data: $leaveData");
@@ -394,70 +449,143 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                 }
                             ),
 
-                            // for Start Date
+                            // // for Start Date
+                            // Container(
+                            //     margin: EdgeInsets.only(top: 5.0),
+                            //   child: Column(
+                            //     children: [
+                            //       Row(
+                            //         children: [
+                            //           Icon(Icons.date_range,
+                            //               color:
+                            //                   ColorResources.getPrimary(context),
+                            //               size: 20),
+                            //           const SizedBox(
+                            //             width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
+                            //           ),
+                            //           MandatoryText(text: 'Start Date', mandatoryText: '*',
+                            //               textStyle: titilliumRegular)
+                            //         ],
+                            //       ),
+                            //       const SizedBox(
+                            //           height: Dimensions.MARGIN_SIZE_SMALL),
+                            //       CustomDateTimeTextField(
+                            //         controller: _startDateController,
+                            //         focusNode: _startDateFocus,
+                            //         nextNode: _endDateFocus,
+                            //         textInputAction: TextInputAction.next,
+                            //         isTime: false,
+                            //         readyOnly: false,
+                            //         onChanged: (v) => { _durationCalculation()},
+                            //         validator: _validateStartDate,
+                            //       ),
+                            //
+                            //     ],
+                            //   ),
+                            // ),
+                            //
+                            // // for End Date
+                            // Container(
+                            //     margin: EdgeInsets.only(top: 5.0),
+                            //   child: Column(
+                            //     children: [
+                            //       Row(
+                            //         children: [
+                            //           Icon(Icons.date_range,
+                            //               color:
+                            //                   ColorResources.getPrimary(context),
+                            //               size: 20),
+                            //           const SizedBox(
+                            //               width:
+                            //                   Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                            //           MandatoryText(text: 'End Date', mandatoryText: '*',
+                            //               textStyle: titilliumRegular)
+                            //         ],
+                            //       ),
+                            //       const SizedBox(
+                            //           height: Dimensions.MARGIN_SIZE_SMALL),
+                            //       CustomDateTimeTextField(
+                            //         controller: _endDateController,
+                            //         focusNode: _endDateFocus,
+                            //         //nextNode: _toDateFocus,
+                            //         textInputAction: TextInputAction.next,
+                            //         isTime: false,
+                            //         readyOnly: false,
+                            //         onChanged: (v) => { _durationCalculation()},
+                            //         validator: _validateEndDate,
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // Date Selection Row (Horizontal Layout)
                             Container(
-                                margin: EdgeInsets.only(top: 5.0),
-                              child: Column(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.date_range,
-                                          color:
-                                              ColorResources.getPrimary(context),
-                                          size: 20),
-                                      const SizedBox(
-                                        width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
-                                      ),
-                                      MandatoryText(text: 'Start Date', mandatoryText: '*',
-                                          textStyle: titilliumRegular)
-                                    ],
+                                  // Start Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.date_range,
+                                                color: ColorResources.getPrimary(context),
+                                                size: 20),
+                                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'Start Date',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDateTimeTextField(
+                                          controller: _startDateController,
+                                          focusNode: _startDateFocus,
+                                          nextNode: _endDateFocus,
+                                          textInputAction: TextInputAction.next,
+                                          isTime: false,
+                                          readyOnly: false,
+                                          onChanged: (v) => {_durationCalculation()},
+                                          validator: _validateStartDate,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(
-                                      height: Dimensions.MARGIN_SIZE_SMALL),
-                                  CustomDateTimeTextField(
-                                    controller: _startDateController,
-                                    focusNode: _startDateFocus,
-                                    nextNode: _endDateFocus,
-                                    textInputAction: TextInputAction.next,
-                                    isTime: false,
-                                    readyOnly: false,
-                                    onChanged: (v) => { _durationCalculation()},
-                                    validator: _validateStartDate,
-                                  ),
-
-                                ],
-                              ),
-                            ),
-
-                            // for End Date
-                            Container(
-                                margin: EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.date_range,
-                                          color:
-                                              ColorResources.getPrimary(context),
-                                          size: 20),
-                                      const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'End Date', mandatoryText: '*',
-                                          textStyle: titilliumRegular)
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                      height: Dimensions.MARGIN_SIZE_SMALL),
-                                  CustomDateTimeTextField(
-                                    controller: _endDateController,
-                                    focusNode: _endDateFocus,
-                                    //nextNode: _toDateFocus,
-                                    textInputAction: TextInputAction.next,
-                                    isTime: false,
-                                    readyOnly: false,
-                                    onChanged: (v) => { _durationCalculation()},
-                                    validator: _validateEndDate,
+                                  SizedBox(width: 16.0),
+                                  // End Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.date_range,
+                                                color: ColorResources.getPrimary(context),
+                                                size: 20),
+                                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'End Date',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDateTimeTextField(
+                                          controller: _endDateController,
+                                          focusNode: _endDateFocus,
+                                          textInputAction: TextInputAction.next,
+                                          isTime: false,
+                                          readyOnly: false,
+                                          onChanged: (v) => {_durationCalculation()},
+                                          validator: _validateEndDate,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -496,6 +624,72 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                               ),
                             ),
 
+                            //Attachment field
+                            // Attachment Field (New)
+                            Container(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.attach_file,
+                                          color: ColorResources.getPrimary(context),
+                                          size: 20),
+                                      const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                      Text('Attachment', style: titilliumRegular),
+                                    ],
+                                  ),
+                                  const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 45,
+                                          padding: EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.black12),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  _attachmentFile?.path.split('/').last ?? 'No file chosen',
+                                                  style: titilliumRegular.copyWith(
+                                                      color: _attachmentFile != null
+                                                          ? Colors.black
+                                                          : Colors.grey
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.clear),
+                                                onPressed: _attachmentFile != null
+                                                    ? () => setState(() => _attachmentFile = null)
+                                                    : null,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      ElevatedButton.icon(
+                                        onPressed: _showImageSourceDialog,
+                                        icon: Icon(Icons.upload_file),
+                                        label: Text('Choose File'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Theme.of(context).primaryColorLight,
+                                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                             // for  leave comment
                             Container(
                                 margin: EdgeInsets.only(top: 5.0),

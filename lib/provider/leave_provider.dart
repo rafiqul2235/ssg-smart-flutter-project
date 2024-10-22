@@ -68,6 +68,7 @@ class LeaveProvider with ChangeNotifier {
   Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
     _resetState();
     showLoading();
+    print("submitted data: $leaveData");
 
     try{
       await _checkDuplicateLeave(leaveData);
