@@ -4,9 +4,11 @@ import 'package:geolocator/geolocator.dart';
 
 class AppConstants {
   static const String APP_NAME = 'SMART';
-  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
-  //static const String BASE_URL = 'http://10.25.4.120/';
+  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  //static const String BASE_URL = 'http://10.25.4.120/'; production
+  // static const String BASE_URL = 'http://192.168.7.98/'; //test
+  static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+
 
   static const int APP_VERSION_CODE = 6;
   static const String APP_VERSION_NAME = '1.0.5';
@@ -48,6 +50,10 @@ class AppConstants {
   static const String SAVE_LOAN_DATA = 'save_loan_data';
   static const String CHANGE_PASSWORD = 'change_password_flutter';
   static const String WPPF_LEDGER = 'wppf_ledger';
+
+  // R&D project
+  static const String ATTACHMENT_PROJECT = 'attachment_project';
+  static const String FETCH_ATTACHMENT = 'fetch_attachment';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

@@ -16,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
   final Function? onSecondActionPressed;
   final Function? onBackPressed;
 
-  CustomAppBar({required this.title, this.isBackButtonExist = true, this.icon,
+  CustomAppBar({ required this.title, this.isBackButtonExist = true, this.icon,
     this.secondIcon, this.widget, this.onActionPressed, this.onSecondActionPressed, this.onBackPressed});
 
   @override

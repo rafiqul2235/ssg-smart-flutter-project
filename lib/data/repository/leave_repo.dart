@@ -64,20 +64,25 @@ class LeaveRepo {
 
   Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
+      print("Enter repo:");
       FormData formData = FormData.fromMap(leaveData.toJson());
-      if (leaveData.attachment != null){
+      final attachment = leaveData.attachment;
+      if (attachment != null){
+        List<int> fileBytes = attachment!.bytes!;
         formData.files.add(
           MapEntry(
             'attachment',
-            await MultipartFile.fromFile(
-              leaveData.attachment!.path,
-              filename: leaveData.attachment!.name,
-              contentType: DioMediaType.parse('application/octet-stream'),
+            await MultipartFile.fromBytes(
+              fileBytes,
+              filename: attachment.name,
+              contentType: DioMediaType.parse(
+                  getContentType(attachment.extension ?? '')
+              ),
             )
           )
         );
       }
-      print("data from repo: $formData");
+      print("data from repo: ${formData.toString()}");
       Response response = await dioClient.post(
         AppConstants.LEAVE_APPLY,
         data:formData,
@@ -200,6 +205,23 @@ class LeaveRepo {
     } catch (e) {
       print('Leave Repo getLeaveType ${e}');
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+  // helper method to determine content type
+  String getContentType(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'application/octet-stream';
     }
   }
 

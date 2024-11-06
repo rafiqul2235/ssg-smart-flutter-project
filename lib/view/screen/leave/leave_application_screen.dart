@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,11 +68,16 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
-
+  // image picker variable
   final ImagePicker _picker = ImagePicker();
   XFile? _attachmentFile;
 
-  bool firstTime = true;
+  // file picker variable
+  PlatformFile? _attachmentFiles;
+  final List<String> _allowedExtensions = [
+    'pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'
+  ];
+  final int _maxFileSize = 5 * 1024 * 1024;
 
   String workingAreaName = '';
 
@@ -109,59 +115,86 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
   // Method to show image source selection dialog
-  void _showImageSourceDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Select Image Source'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Camera'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // void _showImageSourceDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Select Image Source'),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             ListTile(
+  //               leading: Icon(Icons.camera_alt),
+  //               title: Text('Camera'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickImage(ImageSource.camera);
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.photo_library),
+  //               title: Text('Gallery'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickImage(ImageSource.gallery);
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 // Add this method to handle file picking
-  Future<void> _pickImage(ImageSource source) async {
+//   Future<void> _pickImage(ImageSource source) async {
+//     try {
+//       final XFile? pickedFile = await _picker.pickImage(
+//           source: source,
+//           maxHeight: 1800,
+//           maxWidth: 1800,
+//           imageQuality: 85,
+//       );
+//       if (pickedFile != null) {
+//         setState(() {
+//           _attachmentFile = pickedFile;
+//         });
+//       }
+//     } catch(e) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("Error picking image: $e"))
+//       );
+//     }
+//
+//   }
+// Method to handle file picking
+  Future<void> _pickFile() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-          source: source,
-          maxHeight: 1800,
-          maxWidth: 1800,
-          imageQuality: 85,
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: _allowedExtensions,
+        allowMultiple: false,
+        withData: true, // Keep file data in memory
       );
-      if (pickedFile != null) {
+
+      if (result != null) {
+        PlatformFile file = result.files.first;
+
+        // Check file size
+        if (file.size > _maxFileSize) {
+          _showErrorDialog('File size should not exceed 5MB');
+          return;
+        }
+
         setState(() {
-          _attachmentFile = pickedFile;
+          _attachmentFiles = file;
         });
       }
-    } catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error picking image: $e"))
-      );
+
+    } catch (e) {
+      _showErrorDialog('Error picking file: $e');
     }
-
   }
-
   void _onClickSubmit () async {
 
     if(!_formKey.currentState!.validate()){
@@ -193,7 +226,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         startDate: _startDateController.text,
         endDate: _endDateController.text,
         duration: _durationController.text,
-        attachment: _attachmentFile,
+        attachment: _attachmentFiles,
         comment: _leaveCommentsController.text
     );
     print("Leave data: $leaveData");
@@ -449,74 +482,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                 }
                             ),
 
-                            // // for Start Date
-                            // Container(
-                            //     margin: EdgeInsets.only(top: 5.0),
-                            //   child: Column(
-                            //     children: [
-                            //       Row(
-                            //         children: [
-                            //           Icon(Icons.date_range,
-                            //               color:
-                            //                   ColorResources.getPrimary(context),
-                            //               size: 20),
-                            //           const SizedBox(
-                            //             width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
-                            //           ),
-                            //           MandatoryText(text: 'Start Date', mandatoryText: '*',
-                            //               textStyle: titilliumRegular)
-                            //         ],
-                            //       ),
-                            //       const SizedBox(
-                            //           height: Dimensions.MARGIN_SIZE_SMALL),
-                            //       CustomDateTimeTextField(
-                            //         controller: _startDateController,
-                            //         focusNode: _startDateFocus,
-                            //         nextNode: _endDateFocus,
-                            //         textInputAction: TextInputAction.next,
-                            //         isTime: false,
-                            //         readyOnly: false,
-                            //         onChanged: (v) => { _durationCalculation()},
-                            //         validator: _validateStartDate,
-                            //       ),
-                            //
-                            //     ],
-                            //   ),
-                            // ),
-                            //
-                            // // for End Date
-                            // Container(
-                            //     margin: EdgeInsets.only(top: 5.0),
-                            //   child: Column(
-                            //     children: [
-                            //       Row(
-                            //         children: [
-                            //           Icon(Icons.date_range,
-                            //               color:
-                            //                   ColorResources.getPrimary(context),
-                            //               size: 20),
-                            //           const SizedBox(
-                            //               width:
-                            //                   Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            //           MandatoryText(text: 'End Date', mandatoryText: '*',
-                            //               textStyle: titilliumRegular)
-                            //         ],
-                            //       ),
-                            //       const SizedBox(
-                            //           height: Dimensions.MARGIN_SIZE_SMALL),
-                            //       CustomDateTimeTextField(
-                            //         controller: _endDateController,
-                            //         focusNode: _endDateFocus,
-                            //         //nextNode: _toDateFocus,
-                            //         textInputAction: TextInputAction.next,
-                            //         isTime: false,
-                            //         readyOnly: false,
-                            //         onChanged: (v) => { _durationCalculation()},
-                            //         validator: _validateEndDate,
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
                             // Date Selection Row (Horizontal Layout)
                             Container(
                               margin: EdgeInsets.only(top: 5.0),
@@ -626,70 +591,163 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
                             //Attachment field
                             // Attachment Field (New)
-                            Container(
-                              margin: EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.attach_file,
-                                          color: ColorResources.getPrimary(context),
-                                          size: 20),
-                                      const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      Text('Attachment', style: titilliumRegular),
-                                    ],
-                                  ),
-                                  const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 45,
-                                          padding: EdgeInsets.symmetric(horizontal: 10),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.black12),
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  _attachmentFile?.path.split('/').last ?? 'No file chosen',
-                                                  style: titilliumRegular.copyWith(
-                                                      color: _attachmentFile != null
-                                                          ? Colors.black
-                                                          : Colors.grey
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.clear),
-                                                onPressed: _attachmentFile != null
-                                                    ? () => setState(() => _attachmentFile = null)
-                                                    : null,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      ElevatedButton.icon(
-                                        onPressed: _showImageSourceDialog,
-                                        icon: Icon(Icons.upload_file),
-                                        label: Text('Choose File'),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Theme.of(context).primaryColorLight,
-                                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                            // Container(
+                            //   margin: EdgeInsets.only(top: 5.0),
+                            //   child: Column(
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       Row(
+                            //         children: [
+                            //           Icon(Icons.attach_file,
+                            //               color: ColorResources.getPrimary(context),
+                            //               size: 20),
+                            //           const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                            //           Text('Attachment', style: titilliumRegular),
+                            //         ],
+                            //       ),
+                            //       const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                            //       Row(
+                            //         children: [
+                            //           Expanded(
+                            //             child: Container(
+                            //               height: 45,
+                            //               padding: EdgeInsets.symmetric(horizontal: 10),
+                            //               decoration: BoxDecoration(
+                            //                 border: Border.all(color: Colors.black12),
+                            //                 borderRadius: BorderRadius.circular(6),
+                            //               ),
+                            //               child: Row(
+                            //                 children: [
+                            //                   Expanded(
+                            //                     child: Text(
+                            //                       _attachmentFile?.path.split('/').last ?? 'No file chosen',
+                            //                       style: titilliumRegular.copyWith(
+                            //                           color: _attachmentFile != null
+                            //                               ? Colors.black
+                            //                               : Colors.grey
+                            //                       ),
+                            //                       maxLines: 1,
+                            //                       overflow: TextOverflow.ellipsis,
+                            //                     ),
+                            //                   ),
+                            //                   IconButton(
+                            //                     icon: Icon(Icons.clear),
+                            //                     onPressed: _attachmentFile != null
+                            //                         ? () => setState(() => _attachmentFile = null)
+                            //                         : null,
+                            //                   ),
+                            //                 ],
+                            //               ),
+                            //             ),
+                            //           ),
+                            //           SizedBox(width: 8),
+                            //           ElevatedButton.icon(
+                            //             onPressed: _showImageSourceDialog,
+                            //             icon: Icon(Icons.upload_file),
+                            //             label: Text('Choose File'),
+                            //             style: ElevatedButton.styleFrom(
+                            //               backgroundColor: Theme.of(context).primaryColorLight,
+                            //               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                Container(
+                  margin: EdgeInsets.only(top: 5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.attach_file,
+                              color: ColorResources.getPrimary(context),
+                              size: 20),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                          Text('Attachment', style: titilliumRegular),
+                        ],
+                      ),
+                      const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Allowed file types: ${_allowedExtensions.join(', ')}',
+                                style: titilliumRegular.copyWith(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 45,
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            _attachmentFiles?.name ?? 'No file chosen',
+                                            style: titilliumRegular.copyWith(
+                                                color: _attachmentFiles != null
+                                                    ? Colors.black
+                                                    : Colors.grey
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        if (_attachmentFiles != null)
+                                          IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () => setState(() => _attachmentFiles = null),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: _pickFile,
+                                    icon: Icon(Icons.upload_file),
+                                    label: Text('Choose File'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).primaryColorLight,
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (_attachmentFiles != null)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Size: ${(_attachmentFiles!.size / 1024).toStringAsFixed(2)} KB',
+                                  style: titilliumRegular.copyWith(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                             // for  leave comment
                             Container(
                                 margin: EdgeInsets.only(top: 5.0),
@@ -769,5 +827,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     ), dismissible: false);
   }
 }
+
 
 

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 class LeaveData{
@@ -14,7 +15,7 @@ class LeaveData{
   String? startDate;
   String? endDate;
   String? duration;
-  XFile? attachment;
+  PlatformFile? attachment;
   String? comment;
 
   LeaveData({
