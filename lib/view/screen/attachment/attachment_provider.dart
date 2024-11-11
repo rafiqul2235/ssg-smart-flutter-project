@@ -1,15 +1,20 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:ssg_smart2/view/screen/leave/leave_data.dart';
+import 'package:ssg_smart2/data/model/response/base/api_response.dart';
+import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
+import 'package:ssg_smart2/view/screen/attachment/leave_data.dart';
 
 import 'attachment_repo.dart';
-import '../leave/leave_response.dart';
+import 'leave_response.dart';
 
 class AttachmentProvider with ChangeNotifier {
   final AttachmentRepo attachmentRepo;
   bool _isLoading = false;
   String _error = '';
   LeaveRequestResponse? _response;
+  ApiResonseNew? _aitResponse;
+  List<AitData> _aitData = [];
 
   List<AttachmentData> _attachmentData = [];
   List<AttachmentData> get attachment => _attachmentData;
@@ -18,6 +23,8 @@ class AttachmentProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get error => _error;
   LeaveRequestResponse? get response => _response;
+  List<AitData> get aitData => _aitData;
+  ApiResonseNew? get aitResponse => _aitResponse;
 
   Future<void> submitLeaveAttach({
     required String empId,
@@ -51,6 +58,27 @@ class AttachmentProvider with ChangeNotifier {
     }
   }
 
+  Future<void> submitAITAutomationForm(Map<String, dynamic> data) async {
+    _setLoading(true);
+    _setError('');
+    try {
+      final ApiResonseNew resonseNew = await attachmentRepo.submitAITAutomationForm(data);
+      if (resonseNew.isSuccess) {
+        _setResponse(resonseNew);
+      }else{
+        _setError(resonseNew.error?? "Unknown error");
+      }
+    }catch(e){
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }finally{
+      _setLoading(false);
+      _setError('');
+    }
+  }
+
   Future<void> fetchAttachmentData(String empId) async {
     _isLoading = true;
     notifyListeners();
@@ -65,5 +93,32 @@ class AttachmentProvider with ChangeNotifier {
       notifyListeners();
       rethrow;
     }
+  }
+
+  Future<void> fetchAitData() async {
+    try {
+      _setLoading(true);
+      _setError('');
+      _aitData = await attachmentRepo.fetchAitData();
+    }catch(e) {
+      _setError(e.toString());
+    }finally {
+      _setLoading(false);
+      _setError('');
+    }
+  }
+
+  void _setResponse(ApiResonseNew response){
+    _aitResponse = response;
+    notifyListeners();
+  }
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setError(String message) {
+    _error = message;
+    notifyListeners();
   }
 }

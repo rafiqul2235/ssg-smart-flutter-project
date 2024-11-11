@@ -54,6 +54,9 @@ class AppConstants {
   // R&D project
   static const String ATTACHMENT_PROJECT = 'attachment_project';
   static const String FETCH_ATTACHMENT = 'fetch_attachment';
+  static const String AIT_AUTOMATION = 'ait_automation';
+  static const String AIT_VIEW = 'fetch_ait_info';
+
 
   //static const String LOGIN_USERID = 'USER_ID';
 

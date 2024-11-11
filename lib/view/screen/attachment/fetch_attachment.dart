@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
-import 'package:ssg_smart2/view/screen/attachment/file_viewer_widget.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
-import 'package:ssg_smart2/view/screen/leave/file_display_widget.dart';
+import 'package:ssg_smart2/view/screen/attachment/file_display_widget.dart';
 
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/user_provider.dart';

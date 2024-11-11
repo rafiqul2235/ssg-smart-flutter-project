@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_view_screen.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
-import 'package:ssg_smart2/view/screen/leave/fetch_attachment.dart';
+import 'package:ssg_smart2/view/screen/attachment/fetch_attachment.dart';
 import 'package:ssg_smart2/view/screen/leave/leave_application_screen.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
@@ -18,7 +19,7 @@ import '../../../utill/dimensions.dart';
 import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
-import '../attachment/attachment_project.dart';
+import '../attachment/ait_automation_screen.dart';
 import 'leave_approval_history.dart';
 
 class SelfService extends StatefulWidget {
@@ -51,7 +52,7 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
     _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'WPPF Ledger', navigateTo: WppfLedgerScreen()));
     _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT', navigateTo: AITAutomationScreen()));
-    _menuList.add(TopMenuItem(image: Images.notification, menuName: 'Leave Data', navigateTo: FetchAttachment()));
+    _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT View', navigateTo: AitViewScreen()));
   }
 
 
