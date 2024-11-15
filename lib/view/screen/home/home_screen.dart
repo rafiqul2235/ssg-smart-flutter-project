@@ -27,6 +27,8 @@ import '../profile/profile_screen.dart';
 import '../report/report_dashboard_screen.dart';
 import 'package:badges/badges.dart' as badges;
 
+import '../salesOrder/sales_order_screen.dart';
+
 class HomeScreen extends StatefulWidget {
 
   const HomeScreen({Key? key}) : super(key: key);
@@ -190,9 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             else if(userMenu.id == '5'){
                               return HomeMenuItemCircle(image: Images.dashboard, title:  userMenu.name!, navigateTo: ManagementDMenuGCF(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
-                            
                             else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }else if(userMenu.id == '20'){
+                              return HomeMenuItemCircle(image: Images.salesreport, title:  userMenu.name!, navigateTo: SalesOrderScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '14'){
                               return HomeMenuItemCircle(image: Images.self_service, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '37'){

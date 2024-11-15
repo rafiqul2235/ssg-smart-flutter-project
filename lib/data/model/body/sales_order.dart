@@ -20,6 +20,7 @@ class SalesOrder {
   String? warehouseName;
   String? customerToNumber;
 
+  List<ItemDetail>? orderItemDetail = [];
 
   SalesOrder({
     this.customerId = '',
@@ -99,13 +100,17 @@ class ItemDetail {
   String? shipToSiteId;
   String? customerName;
   String? shipToLocation;
-  String? itemId;
+  int? itemId;
   String? itemName;
   String? itemUOM;
   String? quantity;
   String? remarks;
   String? vehicleTypeId;
   String? vehicleType;
+
+  bool isEditable = false;
+  int unitPrice = 0;
+  double totalPrice = 0.0;
 
   ItemDetail({
     this.salesPersonId = '',
@@ -115,7 +120,7 @@ class ItemDetail {
     this.shipToSiteId= '',
     this.customerName= '',
     this.shipToLocation= '',
-    this.itemId= '',
+    this.itemId= 0,
     this.itemName= '',
     this.itemUOM= '',
     this.quantity= '',
@@ -125,20 +130,20 @@ class ItemDetail {
   });
 
   ItemDetail.fromJson(Map<String, dynamic> json) {
-    salesPersonId = json['SALESREP_ID'];
-    customerId = json['CUSTOMER_ID'];
-    orgId = json['ORG_ID'];
-    primaryShipTo = json['PRIMARY_SHIP_TO'];
-    shipToSiteId = json['SHIP_TO_SITE_ID'];
-    customerName = json['CUSTOMER_NAME'];
-    shipToLocation = json['SHIP_TO_LOCATION'];
-    itemId = json['ITEM_ID'];
-    itemName = json['ITEM_NAME'];
-    itemUOM = json['ITEM_UOM'];
-    quantity = json['QUANTITY'];
-    remarks = json['REMARKS'];
-    vehicleTypeId = json['VEHICLE_TYPE_ID'];
-    vehicleType = json['VEHICLE_TYPE'];
+    salesPersonId = json['SALESREP_ID']??'';
+    customerId = json['CUSTOMER_ID']??'';
+    orgId = json['ORG_ID']??'';
+    primaryShipTo = json['PRIMARY_SHIP_TO']??'';
+    shipToSiteId = json['SHIP_TO_SITE_ID']??'';
+    customerName = json['CUSTOMER_NAME']??'';
+    shipToLocation = json['SHIP_TO_LOCATION']??'';
+    itemId = json['ITEM_ID']??0;
+    itemName = json['ITEM_NAME']??'';
+    itemUOM = json['ITEM_UOM']??'';
+    quantity = json['QUANTITY']??'';
+    remarks = json['REMARKS']??'';
+    vehicleTypeId = json['VEHICLE_TYPE_ID']??'';
+    vehicleType = json['VEHICLE_TYPE']??'';
   }
 
   Map<String, dynamic> toJson() {
@@ -150,7 +155,7 @@ class ItemDetail {
     data['SHIP_TO_SITE_ID'] = shipToSiteId;
     data['CUSTOMER_NAME'] = customerName;
     data['SHIP_TO_LOCATION'] = shipToLocation;
-    data['ITEM_ID'] = itemId;
+    data['ITEM_ID'] = itemId??0;
     data['ITEM_NAME'] = itemName;
     data['ITEM_UOM'] = itemUOM;
     data['QUANTITY'] = quantity;

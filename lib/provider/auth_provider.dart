@@ -358,6 +358,10 @@ class AuthProvider with ChangeNotifier {
     return authRepo.getEmpId() ?? "";
   }
 
+  String getSalesPersonId() {
+    return authRepo.getSalesPersonId() ?? "0";
+  }
+
   String getOrgId() {
     return authRepo.getOrgId() ?? "";
   }

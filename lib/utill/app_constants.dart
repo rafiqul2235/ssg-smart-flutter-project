@@ -48,6 +48,8 @@ class AppConstants {
   static const String SAVE_LOAN_DATA = 'save_loan_data';
   static const String CHANGE_PASSWORD = 'change_password_flutter';
   static const String WPPF_LEDGER = 'wppf_ledger';
+  static const String SALES = 'sales';
+  static const String ORDERS = 'orders';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -60,6 +62,7 @@ class AppConstants {
   static const String USER_ID = 'user_id';
   static const String USER_NAME = 'user_name';
   static const String ORG_ID = 'org_id';
+  static const String SALESREP_ID = 'SALESREP_ID';
   static const String ORG_NAME = 'org_name';
   static const String CHANGE_PASSWORD_FLUG = 'password_flag';
 

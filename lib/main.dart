@@ -11,6 +11,7 @@ import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/pfloan_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
+import 'package:ssg_smart2/provider/sales_order_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/user_dashboard_provider.dart';
@@ -73,6 +74,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<SalaryAdvProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<PfLoanProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<WppfProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<SalesOrderProvider>()),
     ],
     child: const MyApp(),
   ));

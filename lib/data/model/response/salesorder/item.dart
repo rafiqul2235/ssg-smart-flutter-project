@@ -1,17 +1,17 @@
 class OrderItem {
-  String? itemId;
+  int? itemId;
   String? itemName;
   String? itemUOM;
 
   OrderItem(
-      { this.itemId = "",
+      { this.itemId = 0,
         this.itemName = "",
         this.itemUOM = ""});
 
   OrderItem.fromJson(Map<String, dynamic> json) {
-    itemId = json['ITEM_ID'];
-    itemName = json['ITEM_NAME'];
-    itemUOM = json['ITEM_UOM'];
+    itemId = json['ITEM_ID']??0;
+    itemName = json['ITEM_NAME']??'';
+    itemUOM = json['ITEM_UOM']??'';
   }
 
   Map<String, dynamic> toJson() {

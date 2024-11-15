@@ -152,8 +152,6 @@ class LeaveRepo {
     }
   }
 
-
-
   Future<ApiResponse> getApprovalList(String empId) async {
     try {
       final Map<String, dynamic> data = <String, dynamic>{};
@@ -183,7 +181,6 @@ class LeaveRepo {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
-
 
 }
 
