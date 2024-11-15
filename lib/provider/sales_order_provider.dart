@@ -47,12 +47,12 @@ class SalesOrderProvider with ChangeNotifier {
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
     try{
-      String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+      String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
-      print('empId $empId, salesPersonId $salesPersonId');
+      print('orgId $orgId, salesPersonId $salesPersonId');
 
-      ApiResponse apiResponse = await salesOrderRepo.getCustomerAndItemListAndOthers(empId,salesPersonId);
+      ApiResponse apiResponse = await salesOrderRepo.getCustomerAndItemListAndOthers(orgId,salesPersonId);
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
         _customerList = [];
@@ -80,7 +80,7 @@ class SalesOrderProvider with ChangeNotifier {
           apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
         }
         //print('Item data Count ${_itemList.length}');
-        //notifyListeners();
+        notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
@@ -95,12 +95,12 @@ class SalesOrderProvider with ChangeNotifier {
   Future<void> getCustomerShipToLocation(BuildContext context, String customerId) async {
     //showLoading();
     try{
-      String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
+      String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
-      print('empId $empId, salesPersonId $salesPersonId customerId $customerId');
+      print('orgId $orgId, salesPersonId $salesPersonId customerId $customerId');
 
-      ApiResponse apiResponse = await salesOrderRepo.getCustomerShipToLocation(empId,salesPersonId,customerId);
+      ApiResponse apiResponse = await salesOrderRepo.getCustomerShipToLocation(orgId,salesPersonId,customerId);
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
         _customerShipToLocationList = [];
@@ -109,7 +109,7 @@ class SalesOrderProvider with ChangeNotifier {
           apiResponse.response?.data['orders'].forEach((element) => _customerShipToLocationList.add(CustomerShipLocation.fromJson(element)));
         }
         print('CustomerShipToLocationList ${_customerShipToLocationList.length}');
-        //notifyListeners();
+        notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }

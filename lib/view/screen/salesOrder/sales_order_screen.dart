@@ -40,8 +40,24 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _depositDateController;
   TextEditingController? _qtyController;
   TextEditingController? _deliverySiteDetailController;
+
+  List<DropDownModel> _customersDropDown = [];
   DropDownModel? _selectedCustomer;
-  List<DropDownModel> _customerList = [];
+
+  List<DropDownModel> _itemsDropDown = [];
+  DropDownModel? _selectedItem;
+
+  List<DropDownModel> _orderTypeDropDown = [];
+  DropDownModel? _selectedOrderType;
+
+  List<DropDownModel> _warehousesDropDown = [];
+  DropDownModel? _selectedWareHouse;
+
+  List<DropDownModel> _vehicleTypesDropDown = [];
+  DropDownModel? _selectedVehicleType;
+
+  List<DropDownModel> _shipToLocationDropDown = [];
+  DropDownModel? _selectedShipToLocation;
 
   bool _selectCompanyError = false;
   bool isViewOnly = false;
@@ -77,10 +93,34 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           child: Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
 
-              if(_customerList == null || _customerList.isEmpty) {
-                _customerList = [];
-                _customerList.add(
-                    DropDownModel(code: "120", name: "Customer 1"));
+              if(_customersDropDown == null || _customersDropDown.isEmpty) {
+                _customersDropDown = [];
+                provider.customerList.forEach((element) => _customersDropDown.add(DropDownModel(code: element.customerId, name: element.customerName)));
+              }
+
+              if(_itemsDropDown == null || _itemsDropDown.isEmpty) {
+                _itemsDropDown = [];
+                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName)));
+              }
+
+              if(_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
+                _orderTypeDropDown = [];
+                provider.orderTypeList.forEach((element) => _orderTypeDropDown.add(DropDownModel(code: element.orderTypeId, name: element.orderType)));
+              }
+
+              if(_warehousesDropDown == null || _warehousesDropDown.isEmpty) {
+                _warehousesDropDown = [];
+                provider.warehouseList.forEach((element) => _warehousesDropDown.add(DropDownModel(code: element.warehouseId, name: element.warehouseName)));
+              }
+
+              if(_vehicleTypesDropDown == null || _vehicleTypesDropDown.isEmpty) {
+                _vehicleTypesDropDown = [];
+                provider.vehicleTypeList.forEach((element) => _vehicleTypesDropDown.add(DropDownModel(code: element.typeId, name: element.typeName)));
+              }
+
+              if(_shipToLocationDropDown == null || _shipToLocationDropDown.isEmpty) {
+                _shipToLocationDropDown = [];
+                provider.customerShipToLocationList.forEach((element) => _shipToLocationDropDown.add(DropDownModel(code: element.shipToSiteId, name: element.shipToLocation)));
               }
 
               return ListView(
@@ -142,7 +182,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               dropdownWidth: width - 40,
                               hint:'Select Customer',
                               hintColor: Colors.black87,
-                              dropdownItems: _customerList,
+                              dropdownItems: _customersDropDown,
                               value: _selectedCustomer,
                               buttonBorderColor:Colors.black12,
                               onChanged: (value) {
@@ -547,14 +587,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownWidth: 200,
               hint: 'Select Item',
               hintColor: Colors.black87,
-              dropdownItems: _customerList,
-              value: _selectedCustomer,
+              dropdownItems: _itemsDropDown,
+              value: _selectedItem,
               buttonBorderColor:
               _selectCompanyError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
-                  _selectCompanyError = false;
-                  _selectedCustomer = value;
+                  //_selectCompanyError = false;
+                  _selectedItem = value;
                 });
               },
             ),
@@ -589,14 +629,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownWidth: 200,
               hint: 'Select Ship Name',
               hintColor: Colors.black87,
-              dropdownItems: _customerList,
-              value: _selectedCustomer,
+              dropdownItems: _shipToLocationDropDown,
+              value: _selectedShipToLocation,
               buttonBorderColor:
               _selectCompanyError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
-                  _selectCompanyError = false;
-                  _selectedCustomer = value;
+                  //_selectCompanyError = false;
+                  _selectedShipToLocation = value;
                 });
               },
             ),
@@ -609,14 +649,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownWidth: 200,
               hint: 'Select Vehicle Type',
               hintColor: Colors.black87,
-              dropdownItems: _customerList,
-              value: _selectedCustomer,
+              dropdownItems: _vehicleTypesDropDown,
+              value: _selectedVehicleType,
               buttonBorderColor:
               _selectCompanyError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
-                  _selectCompanyError = false;
-                  _selectedCustomer = value;
+                 // _selectCompanyError = false;
+                  _selectedVehicleType = value;
                 });
               },
             ),
