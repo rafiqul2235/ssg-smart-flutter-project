@@ -4,6 +4,7 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 
 class CustomTextField extends StatelessWidget {
   final double? height;
+  final double? width;
   final TextEditingController? controller;
   final String? hintText;
   final TextInputType? textInputType;
@@ -27,6 +28,7 @@ class CustomTextField extends StatelessWidget {
    CustomTextField(
       {
       this.height,
+      this.width,
       this.controller,
       this.hintText,
       this.textInputType,
@@ -44,14 +46,14 @@ class CustomTextField extends StatelessWidget {
       this.readOnly = false,
       this.onTab,
       this.onChanged,
-      this.validator
+      this.validator,
       });
 
 
   @override
   Widget build(context) {
     return Container(
-      width: double.infinity,
+      width: width??double.infinity,
       height: height?? 45.0,
       decoration: BoxDecoration(
         color: Theme.of(context).highlightColor,

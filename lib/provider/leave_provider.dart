@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:core';
-import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/leave_data.dart';
 import 'package:ssg_smart2/data/model/response/pf_ledger_summary_model.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/approval_list_model.dart';
-import '../data/model/response/attendance_sheet_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/leave_balance.dart';
 import '../data/model/response/management_dashboard_model.dart';
@@ -163,8 +159,6 @@ class LeaveProvider with ChangeNotifier {
 
   }
 
-
-
   Future<PfLedgerSummaryModel?> getPfLedgerSummaryData(BuildContext context) async {
     showLoading();
     try{
@@ -186,8 +180,6 @@ class LeaveProvider with ChangeNotifier {
     }
     hideLoading();
     return null;
-
-
 
   }
 
