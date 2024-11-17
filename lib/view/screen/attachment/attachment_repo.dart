@@ -93,11 +93,22 @@ class AttachmentRepo {
       List<MultipartFile> attachments = await _getMultipartFiles(data['attachments']);
 
       FormData formData = FormData.fromMap({
-        'customerName': data['customerName'],
-        'challanNo': data['challanNo'],
-        'invoiceAmount': data['invoiceAmount'],
-        'aitAmount': data['aitAmount'],
-        'date': data['date'],
+        'customerId' : data['customerId'],
+        'customerAccount': data['customerAccount'],
+        'customerName' : data['customerName'],
+        'challanNo' : data['challanNo'],
+        'challanDate': data['challanDate'],
+        'invoiceAmount' : data['invoiceAmount'],
+        'aitAmount' : data['aitAmount'],
+        'remarks': data['remarks'],
+        'empId': data['empId'],
+        'empName': data['empName'],
+        'personId': data['personId'],
+        'userId': data['userId'],
+        'deptName': data['deptName'],
+        'designation': data['designation'],
+        'orgId': data['orgId'],
+        'orgName': data['orgName'],
         'attachments[]': attachments,
       });
 

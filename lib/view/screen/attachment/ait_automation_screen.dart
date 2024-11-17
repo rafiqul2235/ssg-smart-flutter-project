@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
 import '../../../data/model/dropdown_model.dart';
+import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/leave_provider.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_dropdown_button.dart';
@@ -41,12 +42,14 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final FocusNode _invoiceNoFocus = FocusNode();
   final FocusNode _aitAmountFocus = FocusNode();
   final FocusNode _dateFocus = FocusNode();
+  final FocusNode _remarkFocus = FocusNode();
 
   final TextEditingController _challanNoController = TextEditingController();
   final TextEditingController _invoiceAmountController =
       TextEditingController();
   final TextEditingController _aitAmountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _remarkController = TextEditingController();
 
   final List<DropDownModel> _customer = [
     DropDownModel(id: 1, name: "Customer A"),
@@ -164,14 +167,28 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       setState(() {
         _isButtonDisable = true;
       });
+      UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+
       Map<String, dynamic> data = {
+        'customerId' : 123,
+        'customerAccount': 23456,
         'customerName' : selectedCustomerName?.name,
         'challanNo' : _challanNoController.text,
+        'challanDate': _dateController.text,
         'invoiceAmount' : _invoiceAmountController.text,
         'aitAmount' : _aitAmountController.text,
-        'date' : _dateController.text,
+        'remarks': _remarkController.text,
+        'empId': userInfoModel?.employeeNumber,
+        'empName': userInfoModel?.fullName,
+        'personId': userInfoModel?.personId,
+        'userId': userInfoModel?.userId,
+        'deptName': userInfoModel?.department,
+        'designation': userInfoModel?.designation,
+        'orgId': userInfoModel?.orgId,
+        'orgName': userInfoModel?.orgName,
         'attachments' : _attachmentFiles?.map((file) => File(file.path!)).toList()
       };
+      print("ait data: $data");
       final provider = Provider.of<AttachmentProvider>(context, listen: false);
       try {
         await provider.submitAITAutomationForm(data);
@@ -411,6 +428,37 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                     controller: _dateController,
                                     focusNode: _dateFocus,
                                     isTime: false,
+                                  )
+                                ],
+                              ),
+                            ),
+
+                            Container(
+                              margin: EdgeInsets.only(top: 5),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.comment,
+                                        color:
+                                        ColorResources.getPrimary(context),
+                                        size: 20,
+                                      ),
+                                      Text('Remarks')
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: Dimensions.MARGIN_SIZE_SMALL,
+                                  ),
+                                  CustomTextField(
+                                    textInputType: TextInputType.text,
+                                    controller: _remarkController,
+                                    focusNode: _remarkFocus,
+                                    height: 80,
+                                    maxLine: 5,
+                                    hintText: "Type your remarks...",
+                                    capitalization: TextCapitalization.sentences,
                                   )
                                 ],
                               ),
