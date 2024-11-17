@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
 import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
 import 'package:ssg_smart2/view/basewidget/mandatory_text.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
@@ -47,10 +48,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final TextEditingController _aitAmountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
-  // image picker variable
-  final ImagePicker _picker = ImagePicker();
-  XFile? _attachmentFile;
-
   final List<DropDownModel> _customer = [
     DropDownModel(id: 1, name: "Customer A"),
     DropDownModel(id: 2, name: "Customer B"),
@@ -68,8 +65,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     'jpeg',
     'png'
   ];
-
-  final int _maxFileSize = 5 * 1024 * 1024;
+  static const int _maxFileCount = 5;
+  final int _maxFileSize = _maxFileCount * 1024 * 1024;
 
   String workingAreaName = '';
 
@@ -93,9 +90,18 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     setState(() {});
   }
 
-// Method to handle file picking
+  // Method to handle file picking
   Future<void> _pickFile() async {
     try {
+      print("max file: $_maxFileCount");
+      print("no of attachments file: ${_attachmentFiles!.length}");
+      if (_attachmentFiles!.length >= _maxFileCount) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Maximum $_maxFileCount file allowed")),
+        );
+        return;
+      }
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: _allowedExtensions,
@@ -104,12 +110,52 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       );
 
       if (result != null) {
-        setState(() {
-          _attachmentFiles!.addAll(result.files);
-        });
+        for (var file in result.files) {
+          if (_attachmentFiles!.length >= _maxFileCount) break;
+
+          // Check file size
+          if (file.size > _maxFileSize) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("File ${file.name} is too large. Max size: ${_maxFileSize ~/(1024*1024)} MB")),
+            );
+            continue;
+          }
+          // Compress if image
+          if (['jpg', 'jpeg', 'png'].contains(file.extension)) {
+            final compressFile = await _compressImageFile(file);
+            if (compressFile != null) {
+              setState(() {
+                _attachmentFiles!.add(PlatformFile(
+                    name: compressFile.path.split('/').last,
+                    path: compressFile.path,
+                    size: compressFile.lengthSync()
+                ));
+              });
+            }
+          }else {
+            setState(() {
+              _attachmentFiles!.add(file);
+            });
+          }
+        }
       }
     } catch (e) {
       print("Error:$e");
+    }
+  }
+  // Compression for images
+  Future<File?> _compressImageFile(PlatformFile file) async {
+    final tempDir = await getTemporaryDirectory();
+    final targetPath = "${tempDir.path}/compressed_${file.path?.split('/').last}";
+    var compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.path!,
+        targetPath,
+        quality: 70
+    );
+    if (compressedFile != null && compressedFile is XFile) {
+      return File(compressedFile.path);
+    }else {
+      return compressedFile as File?;
     }
   }
 
@@ -421,7 +467,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                                           maxLines: 1,
                                                         ),
                                                         subtitle: Text(
-                                                          'Size: ${file.size}',
+                                                          'Size: ${(file.size / 1024).toStringAsFixed(2)} KB',
                                                           style: TextStyle(
                                                               fontSize: 12,
                                                               color:

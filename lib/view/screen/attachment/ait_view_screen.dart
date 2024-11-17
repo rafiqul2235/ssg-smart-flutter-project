@@ -1,14 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/helper/api_checker.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
+import 'package:ssg_smart2/view/screen/attachment/file_view_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AitViewScreen extends StatefulWidget {
-  const AitViewScreen({super.key});
+   final bool isBackButtonExist;
+
+   const AitViewScreen({Key? key, this.isBackButtonExist = true})
+       : super(key: key);
 
   @override
   State<AitViewScreen> createState() => _AitViewScreenState();
@@ -24,10 +26,12 @@ class _AitViewScreenState extends State<AitViewScreen> {
     );
   }
   Future<void> _openFile(String url) async {
-    String fileExtension = url.split('.').last.toLowerCase();
-
     if (await canLaunch(url)) {
-      await launch(url);
+      await launch(
+          url,
+          forceWebView: true,
+        enableJavaScript: true
+      );
     }else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Couln't open file")),
@@ -35,15 +39,31 @@ class _AitViewScreenState extends State<AitViewScreen> {
     }
   }
 
-  Future<String?> downloadFile(String url, String name) async {
-    try {
-      final tempDir = await getTemporaryDirectory();
-      final filePath = '${tempDir.path}/$name';
-      await Dio().download(url, filePath);
-      return filePath;
-    }catch (e) {
-      print("Download error: $e");
-      return null;
+  Future<void> _openFile2(String url, String fileName) async {
+    final extension = url.toLowerCase().split('.').last;
+    fileName = url.toLowerCase().split('/').last;
+    print('file name: $fileName');
+    final supportedImageFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+    if (extension == 'pdf' || supportedImageFormats.contains(extension)) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FileViewScreen(
+                url: url,
+                title: fileName, // Or any other title you want to display
+              )
+          )
+      );
+    } else {
+      // For other file types, use the url_launcher
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Couldn't open file")),
+        );
+      }
     }
   }
 
@@ -107,7 +127,7 @@ class _AitViewScreenState extends State<AitViewScreen> {
                                   return ElevatedButton.icon(
                                     icon: Icon(Icons.attach_file),
                                     label: Text('View File'),
-                                    onPressed: () => _openFile(path),
+                                    onPressed: () => _openFile2(path, 'File Name'),
                                   );
                                 }).toList(),
                               ),
