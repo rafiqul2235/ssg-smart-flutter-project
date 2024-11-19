@@ -1,5 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ssg_smart2/data/model/body/customer_details.dart';
+import 'package:ssg_smart2/data/model/dropdown_model.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
@@ -18,6 +20,9 @@ class AttachmentProvider with ChangeNotifier {
 
   List<AttachmentData> _attachmentData = [];
   List<AttachmentData> get attachment => _attachmentData;
+  
+  List<DropDownModel> _customerDetails = [];
+  List<DropDownModel> get customerDetails => _customerDetails;
 
   AttachmentProvider({required this.attachmentRepo});
   bool get isLoading => _isLoading;
@@ -92,6 +97,25 @@ class AttachmentProvider with ChangeNotifier {
       _error = e.toString();
       notifyListeners();
       rethrow;
+    }
+  }
+  
+  Future<void> fetchCustomerDetailsInfo(String orgId, String salesId) async{
+    try {
+      _setLoading(true);
+      _setError('');
+      final List<CustomerDetails> _customers = await attachmentRepo.fetchCustomerDetailsInfo(orgId, salesId);
+      print("value of customers: $_customers");
+      _customerDetails = (_customers as List)
+          .map((customer) => DropDownModel.fromJsonCustomerInfo(customer))
+          .toList();
+      print("provider: ${_customerDetails}");
+      _setLoading(false);
+    }catch (e) {
+      _setError(e.toString());
+    }finally {
+      _setLoading(false);
+      _setError('');
     }
   }
 

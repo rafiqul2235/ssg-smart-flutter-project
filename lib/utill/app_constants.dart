@@ -56,6 +56,7 @@ class AppConstants {
   static const String FETCH_ATTACHMENT = 'fetch_attachment';
   static const String AIT_AUTOMATION = 'ait_automation';
   static const String AIT_VIEW = 'fetch_ait_info';
+  static const String CUSTOMER_DETAILS = 'customer_details';
 
 
   //static const String LOGIN_USERID = 'USER_ID';

@@ -51,12 +51,12 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
 
-  final List<DropDownModel> _customer = [
-    DropDownModel(id: 1, name: "Customer A"),
-    DropDownModel(id: 2, name: "Customer B"),
-    DropDownModel(id: 3, name: "Customer C"),
-    DropDownModel(id: 4, name: "Customer D"),
-  ];
+  // final List<DropDownModel> _customer = [
+  //   DropDownModel(id: 1, name: "Customer A"),
+  //   DropDownModel(id: 2, name: "Customer B"),
+  //   DropDownModel(id: 3, name: "Customer C"),
+  //   DropDownModel(id: 4, name: "Customer D"),
+  // ];
 
   // file picker variable
   List<PlatformFile>? _attachmentFiles = [];
@@ -78,14 +78,16 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   bool isCustomerNameFieldError = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  UserInfoModel? userInfoModel;
 
   @override
   void initState() {
     super.initState();
     // Provider.of<UserProvider>(context, listen: false).resetLoading();
+    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
 
-    Provider.of<LeaveProvider>(context, listen: false).getLeaveType(context);
-
+    final provider = Provider.of<AttachmentProvider>(context, listen: false);
+     provider.fetchCustomerDetailsInfo(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
     _intData();
   }
 
@@ -167,7 +169,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       setState(() {
         _isButtonDisable = true;
       });
-      UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
 
       Map<String, dynamic> data = {
         'customerId' : 123,
@@ -254,8 +255,9 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                           physics: BouncingScrollPhysics(),
                           children: [
                             // for leave type
-                            Consumer<LeaveProvider>(
-                                builder: (context, leaveProvider, child) {
+                            Consumer<AttachmentProvider>(
+                                builder: (context, attachmentProvider, child) {
+                                  print("customer ui: ${attachmentProvider.customerDetails}");
                               return Container(
                                 margin: EdgeInsets.only(top: 5.0),
                                 child: Column(
@@ -284,7 +286,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                       dropdownWidth: width - 40,
                                       hint: 'Select Customer',
                                       //hintColor: Colors.black: null,
-                                      dropdownItems: _customer,
+                                      dropdownItems: attachmentProvider.customerDetails,
                                       value: selectedCustomerName,
                                       buttonBorderColor:
                                           isCustomerNameFieldError
@@ -292,6 +294,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                               : Colors.black12,
                                       onChanged: (value) {
                                         setState(() {
+                                          print("show value: $value");
                                           selectedCustomerName = value;
                                         });
                                       },

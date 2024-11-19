@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
@@ -132,6 +133,31 @@ class AttachmentRepo {
     return multipartFiles;
   }
 
+  Future<List<CustomerDetails>> fetchCustomerDetailsInfo(String orgId, String salesRepId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.CUSTOMER_DETAILS,
+        data: {
+          'orgId': orgId,
+          'salesId': salesRepId
+        }
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1) {
+          return (responseData['customer_details'] as List)
+              .map((json) => CustomerDetails.fromJson(json))
+              .toList();
+        }else {
+          throw Exception("Failed to load customer details.");
+        }
+      }else {
+        throw Exception("Error to load customer details");
+      }
+    }catch (e) {
+      throw Exception("Error: ${e.toString()}");
+    }
+  }
   Future<List<AttachmentData>> fetchAttachData(String empId) async {
     try {
       final response = await dioClient.postWithFormData(
@@ -151,12 +177,14 @@ class AttachmentRepo {
           throw Exception("Failed to load leave data");
         }
       }else {
-        throw Exception("Failed to load leave data");
+        throw Exception("Error fetching leave data");
       }
     }catch (e) {
-      throw Exception("Error fetching leave data");
+      throw Exception("Error: ${e.toString()}");
     }
   }
+
+
 
   Future<List<AitData>> fetchAitData() async {
     try {

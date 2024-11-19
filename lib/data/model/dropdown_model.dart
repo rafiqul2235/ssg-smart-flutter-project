@@ -1,5 +1,6 @@
-class DropDownModel {
+import 'package:ssg_smart2/data/model/body/customer_details.dart';
 
+class DropDownModel {
   int? id;
   String? code;
   String? name;
@@ -45,4 +46,24 @@ class DropDownModel {
     description = json['type'];
   }
 
+  // DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
+  //    id = int.tryParse(customer.customerId ?? '0');
+  //    code = customer.customerId;
+  //    name = customer.customarName;
+  //    description = customer.customerType;
+  // }
+  factory DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
+    return DropDownModel(
+      id: int.tryParse(customer.customerId ?? '0'),
+      code: customer.customerId,
+      name: customer.customarName,
+      description: customer.customerType,
+    );
+  }
+
+
+  @override
+  String toString() {
+    return 'DropDownModel{id: $id, code: $code, name: $name, nameBl: $nameBl, description: $description}';
+  }
 }
