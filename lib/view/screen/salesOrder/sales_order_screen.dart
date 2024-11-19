@@ -15,8 +15,11 @@ import 'package:ssg_smart2/view/screen/notification/widget/notification_dialog.d
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../data/model/dropdown_model.dart';
+import '../../../data/model/response/salesorder/customer.dart';
+import '../../../provider/auth_provider.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/button/custom_button_with_icon.dart';
+import '../../basewidget/custom_auto_complete.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_loading.dart';
 import '../../basewidget/mandatory_text.dart';
@@ -36,13 +39,16 @@ class SalesOrderScreen extends StatefulWidget {
 
 class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
+  TextEditingController? _customerController;
   TextEditingController? _orgNameController;
   TextEditingController? _depositDateController;
   TextEditingController? _qtyController;
   TextEditingController? _deliverySiteDetailController;
 
+  Customer? _selectedCustomer;
+
   List<DropDownModel> _customersDropDown = [];
-  DropDownModel? _selectedCustomer;
+  DropDownModel? _selectedCustomerDropDown;
 
   List<DropDownModel> _itemsDropDown = [];
   DropDownModel? _selectedItem;
@@ -53,6 +59,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   List<DropDownModel> _warehousesDropDown = [];
   DropDownModel? _selectedWareHouse;
 
+  List<DropDownModel> _freightTermsDropDown = [];
+  DropDownModel? _selectedFreightTerms;
+
   List<DropDownModel> _vehicleTypesDropDown = [];
   DropDownModel? _selectedVehicleType;
 
@@ -62,9 +71,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   bool _selectCompanyError = false;
   bool isViewOnly = false;
 
+  //SalesOrder? _salesOrder;
+
+  String _orgName = '';
+  String _warehouse = '';
+  String _freightTerms = '';
+
+
   @override
   void initState() {
     super.initState();
+    _customerController = TextEditingController();
     _orgNameController = TextEditingController();
     _depositDateController = TextEditingController();
     _qtyController = TextEditingController();
@@ -73,6 +90,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   }
 
   void _intData() async{
+    _orgName =  Provider.of<AuthProvider>(context, listen: false).getOrgName();
+    _orgNameController?.text = _orgName??'';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context,'2491');
   }
@@ -111,6 +130,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               if(_warehousesDropDown == null || _warehousesDropDown.isEmpty) {
                 _warehousesDropDown = [];
                 provider.warehouseList.forEach((element) => _warehousesDropDown.add(DropDownModel(code: element.warehouseId, name: element.warehouseName)));
+              }
+
+              if(_freightTermsDropDown == null || _freightTermsDropDown.isEmpty) {
+                _freightTermsDropDown = [];
+                provider.freightTermsList.forEach((element) => _freightTermsDropDown.add(DropDownModel(code: element, name: element)));
               }
 
               if(_vehicleTypesDropDown == null || _vehicleTypesDropDown.isEmpty) {
@@ -176,20 +200,141 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           ),
                           const SizedBox(width: Dimensions.MARGIN_SIZE_SMALL),
                           Expanded(
-                            child:  CustomDropdownButton(
+                            child: CustomAutoComplete(
+                              dropdownItems: _customersDropDown,
+                              hint: 'Search Customer',
+                              value: _customerController!=null?_customerController!.text:'',
+                              icon: const Icon(Icons.search),
+                              height: 45,
+                              width: width,
+                              dropdownHeight: 300,
+                              dropdownWidth:  width - 40,
+                              borderColor: Colors.transparent,
+                              onReturnTextController: (textController) => _customerController = textController,
+                              onClearPressed: (){
+                                setState(() {
+                                  _selectedCustomer = null;
+                                  _warehouse ='';
+                                  _freightTerms = '';
+                                  _selectedWareHouse = null;
+                                  _selectedFreightTerms = null;
+                                });
+                              },
+                              onChanged: (value) {
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                for(Customer customer in provider.customerList){
+                                  if(customer.customerId == value?.code){
+                                    _selectedCustomer = customer;
+                                    _warehouse = _selectedCustomer?.warehouseName??'';
+                                    _freightTerms = _selectedCustomer?.freightTerms??'';
+                                    _selectedWareHouse = null;
+                                    break;
+                                  }
+                                }
+                                setState(() {
+                                });
+                              },
+                            )
+
+                            /*CustomDropdownButton(
                               buttonHeight: 45,
                               buttonWidth: double.infinity,
                               dropdownWidth: width - 40,
                               hint:'Select Customer',
                               hintColor: Colors.black87,
                               dropdownItems: _customersDropDown,
-                              value: _selectedCustomer,
+                              value: _selectedCustomerDropDown,
+                              buttonBorderColor:Colors.black12,
+                              onChanged: (value) {
+
+                                for(Customer customer in provider.customerList){
+                                  if(customer.customerId == value?.code){
+                                    _selectedCustomer = customer;
+                                    _warehouse = _selectedCustomer?.warehouseName??'';
+                                    _freightTerms = _selectedCustomer?.freightTerms??'';
+                                    //_orgName = _selectedCustomer?.or??'';
+                                    _selectedWareHouse = null;
+                                    break;
+                                  }
+                                }
+
+                                setState(() {
+                                  _selectedCustomerDropDown = value;
+                                });
+                              },
+                            )*/,
+                          )
+                        ],
+                      ),
+                    ),
+
+                    // for Warehouse
+                    Container(
+                      margin: const EdgeInsets.only(
+                          top: Dimensions.MARGIN_SIZE_SMALL,
+                          left: Dimensions.MARGIN_SIZE_DEFAULT,
+                          right: Dimensions.MARGIN_SIZE_DEFAULT),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.person, color: ColorResources.getPrimary(context), size: 20),
+                              const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                              MandatoryText(text:'Warehouse   ', textStyle: titilliumRegular,mandatoryText: '*',)
+                            ],
+                          ),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_SMALL),
+                          Expanded(
+                            child:  CustomDropdownButton(
+                              buttonHeight: 45,
+                              buttonWidth: double.infinity,
+                              dropdownWidth: width - 40,
+                              hint:_warehouse,
+                              hintColor: Colors.black,
+                              dropdownItems: _warehousesDropDown,
+                              value: _selectedWareHouse,
                               buttonBorderColor:Colors.black12,
                               onChanged: (value) {
                                 setState(() {
-                                  _selectedCustomer = value;
-                                 /* _survey = value.name;
-                                  _isCampaignError = false;*/
+                                  _selectedWareHouse = value;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    // for FREIGHT TERMS
+                    Container(
+                      margin: const EdgeInsets.only(
+                          top: Dimensions.MARGIN_SIZE_SMALL,
+                          left: Dimensions.MARGIN_SIZE_DEFAULT,
+                          right: Dimensions.MARGIN_SIZE_DEFAULT),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.person, color: ColorResources.getPrimary(context), size: 20),
+                              const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                              MandatoryText(text:'Freight Terms   ', textStyle: titilliumRegular,mandatoryText: '*',)
+                            ],
+                          ),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_SMALL),
+
+                          Expanded(
+                            child:  CustomDropdownButton(
+                              buttonHeight: 45,
+                              buttonWidth: double.infinity,
+                              dropdownWidth: width - 40,
+                              hint:_freightTerms,
+                              hintColor: Colors.black,
+                              dropdownItems: _freightTermsDropDown,
+                              value: _selectedFreightTerms,
+                              buttonBorderColor:Colors.black12,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedFreightTerms = value;
                                 });
                               },
                             ),
