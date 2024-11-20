@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/response/salesorder/freight_term.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/salesorder/customer.dart';
@@ -84,6 +85,8 @@ class SalesOrderProvider with ChangeNotifier {
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
+
+      print("Frieight term: $freightTermsList");
     }catch(e){
       print("error: $e");
      // hideLoading();

@@ -15,6 +15,7 @@ import 'package:ssg_smart2/view/screen/notification/widget/notification_dialog.d
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../data/model/dropdown_model.dart';
+import '../../../data/model/response/salesorder/customer.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/button/custom_button_with_icon.dart';
 import '../../basewidget/custom_dropdown_button.dart';
@@ -53,6 +54,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   List<DropDownModel> _warehousesDropDown = [];
   DropDownModel? _selectedWareHouse;
 
+  List<DropDownModel> _freightTermsDropDown = [];
+  DropDownModel? _selectedFreightTerms;
+
   List<DropDownModel> _vehicleTypesDropDown = [];
   DropDownModel? _selectedVehicleType;
 
@@ -61,6 +65,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   bool _selectCompanyError = false;
   bool isViewOnly = false;
+
+  Customer? _customer = Customer(orgId: '');
+
+  String? selectedTerm;
+  //String? selectedTerm ="CNF";
 
   @override
   void initState() {
@@ -73,13 +82,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   }
 
   void _intData() async{
-    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context,'2491');
+    print("Org_id_print: ${_customer?.orgId}");
+
   }
 
   @override
   Widget build(BuildContext context) {
-
+    final freightTerm = Provider.of<SalesOrderProvider>(context).freightTermsList;
     double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
 
@@ -113,6 +124,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 provider.warehouseList.forEach((element) => _warehousesDropDown.add(DropDownModel(code: element.warehouseId, name: element.warehouseName)));
               }
 
+             /* if(_freightTermsDropDown == null || _freightTermsDropDown.isEmpty) {
+                _freightTermsDropDown = [];
+                provider.freightTermsList.forEach((element) => _freightTermsDropDown.add(DropDownModel()));
+              }*/
+
               if(_vehicleTypesDropDown == null || _vehicleTypesDropDown.isEmpty) {
                 _vehicleTypesDropDown = [];
                 provider.vehicleTypeList.forEach((element) => _vehicleTypesDropDown.add(DropDownModel(code: element.typeId, name: element.typeName)));
@@ -140,7 +156,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             children: [
                               Icon(Icons.home_outlined, color: ColorResources.getPrimary(context), size: 20),
                               const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                              MandatoryText(text:'Org Name   ', textStyle: titilliumRegular,mandatoryText: '*',)
+                              MandatoryText(text:'Org Name', textStyle: titilliumRegular,mandatoryText: '*',)
                             ],
                           ),
                           const SizedBox(width: Dimensions.MARGIN_SIZE_SMALL),
@@ -149,6 +165,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               height: 50,
                               controller: _orgNameController,
                               hintText:'Org Name',
+                              //hintText:'${_customer?.orgId}',
                               borderColor:Colors.black12,
                               textInputType: TextInputType.text,
                               readOnly: true,
@@ -189,6 +206,44 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                 setState(() {
                                   _selectedCustomer = value;
                                  /* _survey = value.name;
+                                  _isCampaignError = false;*/
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      margin: const EdgeInsets.only(
+                          top: Dimensions.MARGIN_SIZE_SMALL,
+                          left: Dimensions.MARGIN_SIZE_DEFAULT,
+                          right: Dimensions.MARGIN_SIZE_DEFAULT),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.person, color: ColorResources.getPrimary(context), size: 20),
+                              const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                              MandatoryText(text:'Warehouse   ', textStyle: titilliumRegular,mandatoryText: '*',)
+                            ],
+                          ),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_SMALL),
+                          Expanded(
+                            child:  CustomDropdownButton(
+                              buttonHeight: 45,
+                              buttonWidth: double.infinity,
+                              dropdownWidth: width - 40,
+                              hint:'Select Warehouse',
+                              hintColor: Colors.black87,
+                              dropdownItems: _warehousesDropDown,
+                              value: _selectedWareHouse,
+                              buttonBorderColor:Colors.black12,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedWareHouse = value;
+                                  /* _survey = value.name;
                                   _isCampaignError = false;*/
                                 });
                               },

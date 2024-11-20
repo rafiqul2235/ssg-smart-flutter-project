@@ -19,7 +19,7 @@ class SalesOrderRepo {
           AppConstants.SALES,
           data:data
       );
-
+     print("Respons for sales; $response");
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
