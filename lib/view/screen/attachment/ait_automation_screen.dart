@@ -73,7 +73,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   String workingAreaName = '';
 
-  DropDownModel? selectedCustomerName;
+  DropDownModel? selectedCustomer;
 
   bool isCustomerNameFieldError = false;
 
@@ -171,9 +171,12 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       });
 
       Map<String, dynamic> data = {
-        'customerId' : 123,
-        'customerAccount': 23456,
-        'customerName' : selectedCustomerName?.name,
+        'customerId' : selectedCustomer?.id,
+        'customerAccount': selectedCustomer?.code,
+        'customerName' : selectedCustomer?.name,
+        'customerType' : selectedCustomer?.type,
+        'customerCategory' : selectedCustomer?.category,
+        'billToAddress' : selectedCustomer?.address,
         'challanNo' : _challanNoController.text,
         'challanDate': _dateController.text,
         'invoiceAmount' : _invoiceAmountController.text,
@@ -287,7 +290,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                       hint: 'Select Customer',
                                       //hintColor: Colors.black: null,
                                       dropdownItems: attachmentProvider.customerDetails,
-                                      value: selectedCustomerName,
+                                      value: selectedCustomer,
                                       buttonBorderColor:
                                           isCustomerNameFieldError
                                               ? Colors.red
@@ -295,7 +298,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                       onChanged: (value) {
                                         setState(() {
                                           print("show value: $value");
-                                          selectedCustomerName = value;
+                                          selectedCustomer = value;
                                         });
                                       },
                                     ),

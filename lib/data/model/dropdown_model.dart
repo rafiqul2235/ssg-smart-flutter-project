@@ -6,8 +6,15 @@ class DropDownModel {
   String? name;
   String? nameBl;/* Bengali Text*/
   String? description;
+  String? type;
+  String? category;
+  String? address;
 
-  DropDownModel({this.id, this.code, this.name,this.nameBl,this.description=''});
+
+  // DropDownModel(this.id, this.code, this.name);
+
+  DropDownModel({this.id, this.code, this.name, this.nameBl, this.description,
+      this.type, this.category, this.address});
 
   DropDownModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return;
@@ -46,20 +53,24 @@ class DropDownModel {
     description = json['type'];
   }
 
-  // DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
-  //    id = int.tryParse(customer.customerId ?? '0');
-  //    code = customer.customerId;
-  //    name = customer.customarName;
-  //    description = customer.customerType;
-  // }
-  factory DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
-    return DropDownModel(
-      id: int.tryParse(customer.customerId ?? '0'),
-      code: customer.customerId,
-      name: customer.customarName,
-      description: customer.customerType,
-    );
+  DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
+     id = int.tryParse(customer.customerId ?? '0');
+     code = customer.accountNumber;
+     name = customer.customarName;
+     type = customer.customerType;
+     category = customer.customerCategory;
+     address = customer.billToAddress;
+
   }
+  // factory DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
+  //   return DropDownModel(
+  //     id: int.tryParse(customer.customerId ?? '0'),
+  //     code: customer.customerId,
+  //     name: customer.customarName,
+  //     description: customer.customerType,
+  //
+  //   );
+  // }
 
 
   @override
