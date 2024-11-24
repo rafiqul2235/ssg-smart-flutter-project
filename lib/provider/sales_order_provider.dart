@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ssg_smart2/data/model/response/salesorder/freight_term.dart';
+import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/salesorder/customer.dart';
@@ -20,6 +22,12 @@ class SalesOrderProvider with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading ?? false;
+
+  String? _error;
+  String? get error => _error;
+
+  String? _isSuccess;
+  String? get isSuccess => _isSuccess;
 
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
@@ -122,6 +130,34 @@ class SalesOrderProvider with ChangeNotifier {
     }
     // hideLoading();
     return null;
+  }
+
+  Future<void> salesOrderSubmit(BuildContext context, SalesDataModel salesDataModel) async {
+   // _resetState();
+    showLoading();
+
+    try{
+      await _submitSalesApplication(salesDataModel);
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+    }finally{
+      hideLoading();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _submitSalesApplication(SalesDataModel salesdataModel) async {
+    final response = await salesOrderRepo.salesOrderSubmitRep(salesdataModel);
+    if (response.response != null && response.response?.statusCode == 200) {
+      Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+      if (responseData['success'] == 1) {
+        _isSuccess = responseData['msg'][0];
+      } else {
+        _error = "Sales Order Submission failed";
+      }
+    } else {
+      _error = "Server error occurred";
+    }
   }
 
   void showLoading(){

@@ -17,6 +17,7 @@ class CustomAutoComplete extends StatelessWidget {
   final Function? onClearPressed;
   final Function? onReturnTextController;
   final Color? borderColor;
+  final Color? hintColor;
 
   CustomAutoComplete({
     required this.dropdownItems,
@@ -31,7 +32,8 @@ class CustomAutoComplete extends StatelessWidget {
     this.icon,
     this.dropdownHeight,
     this.dropdownWidth,
-    this.borderColor
+    this.borderColor,
+    this.hintColor,
   });
 
   @override

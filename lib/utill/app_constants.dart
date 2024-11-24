@@ -50,6 +50,7 @@ class AppConstants {
   static const String WPPF_LEDGER = 'wppf_ledger';
   static const String SALES = 'sales';
   static const String ORDERS = 'orders';
+  static const String NEW_SALE_SUBMIT = 'new-sale';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
