@@ -1,5 +1,6 @@
 class AitData {
-  final String aitAutomationId;
+  final String headerId;
+  final String customerId;
   final String customerName;
   final String challanNo;
   final String invoiceAmount;
@@ -7,24 +8,25 @@ class AitData {
   final String challanDate;
   final List<String> filePaths;
 
-  AitData({
-    required this.aitAutomationId,
-    required this.customerName,
-    required this.challanNo,
-    required this.invoiceAmount,
-    required this.aitAmount,
-    required this.challanDate,
-    required this.filePaths,
-  });
-
+ AitData({
+    required this.headerId,
+    required this.customerId,
+   required this.customerName,
+   required this.challanNo,
+   required this.challanDate,
+   required this.invoiceAmount,
+   required this.aitAmount,
+   required this.filePaths
+});
   factory AitData.fromJson(Map<String, dynamic> json) {
     return AitData(
-      aitAutomationId: json['ait_automation_id'] ?? '',
-      customerName: json['customer_name'] ?? '',
-      challanNo: json['challan_no'] ?? '',
-      invoiceAmount: json['invoice_amount'] ?? '',
-      aitAmount: json['ait_amount'] ?? '',
-      challanDate: json['challan_date'] ?? '',
+      headerId: json['headerId'] ?? '',
+      customerId: json['customerId'],
+      customerName: json['customerName'] ?? '',
+      challanNo: json['challanNo'] ?? '',
+      challanDate: json['challanDate'] ?? '',
+      invoiceAmount: json['invoiceAmount'] ?? '',
+      aitAmount: json['aitAmount'] ?? '',
       filePaths: List<String>.from(json['file_paths'] ?? []),
     );
   }

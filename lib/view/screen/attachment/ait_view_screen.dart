@@ -25,24 +25,11 @@ class _AitViewScreenState extends State<AitViewScreen> {
         () => context.read<AttachmentProvider>().fetchAitData(),
     );
   }
-  Future<void> _openFile(String url) async {
-    if (await canLaunch(url)) {
-      await launch(
-          url,
-          forceWebView: true,
-        enableJavaScript: true
-      );
-    }else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Couln't open file")),
-      );
-    }
-  }
 
-  Future<void> _openFile2(String url, String fileName) async {
+  Future<void> _openFile(String url, String fileName) async {
     final extension = url.toLowerCase().split('.').last;
     fileName = url.toLowerCase().split('/').last;
-    print('file name: $fileName');
+
     final supportedImageFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
     if (extension == 'pdf' || supportedImageFormats.contains(extension)) {
@@ -102,40 +89,44 @@ class _AitViewScreenState extends State<AitViewScreen> {
                 final ait = provider.aitData[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ExpansionTile(
-                    title: Text(ait.customerName),
-                    subtitle: Text('Challan No: ${ait.challanNo}'),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildInfoRow('Invoice Amount', ait.invoiceAmount),
-                            _buildInfoRow('AIT Amount', ait.aitAmount),
-                            _buildInfoRow('Challan Date', ait.challanDate),
-                            if (ait.filePaths.isNotEmpty) ...[
-                              SizedBox(height: 8),
-                              Text(
-                                'Attached Files:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInfoRow('Custoemr Name', ait.customerName),
+                        _buildInfoRow('Challan No', ait.challanNo),
+                        _buildInfoRow('Invoice Amount', ait.invoiceAmount),
+                        _buildInfoRow('AIT Amount', ait.aitAmount),
+                        _buildInfoRow('Challan Date', ait.challanDate),
+                        if (ait.filePaths.isNotEmpty) ...[
+                          ExpansionTile(
+                              tilePadding: EdgeInsets.zero,
+                              title: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Attached Files (${ait.filePaths.length})'
+                                ),
                               ),
-                              SizedBox(height: 8),
+                            children: [
                               Wrap(
                                 spacing: 8,
+                                alignment: WrapAlignment.start,
                                 children: ait.filePaths.map((path) {
                                   return ElevatedButton.icon(
                                     icon: Icon(Icons.attach_file),
                                     label: Text('View File'),
-                                    onPressed: () => _openFile2(path, 'File Name'),
+                                    onPressed: () => _openFile(path, 'File Name'),
                                   );
                                 }).toList(),
                               ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
+                            ]
+                          ),
+                        ],
+                        _actionButtonWidget()
+                      ],
+
+                    ),
                   ),
                 );
               },
@@ -160,6 +151,27 @@ class _AitViewScreenState extends State<AitViewScreen> {
             child: Text(value),
           ),
         ],
+      ),
+    );
+  }
+  
+  Widget _actionButtonWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+                onPressed: () {},
+                child: Text('Reject')
+            ),
+            ElevatedButton(
+                onPressed: () {},
+                child: Text('Approved')
+            )
+          ],
+        ),
       ),
     );
   }

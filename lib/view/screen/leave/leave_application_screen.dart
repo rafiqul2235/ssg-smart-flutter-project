@@ -68,16 +68,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
-  // image picker variable
-  final ImagePicker _picker = ImagePicker();
-  XFile? _attachmentFile;
-
-  // file picker variable
-  PlatformFile? _attachmentFiles;
-  final List<String> _allowedExtensions = [
-    'pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'
-  ];
-  final int _maxFileSize = 5 * 1024 * 1024;
 
   String workingAreaName = '';
 
@@ -85,133 +75,54 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   bool isLeaveTypeFieldError = false;
 
-  LeaveBalance? _leaveBalance = LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
+  LeaveBalance? _leaveBalance =
+      LeaveBalance(casual: 0, compensatory: 0, earned: 0.0, sick: 0);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-   // Provider.of<UserProvider>(context, listen: false).resetLoading();
+    // Provider.of<UserProvider>(context, listen: false).resetLoading();
 
     Provider.of<LeaveProvider>(context, listen: false).getLeaveType(context);
 
     _intData();
-
   }
 
   _intData() async {
-    _leaveBalance =  await Provider.of<LeaveProvider>(context, listen: false).getLeaveBalance(context);
-     setState(() {});
+    _leaveBalance = await Provider.of<LeaveProvider>(context, listen: false)
+        .getLeaveBalance(context);
+    setState(() {});
   }
 
   void _durationCalculation() {
     String _startDate = _startDateController.text!;
     String _endDate = _endDateController.text!;
-    if(_startDate.isNotEmpty && _endDate.isNotEmpty){
-      int duration = DateConverter.differanceTwoDate(_startDate, _endDate)+1;
-      if(duration > 0) {
+    if (_startDate.isNotEmpty && _endDate.isNotEmpty) {
+      int duration = DateConverter.differanceTwoDate(_startDate, _endDate) + 1;
+      if (duration > 0) {
         _durationController.text = '$duration';
       }
     }
   }
-  // Method to show image source selection dialog
-  // void _showImageSourceDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Select Image Source'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             ListTile(
-  //               leading: Icon(Icons.camera_alt),
-  //               title: Text('Camera'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 _pickImage(ImageSource.camera);
-  //               },
-  //             ),
-  //             ListTile(
-  //               leading: Icon(Icons.photo_library),
-  //               title: Text('Gallery'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 _pickImage(ImageSource.gallery);
-  //               },
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-// Add this method to handle file picking
-//   Future<void> _pickImage(ImageSource source) async {
-//     try {
-//       final XFile? pickedFile = await _picker.pickImage(
-//           source: source,
-//           maxHeight: 1800,
-//           maxWidth: 1800,
-//           imageQuality: 85,
-//       );
-//       if (pickedFile != null) {
-//         setState(() {
-//           _attachmentFile = pickedFile;
-//         });
-//       }
-//     } catch(e) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text("Error picking image: $e"))
-//       );
-//     }
-//
-//   }
-// Method to handle file picking
-  Future<void> _pickFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: _allowedExtensions,
-        allowMultiple: false,
-        withData: true, // Keep file data in memory
-      );
 
-      if (result != null) {
-        PlatformFile file = result.files.first;
-
-        // Check file size
-        if (file.size > _maxFileSize) {
-          _showErrorDialog('File size should not exceed 5MB');
-          return;
-        }
-
-        setState(() {
-          _attachmentFiles = file;
-        });
-      }
-
-    } catch (e) {
-      _showErrorDialog('Error picking file: $e');
-    }
-  }
-  void _onClickSubmit () async {
-
-    if(!_formKey.currentState!.validate()){
+  void _onClickSubmit() async {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    if(selectedLeaveType == null ){
+    if (selectedLeaveType == null) {
       _showErrorDialog("Please select a leave type");
       return;
     }
 
-    if(!_isLeaveBalanceSufficient()){
+    if (!_isLeaveBalanceSufficient()) {
       _showErrorDialog("Unavailable leave balance");
       return;
     }
 
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    UserInfoModel? userInfoModel =
+        Provider.of<UserProvider>(context, listen: false).userInfoModel;
     LeaveData leaveData = LeaveData(
         empName: userInfoModel?.fullName,
         empNumber: userInfoModel?.employeeNumber,
@@ -226,9 +137,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         startDate: _startDateController.text,
         endDate: _endDateController.text,
         duration: _durationController.text,
-        attachment: _attachmentFiles,
-        comment: _leaveCommentsController.text
-    );
+        comment: _leaveCommentsController.text);
     print("Leave data: $leaveData");
     final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
     await leaveProvider.applyLeave(context, leaveData);
@@ -266,29 +175,29 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
 
-  String? _validateLeaveComments(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateLeaveComments(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave comments';
     }
     return null;
   }
 
-  String? _validateDuration(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateDuration(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave duration';
     }
     return null;
   }
 
-  String? _validateStartDate(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateStartDate(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave start date';
     }
     return null;
   }
 
-  String? _validateEndDate(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateEndDate(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave end date';
     }
     return null;
@@ -296,7 +205,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
@@ -325,24 +233,26 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                         decoration: BoxDecoration(
                             color: ColorResources.getIconBg(context),
                             borderRadius: BorderRadius.only(
-                              topLeft:
-                                  Radius.circular(Dimensions.MARGIN_SIZE_DEFAULT),
-                              topRight:
-                                  Radius.circular(Dimensions.MARGIN_SIZE_DEFAULT),
+                              topLeft: Radius.circular(
+                                  Dimensions.MARGIN_SIZE_DEFAULT),
+                              topRight: Radius.circular(
+                                  Dimensions.MARGIN_SIZE_DEFAULT),
                             )),
                         child: ListView(
                           padding: EdgeInsets.all(0),
                           physics: BouncingScrollPhysics(),
                           children: [
-
                             /* Leave Balance */
-                            Center(child: Text('Leave Balance',style: titilliumBold.copyWith(fontSize: 20))),
+                            Center(
+                                child: Text('Leave Balance',
+                                    style:
+                                        titilliumBold.copyWith(fontSize: 20))),
 
                             Container(
-                              color:Colors.blueAccent.withOpacity(0.7),
+                              color: Colors.blueAccent.withOpacity(0.7),
                               child: Table(
-                                //defaultColumnWidth: IntrinsicColumnWidth(),
-                                //defaultColumnWidth: FixedColumnWidth(),
+                                  //defaultColumnWidth: IntrinsicColumnWidth(),
+                                  //defaultColumnWidth: FixedColumnWidth(),
                                   columnWidths: {
                                     //0:FractionColumnWidth(0.23),
                                     0: IntrinsicColumnWidth(),
@@ -354,133 +264,212 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                   border: TableBorder.all(),
                                   children: [
                                     /* Header Row */
-                                    TableRow (
-                                        decoration: const BoxDecoration(color: Colors.transparent),
+                                    TableRow(
+                                        decoration: const BoxDecoration(
+                                            color: Colors.transparent),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Leave Type',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Leave Type',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('B/L',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('B/L',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Leave Type',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Leave Type',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('B/L',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('B/L',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
-                                        ]
-                                    ),
+                                        ]),
                                     /* Data Row */
-                                    TableRow (
-                                        decoration: BoxDecoration(color:Colors.green.shade50),
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                            color: Colors.green.shade50),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Casual Leave',style:titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Casual Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.casual}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.casual}',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Comp. Leave',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Comp. Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.compensatory}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.compensatory}',
+                                                    style: titilliumRegular)),
                                           ),
-
-                                        ]
-                                    ),
-                                    TableRow (
-                                        decoration: BoxDecoration(color:Colors.orange.shade50),
+                                        ]),
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                            color: Colors.orange.shade50),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Sick Leave',style:titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Sick Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.sick}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.sick}',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Earned Leave',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Earned Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.earned}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.earned}',
+                                                    style: titilliumRegular)),
                                           ),
-
-                                        ]
-                                    )
-                                  ]
-                              ),
+                                        ])
+                                  ]),
                             ),
 
                             /* Apply Leave */
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
-                              child: Center(child: Text('Apply Your Leave',style: titilliumBold.copyWith(fontSize: 20))),
+                              child: Center(
+                                  child: Text('Apply Your Leave',
+                                      style: titilliumBold.copyWith(
+                                          fontSize: 20))),
                             ),
 
                             // for leave type
                             Consumer<LeaveProvider>(
-                                builder: (context,leaveProvider,child){
-
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 5.0),
-                                    child: Column(
+                                builder: (context, leaveProvider, child) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 5.0),
+                                child: Column(
+                                  children: [
+                                    Row(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Icon(Icons.streetview,
-                                                color:
-                                                ColorResources.getPrimary(context),
-                                                size: 20),
-                                            const SizedBox(
-                                              width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
-                                            ),
-                                            MandatoryText(text: 'Leave Type', mandatoryText: '*',
-                                                textStyle: titilliumRegular)
-                                          ],
-                                        ),
-
+                                        Icon(Icons.streetview,
+                                            color: ColorResources.getPrimary(
+                                                context),
+                                            size: 20),
                                         const SizedBox(
-                                            height: Dimensions.MARGIN_SIZE_SMALL),
-                                        CustomDropdownButton(
-                                          buttonHeight: 45,
-                                          buttonWidth: double.infinity,
-                                          dropdownWidth: width - 40,
-                                          hint: 'Select Leave Type',
-                                          //hintColor: Colors.black: null,
-                                          dropdownItems: leaveProvider.leaveTypes,
-                                          value: selectedLeaveType,
-                                          buttonBorderColor: isLeaveTypeFieldError?Colors.red:Colors.black12,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedLeaveType = value;
-                                            });
-                                          },
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL,
                                         ),
+                                        MandatoryText(
+                                            text: 'Leave Type',
+                                            mandatoryText: '*',
+                                            textStyle: titilliumRegular)
                                       ],
                                     ),
-                                  );
-                                }
-                            ),
+                                    const SizedBox(
+                                        height: Dimensions.MARGIN_SIZE_SMALL),
+                                    CustomDropdownButton(
+                                      buttonHeight: 45,
+                                      buttonWidth: double.infinity,
+                                      dropdownWidth: width - 40,
+                                      hint: 'Select Leave Type',
+                                      //hintColor: Colors.black: null,
+                                      dropdownItems: leaveProvider.leaveTypes,
+                                      value: selectedLeaveType,
+                                      buttonBorderColor: isLeaveTypeFieldError
+                                          ? Colors.red
+                                          : Colors.black12,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedLeaveType = value;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
 
                             // Date Selection Row (Horizontal Layout)
                             Container(
@@ -491,22 +480,28 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                   // Start Date
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
                                             Icon(Icons.date_range,
-                                                color: ColorResources.getPrimary(context),
+                                                color:
+                                                    ColorResources.getPrimary(
+                                                        context),
                                                 size: 20),
-                                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
                                             MandatoryText(
                                                 text: 'Start Date',
                                                 mandatoryText: '*',
-                                                textStyle: titilliumRegular
-                                            )
+                                                textStyle: titilliumRegular)
                                           ],
                                         ),
-                                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.MARGIN_SIZE_SMALL),
                                         CustomDateTimeTextField(
                                           controller: _startDateController,
                                           focusNode: _startDateFocus,
@@ -514,7 +509,8 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                           textInputAction: TextInputAction.next,
                                           isTime: false,
                                           readyOnly: false,
-                                          onChanged: (v) => {_durationCalculation()},
+                                          onChanged: (v) =>
+                                              {_durationCalculation()},
                                           validator: _validateStartDate,
                                         ),
                                       ],
@@ -524,29 +520,36 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                   // End Date
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
                                             Icon(Icons.date_range,
-                                                color: ColorResources.getPrimary(context),
+                                                color:
+                                                    ColorResources.getPrimary(
+                                                        context),
                                                 size: 20),
-                                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
                                             MandatoryText(
                                                 text: 'End Date',
                                                 mandatoryText: '*',
-                                                textStyle: titilliumRegular
-                                            )
+                                                textStyle: titilliumRegular)
                                           ],
                                         ),
-                                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.MARGIN_SIZE_SMALL),
                                         CustomDateTimeTextField(
                                           controller: _endDateController,
                                           focusNode: _endDateFocus,
                                           textInputAction: TextInputAction.next,
                                           isTime: false,
                                           readyOnly: false,
-                                          onChanged: (v) => {_durationCalculation()},
+                                          onChanged: (v) =>
+                                              {_durationCalculation()},
                                           validator: _validateEndDate,
                                         ),
                                       ],
@@ -558,19 +561,21 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
                             // for Duration
                             Container(
-                                margin: EdgeInsets.only(top: 5.0),
+                              margin: EdgeInsets.only(top: 5.0),
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
                                       Icon(Icons.access_time_filled,
-                                          color:
-                                              ColorResources.getPrimary(context),
+                                          color: ColorResources.getPrimary(
+                                              context),
                                           size: 20),
                                       const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'Leave Duration', mandatoryText: '*',
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL),
+                                      MandatoryText(
+                                          text: 'Leave Duration',
+                                          mandatoryText: '*',
                                           textStyle: titilliumRegular)
                                     ],
                                   ),
@@ -589,180 +594,23 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                               ),
                             ),
 
-                            //Attachment field
-                            // Attachment Field (New)
-                            // Container(
-                            //   margin: EdgeInsets.only(top: 5.0),
-                            //   child: Column(
-                            //     crossAxisAlignment: CrossAxisAlignment.start,
-                            //     children: [
-                            //       Row(
-                            //         children: [
-                            //           Icon(Icons.attach_file,
-                            //               color: ColorResources.getPrimary(context),
-                            //               size: 20),
-                            //           const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                            //           Text('Attachment', style: titilliumRegular),
-                            //         ],
-                            //       ),
-                            //       const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                            //       Row(
-                            //         children: [
-                            //           Expanded(
-                            //             child: Container(
-                            //               height: 45,
-                            //               padding: EdgeInsets.symmetric(horizontal: 10),
-                            //               decoration: BoxDecoration(
-                            //                 border: Border.all(color: Colors.black12),
-                            //                 borderRadius: BorderRadius.circular(6),
-                            //               ),
-                            //               child: Row(
-                            //                 children: [
-                            //                   Expanded(
-                            //                     child: Text(
-                            //                       _attachmentFile?.path.split('/').last ?? 'No file chosen',
-                            //                       style: titilliumRegular.copyWith(
-                            //                           color: _attachmentFile != null
-                            //                               ? Colors.black
-                            //                               : Colors.grey
-                            //                       ),
-                            //                       maxLines: 1,
-                            //                       overflow: TextOverflow.ellipsis,
-                            //                     ),
-                            //                   ),
-                            //                   IconButton(
-                            //                     icon: Icon(Icons.clear),
-                            //                     onPressed: _attachmentFile != null
-                            //                         ? () => setState(() => _attachmentFile = null)
-                            //                         : null,
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //             ),
-                            //           ),
-                            //           SizedBox(width: 8),
-                            //           ElevatedButton.icon(
-                            //             onPressed: _showImageSourceDialog,
-                            //             icon: Icon(Icons.upload_file),
-                            //             label: Text('Choose File'),
-                            //             style: ElevatedButton.styleFrom(
-                            //               backgroundColor: Theme.of(context).primaryColorLight,
-                            //               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                Container(
-                  margin: EdgeInsets.only(top: 5.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.attach_file,
-                              color: ColorResources.getPrimary(context),
-                              size: 20),
-                          const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                          Text('Attachment', style: titilliumRegular),
-                        ],
-                      ),
-                      const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Allowed file types: ${_allowedExtensions.join(', ')}',
-                                style: titilliumRegular.copyWith(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 45,
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            _attachmentFiles?.name ?? 'No file chosen',
-                                            style: titilliumRegular.copyWith(
-                                                color: _attachmentFiles != null
-                                                    ? Colors.black
-                                                    : Colors.grey
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        if (_attachmentFiles != null)
-                                          IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed: () => setState(() => _attachmentFiles = null),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: _pickFile,
-                                    icon: Icon(Icons.upload_file),
-                                    label: Text('Choose File'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Theme.of(context).primaryColorLight,
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (_attachmentFiles != null)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Size: ${(_attachmentFiles!.size / 1024).toStringAsFixed(2)} KB',
-                                  style: titilliumRegular.copyWith(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                             // for  leave comment
                             Container(
-                                margin: EdgeInsets.only(top: 5.0),
+                              margin: EdgeInsets.only(top: 5.0),
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
                                       Icon(Icons.note_add,
-                                          color:
-                                              ColorResources.getPrimary(context),
+                                          color: ColorResources.getPrimary(
+                                              context),
                                           size: 20),
                                       const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'Leave Comments', mandatoryText: '*',
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL),
+                                      MandatoryText(
+                                          text: 'Leave Comments',
+                                          mandatoryText: '*',
                                           textStyle: titilliumRegular)
                                     ],
                                   ),
@@ -788,7 +636,11 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                           horizontal: Dimensions.MARGIN_SIZE_LARGE,
                           vertical: Dimensions.MARGIN_SIZE_SMALL),
                       child: !Provider.of<LeaveProvider>(context).loading
-                          ? CustomButton(onTap: () {_onClickSubmit();}, buttonText: 'SUBMIT')
+                          ? CustomButton(
+                              onTap: () {
+                                _onClickSubmit();
+                              },
+                              buttonText: 'SUBMIT')
                           : Center(
                               child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -801,32 +653,39 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
           ],
         ));
   }
-  void _showSuccessDialog(String message){
-    showAnimatedDialog(context, MyDialog(
-      icon: Icons.check,
-      title: 'Success',
-      description: message,
-      rotateAngle: 0,
-      positionButtonTxt: 'Go to Home',
-      onPositiveButtonPressed: () {
-        Navigator.of(context).pop(); // Close the dialog
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SelfService(isBackButtonExist: false,))
-        );
-      },
-    ), dismissible: false);
+
+  void _showSuccessDialog(String message) {
+    showAnimatedDialog(
+        context,
+        MyDialog(
+          icon: Icons.check,
+          title: 'Success',
+          description: message,
+          rotateAngle: 0,
+          positionButtonTxt: 'Go to Home',
+          onPositiveButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SelfService(
+                          isBackButtonExist: false,
+                        )));
+          },
+        ),
+        dismissible: false);
   }
-  void _showErrorDialog(String message){
-    showAnimatedDialog(context, MyDialog(
-      icon: Icons.error,
-      title: 'Error',
-      description: message,
-      rotateAngle: 0,
-      positionButtonTxt: 'Ok',
-    ), dismissible: false);
+
+  void _showErrorDialog(String message) {
+    showAnimatedDialog(
+        context,
+        MyDialog(
+          icon: Icons.error,
+          title: 'Error',
+          description: message,
+          rotateAngle: 0,
+          positionButtonTxt: 'Ok',
+        ),
+        dismissible: false);
   }
 }
-
-
-

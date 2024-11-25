@@ -16,7 +16,6 @@ import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/user_info_model.dart';
-import '../../../provider/leave_provider.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
@@ -51,13 +50,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
 
-  // final List<DropDownModel> _customer = [
-  //   DropDownModel(id: 1, name: "Customer A"),
-  //   DropDownModel(id: 2, name: "Customer B"),
-  //   DropDownModel(id: 3, name: "Customer C"),
-  //   DropDownModel(id: 4, name: "Customer D"),
-  // ];
-
   // file picker variable
   List<PlatformFile>? _attachmentFiles = [];
   final List<String> _allowedExtensions = [
@@ -83,15 +75,16 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   @override
   void initState() {
     super.initState();
-    // Provider.of<UserProvider>(context, listen: false).resetLoading();
-    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-
-    final provider = Provider.of<AttachmentProvider>(context, listen: false);
-     provider.fetchCustomerDetailsInfo(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
     _intData();
   }
 
   _intData() async {
+    // Provider.of<UserProvider>(context, listen: false).resetLoading();
+    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    print("userinfo: ${userInfoModel}");
+    final provider = Provider.of<AttachmentProvider>(context, listen: false);
+    provider.fetchCustomerDetailsInfo(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+
     setState(() {});
   }
 

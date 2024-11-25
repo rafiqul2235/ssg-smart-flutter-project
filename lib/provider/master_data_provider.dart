@@ -13,7 +13,6 @@ class MasterDataProvider with ChangeNotifier {
   MasterDataProvider({required this.masterDataRepo});
 
   Future<List<DropDownModel>> getAreaData(AreaRequestData requestData) async {
-
    // print( ' DefaultLocalRepository getAreaData  ${requestData.toString()}');
 
     List<DropDownModel> datas = [];
