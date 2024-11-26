@@ -99,7 +99,7 @@ class CustomAutoComplete extends StatelessWidget {
                 filled: true,
                 fillColor: Theme.of(context).highlightColor,
                 focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)),
-                hintStyle: titilliumRegular.copyWith(color: Theme.of(context).hintColor),
+                hintStyle: titilliumRegular.copyWith(color:hintColor??Theme.of(context).hintColor),
                  //border: InputBorder.none
                 border: OutlineInputBorder(borderSide:BorderSide(color:borderColor??Colors.black12)),
             ),

@@ -31,6 +31,7 @@ import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../../basewidget/textfield/custom_textfield.dart';
 import '../home/dashboard_screen.dart';
+import 'dart:developer' as developer;
 
 class SalesOrderScreen extends StatefulWidget {
   final bool isBackButtonExist;
@@ -79,13 +80,18 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   List<DropDownModel> _shipToLocationDropDown = [];
   DropDownModel? _selectedShipToLocation;
 
-  bool _selectCompanyError = false;
+
   bool isViewOnly = false;
+
+  bool _customerFieldError = false;
+  bool _warehouseFieldError = false;
+  bool _freightTermsFieldError = false;
+  bool _orderDateFieldError = false;
 
   //SalesOrder? _salesOrder;
 
   String _orgName = '';
-  String _warehouse = '';
+  String _warehouseId = '';
   String _custId = '';
   String _freightTerms = '';
   String formattedDate = '';
@@ -124,9 +130,113 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         "Current Date: ${now.toLocal()}"); // Outputs: YYYY-MM-DD HH:MM:SS.mmmuuu
 
     // If you want only the date (DD-MM-YYYY)
-    formattedDate =
-        "${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
+    formattedDate ="${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
     print("Formatted Date: $formattedDate"); // Outputs: DD-MM-YYYY
+  }
+
+  Future<void> _onClickSubmit() async {
+
+    _customerFieldError = false;
+    _warehouseFieldError = false;
+    _freightTermsFieldError = false;
+    _orderDateFieldError = false;
+
+    if (_selectedCustomer == null) {
+      _customerFieldError = true;
+      _showMessage('Select Customer!',true);
+      return;
+    }
+
+    if (_warehouseId == null || _warehouseId.isEmpty ) {
+      _warehouseFieldError = true;
+      _showMessage('Select Warehouse',true);
+      return;
+    }
+
+    //SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+
+
+    /*final salesProviderAvailable = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProviderAvailable.getCustAvailBalance(context, '$_custId');
+    _availableBalanceModel = salesProviderAvailable.availCustBalance;
+    final availableCustBal = _availableBalanceModel!.customerBalance;
+    print("Available customer Balance : $availableCustBal");
+*/
+
+    /* if (availableCustBal == '71953') {
+      _showErrorDialog("Insufficient Customer Balance");
+      return;
+    }*/
+
+    /*if(_selectedWareHouse == null ){
+      _showErrorDialog("Warehouse is Emty");
+      return;
+    }*/
+
+    /* if(_selectedFreightTerms == null ){
+      _showErrorDialog("Warehouse is Emty");
+      return;
+    }*/
+
+
+    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+    salesInfoModel.orgId = _selectedCustomer?.orgId;
+    salesInfoModel.customerId = _selectedCustomer?.customerId;
+    salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
+    salesInfoModel.warehouseId = _warehouseId;
+    salesInfoModel.freightTerms = _freightTerms;
+    salesInfoModel.orderDate = formattedDate;
+
+    developer.log(salesInfoModel.toJson().toString());
+
+
+
+
+
+   /* SalesDataModel salesDataModel = SalesDataModel(
+      custId: _selectedCustomer?.customerId,
+      selesrepId: _selectedCustomer?.salesPersonId,
+      orgId: _selectedCustomer?.orgId,
+      billToSiteId: _selectedCustomer?.billToSiteId,
+      billToAddress: _selectedCustomer?.billToAddress,
+      orderTypeId: _selectedCustomer?.orderTypeId,
+      orderType: _selectedCustomer?.orderType,
+      freightTerm: _selectedCustomer?.freightTerms,
+      freightTermId: _selectedCustomer?.freightTermsId,
+      wareHouseId: _selectedCustomer?.warehouseId,
+      orderDate: "24-12-2024",
+      priceListId: _selectedCustomer?.priceListId,
+      primaryShipToSiteId: _selectedCustomer?.priceListId,
+    );*/
+    //print("Sales data: $salesDataModel");
+   // final salesProvider =
+    //Provider.of<SalesOrderProvider>(context, listen: false);
+    //await salesProvider.salesOrderSubmit(context, salesDataModel);
+
+  }
+
+  Future<void> _onClickCustBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustBalance(context, '$_custId');
+    _balanceModel = salesProvider.custBalance;
+    final customerBal = _balanceModel!.customerBalance;
+    print("customerBalance : $customerBal");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
+    if (_selectedCustomer == null) {
+      _showErrorDialog("Select Customer for showing Balance");
+      return;
+    }
+    // _showErrorDialog("Rafiqul");
+    _showCustBalDialog('$customerBal');
+    return;
+  }
+
+  _showMessage(String message, bool isError){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: isError?Colors.red:Colors.green,
+    ));
   }
 
   @override
@@ -303,13 +413,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
-                              borderColor: Colors.transparent,
+                              borderColor: _customerFieldError?Colors.red:Colors.transparent,
                               onReturnTextController: (textController) =>
                                   _customerController = textController,
                               onClearPressed: () {
                                 setState(() {
+                                  _selectedShipToLocation = null;
+                                  if(_shipToSiteController!=null) {
+                                    _shipToSiteController!.text = '';
+                                  }
                                   _selectedCustomer = null;
-                                  _warehouse = '';
+                                  _warehouseId = '';
                                   _custId = '';
                                   _freightTerms = '';
                                   _selectedWareHouse = null;
@@ -317,22 +431,31 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                 });
                               },
                               onChanged: (value) {
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                                for (Customer customer
-                                    in provider.customerList) {
-                                  if (customer.customerId == value?.code) {
+                                FocusScope.of(context).requestFocus(FocusNode());
+
+                                _selectedShipToLocation = null;
+                                if(_shipToSiteController!=null) {
+                                  _shipToSiteController!.text = '';
+                                }
+
+                                for (Customer customer in provider.customerList) {
+                                  if (customer.customerId == value.code) {
+
+                                    provider.salesOrder.customerId = customer.customerId;
+                                    provider.salesOrder.customerName = customer.customerName;
+                                    provider.salesOrder.warehouseId = customer.warehouseId;
+                                    provider.salesOrder.warehouseName = customer.warehouseName;
+                                    provider.salesOrder.freightTermsId = customer.freightTermsId;
+                                    provider.salesOrder.freightTerms = customer.freightTerms;
+
                                     _selectedCustomer = customer;
-                                    _custId =
-                                        _selectedCustomer?.customerId ?? '';
+                                    _custId = _selectedCustomer?.customerId ?? '';
                                     Provider.of<SalesOrderProvider>(context,
                                             listen: false)
                                         .getCustomerShipToLocation(
                                             context, _custId);
-                                    _warehouse =
-                                        _selectedCustomer?.warehouseName ?? '';
-                                    _freightTerms =
-                                        _selectedCustomer?.freightTerms ?? '';
+                                    _warehouseId = _selectedCustomer?.warehouseId ?? '';
+                                    _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;
                                     break;
                                   }
@@ -427,19 +550,20 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         dropdownItems: _warehousesDropDown,
                         value: _warehouseController != null
                             ? _warehouseController!.text
-                            : '',
+                            : _warehouseId??'',
                         icon: const Icon(Icons.search),
                         height: 35,
                         width: width,
-                        hint: _warehouse,
+                        hint: _selectedCustomer?.warehouseName??"",
                         hintColor: Colors.black,
                         dropdownHeight: 300,
                         dropdownWidth: width - 40,
-                        borderColor: Colors.transparent,
+                        borderColor: _warehouseFieldError?Colors.red:Colors.transparent,
                         onReturnTextController: (textController) =>
                             _warehouseController = textController,
                         onChanged: (value) {
                           setState(() {
+                            _warehouseId = value.code??'0';
                             _selectedWareHouse = value;
                           });
                         },
@@ -491,6 +615,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         buttonBorderColor: Colors.black12,
                         onChanged: (value) {
                           setState(() {
+                            _freightTerms = value?.code??'0';
                             _selectedFreightTerms = value;
                           });
                         },
@@ -499,7 +624,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                     ],
                   ),
                 ),
-
 
                 Container(
                   margin: const EdgeInsets.only(
@@ -657,81 +781,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       ]),
     );
   }
-
-
-
-  Future<void> _onClickSubmit() async {
-    if (_selectedCustomer == null) {
-      _showErrorDialog("Select Customer Name");
-      return;
-    }
-
-    final salesProviderAvailable = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProviderAvailable.getCustAvailBalance(context, '$_custId');
-    _availableBalanceModel = salesProviderAvailable.availCustBalance;
-    final availableCustBal = _availableBalanceModel!.customerBalance;
-    print("Available customer Balance : $availableCustBal");
-
-    if (availableCustBal == '71953') {
-      _showErrorDialog("Insufficient Customer Balance");
-      return;
-    }
-
-
-
-    /*if(_selectedWareHouse == null ){
-      _showErrorDialog("Warehouse is Emty");
-      return;
-    }*/
-
-    /* if(_selectedFreightTerms == null ){
-      _showErrorDialog("Warehouse is Emty");
-      return;
-    }*/
-
-    SalesOrder? salesInfoModel =
-        Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
-    SalesDataModel salesDataModel = SalesDataModel(
-      custId: _selectedCustomer?.customerId,
-      selesrepId: _selectedCustomer?.salesPersonId,
-      orgId: _selectedCustomer?.orgId,
-      billToSiteId: _selectedCustomer?.billToSiteId,
-      billToAddress: _selectedCustomer?.billToAddress,
-      orderTypeId: _selectedCustomer?.orderTypeId,
-      orderType: _selectedCustomer?.orderType,
-      freightTerm: _selectedCustomer?.freightTerms,
-      freightTermId: _selectedCustomer?.freightTermsId,
-      wareHouseId: _selectedCustomer?.warehouseId,
-      orderDate: "24-12-2024",
-      priceListId: _selectedCustomer?.priceListId,
-      primaryShipToSiteId: _selectedCustomer?.priceListId,
-    );
-    print("Sales data: $salesDataModel");
-    final salesProvider =
-        Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.salesOrderSubmit(context, salesDataModel);
-
-  }
-
-  Future<void> _onClickCustBal() async {
-    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getCustBalance(context, '$_custId');
-    _balanceModel = salesProvider.custBalance;
-    final customerBal = _balanceModel!.customerBalance;
-    print("customerBalance : $customerBal");
-
-    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
-    if (_selectedCustomer == null) {
-      _showErrorDialog("Select Customer for showing Balance");
-      return;
-    }
-     // _showErrorDialog("Rafiqul");
-      _showCustBalDialog('$customerBal');
-      return;
-
-
-  }
-
 
   void _showErrorDialog(String message) {
     showAnimatedDialog(
@@ -1021,7 +1070,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownItems: _itemsDropDown,
               value: _selectedItem,
               buttonBorderColor:
-                  _selectCompanyError ? Colors.red : Colors.black87,
+                  _customerFieldError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
                   //_selectCompanyError = false;
@@ -1085,7 +1134,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownItems: _vehicleTypesDropDown,
               value: _selectedVehicleType,
               buttonBorderColor:
-                  _selectCompanyError ? Colors.red : Colors.black87,
+                  _customerFieldError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
                   // _selectCompanyError = false;
@@ -1128,5 +1177,4 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   _deleteItemDetail(masterId, detailsId, company) {}
 
-  _submitButton() {}
 }
