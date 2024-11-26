@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
+import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/response/base/api_response.dart';
@@ -28,6 +30,12 @@ class SalesOrderProvider with ChangeNotifier {
 
   String? _isSuccess;
   String? get isSuccess => _isSuccess;
+
+  CustomerBalanceModel? _custBalance;
+  CustomerBalanceModel get custBalance => _custBalance??CustomerBalanceModel(customerBalance: '');
+
+  AvailableCustBalModel? _availCustBalance;
+  AvailableCustBalModel get availCustBalance => _availCustBalance??AvailableCustBalModel(customerBalance: '');
 
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
@@ -144,6 +152,43 @@ class SalesOrderProvider with ChangeNotifier {
       hideLoading();
       notifyListeners();
     }
+  }
+
+
+  Future<CustomerBalanceModel?> getCustBalance(BuildContext context,String customerId) async {
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+    ApiResponse apiResponse = await salesOrderRepo.geCustBalance(orgId,customerId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _custBalance = CustomerBalanceModel.fromJson(apiResponse.response?.data['customer_balance'][0]);
+
+      return _custBalance;
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+
+    return CustomerBalanceModel(customerBalance: '');
+
+  }
+
+  Future<AvailableCustBalModel?> getCustAvailBalance(BuildContext context,String customerId) async {
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+    ApiResponse apiResponse = await salesOrderRepo.getAvailCustBalance(orgId,customerId);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _availCustBalance = AvailableCustBalModel.fromJson(apiResponse.response?.data['cust_balance'][0]);
+
+      return _availCustBalance;
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+
+    return AvailableCustBalModel(customerBalance: '');
+
   }
 
   Future<void> _submitSalesApplication(SalesDataModel salesdataModel) async {

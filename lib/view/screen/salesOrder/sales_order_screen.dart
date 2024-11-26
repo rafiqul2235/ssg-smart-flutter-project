@@ -1,4 +1,6 @@
 import 'package:ssg_smart2/data/model/body/sales_order.dart';
+import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
+import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/notification_model.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/helper/date_converter.dart';
@@ -51,6 +53,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _deliverySiteDetailController;
 
   Customer? _selectedCustomer;
+  CustomerBalanceModel? _balanceModel;
+  AvailableCustBalModel? _availableBalanceModel;
+
+  CustomerBalanceModel? _custBalance = CustomerBalanceModel(customerBalance: '');
 
   List<DropDownModel> _customersDropDown = [];
   DropDownModel? _selectedCustomerDropDown;
@@ -83,6 +89,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String _custId = '';
   String _freightTerms = '';
   String formattedDate = '';
+  String customerBal ='';
 
   @override
   void initState() {
@@ -488,9 +495,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           });
                         },
                       ),
+
                     ],
                   ),
                 ),
+
 
                 Container(
                   margin: const EdgeInsets.only(
@@ -599,6 +608,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         ),
                       ),
                     ),
+
                     SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
@@ -616,6 +626,26 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           ),
                         ),
                       ),
+
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        child: Text(
+                          'Balance',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          _onClickCustBal();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+
                     ),
                   ],
                 )
@@ -628,11 +658,27 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     );
   }
 
+
+
   Future<void> _onClickSubmit() async {
     if (_selectedCustomer == null) {
       _showErrorDialog("Select Customer Name");
       return;
     }
+
+    final salesProviderAvailable = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProviderAvailable.getCustAvailBalance(context, '$_custId');
+    _availableBalanceModel = salesProviderAvailable.availCustBalance;
+    final availableCustBal = _availableBalanceModel!.customerBalance;
+    print("Available customer Balance : $availableCustBal");
+
+    if (availableCustBal == '71953') {
+      _showErrorDialog("Insufficient Customer Balance");
+      return;
+    }
+
+
+
     /*if(_selectedWareHouse == null ){
       _showErrorDialog("Warehouse is Emty");
       return;
@@ -664,7 +710,28 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     final salesProvider =
         Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.salesOrderSubmit(context, salesDataModel);
+
   }
+
+  Future<void> _onClickCustBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustBalance(context, '$_custId');
+    _balanceModel = salesProvider.custBalance;
+    final customerBal = _balanceModel!.customerBalance;
+    print("customerBalance : $customerBal");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
+    if (_selectedCustomer == null) {
+      _showErrorDialog("Select Customer for showing Balance");
+      return;
+    }
+     // _showErrorDialog("Rafiqul");
+      _showCustBalDialog('$customerBal');
+      return;
+
+
+  }
+
 
   void _showErrorDialog(String message) {
     showAnimatedDialog(
@@ -672,6 +739,19 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         MyDialog(
           icon: Icons.error,
           title: 'Error',
+          description: message,
+          rotateAngle: 0,
+          positionButtonTxt: 'Ok',
+        ),
+        dismissible: false);
+  }
+
+
+  void _showCustBalDialog(String message) {
+    showAnimatedDialog(
+        context,
+        MyDialog(
+          title: 'Customer Balance',
           description: message,
           rotateAngle: 0,
           positionButtonTxt: 'Ok',
