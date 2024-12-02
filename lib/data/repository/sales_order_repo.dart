@@ -45,6 +45,25 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getItemPriceRep(String orgId, String account_id, String site_id,String item_id,String freght) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['org_id'] = orgId;
+      data['account_id'] = account_id;
+      data['site_id'] = site_id;
+      data['item_id'] = item_id;
+      data['freght'] = freght;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.Customer_BALANCE,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('customer balance ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getAvailCustBalance(String orgId, String customerId) async {
     try {
       final Map<String, dynamic> data = <String, dynamic>{};

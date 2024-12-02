@@ -232,6 +232,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     return;
   }
 
+  Future<void> _onClickCustItemPrice() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustBalance(context, '$_custId');
+    _balanceModel = salesProvider.custBalance;
+    final customerBal = _balanceModel!.customerBalance;
+    print("customerBalance : $customerBal");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
+    if (_selectedCustomer == null) {
+      _showErrorDialog("Select Customer for showing Balance");
+      return;
+    }
+    // _showErrorDialog("Rafiqul");
+    _showCustBalDialog('$customerBal');
+    return;
+  }
+
   _showMessage(String message, bool isError){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
+import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/response/base/api_response.dart';
@@ -30,6 +31,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   String? _isSuccess;
   String? get isSuccess => _isSuccess;
+
+  ItemPriceModel? _itemPriceModel;
+  ItemPriceModel get itemPriceModel => _itemPriceModel??ItemPriceModel(itemPrice: 0);
 
   CustomerBalanceModel? _custBalance;
   CustomerBalanceModel get custBalance => _custBalance??CustomerBalanceModel(customerBalance: '');
@@ -153,6 +157,24 @@ class SalesOrderProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /*Future<ItemPriceModel?> getItemPrice(BuildContext context,String account_id,String site_id,String item_id,String freght) async {
+    //String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+    //ApiResponse apiResponse = await salesOrderRepo.getItemPriceRep(orgId,customerId,);
+
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+
+      _custBalance = CustomerBalanceModel.fromJson(apiResponse.response?.data['customer_balance'][0]);
+
+      return _itemPriceModel;
+
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+
+    return ItemPriceModel(itemPrice: 0);
+
+  }*/
 
 
   Future<CustomerBalanceModel?> getCustBalance(BuildContext context,String customerId) async {
