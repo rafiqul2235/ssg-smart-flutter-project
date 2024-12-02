@@ -17,6 +17,7 @@ import '../../../utill/dimensions.dart';
 import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
+import '../home/web_view_screen.dart';
 import '../leave/leave_application_screen.dart';
 import 'leave_approval_history.dart';
 
@@ -49,8 +50,11 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: PfLoanScreen(),));
     _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
     _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'WPPF Ledger', navigateTo: WppfLedgerScreen()));
+    _menuList.add(TopMenuItem(image: Images.visiting_card, menuName: 'Requisition Visiting Card', navigateTo: WebViewScreen(
+      title:'Apply Form for Visiting Card',
+      url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
+    )));
   }
-
 
   @override
   Widget build(BuildContext context) {
