@@ -17,6 +17,7 @@ import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
 import '../auth/reset_password_screen.dart';
+import '../cashpayment/ait_approval_screen.dart';
 import '../cashpayment/cash_payment_akg_screen.dart';
 import '../empselfservice/self_service.dart';
 import '../managementdashboard/management_dashbboard_screen.dart';
@@ -26,6 +27,8 @@ import '../pdf/pdf_list_screen.dart';
 import '../profile/profile_screen.dart';
 import '../report/report_dashboard_screen.dart';
 import 'package:badges/badges.dart' as badges;
+
+import '../salesOrder/sales_order_screen.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -190,9 +193,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             else if(userMenu.id == '5'){
                               return HomeMenuItemCircle(image: Images.dashboard, title:  userMenu.name!, navigateTo: ManagementDMenuGCF(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
-                            
                             else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }else if(userMenu.id == '20'){
+                              return HomeMenuItemCircle(image: Images.salesreport, title:  userMenu.name!, navigateTo: SalesOrderScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '14'){
                               return HomeMenuItemCircle(image: Images.self_service, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '37'){
@@ -201,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '41'){
                               return HomeMenuItemCircle(image: Images.cash_payment, title:  userMenu.name!, navigateTo: CashPaymentAkgPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              //return HomeMenuItemCircle(image: Images.cash_payment, title:  userMenu.name!, navigateTo: AitApprovalPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '42'){
                               return HomeMenuItemCircle(image: Images.visiting_card, title:  userMenu.name!, navigateTo: WebViewScreen(
                                 title: getTranslated('Apply Form for Visiting Card', context),

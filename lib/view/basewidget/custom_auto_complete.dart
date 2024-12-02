@@ -17,6 +17,7 @@ class CustomAutoComplete extends StatelessWidget {
   final Function? onClearPressed;
   final Function? onReturnTextController;
   final Color? borderColor;
+  final Color? hintColor;
 
   CustomAutoComplete({
     required this.dropdownItems,
@@ -31,7 +32,8 @@ class CustomAutoComplete extends StatelessWidget {
     this.icon,
     this.dropdownHeight,
     this.dropdownWidth,
-    this.borderColor
+    this.borderColor,
+    this.hintColor,
   });
 
   @override
@@ -97,7 +99,7 @@ class CustomAutoComplete extends StatelessWidget {
                 filled: true,
                 fillColor: Theme.of(context).highlightColor,
                 focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)),
-                hintStyle: titilliumRegular.copyWith(color: Theme.of(context).hintColor),
+                hintStyle: titilliumRegular.copyWith(color:hintColor??Theme.of(context).hintColor),
                  //border: InputBorder.none
                 border: OutlineInputBorder(borderSide:BorderSide(color:borderColor??Colors.black12)),
             ),

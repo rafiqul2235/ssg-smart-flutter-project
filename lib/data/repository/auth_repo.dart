@@ -74,6 +74,7 @@ class AuthRepo {
         prefs.setString(AppConstants.USER_NAME, userInfoModel.userName??'');
         prefs.setString(AppConstants.ORG_ID, userInfoModel.orgId??'');
         prefs.setString(AppConstants.ORG_NAME, userInfoModel.orgName??'');
+        prefs.setString(AppConstants.SALESREP_ID, userInfoModel.salesRepId??'');
         prefs.setString(AppConstants.CHANGE_PASSWORD_FLUG, userInfoModel.changePasswordFlag??'');
 
         prefs.setString(AppConstants.USER_DATA, jsonEncode(userInfoModel.toJson()));
@@ -108,6 +109,11 @@ class AuthRepo {
   String getUserName() {
     return sharedPreferences.getString(AppConstants.USER_NAME) ?? "";
   }
+
+  String getSalesPersonId() {
+    return sharedPreferences.getString(AppConstants.SALESREP_ID) ?? "0";
+  }
+
 
   String getEmpId() {
     return sharedPreferences.getString(AppConstants.USER_NAME) ?? "";

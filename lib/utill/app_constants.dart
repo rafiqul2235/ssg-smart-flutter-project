@@ -21,6 +21,9 @@ class AppConstants {
   static const String APPROVAL_List = 'leave_approval_flow';
   static const String EMP_INFO = 'emp_info';
   static const String LEAVE_BALANCE = 'leave_balance';
+  static const String Customer_BALANCE = 'customer_balance';
+  static const String Item_PRICE = 'item_price_display';
+  static const String AVAIL_Cust_BAL = 'cust_balance';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
   static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
   static const String PF_DATA = 'pf_ledger';
@@ -48,6 +51,9 @@ class AppConstants {
   static const String SAVE_LOAN_DATA = 'save_loan_data';
   static const String CHANGE_PASSWORD = 'change_password_flutter';
   static const String WPPF_LEDGER = 'wppf_ledger';
+  static const String SALES = 'sales';
+  static const String ORDERS = 'orders';
+  static const String NEW_SALE_SUBMIT = 'new-sale';
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -60,6 +66,7 @@ class AppConstants {
   static const String USER_ID = 'user_id';
   static const String USER_NAME = 'user_name';
   static const String ORG_ID = 'org_id';
+  static const String SALESREP_ID = 'SALESREP_ID';
   static const String ORG_NAME = 'org_name';
   static const String CHANGE_PASSWORD_FLUG = 'password_flag';
 

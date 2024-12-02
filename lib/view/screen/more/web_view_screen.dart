@@ -18,7 +18,7 @@ class WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
 
   @override
-  void initState() {
+  /*void initState() {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -33,7 +33,7 @@ class WebViewScreenState extends State<WebViewScreen> {
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class WebViewScreenState extends State<WebViewScreen> {
             Expanded(
               child: Stack(
                 children: [
-                  WebViewWidget(controller: _controller),
+                  //WebViewWidget(controller: _controller),
                   if (_isLoading)
                     CustomLoader(color: Theme.of(context).primaryColor),
                 ],

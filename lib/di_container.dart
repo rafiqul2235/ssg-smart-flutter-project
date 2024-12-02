@@ -38,6 +38,7 @@ import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/pfloan_provider.dart';
 import 'package:ssg_smart2/provider/report_provider.dart';
 import 'package:ssg_smart2/provider/salaryAdv_provider.dart';
+import 'package:ssg_smart2/provider/sales_order_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/provider/search_provider.dart';
 import 'package:ssg_smart2/provider/splash_provider.dart';
@@ -53,6 +54,7 @@ import 'data/repository/leave_repo.dart';
 import 'data/repository/master_data_repo.dart';
 import 'data/repository/location_repo.dart';
 import 'data/repository/report_repo.dart';
+import 'data/repository/sales_order_repo.dart';
 import 'data/repository/user_dashboard_repo.dart';
 
 final sl = GetIt.instance;
@@ -87,6 +89,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SalaryAdvRepo(dioClient: sl()));
   sl.registerLazySingleton(() => PfLoanRepo(dioClient: sl()));
   sl.registerLazySingleton(() => WppfRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => SalesOrderRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -114,6 +117,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SalaryAdvProvider(salaryAdvRepo: sl()));
   sl.registerLazySingleton(() => PfLoanProvider(pfLoanRepo: sl()));
   sl.registerLazySingleton(() => WppfProvider(wppfRepo: sl()));
+  sl.registerLazySingleton(() => SalesOrderProvider(salesOrderRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
