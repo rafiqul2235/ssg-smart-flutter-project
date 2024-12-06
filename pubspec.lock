@@ -451,6 +451,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_barcode_scanner:
+    dependency: transitive
+    description:
+      name: flutter_barcode_scanner
+      sha256: a4ba37daf9933f451a5e812c753ddd045d6354e4a3280342d895b07fecaab3fa
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   flutter_datetime_picker_plus:
     dependency: "direct main"
     description:
@@ -1489,18 +1497,18 @@ packages:
     dependency: transitive
     description:
       name: simple_animations
-      sha256: "6c0f1d53d351a2187da979cc6883322eb9e76f1147c1aecc1937c498eaa9abff"
+      sha256: "1ea7b93fb98e2a611b6865d632de55607b766328d14700143353129ee0559d3a"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.0.2"
   simple_barcode_scanner:
     dependency: "direct main"
     description:
       name: simple_barcode_scanner
-      sha256: e6a96e4784bc0e7e61129782548ca4bfeb5094e1b4b07da62022e53d7b9b3645
+      sha256: e14c0b302ffe76f0b61004aa47c36365b5d884fcd745494309e21042667902d3
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.9"
+    version: "0.1.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1782,10 +1790,10 @@ packages:
     dependency: transitive
     description:
       name: webview_windows
-      sha256: "47fcad5875a45db29dbb5c9e6709bf5c88dcc429049872701343f91ed7255730"
+      sha256: "7572089e5d6fe09e790093c499fcb6d76a552250187dbcb89790987b1fb723db"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.3.0"
   win32:
     dependency: transitive
     description:
@@ -1827,5 +1835,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.5.4 <4.0.0"
+  dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.0"

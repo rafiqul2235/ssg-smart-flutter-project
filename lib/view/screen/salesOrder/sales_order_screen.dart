@@ -3,6 +3,7 @@ import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/notification_model.dart';
 import 'package:flutter/material.dart';
+import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/helper/date_converter.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
@@ -55,6 +56,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   Customer? _selectedCustomer;
   CustomerBalanceModel? _balanceModel;
+  ItemPriceModel? _itemPriveModel;
   AvailableCustBalModel? _availableBalanceModel;
 
   CustomerBalanceModel? _custBalance = CustomerBalanceModel(customerBalance: '');
@@ -93,9 +95,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String _orgName = '';
   String _warehouseId = '';
   String _custId = '';
+  String _custAccount = '';
   String _freightTerms = '';
+  String _siteId = '';
+  int _itemId = 0;
   String formattedDate = '';
   String customerBal ='';
+  int itemPriceInt = 0;
+  int totalPriceInt = 0;
 
   @override
   void initState() {
@@ -111,13 +118,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   void _intData() async {
     currentDateTime();
     final salesProvider =
-        Provider.of<SalesOrderProvider>(context, listen: false)
-            .getCustomerAndItemListAndOthers(context);
+        Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
-    Provider.of<SalesOrderProvider>(context, listen: false)
-        .getCustomerAndItemListAndOthers(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     //Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, '3138');
   }
 
@@ -190,9 +195,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     developer.log(salesInfoModel.toJson().toString());
 
 
-
-
-
    /* SalesDataModel salesDataModel = SalesDataModel(
       custId: _selectedCustomer?.customerId,
       selesrepId: _selectedCustomer?.salesPersonId,
@@ -232,20 +234,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     return;
   }
 
-  Future<void> _onClickCustItemPrice() async {
+  Future<void> _onClickItemPrice() async {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getCustBalance(context, '$_custId');
-    _balanceModel = salesProvider.custBalance;
-    final customerBal = _balanceModel!.customerBalance;
-    print("customerBalance : $customerBal");
-
-    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
-    if (_selectedCustomer == null) {
-      _showErrorDialog("Select Customer for showing Balance");
-      return;
-    }
-    // _showErrorDialog("Rafiqul");
-    _showCustBalDialog('$customerBal');
+    await salesProvider.getItemPrice(context, '$_custAccount','13595','510246','$_freightTerms');
+    final String qtyText = _qtyController?.text ?? '0';
+    final int quantity = int.tryParse(qtyText) ?? 0;
+    _itemPriveModel = salesProvider.itemPriceModel;
+    itemPriceInt = _itemPriveModel!.itemPrice;
+    totalPriceInt = itemPriceInt * quantity;
     return;
   }
 
@@ -435,7 +431,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   _customerController = textController,
                               onClearPressed: () {
                                 setState(() {
-                                  _selectedShipToLocation = null;
+
                                   if(_shipToSiteController!=null) {
                                     _shipToSiteController!.text = '';
                                   }
@@ -467,10 +463,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
                                     _selectedCustomer = customer;
                                     _custId = _selectedCustomer?.customerId ?? '';
-                                    Provider.of<SalesOrderProvider>(context,
-                                            listen: false)
-                                        .getCustomerShipToLocation(
-                                            context, _custId);
+                                    _custAccount = _selectedCustomer?.accountNumber ?? '';
+                                    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;
@@ -847,6 +841,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
       DataColumn(
           label: Expanded(
+            child: Container(
+              width: 100,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Ship To Location',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
+      DataColumn(
+          label: Expanded(
         child: Container(
           width: 100,
           height: 50,
@@ -896,23 +907,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
-      DataColumn(
-          label: Expanded(
-        child: Container(
-          width: 100,
-          height: 50,
-          child: Center(
-            child: Text(
-              'Ship To Location',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-          ),
-        ),
-      )),
+
       DataColumn(
           label: Expanded(
         child: Container(
@@ -983,6 +978,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.shipToLocation}')),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(
             child: itemDetails.isEditable
                 ? CustomTextField(
@@ -1006,10 +1005,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
-      )),
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.shipToLocation}')),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -1098,28 +1093,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: CustomTextField(
-              width: 100,
-              height: 50,
-              controller: _qtyController,
-              hintText: 'Qty',
-              //focusNode: _qtyNode,
-              //nextNode: _unitPriceNode,
-              borderColor: Colors.black12,
-              textInputType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-            ),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: Center(child: Text('632')),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: Center(child: Text('521541')),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomAutoComplete(
               dropdownItems: _shipToLocationDropDown,
               value: _shipToSiteController != null
@@ -1131,7 +1104,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               hintColor: Colors.black87,
               borderColor: Colors.transparent,
               onReturnTextController: (textController) =>
-                  _shipToSiteController = textController,
+              _shipToSiteController = textController,
               onChanged: (value) {
                 setState(() {
                   //_selectCompanyError = false;
@@ -1140,6 +1113,36 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               },
             ),
           )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: CustomTextField(
+              width: 100,
+              height: 50,
+              controller: _qtyController,
+              hintText: 'Qty',
+
+              //focusNode: _qtyNode,
+              //nextNode: _unitPriceNode,
+              borderColor: Colors.black12,
+              textInputType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+              onChanged: (value) {
+                setState(() {
+                  // _selectCompanyError = false;
+                  _onClickItemPrice();
+                });
+              },
+            ),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: Center(child: Text('$itemPriceInt')),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: Center(child: Text('$totalPriceInt')),
+          )),
+
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(

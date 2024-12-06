@@ -1,13 +1,10 @@
 class ItemPriceModel {
+  int itemPrice;
 
-   int itemPrice = 0;
+  ItemPriceModel({this.itemPrice = 0});
 
-
-  ItemPriceModel({this.itemPrice=0});
-
-  ItemPriceModel.fromJson(Map<String, dynamic> json) {
-    itemPrice = json['ITEM_PRICE']??'';
-  }
+  ItemPriceModel.fromJson(Map<String, dynamic> json)
+      : itemPrice = int.tryParse(json['ITEM_PRICE']?.toString() ?? '') ?? 0;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -15,7 +12,7 @@ class ItemPriceModel {
     return data;
   }
 
-   @override
+  @override
   String toString() {
     return 'ItemPriceModel{itemPrice: $itemPrice}';
   }

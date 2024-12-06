@@ -105,7 +105,6 @@ class SalesOrderProvider with ChangeNotifier {
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
-
       print("Frieight term: $freightTermsList");
     }catch(e){
       print("error: $e");
@@ -158,13 +157,13 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
-  /*Future<ItemPriceModel?> getItemPrice(BuildContext context,String account_id,String site_id,String item_id,String freght) async {
-    //String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
-    //ApiResponse apiResponse = await salesOrderRepo.getItemPriceRep(orgId,customerId,);
+  Future<ItemPriceModel?> getItemPrice(BuildContext context,String account_id,String site_id,String item_id,String freght) async {
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+    ApiResponse apiResponse = await salesOrderRepo.getItemPriceRep(orgId,account_id,site_id,item_id,freght);
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
-      _custBalance = CustomerBalanceModel.fromJson(apiResponse.response?.data['customer_balance'][0]);
+      _itemPriceModel = ItemPriceModel.fromJson(apiResponse.response?.data['item_price'][0]);
 
       return _itemPriceModel;
 
@@ -174,7 +173,7 @@ class SalesOrderProvider with ChangeNotifier {
 
     return ItemPriceModel(itemPrice: 0);
 
-  }*/
+  }
 
 
   Future<CustomerBalanceModel?> getCustBalance(BuildContext context,String customerId) async {

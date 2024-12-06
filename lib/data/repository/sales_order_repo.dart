@@ -54,12 +54,12 @@ class SalesOrderRepo {
       data['item_id'] = item_id;
       data['freght'] = freght;
       Response response = await dioClient.postWithFormData(
-        AppConstants.Customer_BALANCE,
+        AppConstants.Item_PRICE,
         data:data,
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
-      print('customer balance ${e}');
+      print('Item price ${e}');
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
