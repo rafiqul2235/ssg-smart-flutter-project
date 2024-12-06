@@ -234,14 +234,38 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     return;
   }
 
-  Future<void> _onClickItemPrice() async {
+  Future<void> _onClickItemPrice(int itemId, String siteId) async {
+
+    if(_custAccount == null || _custAccount.isEmpty){
+      _showErrorDialog("Select Customer");
+      return;
+    }
+
+    if(itemId == null || itemId <= 0){
+      _showErrorDialog("Select Item");
+      return;
+    }
+
+    if(siteId == null || siteId.isEmpty){
+      _showErrorDialog("Select Site ID");
+      return;
+    }
+
+    if(_freightTerms == null || _freightTerms.isEmpty){
+      _showErrorDialog("Select Freight Terms");
+      return;
+    }
+
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getItemPrice(context, '$_custAccount','13595','510246','$_freightTerms');
+    await salesProvider.getItemPrice(context, '$_custAccount',itemId.toString(),siteId,'$_freightTerms');
     final String qtyText = _qtyController?.text ?? '0';
     final int quantity = int.tryParse(qtyText) ?? 0;
     _itemPriveModel = salesProvider.itemPriceModel;
-    itemPriceInt = _itemPriveModel!.itemPrice;
-    totalPriceInt = itemPriceInt * quantity;
+    setState(() {
+      itemPriceInt = _itemPriveModel!.itemPrice;
+      totalPriceInt = itemPriceInt * quantity;
+    });
+
     return;
   }
 
@@ -317,14 +341,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         code: element.typeId, name: element.typeName)));
               }
 
-              if (_shipToLocationDropDown == null ||
-                  _shipToLocationDropDown.isEmpty) {
+              //if (_shipToLocationDropDown.isEmpty) {
                 _shipToLocationDropDown = [];
                 provider.customerShipToLocationList.forEach((element) =>
                     _shipToLocationDropDown.add(DropDownModel(
                         code: element.shipToSiteId,
                         name: element.shipToLocation)));
-              }
+             // }
 
               return ListView(children: [
                 provider.isLoading
@@ -438,15 +461,19 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   _selectedCustomer = null;
                                   _warehouseId = '';
                                   _custId = '';
+                                  _custAccount = '';
                                   _freightTerms = '';
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
+                                  _selectedShipToLocation = null;
                                 });
                               },
                               onChanged: (value) {
                                 FocusScope.of(context).requestFocus(FocusNode());
 
                                 _selectedShipToLocation = null;
+                                _shipToLocationDropDown = [];
+
                                 if(_shipToSiteController!=null) {
                                   _shipToSiteController!.text = '';
                                 }
@@ -1083,10 +1110,12 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               value: _selectedItem,
               buttonBorderColor:
                   _customerFieldError ? Colors.red : Colors.black87,
-              onChanged: (value) {
+              onChanged: (item) {
                 setState(() {
                   //_selectCompanyError = false;
-                  _selectedItem = value;
+                  _selectedItem = item;
+                  //_itemId = value?.id??0;
+                  _itemId = item?.id??0;
                 });
               },
             ),
@@ -1109,6 +1138,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 setState(() {
                   //_selectCompanyError = false;
                   _selectedShipToLocation = value;
+                  _siteId = value?.code??'';
                 });
               },
             ),
@@ -1120,7 +1150,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               height: 50,
               controller: _qtyController,
               hintText: 'Qty',
-
               //focusNode: _qtyNode,
               //nextNode: _unitPriceNode,
               borderColor: Colors.black12,
@@ -1129,7 +1158,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               onChanged: (value) {
                 setState(() {
                   // _selectCompanyError = false;
-                  _onClickItemPrice();
+                  _onClickItemPrice(_itemId,_siteId);
                 });
               },
             ),
