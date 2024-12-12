@@ -18,7 +18,7 @@ class SalesOrder {
   String? orderDate;
   String? warehouseId;
   String? warehouseName;
-  String? customerToNumber;
+  String? customerPoNumber;
 
   List<ItemDetail>? orderItemDetail = [];
 
@@ -41,7 +41,7 @@ class SalesOrder {
     this.orderDate= '',
     this.warehouseId= '',
     this.warehouseName= '',
-    this.customerToNumber= ''
+    this.customerPoNumber= ''
   });
 
   SalesOrder.fromJson(Map<String, dynamic> json) {
@@ -63,7 +63,7 @@ class SalesOrder {
     orderDate= json['ORDER_DATE'];
     warehouseId= json['WAREHOUSE_ID'];
     warehouseName= json['WAREHOUSE_NAME'];
-    customerToNumber= json['CUSTOMER_PO_NUMBER'];
+    customerPoNumber= json['CUSTOMER_PO_NUMBER'];
   }
 
   Map<String, dynamic> toJson() {
@@ -86,7 +86,7 @@ class SalesOrder {
     data['ORDER_DATE'] = orderDate;
     data['WAREHOUSE_ID'] = warehouseId;
     data['WAREHOUSE_NAME'] = warehouseName;
-    data['CUSTOMER_PO_NUMBER'] = customerToNumber;
+    data['CUSTOMER_PO_NUMBER'] = customerPoNumber;
     return data;
   }
 }

@@ -3,6 +3,8 @@ import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/notification_model.dart';
 import 'package:flutter/material.dart';
+import 'package:ssg_smart2/data/model/response/salesorder/customer_location.dart';
+import 'package:ssg_smart2/data/model/response/salesorder/item.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/helper/date_converter.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
@@ -55,6 +57,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _deliverySiteDetailController;
 
   Customer? _selectedCustomer;
+  CustomerShipLocation? _shipLocationInfo;
   CustomerBalanceModel? _balanceModel;
   ItemPriceModel? _itemPriveModel;
   AvailableCustBalModel? _availableBalanceModel;
@@ -79,6 +82,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   List<DropDownModel> _vehicleTypesDropDown = [];
   DropDownModel? _selectedVehicleType;
 
+ /* List<DropDownModel> _vehicleTypesDropDown = [];
+  DropDownModel? _selectedVehicleType;
+*/
   List<DropDownModel> _shipToLocationDropDown = [];
   DropDownModel? _selectedShipToLocation;
 
@@ -158,6 +164,24 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
+    if(_freightTerms == null || _freightTerms.isEmpty){
+      _showErrorDialog("Select Freight Terms");
+      return;
+    }
+
+    if(_itemId == null || _itemId <= 0){
+      _showErrorDialog("Select Item");
+      return;
+    }
+
+    if(_siteId == null || _siteId.isEmpty){
+      _showErrorDialog("Select Ship to Location");
+      return;
+    }
+    if(_selectedVehicleType == null){
+      _showMessage('Select Vehicle Type',true);
+      return;
+    }
     //SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
 
 
@@ -183,17 +207,48 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }*/
 
-
     SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
-    salesInfoModel.orgId = _selectedCustomer?.orgId;
     salesInfoModel.customerId = _selectedCustomer?.customerId;
     salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
-    salesInfoModel.warehouseId = _warehouseId;
+    salesInfoModel.orgId = _selectedCustomer?.orgId;
+    //salesInfoModel.orgName = _selectedCustomer?.orgName;
+    salesInfoModel.accountNumber = _selectedCustomer?.accountNumber;
+    salesInfoModel.partySiteNumber = _selectedCustomer?.partySiteNumber;
+    salesInfoModel.billToSiteId = _selectedCustomer?.billToSiteId;
+    salesInfoModel.customerName = _selectedCustomer?.customerName;
+    salesInfoModel.billToAddress = _selectedCustomer?.billToAddress;
+    salesInfoModel.priceListId = _selectedCustomer?.priceListId;
+    salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
+    salesInfoModel.orgId = _selectedCustomer?.orgId;
+    salesInfoModel.orderType = _selectedCustomer?.orderType;
+    salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
     salesInfoModel.freightTerms = _freightTerms;
     salesInfoModel.orderDate = formattedDate;
+    salesInfoModel.warehouseId = _warehouseId;
+    salesInfoModel.warehouseName = _selectedWareHouse?.name;
+    salesInfoModel.customerPoNumber = _CusPONoController?.text;
+
+
+
+
+    ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
+
+    itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;
+    itemDetail.customerId = _shipLocationInfo?.customerId;
+    itemDetail.orgId = _shipLocationInfo?.orgId;
+    itemDetail.primaryShipTo = _shipLocationInfo?.primaryShipTo;
+    itemDetail.shipToSiteId = _shipLocationInfo?.shipToSiteId;
+    itemDetail.customerName = _shipLocationInfo?.customerName;
+    itemDetail.shipToLocation = _shipLocationInfo?.shipToLocation;
+    itemDetail.itemName = _selectedItem?.name;
+    itemDetail.itemName = _selectedItem?.id.toString();
+    //itemDetail.itemName = _selectedItem?.uom;
+    itemDetail.quantity = _qtyController.toString();
+    itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.vehicleType = _selectedVehicleType?.name;
+    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
 
     developer.log(salesInfoModel.toJson().toString());
-
 
    /* SalesDataModel salesDataModel = SalesDataModel(
       custId: _selectedCustomer?.customerId,
@@ -210,10 +265,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       priceListId: _selectedCustomer?.priceListId,
       primaryShipToSiteId: _selectedCustomer?.priceListId,
     );*/
-    //print("Sales data: $salesDataModel");
-   // final salesProvider =
-    //Provider.of<SalesOrderProvider>(context, listen: false);
-    //await salesProvider.salesOrderSubmit(context, salesDataModel);
+    /*print("Sales data: $salesDataModel");
+    final salesProvider =
+    Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.salesOrderSubmit(context, salesDataModel);*/
 
   }
 
@@ -256,17 +311,26 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
+
+
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getItemPrice(context, '$_custAccount',itemId.toString(),siteId,'$_freightTerms');
+    await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
     final String qtyText = _qtyController?.text ?? '0';
     final int quantity = int.tryParse(qtyText) ?? 0;
     _itemPriveModel = salesProvider.itemPriceModel;
+
     setState(() {
       itemPriceInt = _itemPriveModel!.itemPrice;
       totalPriceInt = itemPriceInt * quantity;
+      print("Item ptice : $itemPriceInt");
     });
-
+    if( itemPriceInt <= 0){
+      _showErrorDialog("Inactive price, Please contact with Finance department");
+      return;
+    }
     return;
+
+
   }
 
   _showMessage(String message, bool isError){
@@ -466,6 +530,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
                                   _selectedShipToLocation = null;
+                                  itemPriceInt=0;
+                                  totalPriceInt=0;
                                 });
                               },
                               onChanged: (value) {
@@ -954,6 +1020,24 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
       DataColumn(
           label: Expanded(
+            child: Container(
+              width: 100,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Vehicle Category',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
+
+      DataColumn(
+          label: Expanded(
         child: Container(
           width: 200,
           height: 50,
@@ -1074,6 +1158,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               InkWell(
                   onTap: () => _editItemDetail(itemDetails.itemId,
                       itemDetails.orgId, itemDetails.customerId, true),
+
                   child: Icon(
                     Icons.edit,
                     color: Colors.black,
@@ -1194,6 +1279,26 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: CustomDropdownButton(
+              buttonHeight: 45,
+              buttonWidth: 150,
+              dropdownWidth: 200,
+              hint: 'Select Vehicle Category',
+              hintColor: Colors.black87,
+              dropdownItems: _vehicleTypesDropDown,
+              value: _selectedVehicleType,
+              buttonBorderColor:
+              _customerFieldError ? Colors.red : Colors.black87,
+              onChanged: (value) {
+                setState(() {
+                  // _selectCompanyError = false;
+                  _selectedVehicleType = value;
+                });
+              },
+            ),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomTextField(
               width: 200,
               height: 50,
@@ -1211,6 +1316,19 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
             padding: const EdgeInsets.only(right: 2.0, top: 5.0, bottom: 5.0),
             child: CustomButtonWithIcon(
               onTap: () {
+                if(_itemId == null || _itemId <= 0){
+                  _showErrorDialog("Select Item");
+                  return;
+                }
+
+                if(_siteId == null || _siteId.isEmpty){
+                  _showErrorDialog("Select Ship to Location");
+                  return;
+                }
+                if(_selectedVehicleType == null){
+                  _showMessage('Select Vehicle Type',true);
+                  return;
+                }
                 FocusScope.of(context).requestFocus(FocusNode());
                 //_addItem();
               },

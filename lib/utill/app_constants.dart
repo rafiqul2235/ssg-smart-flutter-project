@@ -24,6 +24,7 @@ class AppConstants {
   static const String Customer_BALANCE = 'customer_balance';
   static const String Item_PRICE = 'item_price_display';
   static const String AVAIL_Cust_BAL = 'cust_balance';
+  static const String ITEM = 'items';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
   static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
   static const String PF_DATA = 'pf_ledger';

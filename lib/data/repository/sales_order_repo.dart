@@ -80,6 +80,21 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getItemRep(String warehouseId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['warehouse_id'] = warehouseId;
+      Response response = await dioClient.postWithFormData(
+        AppConstants.ITEM,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('item name ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getCustomerShipToLocation(String orgId, String salesPersonId, String customerId) async {
     try {
       final Map<String, dynamic> data = <String, dynamic>{};

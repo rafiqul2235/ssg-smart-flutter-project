@@ -53,6 +53,9 @@ class SalesOrderProvider with ChangeNotifier {
   List<VehicleType> _vehicleTypeList = [];
   List<VehicleType> get vehicleTypeList => _vehicleTypeList ?? [];
 
+  List<VehicleType> _vehicleCategoryList = [];
+  List<VehicleType> get vehicleCategoryList => _vehicleCategoryList ?? [];
+
   List<String> _freightTermsList = [];
   List<String> get freightTermsList => _freightTermsList ?? [];
 
@@ -64,6 +67,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   SalesOrder? _salesOrder;
   SalesOrder get salesOrder => _salesOrder ?? SalesOrder();
+
+  ItemDetail? _itemDetails;
+  ItemDetail get itemDetails => _itemDetails ?? ItemDetail();
 
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
@@ -93,6 +99,9 @@ class SalesOrderProvider with ChangeNotifier {
         }
         if( apiResponse.response?.data['vehicle_types'] != null){
           apiResponse.response?.data['vehicle_types'].forEach((element) => _vehicleTypeList.add(VehicleType.fromJson(element)));
+        }
+        if( apiResponse.response?.data['vehicle_types'] != null){
+          apiResponse.response?.data['vehicle_types'].forEach((element) => _vehicleCategoryList.add(VehicleType.fromJson(element)));
         }
         if(apiResponse.response?.data['freight_terms'] != null){
           apiResponse.response?.data['freight_terms'].forEach((element) => _freightTermsList.add(element));
@@ -142,6 +151,35 @@ class SalesOrderProvider with ChangeNotifier {
     // hideLoading();
     return null;
   }
+
+
+  Future<void> getItemName(BuildContext context, String wareHoseId) async {
+    //showLoading();
+    try{
+      //print('orgId $orgId');
+      ApiResponse apiResponse = await salesOrderRepo.getItemRep(wareHoseId);
+
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        _itemList = [];
+
+        if(apiResponse.response?.data['items'] != null){
+          apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
+        }
+        print('_itemlist ${_itemList.length}');
+        notifyListeners();
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      // hideLoading();
+    }
+    // hideLoading();
+    return null;
+  }
+
+
+
 
   Future<void> salesOrderSubmit(BuildContext context, SalesDataModel salesDataModel) async {
    // _resetState();
@@ -193,6 +231,7 @@ class SalesOrderProvider with ChangeNotifier {
     return CustomerBalanceModel(customerBalance: '');
 
   }
+
 
   Future<AvailableCustBalModel?> getCustAvailBalance(BuildContext context,String customerId) async {
     String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
