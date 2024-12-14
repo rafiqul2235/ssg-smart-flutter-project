@@ -65,11 +65,33 @@ class SalesOrderProvider with ChangeNotifier {
   List<CustomerShipLocation> _customerShipToLocationList = [];
   List<CustomerShipLocation> get customerShipToLocationList => _customerShipToLocationList ?? [];
 
+  /* Submit Order Object */
   SalesOrder? _salesOrder;
   SalesOrder get salesOrder => _salesOrder ?? SalesOrder();
 
+ /*
   ItemDetail? _itemDetails;
   ItemDetail get itemDetails => _itemDetails ?? ItemDetail();
+ */
+
+  Future<void> clearSalesOrderItem() async{
+    _salesOrder ??= SalesOrder();
+    _salesOrder?.orderItemDetail?.clear();
+  }
+
+  Future<void> addSalesOrderItem(ItemDetail item) async {
+    _salesOrder ??= SalesOrder();
+    _salesOrder?.addItem(item);
+
+    if(_salesOrder==null){
+      print(' null ');
+    }else{
+      print(' not null ');
+    }
+
+    print('addSalesOrderItem ${_salesOrder?.orderItemDetail?.length}');
+    //notifyListeners();
+  }
 
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
@@ -179,8 +201,6 @@ class SalesOrderProvider with ChangeNotifier {
   }
 
 
-
-
   Future<void> salesOrderSubmit(BuildContext context, SalesDataModel salesDataModel) async {
    // _resetState();
     showLoading();
@@ -278,7 +298,5 @@ class SalesOrderProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 
 }

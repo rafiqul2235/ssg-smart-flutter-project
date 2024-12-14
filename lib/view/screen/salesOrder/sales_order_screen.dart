@@ -57,7 +57,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _deliverySiteDetailController;
 
   Customer? _selectedCustomer;
-  CustomerShipLocation? _shipLocationInfo;
+  //CustomerShipLocation? _shipLocationInfo;
   CustomerBalanceModel? _balanceModel;
   ItemPriceModel? _itemPriveModel;
   AvailableCustBalModel? _availableBalanceModel;
@@ -86,7 +86,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   DropDownModel? _selectedVehicleType;
 */
   List<DropDownModel> _shipToLocationDropDown = [];
-  DropDownModel? _selectedShipToLocation;
+  //DropDownModel? _selectedShipToLocation;
 
 
   bool isViewOnly = false;
@@ -103,7 +103,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String _custId = '';
   String _custAccount = '';
   String _freightTerms = '';
-  String _siteId = '';
+  String _shipToSiteId = '';
+  String _shipToLocation = '';
+  String  _primaryShipTo = '';
+  String  _salesPersonId = '';
   int _itemId = 0;
   String formattedDate = '';
   String customerBal ='';
@@ -123,26 +126,118 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   void _intData() async {
     currentDateTime();
-    final salesProvider =
-        Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
-    //Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, '3138');
   }
 
   void currentDateTime() {
     // Get the current date and time
     DateTime now = DateTime.now();
-
     // Print the current date
-    print(
-        "Current Date: ${now.toLocal()}"); // Outputs: YYYY-MM-DD HH:MM:SS.mmmuuu
-
+    print("Current Date: ${now.toLocal()}"); // Outputs: YYYY-MM-DD HH:MM:SS.mmmuuu
     // If you want only the date (DD-MM-YYYY)
     formattedDate ="${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
     print("Formatted Date: $formattedDate"); // Outputs: DD-MM-YYYY
+  }
+
+  Future<void> _onClickCustBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustBalance(context, '$_custId');
+    _balanceModel = salesProvider.custBalance;
+    final customerBal = _balanceModel!.customerBalance;
+    print("customerBalance : $customerBal");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
+    if (_selectedCustomer == null) {
+      _showErrorDialog("Select Customer for showing Balance");
+      return;
+    }
+    // _showErrorDialog("Rafiqul");
+    _showCustBalDialog('$customerBal');
+    return;
+  }
+
+  Future<void> _onClickItemPrice(int itemId, String siteId) async {
+
+    if(_custAccount == null || _custAccount.isEmpty){
+      _showErrorDialog("Select Customer");
+      return;
+    }
+
+    if(itemId == null || itemId <= 0){
+      _showErrorDialog("Select Item");
+      return;
+    }
+
+    if(siteId == null || siteId.isEmpty){
+      _showErrorDialog("Select Site ID");
+      return;
+    }
+
+    if(_freightTerms == null || _freightTerms.isEmpty){
+      _showErrorDialog("Select Freight Terms");
+      return;
+    }
+
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
+    final String qtyText = _qtyController?.text ?? '0';
+    final int quantity = int.tryParse(qtyText) ?? 0;
+    _itemPriveModel = salesProvider.itemPriceModel;
+
+    setState(() {
+      itemPriceInt = _itemPriveModel!.itemPrice;
+      totalPriceInt = itemPriceInt * quantity;
+      print("Item ptice : $itemPriceInt");
+    });
+    if( itemPriceInt <= 0){
+      _showErrorDialog("Inactive price, Please contact with Finance department");
+      return;
+    }
+    return;
+
+  }
+
+  Future<void>  _onClickAddButton() async {
+    print('On Click Add Button');
+
+    if(_itemId == null || _itemId <= 0){
+      _showErrorDialog("Select Item");
+      return;
+    }
+
+    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
+      _showErrorDialog("Select Ship to Location");
+      return;
+    }
+    if(_selectedVehicleType == null){
+      _showMessage('Select Vehicle Type',true);
+      return;
+    }
+
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    ItemDetail? itemDetail = ItemDetail();
+    itemDetail.salesPersonId = _salesPersonId;
+    itemDetail.customerId = _selectedCustomer?.customerId;
+    itemDetail.orgId = _selectedCustomer?.orgId;
+    itemDetail.shipToSiteId = _shipToSiteId;
+    itemDetail.primaryShipTo = _primaryShipTo;
+    itemDetail.shipToLocation = _shipToLocation;
+    itemDetail.customerName = _selectedCustomer?.customerName;
+    itemDetail.itemName = _selectedItem?.name;
+    itemDetail.itemId = _selectedItem?.id;
+    //itemDetail.itemName = _selectedItem?.uom;
+    itemDetail.quantity = _qtyController?.text.toString();
+    itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.vehicleType = _selectedVehicleType?.name;
+    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
+
+    Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
+
   }
 
   Future<void> _onClickSubmit() async {
@@ -174,7 +269,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
-    if(_siteId == null || _siteId.isEmpty){
+    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
       _showErrorDialog("Select Ship to Location");
       return;
     }
@@ -229,10 +324,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.customerPoNumber = _CusPONoController?.text;
 
 
-
-
-    ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
-
+  /*  ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
     itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;
     itemDetail.customerId = _shipLocationInfo?.customerId;
     itemDetail.orgId = _shipLocationInfo?.orgId;
@@ -246,7 +338,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     itemDetail.quantity = _qtyController.toString();
     itemDetail.remarks = _deliverySiteDetailController?.text;
     itemDetail.vehicleType = _selectedVehicleType?.name;
-    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
+    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();*/
 
     developer.log(salesInfoModel.toJson().toString());
 
@@ -272,78 +364,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   }
 
-  Future<void> _onClickCustBal() async {
-    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getCustBalance(context, '$_custId');
-    _balanceModel = salesProvider.custBalance;
-    final customerBal = _balanceModel!.customerBalance;
-    print("customerBalance : $customerBal");
-
-    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
-    if (_selectedCustomer == null) {
-      _showErrorDialog("Select Customer for showing Balance");
-      return;
-    }
-    // _showErrorDialog("Rafiqul");
-    _showCustBalDialog('$customerBal');
-    return;
-  }
-
-  Future<void> _onClickItemPrice(int itemId, String siteId) async {
-
-    if(_custAccount == null || _custAccount.isEmpty){
-      _showErrorDialog("Select Customer");
-      return;
-    }
-
-    if(itemId == null || itemId <= 0){
-      _showErrorDialog("Select Item");
-      return;
-    }
-
-    if(siteId == null || siteId.isEmpty){
-      _showErrorDialog("Select Site ID");
-      return;
-    }
-
-    if(_freightTerms == null || _freightTerms.isEmpty){
-      _showErrorDialog("Select Freight Terms");
-      return;
-    }
-
-
-
-    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
-    final String qtyText = _qtyController?.text ?? '0';
-    final int quantity = int.tryParse(qtyText) ?? 0;
-    _itemPriveModel = salesProvider.itemPriceModel;
-
-    setState(() {
-      itemPriceInt = _itemPriveModel!.itemPrice;
-      totalPriceInt = itemPriceInt * quantity;
-      print("Item ptice : $itemPriceInt");
-    });
-    if( itemPriceInt <= 0){
-      _showErrorDialog("Inactive price, Please contact with Finance department");
-      return;
-    }
-    return;
-
-
-  }
-
-  _showMessage(String message, bool isError){
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: isError?Colors.red:Colors.green,
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
-    final freightTerm =
-        Provider.of<SalesOrderProvider>(context).freightTermsList;
+    final freightTerm = Provider.of<SalesOrderProvider>(context).freightTermsList;
     double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
 
@@ -410,7 +434,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 provider.customerShipToLocationList.forEach((element) =>
                     _shipToLocationDropDown.add(DropDownModel(
                         code: element.shipToSiteId,
-                        name: element.shipToLocation)));
+                        name: element.shipToLocation,
+                        nameBl: element.primaryShipTo,
+                        description: element.salesPersonId
+                    )));
              // }
 
               return ListView(children: [
@@ -529,7 +556,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   _freightTerms = '';
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
-                                  _selectedShipToLocation = null;
+                                  //_selectedShipToLocation = null;
                                   itemPriceInt=0;
                                   totalPriceInt=0;
                                 });
@@ -537,7 +564,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               onChanged: (value) {
                                 FocusScope.of(context).requestFocus(FocusNode());
 
-                                _selectedShipToLocation = null;
+                                //_selectedShipToLocation = null;
                                 _shipToLocationDropDown = [];
 
                                 if(_shipToSiteController!=null) {
@@ -899,7 +926,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         dismissible: false);
   }
 
-
   void _showCustBalDialog(String message) {
     showAnimatedDialog(
         context,
@@ -1000,7 +1026,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
-
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1035,7 +1060,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               ),
             ),
           )),
-
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1087,10 +1111,12 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.itemName}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.shipToLocation}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(
@@ -1109,18 +1135,27 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                   )
                 : Text('${itemDetails.quantity}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.unitPrice}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.vehicleType}')),
       )),
+
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.vehicleType}')),
+      )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(
@@ -1140,6 +1175,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                   )
                 : Text('${itemDetails.primaryShipTo}')),
       )),
+
       DataCell(Padding(
         padding: const EdgeInsets.only(right: 2.0, top: 5.0, bottom: 5.0),
         child: Center(
@@ -1217,13 +1253,16 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               hint: 'Select Ship Name',
               hintColor: Colors.black87,
               borderColor: Colors.transparent,
-              onReturnTextController: (textController) =>
-              _shipToSiteController = textController,
+              onReturnTextController: (textController) => _shipToSiteController = textController,
               onChanged: (value) {
                 setState(() {
                   //_selectCompanyError = false;
-                  _selectedShipToLocation = value;
-                  _siteId = value?.code??'';
+                  //_selectedShipToLocation = value;
+
+                  _shipToSiteId = value?.code??'';
+                  _shipToLocation = value?.name??'';
+                  _primaryShipTo = value?.nameBl??'';
+                  _salesPersonId = value?.description??'';
                 });
               },
             ),
@@ -1243,7 +1282,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               onChanged: (value) {
                 setState(() {
                   // _selectCompanyError = false;
-                  _onClickItemPrice(_itemId,_siteId);
+                  _onClickItemPrice(_itemId,_shipToSiteId);
                 });
               },
             ),
@@ -1256,7 +1295,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: Center(child: Text('$totalPriceInt')),
           )),
-
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(
@@ -1312,25 +1350,12 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               textInputAction: TextInputAction.next,
             ),
           )),
+          //action Add method
           DataCell(Padding(
             padding: const EdgeInsets.only(right: 2.0, top: 5.0, bottom: 5.0),
             child: CustomButtonWithIcon(
               onTap: () {
-                if(_itemId == null || _itemId <= 0){
-                  _showErrorDialog("Select Item");
-                  return;
-                }
-
-                if(_siteId == null || _siteId.isEmpty){
-                  _showErrorDialog("Select Ship to Location");
-                  return;
-                }
-                if(_selectedVehicleType == null){
-                  _showMessage('Select Vehicle Type',true);
-                  return;
-                }
-                FocusScope.of(context).requestFocus(FocusNode());
-                //_addItem();
+                _onClickAddButton();
               },
               color: Colors.transparent,
               buttonText: '',
@@ -1343,5 +1368,12 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   _editItemDetail(masterId, detailsId, company, bool bool) {}
 
   _deleteItemDetail(masterId, detailsId, company) {}
+
+  _showMessage(String message, bool isError){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: isError?Colors.red:Colors.green,
+    ));
+  }
 
 }
