@@ -1,6 +1,3 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:image_picker/image_picker.dart';
-
 class LeaveData{
   String? empName;
   String? empNumber;
@@ -15,7 +12,6 @@ class LeaveData{
   String? startDate;
   String? endDate;
   String? duration;
-  PlatformFile? attachment;
   String? comment;
 
   LeaveData({
@@ -32,7 +28,6 @@ class LeaveData{
     required this.startDate,
     required this.endDate,
     required this.duration,
-    this.attachment,
     required this.comment
 });
 
@@ -51,13 +46,12 @@ class LeaveData{
       'leave_start_date': startDate,
       'leave_end_date': endDate,
       'leave_duration': duration,
-      'attachment': attachment,
       'comment': comment
     };
   }
 
   @override
   String toString() {
-    return 'LeaveData{empName: $empName, empNumber: $empNumber, department: $department, designation: $designation, orgId: $orgId, orgName: $orgName, personId: $personId, workLocation: $workLocation, leaveType: $leaveType, leaveId: $leaveId, startDate: $startDate, endDate: $endDate, duration: $duration, attachment: $attachment, comment: $comment}';
+    return 'LeaveData{empName: $empName, empNumber: $empNumber, department: $department, designation: $designation, orgId: $orgId, orgName: $orgName, personId: $personId, workLocation: $workLocation, leaveType: $leaveType, leaveId: $leaveId, startDate: $startDate, endDate: $endDate, duration: $duration, comment: $comment}';
   }
 }

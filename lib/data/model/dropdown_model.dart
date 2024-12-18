@@ -1,4 +1,5 @@
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
+import 'package:ssg_smart2/data/model/body/financial_year.dart';
 
 class DropDownModel {
   int? id;
@@ -9,12 +10,13 @@ class DropDownModel {
   String? type;
   String? category;
   String? address;
+  String? salesSection;
 
 
   // DropDownModel(this.id, this.code, this.name);
 
   DropDownModel({this.id, this.code, this.name, this.nameBl, this.description,
-      this.type, this.category, this.address});
+      this.type, this.category, this.address, this.salesSection});
 
   DropDownModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return;
@@ -53,6 +55,8 @@ class DropDownModel {
     description = json['type'];
   }
 
+
+
   DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
      id = int.tryParse(customer.customerId ?? '0');
      code = customer.accountNumber;
@@ -60,18 +64,14 @@ class DropDownModel {
      type = customer.customerType;
      category = customer.customerCategory;
      address = customer.billToAddress;
+     salesSection = customer.salesSection;
 
   }
-  // factory DropDownModel.fromJsonCustomerInfo(CustomerDetails customer) {
-  //   return DropDownModel(
-  //     id: int.tryParse(customer.customerId ?? '0'),
-  //     code: customer.customerId,
-  //     name: customer.customarName,
-  //     description: customer.customerType,
-  //
-  //   );
-  // }
 
+  DropDownModel.fromJsonFinancialYear(FinancialYear financialYear) {
+    code = financialYear.enableFlagId;
+    name = financialYear.description;
+  }
 
   @override
   String toString() {

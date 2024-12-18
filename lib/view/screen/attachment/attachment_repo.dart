@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
-import 'package:ssg_smart2/data/model/response/base/api_response.dart';
+import 'package:ssg_smart2/data/model/response/AitResponse.dart';
+import 'package:ssg_smart2/data/model/response/ait_essential.dart';
+
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
 
@@ -46,8 +46,11 @@ class AttachmentRepo {
         'customerType' : data['customerType'],
         'customerCategory' : data['customerCategory'],
         'billToAddress' : data['billToAddress'],
+        'salesSection' : data['salesSection'],
+        'statusFlg' : data['statusFlg'],
         'challanNo' : data['challanNo'],
         'challanDate': data['challanDate'],
+        'financialYear': data['financialYear'],
         'invoiceAmount' : data['invoiceAmount'],
         'aitAmount' : data['aitAmount'],
         'remarks': data['remarks'],
@@ -108,10 +111,38 @@ class AttachmentRepo {
     }
   }
 
-  Future<List<AitData>> fetchAitData() async {
+
+  Future<AitEssentialResponse> fetchAitEssential(String orgId, String salesRepId) async {
     try {
-      final response = await dioClient.post(
+      final response = await dioClient.postWithFormData(
+          AppConstants.AIT_ESSENTIAL,
+          data: {
+            'orgId': orgId,
+            'salesId': salesRepId
+          }
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1) {
+          return AitEssentialResponse.fromJson(responseData);
+        }else {
+          throw Exception("Failed to load customer details.");
+        }
+      }else {
+        throw Exception("Error to load customer details");
+      }
+    }catch (e) {
+      throw Exception("Error: ${e.toString()}");
+    }
+  }
+
+  Future<List<AitData>> fetchAitInfo(String empId) async {
+    try {
+      final response = await dioClient.postWithFormData(
         AppConstants.AIT_VIEW,
+        data: {
+          'emp_id': empId
+        }
       );
 
       if (response.statusCode == 200) {
@@ -127,5 +158,32 @@ class AttachmentRepo {
     }
   }
 
+Future<AitResponse> fetchAitDetails(String headerId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.AIT_DETAILS,
+        data: {
+          'header_id': headerId
+        }
+      );
+      print("API response status: ${response.statusCode}");
+      print("API response data: ${response.data}");
 
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.data;
+
+        if (data['success'] == 1) {
+          return AitResponse.fromJson(data);
+        }else {
+          print("API returned success = 0");
+          throw Exception("API returned success = 0");
+        }
+      }else {
+        throw Exception("Failed to fetch AIT data. Status code: ${response.statusCode}");
+      }
+    } catch(e) {
+      print("Details error in repository: $e");
+      rethrow;
+    }
+}
 }

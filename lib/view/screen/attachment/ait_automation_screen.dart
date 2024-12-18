@@ -34,6 +34,7 @@ class AITAutomationScreen extends StatefulWidget {
 class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isButtonDisable = false;
 
   final FocusNode _customerFocus = FocusNode();
@@ -66,10 +67,10 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   String workingAreaName = '';
 
   DropDownModel? selectedCustomer;
+  DropDownModel? selectedFncYear;
 
   bool isCustomerNameFieldError = false;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserInfoModel? userInfoModel;
 
   @override
@@ -83,7 +84,10 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
-    provider.fetchCustomerDetailsInfo(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    // if (provider.financialYears.isNotEmpty) {
+    //   selectedFncYear = provider.financialYears.first;
+    // }
 
     setState(() {});
   }
@@ -170,8 +174,11 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         'customerType' : selectedCustomer?.type,
         'customerCategory' : selectedCustomer?.category,
         'billToAddress' : selectedCustomer?.address,
+        'salesSection' : selectedCustomer?.salesSection,
+        'statusFlg' : 'Initiated',
         'challanNo' : _challanNoController.text,
         'challanDate': _dateController.text,
+        'financialYear': selectedFncYear?.name,
         'invoiceAmount' : _invoiceAmountController.text,
         'aitAmount' : _aitAmountController.text,
         'remarks': _remarkController.text,
@@ -250,7 +257,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                           padding: EdgeInsets.all(0),
                           physics: BouncingScrollPhysics(),
                           children: [
-                            // for leave type
+                            // for Customer Name
                             Consumer<AttachmentProvider>(
                                 builder: (context, attachmentProvider, child) {
                                   print("customer ui: ${attachmentProvider.customerDetails}");
@@ -404,6 +411,55 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                 ],
                               ),
                             ),
+                            Consumer<AttachmentProvider>(
+                                builder: (context, attachmentProvider, child) {
+                                  print("financial year: ${attachmentProvider.financialYears}");
+
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 5.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                color: ColorResources.getPrimary(
+                                                    context),
+                                                size: 20),
+                                            const SizedBox(
+                                              width: Dimensions
+                                                  .MARGIN_SIZE_EXTRA_SMALL,
+                                            ),
+                                            MandatoryText(
+                                                text: 'Financial Year',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular)
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                            height: Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDropdownButton(
+                                          buttonHeight: 45,
+                                          buttonWidth: double.infinity,
+                                          dropdownWidth: width - 40,
+                                          hint: 'Select financial year',
+                                          //hintColor: Colors.black: null,
+                                          dropdownItems: attachmentProvider.financialYears,
+                                          value: selectedFncYear,
+                                          buttonBorderColor:
+                                          isCustomerNameFieldError
+                                              ? Colors.red
+                                              : Colors.black12,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              print("show value: $value");
+                                              selectedFncYear = value;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
                             Container(
                               margin: EdgeInsets.only(top: 5),
                               child: Column(

@@ -2,6 +2,7 @@ import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 
+
 class AppConstants {
   static const String APP_NAME = 'SMART';
   // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
@@ -41,6 +42,7 @@ class AppConstants {
   static const String CASH_PAYMENT_HISTORY = 'cash_payment_akg_history';
   static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
+  static const String APPROVAL_FLOW = 'approval_flow';
   static const String PAY_SLIP = 'emp_pay_slip';
   static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
   static const String SAL_LOAN_INFO = 'salary_loan_info';
@@ -56,7 +58,9 @@ class AppConstants {
   static const String FETCH_ATTACHMENT = 'fetch_attachment';
   static const String AIT_AUTOMATION = 'ait_automation';
   static const String AIT_VIEW = 'fetch_ait_info';
-  static const String CUSTOMER_DETAILS = 'customer_details';
+  static const String AIT_DETAILS = 'fetch_ait_details';
+  static const String CUSTOMER_DETAILS = 'ait_essential';
+  static const String AIT_ESSENTIAL = 'ait_essential';
 
 
   //static const String LOGIN_USERID = 'USER_ID';
@@ -105,5 +109,6 @@ class AppConstants {
     LanguageModel(imageUrl: '', languageName: 'English', countryCode: 'US', languageCode: 'en'),
     LanguageModel(imageUrl: '', languageName: 'বাংলা', countryCode: 'BD', languageCode: 'bn'),
   ];
+
 }
 
