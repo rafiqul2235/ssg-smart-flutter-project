@@ -41,6 +41,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final FocusNode _challanNoFocus = FocusNode();
   final FocusNode _invoiceNoFocus = FocusNode();
   final FocusNode _aitAmountFocus = FocusNode();
+  final FocusNode _taxFocus = FocusNode();
+  final FocusNode _differenceFocus = FocusNode();
   final FocusNode _dateFocus = FocusNode();
   final FocusNode _remarkFocus = FocusNode();
 
@@ -48,6 +50,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final TextEditingController _invoiceAmountController =
       TextEditingController();
   final TextEditingController _aitAmountController = TextEditingController();
+  final TextEditingController _taxController = TextEditingController();
+  final TextEditingController _differenceController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
 
@@ -212,6 +216,17 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     }
   }
 
+  void _calculateDifference() {
+    final double invoiceAmount = double.tryParse(_invoiceAmountController.text) ?? 0.0;
+    final double taxPercentage = double.tryParse(_taxController.text) ?? 0.0;
+    final double aitAmount = double.tryParse(_aitAmountController.text) ?? 0.0;
+    // calculate tax amount and difference
+    final double taxAmount = (invoiceAmount * taxPercentage) /100;
+    final double difference = taxAmount - aitAmount;
+    // update the difference
+    _differenceController.text = difference.toStringAsFixed(2);
+  }
+
   void _removeFile(int index) {
     setState(() {
       _attachmentFiles?.removeAt(index);
@@ -220,9 +235,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
         key: _scaffoldKey,
         body: Column(
@@ -369,6 +382,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                           textInputType: TextInputType.number,
                                           controller: _invoiceAmountController,
                                           focusNode: _invoiceNoFocus,
+                                          onChanged: (v) => _calculateDifference,
                                         ),
                                       ],
                                     ),
@@ -404,6 +418,86 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                           textInputType: TextInputType.number,
                                           controller: _aitAmountController,
                                           focusNode: _aitAmountFocus,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Date Selection Row (Horizontal Layout)
+                            Container(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Start Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.interests,
+                                                color:
+                                                ColorResources.getPrimary(
+                                                    context),
+                                                size: 20),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'Tax(%)',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular)
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                            height:
+                                            Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomTextField(
+                                          textInputType: TextInputType.number,
+                                          controller: _taxController,
+                                          focusNode: _taxFocus,
+                                          onChanged: (v) => _calculateDifference,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 16.0),
+
+                                  // End Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.difference,
+                                                color:
+                                                ColorResources.getPrimary(
+                                                    context),
+                                                size: 20),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'Difference',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular)
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                            height:
+                                            Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomTextField(
+                                          textInputType: TextInputType.number,
+                                          controller: _differenceController,
+                                          focusNode: _differenceFocus,
+                                          readOnly: true,
                                         )
                                       ],
                                     ),
