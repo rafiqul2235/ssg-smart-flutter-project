@@ -7,6 +7,7 @@ import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/sales_order.dart';
+import '../data/model/dropdown_model.dart';
 import '../data/model/response/base/api_response.dart';
 import '../data/model/response/salesorder/customer.dart';
 import '../data/model/response/salesorder/customer_location.dart';
@@ -77,6 +78,19 @@ class SalesOrderProvider with ChangeNotifier {
   Future<void> clearSalesOrderItem() async{
     _salesOrder ??= SalesOrder();
     _salesOrder?.orderItemDetail?.clear();
+  }
+
+
+  Future<List<DropDownModel>> getVehicleCategoryByType(String vehicleType) async {
+    List<DropDownModel> vehicleCats = [];
+     for(VehicleType item in vehicleTypeList){
+      if(item.typeId == vehicleType){
+        item.categories?.forEach((catItem) =>
+            vehicleCats.add(DropDownModel(code: catItem.categoryId, name: catItem.categoryName)));
+        break;
+      }
+     }
+    return vehicleCats;
   }
 
   Future<void> addSalesOrderItem(ItemDetail item) async {
@@ -201,17 +215,33 @@ class SalesOrderProvider with ChangeNotifier {
   }
 
 
-  Future<void> salesOrderSubmit(BuildContext context, SalesDataModel salesDataModel) async {
+  Future<bool> salesOrderSubmit(BuildContext context, SalesOrder salesOrder) async {
    // _resetState();
     showLoading();
+    bool success = false;
 
     try{
-      await _submitSalesApplication(salesDataModel);
+      final response = await salesOrderRepo.salesOrderSubmitRep(salesOrder);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        print('salesOrderSubmit '+responseData.toString());
+        if (responseData['success'] == 1) {
+          //_isSuccess = responseData['msg'][0];
+          _salesOrder = SalesOrder();
+          success = true;
+        } else {
+          //_error = "Sales Order Submission failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
     }catch(e){
       _error = "An error occurred: ${e.toString()}";
+      print('salesOrderSubmit '+e.toString());
     }finally{
       hideLoading();
-      notifyListeners();
+     // notifyListeners();
+      return success;
     }
   }
 
@@ -269,20 +299,6 @@ class SalesOrderProvider with ChangeNotifier {
 
     return AvailableCustBalModel(customerBalance: '');
 
-  }
-
-  Future<void> _submitSalesApplication(SalesDataModel salesdataModel) async {
-    final response = await salesOrderRepo.salesOrderSubmitRep(salesdataModel);
-    if (response.response != null && response.response?.statusCode == 200) {
-      Map<String, dynamic> responseData = jsonDecode(response.response.toString());
-      if (responseData['success'] == 1) {
-        _isSuccess = responseData['msg'][0];
-      } else {
-        _error = "Sales Order Submission failed";
-      }
-    } else {
-      _error = "Server error occurred";
-    }
   }
 
   void showLoading(){

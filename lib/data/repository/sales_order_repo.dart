@@ -5,6 +5,7 @@ import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
+import '../model/body/sales_order.dart';
 
 class SalesOrderRepo {
 
@@ -113,7 +114,7 @@ class SalesOrderRepo {
     }
   }
 
-  Future<ApiResponse> salesOrderSubmitRep (SalesDataModel salesData) async {
+  Future<ApiResponse> salesOrderSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(
         AppConstants.NEW_SALE_SUBMIT,

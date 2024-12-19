@@ -51,7 +51,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _warehouseController;
   TextEditingController? _shipToSiteController;
   TextEditingController? _orgNameController;
-  TextEditingController? _CusPONoController;
+  TextEditingController? _cusPONoController;
   TextEditingController? _depositDateController;
   TextEditingController? _qtyController;
   TextEditingController? _deliverySiteDetailController;
@@ -82,9 +82,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   List<DropDownModel> _vehicleTypesDropDown = [];
   DropDownModel? _selectedVehicleType;
 
- /* List<DropDownModel> _vehicleTypesDropDown = [];
-  DropDownModel? _selectedVehicleType;
-*/
+  List<DropDownModel> _vehicleCatDropDown = [];
+  DropDownModel? _selectedVehicleCat;
+
   List<DropDownModel> _shipToLocationDropDown = [];
   //DropDownModel? _selectedShipToLocation;
 
@@ -113,6 +113,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   int itemPriceInt = 0;
   int totalPriceInt = 0;
 
+  String _vehicleType ='';
+  String _vehicleCate ='';
+
   @override
   void initState() {
     super.initState();
@@ -121,6 +124,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _depositDateController = TextEditingController();
     _qtyController = TextEditingController();
     _deliverySiteDetailController = TextEditingController();
+    _cusPONoController = TextEditingController();
     _intData();
   }
 
@@ -228,16 +232,27 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     itemDetail.primaryShipTo = _primaryShipTo;
     itemDetail.shipToLocation = _shipToLocation;
     itemDetail.customerName = _selectedCustomer?.customerName;
+
     itemDetail.itemName = _selectedItem?.name;
     itemDetail.itemId = _selectedItem?.id;
     //itemDetail.itemName = _selectedItem?.uom;
     itemDetail.quantity = _qtyController?.text.toString();
     itemDetail.remarks = _deliverySiteDetailController?.text;
-    itemDetail.vehicleType = _selectedVehicleType?.name;
+    itemDetail.vehicleType = _vehicleType;
     itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
+    itemDetail.vehicleCate = _vehicleCate;
+    itemDetail.vehicleCateId = _selectedVehicleCat?.id.toString();
 
     Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
 
+    /* Clear Data */
+    _selectedItem = null;
+    _qtyController?.text = '';
+    _deliverySiteDetailController?.text = '';
+    _vehicleType = '';
+    _selectedVehicleType = null;
+    _vehicleCate = '';
+    _selectedVehicleCat = null;
   }
 
   Future<void> _onClickSubmit() async {
@@ -273,34 +288,21 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Select Ship to Location");
       return;
     }
-    if(_selectedVehicleType == null){
+    if(_vehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
     }
-    //SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
 
 
-    /*final salesProviderAvailable = Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProviderAvailable.getCustAvailBalance(context, '$_custId');
-    _availableBalanceModel = salesProviderAvailable.availCustBalance;
-    final availableCustBal = _availableBalanceModel!.customerBalance;
-    print("Available customer Balance : $availableCustBal");
-*/
+    var isSubmit = await showAnimatedDialog(context, MyDialog(
+      title: '',
+      description: 'Are you sure you want to submit your order?',
+      rotateAngle: 0,
+      negativeButtonTxt: 'No',
+      positionButtonTxt: 'Yes',
+    ), dismissible: false);
 
-    /* if (availableCustBal == '71953') {
-      _showErrorDialog("Insufficient Customer Balance");
-      return;
-    }*/
-
-    /*if(_selectedWareHouse == null ){
-      _showErrorDialog("Warehouse is Emty");
-      return;
-    }*/
-
-    /* if(_selectedFreightTerms == null ){
-      _showErrorDialog("Warehouse is Emty");
-      return;
-    }*/
+    if(!isSubmit!) return;
 
     SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
     salesInfoModel.customerId = _selectedCustomer?.customerId;
@@ -321,46 +323,45 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.orderDate = formattedDate;
     salesInfoModel.warehouseId = _warehouseId;
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
-    salesInfoModel.customerPoNumber = _CusPONoController?.text;
-
-
-  /*  ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
-    itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;
-    itemDetail.customerId = _shipLocationInfo?.customerId;
-    itemDetail.orgId = _shipLocationInfo?.orgId;
-    itemDetail.primaryShipTo = _shipLocationInfo?.primaryShipTo;
-    itemDetail.shipToSiteId = _shipLocationInfo?.shipToSiteId;
-    itemDetail.customerName = _shipLocationInfo?.customerName;
-    itemDetail.shipToLocation = _shipLocationInfo?.shipToLocation;
-    itemDetail.itemName = _selectedItem?.name;
-    itemDetail.itemName = _selectedItem?.id.toString();
-    //itemDetail.itemName = _selectedItem?.uom;
-    itemDetail.quantity = _qtyController.toString();
-    itemDetail.remarks = _deliverySiteDetailController?.text;
-    itemDetail.vehicleType = _selectedVehicleType?.name;
-    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();*/
+    salesInfoModel.customerPoNumber = _cusPONoController?.text;
 
     developer.log(salesInfoModel.toJson().toString());
 
-   /* SalesDataModel salesDataModel = SalesDataModel(
-      custId: _selectedCustomer?.customerId,
-      selesrepId: _selectedCustomer?.salesPersonId,
-      orgId: _selectedCustomer?.orgId,
-      billToSiteId: _selectedCustomer?.billToSiteId,
-      billToAddress: _selectedCustomer?.billToAddress,
-      orderTypeId: _selectedCustomer?.orderTypeId,
-      orderType: _selectedCustomer?.orderType,
-      freightTerm: _selectedCustomer?.freightTerms,
-      freightTermId: _selectedCustomer?.freightTermsId,
-      wareHouseId: _selectedCustomer?.warehouseId,
-      orderDate: "24-12-2024",
-      priceListId: _selectedCustomer?.priceListId,
-      primaryShipToSiteId: _selectedCustomer?.priceListId,
-    );*/
-    /*print("Sales data: $salesDataModel");
-    final salesProvider =
-    Provider.of<SalesOrderProvider>(context, listen: false);
-    await salesProvider.salesOrderSubmit(context, salesDataModel);*/
+    await Provider.of<SalesOrderProvider>(context, listen: false).salesOrderSubmit(context, salesInfoModel).then((status) async {
+
+      if(status){
+        _customerController?.text= '';
+        if(_shipToSiteController!=null) {
+          _shipToSiteController!.text = '';
+        }
+
+        _selectedCustomer = null;
+        _warehouseId = '';
+        _custId = '';
+        _custAccount = '';
+        _freightTerms = '';
+        _selectedWareHouse = null;
+        _selectedFreightTerms = null;
+        //_selectedShipToLocation = null;
+        itemPriceInt=0;
+        totalPriceInt=0;
+      }
+
+
+      bool? action = await showAnimatedDialog(context, MyDialog(
+        title: status?'Successfully submitted your order':"Fail, Please try again",
+        description: 'Are you sure you want to submit your order?',
+        rotateAngle: 0,
+        negativeButtonTxt: 'Again Order',
+        positionButtonTxt: 'Go To Home',
+      ), dismissible: false);
+
+      if(action!){
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => const DashBoardScreen()));
+      }
+
+    });
 
   }
 
@@ -631,7 +632,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           Expanded(
                             child: CustomTextField(
                               height: 35,
-                              controller: _CusPONoController,
+                              controller: _cusPONoController,
                               hintText: 'Enter Customer PO Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
@@ -1258,7 +1259,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 setState(() {
                   //_selectCompanyError = false;
                   //_selectedShipToLocation = value;
-
                   _shipToSiteId = value?.code??'';
                   _shipToLocation = value?.name??'';
                   _primaryShipTo = value?.nameBl??'';
@@ -1307,9 +1307,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               value: _selectedVehicleType,
               buttonBorderColor:
                   _customerFieldError ? Colors.red : Colors.black87,
-              onChanged: (value) {
-                setState(() {
+              onChanged: (value) async{
+                _vehicleCatDropDown =  await Provider.of<SalesOrderProvider>(context, listen: false).getVehicleCategoryByType(value?.code??'');
+                setState((){
                   // _selectCompanyError = false;
+                  _vehicleType = value?.name??'';
                   _selectedVehicleType = value;
                 });
               },
@@ -1323,14 +1325,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               dropdownWidth: 200,
               hint: 'Select Vehicle Category',
               hintColor: Colors.black87,
-              dropdownItems: _vehicleTypesDropDown,
-              value: _selectedVehicleType,
+              dropdownItems: _vehicleCatDropDown,
+              value: _selectedVehicleCat,
               buttonBorderColor:
               _customerFieldError ? Colors.red : Colors.black87,
               onChanged: (value) {
                 setState(() {
                   // _selectCompanyError = false;
-                  _selectedVehicleType = value;
+                  _vehicleCate = value?.name??'';
+                  _selectedVehicleCat = value;
                 });
               },
             ),
