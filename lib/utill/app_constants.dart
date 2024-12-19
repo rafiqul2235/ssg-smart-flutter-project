@@ -30,6 +30,7 @@ class AppConstants {
   static const String PF_DATA = 'pf_ledger';
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
+  static const String MSD_REPORT_DATA = 'notification';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
   static const String LEAVE_APPLY = 'leave_save';

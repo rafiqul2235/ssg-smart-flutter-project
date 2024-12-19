@@ -228,9 +228,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
     salesInfoModel.customerPoNumber = _CusPONoController?.text;
 
-
-
-
     ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
 
     itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;

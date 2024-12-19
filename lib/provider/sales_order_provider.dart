@@ -16,6 +16,7 @@ import '../data/model/response/salesorder/vehicle_type.dart';
 import '../data/model/response/salesorder/warehouse.dart';
 import '../data/repository/sales_order_repo.dart';
 import '../helper/api_checker.dart';
+import '../view/screen/msd_report/msd_report_model.dart';
 import 'auth_provider.dart';
 
 class SalesOrderProvider with ChangeNotifier {
@@ -70,6 +71,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   ItemDetail? _itemDetails;
   ItemDetail get itemDetails => _itemDetails ?? ItemDetail();
+
+  List<MsdReportModel> _msdsalesReport = [];
+  List<MsdReportModel> get msdsalesReport => _msdsalesReport;
 
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
@@ -263,6 +267,21 @@ class SalesOrderProvider with ChangeNotifier {
     } else {
       _error = "Server error occurred";
     }
+  }
+
+
+  Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _msdsalesReport = await salesOrderRepo.fetchMsdReportRep(salesrep_id, cust_id,fromDate, toDate, type);
+    } catch (e) {
+      print('Error fetching: $e');
+      _msdsalesReport = [];
+    }
+    _isLoading = false;
+    notifyListeners();
   }
 
   void showLoading(){
