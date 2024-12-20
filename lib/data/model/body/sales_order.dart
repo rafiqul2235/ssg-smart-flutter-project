@@ -44,6 +44,15 @@ class SalesOrder {
     this.customerPoNumber= ''
   });
 
+  void addItem(ItemDetail item){
+    /*if(orderItemDetail == null){
+      orderItemDetail = [];
+    }*/
+    orderItemDetail ??= [];
+    orderItemDetail?.add(item);
+
+  }
+
   SalesOrder.fromJson(Map<String, dynamic> json) {
     customerId= json['CUSTOMER_ID'];
     salesPersonId= json['SALESREP_ID'];
@@ -87,6 +96,11 @@ class SalesOrder {
     data['WAREHOUSE_ID'] = warehouseId;
     data['WAREHOUSE_NAME'] = warehouseName;
     data['CUSTOMER_PO_NUMBER'] = customerPoNumber;
+/*
+    if (this.orderItemDetail != null) {
+      data['unique_shops'] = this._uniqueShops?.map((v) => v.toJson()).toList();
+    }*/
+
     return data;
   }
 }
