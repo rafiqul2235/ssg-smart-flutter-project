@@ -18,6 +18,8 @@ class _AITAutomationFormState extends State<AITAutomationForm> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedCustomer;
   String? _selectedFinancialYear;
+  String? _selectedInvoiceType;
+
   final _challanController = TextEditingController();
   final _dateController = TextEditingController();
   final _invoiceAmountController = TextEditingController();
@@ -37,6 +39,10 @@ class _AITAutomationFormState extends State<AITAutomationForm> {
     'FY: 2023-24',
     'FY: 2024-25',
     'FY: 2025-26',
+  ];
+  final List<String> _invoiceTypes = [
+    'General',
+    'Excluding vat'
   ];
 
   @override
@@ -111,117 +117,153 @@ class _AITAutomationFormState extends State<AITAutomationForm> {
                   ];
                 },
               ),
-
           ),
-          Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                _buildDropdownField(
-                  label: 'Customer Name',
-                  value: _selectedCustomer,
-                  items: _customers,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedCustomer = value;
-                    });
-                  },
-                  isRequired: true,
-                ),
-                _buildTextField(
-                  controller: _challanController,
-                  label: 'Challan Number',
-                  keyboardType: TextInputType.number,
-                  prefixIcon: Icon(Icons.numbers)
-                ),
-                _buildDropdownField(
-                  label: 'Financial Year',
-                  value: _selectedFinancialYear,
-                  items: _financialYears,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedFinancialYear = value;
-                    });
-                  },
-                  isRequired: true,
-                ),
-                _buildTextField(
-                  controller: _dateController,
-                  label: 'Date',
-                  readOnly: true,
-                  onTap: () => _selectDate(context),
-                  suffixIcon: const Icon(Icons.calendar_today),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _invoiceAmountController,
-                        label: 'Invoice Amount',
-                        keyboardType: TextInputType.number,
-                        isRequired: true,
-                        onChanged: (value) => _calculateDifference(),
-                        prefixIcon: Icon(Icons.numbers)
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _aitAmountController,
-                        label: 'AIT Amount',
-                        keyboardType: TextInputType.number,
-                        isRequired: true,
-                        onChanged: (value) => _calculateDifference(),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _taxController,
-                        label: 'Tax(%)',
-                        keyboardType: TextInputType.number,
-                        isRequired: true,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildTextField(
-                        controller: _differenceController,
-                        label: 'Difference',
-                        readOnly: true,
-                        isRequired: true,
-                      ),
-                    ),
-                  ],
-                ),
-                _buildTextField(
-                  controller: _remarksController,
-                  label: 'Remarks',
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 16),
-                _buildAttachmentField(),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Handle form submission
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  _buildDropdownField(
+                    label: 'Customer Name',
+                    value: _selectedCustomer,
+                    items: _customers,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectedCustomer = value;
+                      });
+                    },
+                    isRequired: true,
                   ),
-                  child: const Text(
-                    'SUBMIT',
-                    style: TextStyle(color: Colors.white),
+                  _buildTextField(
+                    controller: _challanController,
+                    label: 'Challan Number',
+                    keyboardType: TextInputType.number,
                   ),
-                ),
-              ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdownField(
+                          label: 'Financial Year',
+                          value: _selectedFinancialYear,
+                          items: _financialYears,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedFinancialYear = value;
+                            });
+                          },
+                          isRequired: true,
+                        ),
+                      ),
+                      SizedBox(width: 16,),
+                      Expanded(
+                          child: _buildTextField(
+                            controller: _dateController,
+                            label: 'Challan Date',
+                            readOnly: true,
+                            onTap: () => _selectDate(context),
+                            suffixIcon: const Icon(Icons.calendar_today),
+                          ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdownField(
+                          label: 'Invoice Type',
+                          value: _selectedInvoiceType,
+                          items: _invoiceTypes,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedInvoiceType = value;
+                            });
+                          },
+                          isRequired: true,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _aitAmountController,
+                          label: 'Invoice Amount',
+                          keyboardType: TextInputType.number,
+                          isRequired: true,
+                          onChanged: (value) => _calculateDifference(),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _invoiceAmountController,
+                          label: 'Base Amount',
+                          keyboardType: TextInputType.number,
+                          isRequired: true,
+                          onChanged: (value) => _calculateDifference(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _aitAmountController,
+                          label: 'AIT Amount',
+                          keyboardType: TextInputType.number,
+                          isRequired: true,
+                          onChanged: (value) => _calculateDifference(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _taxController,
+                          label: 'Tax(%)',
+                          keyboardType: TextInputType.number,
+                          isRequired: true,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildTextField(
+                          controller: _differenceController,
+                          label: 'Difference',
+                          readOnly: true,
+                          isRequired: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  _buildTextField(
+                    controller: _remarksController,
+                    label: 'Remarks',
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildAttachmentField(),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // Handle form submission
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text(
+                      'SUBMIT',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

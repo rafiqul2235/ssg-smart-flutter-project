@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_view_screen.dart';
 import 'package:ssg_smart2/view/screen/attachment/test.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
