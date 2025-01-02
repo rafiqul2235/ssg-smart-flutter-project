@@ -180,7 +180,7 @@ class _MoreScreenState extends State<MoreScreen> {
 
                       //TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: AboutUsScreen()),
                       TitleButton(image: Images.about_us, title: getTranslated('about_us', context), navigateTo: WebViewScreen(
-                          title: getTranslated('contact_us', context),
+                          title: getTranslated('about_us', context),
                           url: 'https://sevenringscement.com/about-page/')),
 
                       //TitleButton(image: Images.contact_us, title: getTranslated('contact_us', context), navigateTo: ContactUsScreen()),

@@ -18,7 +18,7 @@ class SalesOrder {
   String? orderDate;
   String? warehouseId;
   String? warehouseName;
-  String? customerToNumber;
+  String? customerPoNumber;
 
   List<ItemDetail>? orderItemDetail = [];
 
@@ -41,8 +41,17 @@ class SalesOrder {
     this.orderDate= '',
     this.warehouseId= '',
     this.warehouseName= '',
-    this.customerToNumber= ''
+    this.customerPoNumber= ''
   });
+
+  void addItem(ItemDetail item){
+    /*if(orderItemDetail == null){
+      orderItemDetail = [];
+    }*/
+    orderItemDetail ??= [];
+    orderItemDetail?.add(item);
+
+  }
 
   SalesOrder.fromJson(Map<String, dynamic> json) {
     customerId= json['CUSTOMER_ID'];
@@ -63,13 +72,12 @@ class SalesOrder {
     orderDate= json['ORDER_DATE'];
     warehouseId= json['WAREHOUSE_ID'];
     warehouseName= json['WAREHOUSE_NAME'];
-    customerToNumber= json['CUSTOMER_PO_NUMBER'];
+    customerPoNumber= json['CUSTOMER_PO_NUMBER'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['CUSTOMER_ID'] = customerId;
-    data['SALESREP_ID'] = salesPersonId;
+    /*data['SALESREP_ID'] = salesPersonId;
     data['ORG_ID'] = orgId;
     data['ORG_NAME'] = orgName;
     data['ACCOUNT_NUMBER'] = accountNumber;
@@ -86,7 +94,26 @@ class SalesOrder {
     data['ORDER_DATE'] = orderDate;
     data['WAREHOUSE_ID'] = warehouseId;
     data['WAREHOUSE_NAME'] = warehouseName;
-    data['CUSTOMER_PO_NUMBER'] = customerToNumber;
+    data['CUSTOMER_PO_NUMBER'] = customerPoNumber;*/
+
+    data['CUSTOMER_ID'] = customerId??'0';
+    data['ORG_ID'] = orgId??'0';
+    data['BILL_TO_SITE_ID'] = billToSiteId??'0';
+    data['BILL_TO_ADDRESS'] = billToAddress??'';
+    data['ORDER_TYPE_ID'] = orderTypeId??'0';
+    data['ORDER_TYPE'] = orderType??'';
+    data['FREIGHT_TERMS_ID'] = freightTermsId??'';
+    data['FREIGHT_TERMS'] = freightTerms??'';
+    data['WAREHOUSE_ID'] = warehouseId??'0';
+    data['CUSTOMER_PO_NUMBER'] = customerPoNumber??'';
+    data['SALESREP_ID'] = salesPersonId??'0';
+    data['PRICE_LIST_ID'] = priceListId??'0';
+    data['PRIMARY_SHIP_TO_SITE_ID'] = primaryShipToSiteId??'';
+
+    if (this.orderItemDetail != null) {
+      data['sales'] = this.orderItemDetail?.map((item) => item.toJson()).toList();
+    }
+
     return data;
   }
 }
@@ -107,6 +134,8 @@ class ItemDetail {
   String? remarks;
   String? vehicleTypeId;
   String? vehicleType;
+  String? vehicleCate;
+  String? vehicleCateId;
 
   bool isEditable = false;
   int unitPrice = 0;
@@ -148,7 +177,7 @@ class ItemDetail {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['SALESREP_ID'] = salesPersonId;
+    /*data['SALESREP_ID'] = salesPersonId;
     data['CUSTOMER_ID'] = customerId;
     data['ORG_ID'] = orgId;
     data['PRIMARY_SHIP_TO'] = primaryShipTo;
@@ -161,7 +190,18 @@ class ItemDetail {
     data['QUANTITY'] = quantity;
     data['REMARKS'] = remarks;
     data['VEHICLE_TYPE_ID'] = vehicleTypeId;
-    data['VEHICLE_TYPE'] = vehicleType;
+    data['VEHICLE_TYPE'] = vehicleType;*/
+
+    data['ITEM_ID'] = itemId??0;
+    data['ITEM_NAME'] = itemName??'';
+    data['ITEM_UOM'] = itemUOM??"";
+    data['QUANTITY'] = quantity??'0';
+    data['SHIP_TO_SITE_ID'] = shipToSiteId??'';
+    data['SHIP_TO_LOCATION'] = shipToLocation??'';
+    data['VEHICLE_TYPE'] = vehicleType??'';
+    data['VEHICLE_CAT'] = vehicleCate??'';
+    data['REMARKS'] = remarks??'';
+
     return data;
   }
 
