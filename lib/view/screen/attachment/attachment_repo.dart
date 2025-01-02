@@ -53,6 +53,8 @@ class AttachmentRepo {
         'financialYear': data['financialYear'],
         'invoiceAmount' : data['invoiceAmount'],
         'aitAmount' : data['aitAmount'],
+        'tax' : data['tax'],
+        'difference' : data['difference'],
         'remarks': data['remarks'],
         'empId': data['empId'],
         'empName': data['empName'],

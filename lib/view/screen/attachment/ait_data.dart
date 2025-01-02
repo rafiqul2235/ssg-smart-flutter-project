@@ -2,7 +2,9 @@ class AitData {
   final String headerId;
   final String customerId;
   final String notificationId;
+  final String status;
   final String customerName;
+  final String fromUser;
   final String challanNo;
   final String invoiceAmount;
   final String aitAmount;
@@ -13,7 +15,9 @@ class AitData {
    required this.headerId,
    required this.customerId,
    required this.notificationId,
+   required this.status,
    required this.customerName,
+   required this.fromUser,
    required this.challanNo,
    required this.challanDate,
    required this.invoiceAmount,
@@ -25,7 +29,9 @@ class AitData {
       headerId: json['headerId'] ?? '',
       customerId: json['customerId'],
       notificationId: json['notificationId'],
+      status: json['statusflag'],
       customerName: json['customerName'] ?? '',
+      fromUser: json['fromUser'] ?? '',
       challanNo: json['challanNo'] ?? '',
       challanDate: json['challanDate'] ?? '',
       invoiceAmount: json['invoiceAmount'] ?? '',

@@ -13,7 +13,9 @@ import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
 import 'package:ssg_smart2/view/basewidget/mandatory_text.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_hisotry.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
+
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../basewidget/custom_app_bar.dart';
@@ -72,6 +74,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   DropDownModel? selectedCustomer;
   DropDownModel? selectedFncYear;
+  String? selectedValue;
 
   bool isCustomerNameFieldError = false;
 
@@ -89,9 +92,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
-    // if (provider.financialYears.isNotEmpty) {
-    //   selectedFncYear = provider.financialYears.first;
-    // }
 
     setState(() {});
   }
@@ -185,6 +185,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         'financialYear': selectedFncYear?.name,
         'invoiceAmount' : _invoiceAmountController.text,
         'aitAmount' : _aitAmountController.text,
+        'tax' : _taxController.text,
+        'difference' : _differenceController.text,
         'remarks': _remarkController.text,
         'empId': userInfoModel?.employeeNumber,
         'empName': userInfoModel?.fullName,
@@ -221,10 +223,14 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     final double taxPercentage = double.tryParse(_taxController.text) ?? 0.0;
     final double aitAmount = double.tryParse(_aitAmountController.text) ?? 0.0;
     // calculate tax amount and difference
-    final double taxAmount = (invoiceAmount * taxPercentage) /100;
-    final double difference = taxAmount - aitAmount;
+    final double calculatedAit = (invoiceAmount * taxPercentage) /100;
+    final double difference = aitAmount - calculatedAit;
+
     // update the difference
-    _differenceController.text = difference.toStringAsFixed(2);
+    setState(() {
+      _differenceController.text = difference.toStringAsFixed(2);
+    });
+
   }
 
   void _removeFile(int index) {
@@ -243,12 +249,36 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
             CustomAppBar(
                 title: 'AIT Automation',
                 isBackButtonExist: widget.isBackButtonExist,
-                icon: Icons.home,
-                onActionPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          const DashBoardScreen()));
-                }),
+                widget:
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert, color: Colors.white,),
+                    onSelected: (value) {
+                      if (value == 'History') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AitHistory())
+                        );
+                      }else if( value == 'Home') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => DashBoardScreen())
+                        );
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem<String>(
+                              value: 'History',
+                              child: Text('History'),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'Home',
+                            child: Text('Home'),
+                          ),
+                        ];
+                    },
+                  ),
+            ),
             Expanded(
                 child: Container(
               padding: EdgeInsets.all(16.0),
@@ -319,7 +349,18 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                 ),
                               );
                             }),
-
+                            // SizedBox(height: 15,),
+                            // SmartDropdown<String>(
+                            //   items: ['Apple', 'Banana', 'Cherry', 'Date'],
+                            //   value: selectedValue,
+                            //   displayStringForOption: (String item) => item,
+                            //   enableSearch: false,
+                            //   onChanged: (String? v ) {
+                            //     setState(() {
+                            //       selectedValue = v;
+                            //     });
+                            //   },
+                            // ),
                             Container(
                               margin: EdgeInsets.only(top: 5),
                               child: Column(
@@ -342,7 +383,86 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                     textInputType: TextInputType.number,
                                     controller: _challanNoController,
                                     focusNode: _challanNoFocus,
-                                  )
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Replace the separate Container widgets for financial year and challan date with this Row layout
+                            Container(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Financial Year
+                                  Expanded(
+                                    child: Consumer<AttachmentProvider>(
+                                        builder: (context, attachmentProvider, child) {
+                                          return Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.calendar_today,
+                                                      color: ColorResources.getPrimary(context),
+                                                      size: 20),
+                                                  const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                                  MandatoryText(
+                                                      text: 'Financial Year',
+                                                      mandatoryText: '*',
+                                                      textStyle: titilliumRegular)
+                                                ],
+                                              ),
+                                              const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                              CustomDropdownButton(
+                                                buttonHeight: 45,
+                                                buttonWidth: double.infinity,
+                                                dropdownWidth: (width - 56) / 2, // Adjusted for padding and gap
+                                                hint: 'Select financial year',
+                                                dropdownItems: attachmentProvider.financialYears,
+                                                value: selectedFncYear,
+                                                buttonBorderColor: isCustomerNameFieldError
+                                                    ? Colors.red
+                                                    : Colors.black12,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedFncYear = value;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 16.0), // Gap between the two fields
+
+                                  // Challan Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.date_range,
+                                              size: 20,
+                                              color: ColorResources.getPrimary(context),
+                                            ),
+                                            const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                            Text('Challan Date')
+                                          ],
+                                        ),
+                                        const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDateTimeTextField(
+                                          textInputAction: TextInputAction.next,
+                                          controller: _dateController,
+                                          focusNode: _dateFocus,
+                                          isTime: false,
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -382,7 +502,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                           textInputType: TextInputType.number,
                                           controller: _invoiceAmountController,
                                           focusNode: _invoiceNoFocus,
-                                          onChanged: (v) => _calculateDifference,
                                         ),
                                       ],
                                     ),
@@ -461,7 +580,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                           textInputType: TextInputType.number,
                                           controller: _taxController,
                                           focusNode: _taxFocus,
-                                          onChanged: (v) => _calculateDifference,
+                                          onChanged: (v) => _calculateDifference(),
                                         ),
                                       ],
                                     ),
@@ -502,82 +621,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            Consumer<AttachmentProvider>(
-                                builder: (context, attachmentProvider, child) {
-                                  print("financial year: ${attachmentProvider.financialYears}");
-
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 5.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(Icons.calendar_today,
-                                                color: ColorResources.getPrimary(
-                                                    context),
-                                                size: 20),
-                                            const SizedBox(
-                                              width: Dimensions
-                                                  .MARGIN_SIZE_EXTRA_SMALL,
-                                            ),
-                                            MandatoryText(
-                                                text: 'Financial Year',
-                                                mandatoryText: '*',
-                                                textStyle: titilliumRegular)
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                            height: Dimensions.MARGIN_SIZE_SMALL),
-                                        CustomDropdownButton(
-                                          buttonHeight: 45,
-                                          buttonWidth: double.infinity,
-                                          dropdownWidth: width - 40,
-                                          hint: 'Select financial year',
-                                          //hintColor: Colors.black: null,
-                                          dropdownItems: attachmentProvider.financialYears,
-                                          value: selectedFncYear,
-                                          buttonBorderColor:
-                                          isCustomerNameFieldError
-                                              ? Colors.red
-                                              : Colors.black12,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              print("show value: $value");
-                                              selectedFncYear = value;
-                                            });
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                            Container(
-                              margin: EdgeInsets.only(top: 5),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.date_range,
-                                        size: 20,
-                                        color:
-                                            ColorResources.getPrimary(context),
-                                      ),
-                                      Text('Date')
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: Dimensions.MARGIN_SIZE_SMALL,
-                                  ),
-                                  CustomDateTimeTextField(
-                                    textInputAction: TextInputAction.next,
-                                    controller: _dateController,
-                                    focusNode: _dateFocus,
-                                    isTime: false,
-                                  )
                                 ],
                               ),
                             ),

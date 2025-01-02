@@ -9,18 +9,18 @@ import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
 
 import '../../../provider/user_provider.dart';
 
-class AitView extends StatefulWidget {
+class AitHistory extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const AitView({Key? key, this.isBackButtonExist = true})
+  const AitHistory({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AitViewState();
+  State<StatefulWidget> createState() => _AitHistoryState();
 
 }
 
-class _AitViewState extends State<AitView> {
+class _AitHistoryState extends State<AitHistory> {
   UserInfoModel? userInfoModel;
 
   @override
@@ -73,7 +73,7 @@ class _AitViewState extends State<AitView> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,notificationId: aitData.notificationId,showApprovalSection: true,)
+                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,notificationId: aitData.notificationId,showApprovalSection: false,)
                             )
                         );
                       },
@@ -95,6 +95,7 @@ class _AitViewState extends State<AitView> {
                                           '${aitData.customerName}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 16,
                                           ),
                                         ),
                                         Text('Challan No: ${aitData.challanNo}'),
@@ -119,7 +120,7 @@ class _AitViewState extends State<AitView> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text('Issued by ${aitData.fromUser}'),
+                              const Text('Issued by Md Masum Manzil RSM'),
                             ],
                           ),
                         ),

@@ -6,6 +6,8 @@ class AitDetail {
   final String challanNo;
   final String invoiceAmount;
   final String aitAmount;
+  final String tax;
+  final String difference;
   final String challanDate;
   final String remarks;
   final String statusflag;
@@ -28,6 +30,8 @@ class AitDetail {
     required this.challanNo,
     required this.invoiceAmount,
     required this.aitAmount,
+    required this.tax,
+    required this.difference,
     required this.challanDate,
     required this.remarks,
     required this.statusflag,
@@ -52,6 +56,8 @@ class AitDetail {
       challanNo: json['challanNo']?.toString() ?? '',
       invoiceAmount: json['invoiceAmount']?.toString() ?? '',
       aitAmount: json['aitAmount']?.toString() ?? '',
+      tax: json['tax']?.toString() ?? '',
+      difference: json['difference']?.toString() ?? '',
       challanDate: json['challanDate']?.toString() ?? '',
       remarks: json['remarks']?.toString() ?? '',
       statusflag: json['statusflag']?.toString() ?? '',

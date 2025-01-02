@@ -18,12 +18,15 @@ class AitDetailsScreen extends StatefulWidget {
   final bool isBackButtonExist;
   final String headerId;
   final String notificationId;
+  final bool showApprovalSection;
 
   const AitDetailsScreen(
       {Key? key,
       this.isBackButtonExist = true,
       required this.headerId,
-      required this.notificationId})
+      required this.notificationId,
+      required this.showApprovalSection
+      })
       : super(key: key);
 
   @override
@@ -173,7 +176,6 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
 
                         // Attachments Section
                         _buildAttachmentsSection(aitDetails.filePaths),
-
                         const SizedBox(height: 20.0),
 
                         // Approver History Section
@@ -181,18 +183,16 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                         const SizedBox(height: 10.0),
                         _buildApproverHistoryList(approverList),
 
-                        const SizedBox(height: 20.0),
-
-                        // Remarks Section
-                        _buildSectionHeader("Remarks"),
-                        const SizedBox(height: 10.0),
-                        _buildRemarksTextField(),
-
-                        const SizedBox(height: 20.0),
-
-                        // Approve/Reject Buttons
-                        _buildActionButtons(),
-
+                        if (widget.showApprovalSection) ...[
+                          const SizedBox(height: 20.0),
+                          // Remarks Section
+                          _buildSectionHeader("Remarks"),
+                          const SizedBox(height: 10.0),
+                          _buildRemarksTextField(),
+                          const SizedBox(height: 20.0),
+                          // Approve/Reject Buttons
+                          _buildActionButtons(),
+                        ],
                         // Status Message
                         if (_statusMessage != null) _buildStatusMessage(),
                       ],
@@ -342,6 +342,8 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
             _buildDetailRow('Financial Year', '${aitDetails.financialYear}'),
             _buildDetailRow('Invoice Amount', '${aitDetails.invoiceAmount}'),
             _buildDetailRow('AIT Amount', '${aitDetails.aitAmount}'),
+            _buildDetailRow('Tax', '${aitDetails.tax}%'),
+            _buildDetailRow('Difference', '${aitDetails.difference}')
           ],
         ),
       ),
