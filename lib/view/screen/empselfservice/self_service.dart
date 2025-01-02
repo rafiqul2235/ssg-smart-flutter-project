@@ -48,6 +48,7 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'PaySlip', navigateTo: PayslipScreen(),));
+    // Allow Salary Adv* for OFC employee
     if(userInfoModel?.employmentCategory == 'OFC') {
       _menuList.add(TopMenuItem(image: Images.salary_advance, menuName: 'Salary Adv.', navigateTo: SalaryAdvanceScreen(),));
     }
