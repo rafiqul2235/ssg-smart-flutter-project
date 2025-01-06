@@ -127,6 +127,18 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> deliveryRequestSubmitRep (SalesOrder salesData) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.DELIVERY_RREQUEST_SUBMIT,
+        data:salesData.toJson(),
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<List<MsdReportModel>> fetchMsdReportRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
     try {
       final response = await dioClient.postWithFormData(

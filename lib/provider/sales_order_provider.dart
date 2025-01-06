@@ -249,6 +249,37 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> deliveryRequestSubmit(BuildContext context, SalesOrder salesOrder) async {
+    // _resetState();
+    showLoading();
+    bool success = false;
+
+    try{
+      final response = await salesOrderRepo.deliveryRequestSubmitRep(salesOrder);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        print('salesOrderSubmit '+responseData.toString());
+        if (responseData['success'] == 1) {
+          //_isSuccess = responseData['msg'][0];
+          _salesOrder = SalesOrder();
+          success = true;
+        } else {
+          //_error = "Sales Order Submission failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+      print('salesOrderSubmit '+e.toString());
+    }finally{
+      hideLoading();
+      // notifyListeners();
+      return success;
+    }
+  }
+
+
   Future<ItemPriceModel?> getItemPrice(BuildContext context,String account_id,String site_id,String item_id,String freght) async {
     String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
     ApiResponse apiResponse = await salesOrderRepo.getItemPriceRep(orgId,account_id,site_id,item_id,freght);

@@ -19,6 +19,7 @@ class SalesOrder {
   String? warehouseId;
   String? warehouseName;
   String? customerPoNumber;
+  String? vehicleInfo;
 
   List<ItemDetail>? orderItemDetail = [];
 
@@ -41,7 +42,8 @@ class SalesOrder {
     this.orderDate= '',
     this.warehouseId= '',
     this.warehouseName= '',
-    this.customerPoNumber= ''
+    this.customerPoNumber= '',
+    this.vehicleInfo = ''
   });
 
   void addItem(ItemDetail item){
@@ -73,6 +75,7 @@ class SalesOrder {
     warehouseId= json['WAREHOUSE_ID'];
     warehouseName= json['WAREHOUSE_NAME'];
     customerPoNumber= json['CUSTOMER_PO_NUMBER'];
+    vehicleInfo= json['VEHICLE_INFO'];
   }
 
   Map<String, dynamic> toJson() {
@@ -106,6 +109,7 @@ class SalesOrder {
     data['FREIGHT_TERMS'] = freightTerms??'';
     data['WAREHOUSE_ID'] = warehouseId??'0';
     data['CUSTOMER_PO_NUMBER'] = customerPoNumber??'';
+    data['VEHICLE_INFO'] = vehicleInfo??'';
     data['SALESREP_ID'] = salesPersonId??'0';
     data['PRICE_LIST_ID'] = priceListId??'0';
     data['PRIMARY_SHIP_TO_SITE_ID'] = primaryShipToSiteId??'';
