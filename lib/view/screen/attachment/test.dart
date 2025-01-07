@@ -1,382 +1,953 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:intl/intl.dart';
-import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/body/customer_details.dart';
+import 'package:ssg_smart2/data/model/body/financial_year.dart';
+import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 
+import '../../../provider/user_provider.dart';
+import '../../../utill/color_resources.dart';
+import '../../../utill/custom_themes.dart';
+import '../../../utill/dimensions.dart';
 import '../home/dashboard_screen.dart';
 import 'ait_hisotry.dart';
+import 'attachment_provider.dart';
 
-class AITAutomationForm extends StatefulWidget {
-  final bool isBackButtonExist;
-  const AITAutomationForm({Key? key, this.isBackButtonExist = true}) : super(key: key);
+class AITAutomationScreenTest extends StatefulWidget {
+  const AITAutomationScreenTest({Key? key}) : super(key: key);
 
   @override
-  State<AITAutomationForm> createState() => _AITAutomationFormState();
+  _AITAutomationScreenTestState createState() => _AITAutomationScreenTestState();
 }
 
-class _AITAutomationFormState extends State<AITAutomationForm> {
+class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
   final _formKey = GlobalKey<FormState>();
-  String? _selectedCustomer;
-  String? _selectedFinancialYear;
-  String? _selectedInvoiceType;
+  final _scrollController = ScrollController();
 
-  final _challanController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _invoiceAmountController = TextEditingController();
-  final _aitAmountController = TextEditingController();
-  final _taxController = TextEditingController();
-  final _differenceController = TextEditingController();
-  final _remarksController = TextEditingController();
+  // Controllers for form fields
+  final TextEditingController _challanNumberController =
+  TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _challanDateController = TextEditingController();
+  final TextEditingController _invoiceAmountController =
+  TextEditingController();
+  final TextEditingController _baseAmountController = TextEditingController();
+  final TextEditingController _aitAmountController = TextEditingController();
+  final TextEditingController _taxController = TextEditingController();
+  final TextEditingController _differenceController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
+  bool _isExcludedVat = false;
 
-  // Sample data for dropdowns
-  final List<String> _customers = [
-    'Bengal Development Corporation',
-    'Customer 2',
-    'Customer 3',
-  ];
+  UserInfoModel? userInfoModel;
 
-  final List<String> _financialYears = [
-    'FY: 2023-24',
-    'FY: 2024-25',
-    'FY: 2025-26',
-  ];
-  final List<String> _invoiceTypes = [
-    'General',
-    'Excluding vat'
-  ];
+  // Form state variables
+  CustomerDetails? _selectedCustomer;
+  FinancialYear? _selectedFinancialYear;
+  File? _attachedFile;
+  bool _isLoading = false;
+
+
+
 
   @override
-  void dispose() {
-    _challanController.dispose();
-    _dateController.dispose();
-    _invoiceAmountController.dispose();
-    _aitAmountController.dispose();
-    _taxController.dispose();
-    _differenceController.dispose();
-    _remarksController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _intData();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  _intData() async {
+    // Provider.of<UserProvider>(context, listen: false).resetLoading();
+    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    print("userinfo: ${userInfoModel}");
+    final provider = Provider.of<AttachmentProvider>(context, listen: false);
+    provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+
+    setState(() {});
+  }
+
+  // Number formatter for currency
+  final _currencyFormatter = NumberFormat("#,##0.00", "en_US");
+
+  // Customer search dialog
+  void _showCustomerDialog(List<CustomerDetails> customers) {
+    showDialog(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            dialogTheme: DialogTheme(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Column(
+                  children: [
+                    Text(
+                      'Select Customer',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search customers...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey[50],
+                        filled: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                content: Container(
+                  width: double.maxFinite,
+                  height: 300,
+                  child: ListView.builder(
+                    itemCount: customers.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(
+                          '${customers[index].customarName!}(${customers[index].accountNumber})',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        leading: Icon(Icons.business),
+                        selected: customers[index] == _selectedCustomer,
+                        selectedTileColor: Colors.blue.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _selectedCustomer = customers[index];
+                          });
+                          this.setState(() {});
+                          Navigator.pop(context);
+                          _searchController.clear();
+                        },
+                      );
+                    },
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _searchController.clear();
+                    },
+                    child: Text('Cancel'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey[700],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
-    if (picked != null) {
-      setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(picked);
-      });
+  }
+
+  // File picker
+  // Future<void> _pickFile() async {
+  //   try {
+  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+  //     );
+  //
+  //     if (result != null) {
+  //       setState(() {
+  //         _attachedFile = File(result.files.single.path!);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Error picking file: ${e.toString()}'),
+  //         backgroundColor: Colors.red,
+  //         behavior: SnackBarBehavior.floating,
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // file picker variable
+  List<PlatformFile>? _attachmentFiles = [];
+  final List<String> _allowedExtensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'jpg',
+    'jpeg',
+    'png'
+  ];
+  static const int _maxFileCount = 5;
+  final int _maxFileSize = _maxFileCount * 1024 * 1024;
+
+
+
+  // Method to handle file picking
+  Future<void> _pickFile() async {
+    try {
+      print("max file: $_maxFileCount");
+      print("no of attachments file: ${_attachmentFiles!.length}");
+      if (_attachmentFiles!.length >= _maxFileCount) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Maximum $_maxFileCount file allowed")),
+        );
+        return;
+      }
+
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: _allowedExtensions,
+        allowMultiple: true,
+        withData: true, // Keep file data in memory
+      );
+
+      if (result != null) {
+        for (var file in result.files) {
+          if (_attachmentFiles!.length >= _maxFileCount) break;
+
+          // Check file size
+          if (file.size > _maxFileSize) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("File ${file.name} is too large. Max size: ${_maxFileSize ~/(1024*1024)} MB")),
+            );
+            continue;
+          }
+          // Compress if image
+          if (['jpg', 'jpeg', 'png'].contains(file.extension)) {
+            final compressFile = await _compressImageFile(file);
+            if (compressFile != null) {
+              setState(() {
+                _attachmentFiles!.add(PlatformFile(
+                    name: compressFile.path.split('/').last,
+                    path: compressFile.path,
+                    size: compressFile.lengthSync()
+                ));
+              });
+            }
+          }else {
+            setState(() {
+              _attachmentFiles!.add(file);
+            });
+          }
+        }
+      }
+    } catch (e) {
+      print("Error:$e");
+    }
+  }
+  // Compression for images
+  Future<File?> _compressImageFile(PlatformFile file) async {
+    final tempDir = await getTemporaryDirectory();
+    final targetPath = "${tempDir.path}/compressed_${file.path?.split('/').last}";
+    var compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.path!,
+        targetPath,
+        quality: 70
+    );
+    if (compressedFile != null && compressedFile is XFile) {
+      return File(compressedFile.path);
+    }else {
+      return compressedFile as File?;
     }
   }
 
+
+  void _calculatedBaseAmount() {
+    if (_invoiceAmountController.text.isNotEmpty) {
+      final invoiceAmount = double.tryParse(_invoiceAmountController.text) ?? 0.0;
+      final baseAmount = (invoiceAmount * 100) /115;
+      _baseAmountController.text = baseAmount.toStringAsFixed(2);
+    }else {
+      _baseAmountController.clear();
+    }
+  }
+
+  // Calculate difference amount
   void _calculateDifference() {
-    if (_invoiceAmountController.text.isNotEmpty &&
-        _aitAmountController.text.isNotEmpty) {
-      final invoiceAmount = double.parse(_invoiceAmountController.text);
-      final aitAmount = double.parse(_aitAmountController.text);
-      final difference = aitAmount - (invoiceAmount * 0.02);
-      _differenceController.text = difference.toStringAsFixed(2);
+    if (_baseAmountController.text.isNotEmpty &&
+        _aitAmountController.text.isNotEmpty &&
+        _taxController.text.isNotEmpty) {
+      try {
+        final baseAmount =
+        double.parse(_baseAmountController.text.replaceAll(',', ''));
+        final aitAmount =
+        double.parse(_aitAmountController.text.replaceAll(',', ''));
+        final tax = double.parse(_taxController.text.replaceAll(',', ''));
+        final difference = ((baseAmount * tax) /100) - aitAmount;
+        _differenceController.text = _currencyFormatter.format(difference);
+      } catch (e) {
+        _differenceController.text = '';
+      }
+    }
+  }
+
+  // Format currency input
+  void _formatCurrency(TextEditingController controller) {
+    if (controller.text.isNotEmpty) {
+      try {
+        final value = double.parse(controller.text.replaceAll(',', ''));
+        controller.text = _currencyFormatter.format(value);
+      } catch (e) {
+        // Handle parsing error
+      }
+    }
+  }
+
+  // Form submission
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      Map<String, dynamic> data = {
+        'customerId' : _selectedCustomer?.customerId,
+        'customerAccount': _selectedCustomer?.accountNumber,
+        'customerName' : _selectedCustomer?.customarName,
+        'customerType' : _selectedCustomer?.customerType,
+        'customerCategory' : _selectedCustomer?.customerCategory,
+        'billToAddress' : _selectedCustomer?.billToAddress,
+        'salesSection' : _selectedCustomer?.salesSection,
+        'statusFlg' : 'Initiated',
+        'challanNo' : _challanNumberController.text,
+        'challanDate': _challanDateController.text,
+        'financialYear': _selectedFinancialYear?.description,
+        'invoiceType': !_isExcludedVat ? 'General' : 'Excluding VAT',
+        'invoiceAmount' : _invoiceAmountController.text,
+        'baseAmount': _baseAmountController.text,
+        'aitAmount' : _aitAmountController.text,
+        'tax' : _taxController.text,
+        'difference' : _differenceController.text,
+        'remarks': _remarksController.text,
+        'empId': userInfoModel?.employeeNumber,
+        'empName': userInfoModel?.fullName,
+        'personId': userInfoModel?.personId,
+        'userId': userInfoModel?.userId,
+        'deptName': userInfoModel?.department,
+        'designation': userInfoModel?.designation,
+        'orgId': userInfoModel?.orgId,
+        'orgName': userInfoModel?.orgName,
+        'attachments' : _attachmentFiles?.map((file) => File(file.path!)).toList()
+      };
+
+      try {
+        // TODO: Implement your API call here
+        final provider = Provider.of<AttachmentProvider>(context, listen: false);
+        await provider.submitAITAutomationForm(data);
+
+        if (provider.aitResponse!.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('AIT form submitted successfully!'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+
+        // Reset form after successful submission
+        _formKey.currentState!.reset();
+        setState(() {
+          _selectedCustomer = null;
+          _selectedFinancialYear = null;
+          _isExcludedVat = false;
+          _attachedFile = null;
+          _challanDateController.clear();
+          _invoiceAmountController.clear();
+          _baseAmountController.clear();
+          _aitAmountController.clear();
+          _taxController.clear();
+          _differenceController.clear();
+          _remarksController.clear();
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error submitting form: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AttachmentProvider>();
+    final customers = provider.customersList;
+    final financialYears = provider.financialYearsList;
+    _selectedFinancialYear = financialYears[0];
     return Scaffold(
-      body: Column(
-        children: [
-          CustomAppBar(
-              title: 'AIT Automation',
-              isBackButtonExist: widget.isBackButtonExist,
-              widget: PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, color: Colors.white,),
-                onSelected: (value) {
-                  if (value == 'History') {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AitHistory())
-                    );
-                  }else if( value == 'Home') {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DashBoardScreen())
-                    );
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return [
-                    PopupMenuItem<String>(
-                      value: 'History',
-                      child: Text('History'),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'Home',
-                      child: Text('Home'),
-                    ),
-                  ];
-                },
-              ),
-          ),
-          Expanded(
+      appBar: AppBar(
+        title: Text('AIT Automation'),
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios)
+        ),
+        backgroundColor: Colors.red,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white
+        ),
+        actions: [
+          PopupMenuButton<String>(
+              onSelected: (String value) {
+                if (value == 'history') {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AitHistory())
+                  );
+                } else if (value == 'home') {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DashBoardScreen())
+                  );
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                PopupMenuItem<String>(
+                    value: 'history',
+                    child: Text('History')
+                ),
+                PopupMenuItem<String>(
+                    value: 'home',
+                    child: Text('Home')
+                )
+              ]
+          )
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            padding: EdgeInsets.all(24),
             child: Form(
               key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDropdownField(
-                    label: 'Customer Name',
-                    value: _selectedCustomer,
-                    items: _customers,
-                    onChanged: (String? value) {
+                  // Customer Name
+                  _buildFormLabel('Customer Name *'),
+                  TextFormField(
+                    readOnly: true,
+                    decoration: _buildInputDecoration(
+                      _selectedCustomer?.customarName! ?? 'Select customer',
+                      Icons.business_outlined,
+                      suffixIcon: Icon(Icons.arrow_drop_down),
+                    ),
+                    onTap: () => _showCustomerDialog(customers),
+                    validator: (value) {
+                      if (_selectedCustomer == null) {
+                        return 'Please select a customer';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Challan Number
+                  _buildFormLabel('Challan Number *'),
+                  TextFormField(
+                    controller: _challanNumberController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d{1,15}'))
+                    ],
+                    decoration: _buildInputDecoration(
+                      'Enter challan number',
+                      Icons.receipt_outlined,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter challan number';
+                      }
+                      if (value.length < 15) {
+                        return 'Challan number must be 15 digits';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Financial Year
+                  _buildFormLabel('Financial Year *'),
+                  DropdownButtonFormField<FinancialYear>(
+                    value: _selectedFinancialYear,
+                    decoration: _buildInputDecoration(
+                      'Select financial year',
+                      Icons.calendar_today_outlined,
+                    ),
+                    items: financialYears.map((year) {
+                      return DropdownMenuItem<FinancialYear>(
+                        value: year,
+                        child: Text(year.description),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
                       setState(() {
-                        _selectedCustomer = value;
+                        _selectedFinancialYear = value;
                       });
                     },
-                    isRequired: true,
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select financial year';
+                      }
+                      return null;
+                    },
                   ),
-                  _buildTextField(
-                    controller: _challanController,
-                    label: 'Challan Number',
-                    keyboardType: TextInputType.number,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdownField(
-                          label: 'Financial Year',
-                          value: _selectedFinancialYear,
-                          items: _financialYears,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedFinancialYear = value;
-                            });
-                          },
-                          isRequired: true,
-                        ),
-                      ),
-                      SizedBox(width: 16,),
-                      Expanded(
-                          child: _buildTextField(
-                            controller: _dateController,
-                            label: 'Challan Date',
-                            readOnly: true,
-                            onTap: () => _selectDate(context),
-                            suffixIcon: const Icon(Icons.calendar_today),
-                          ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdownField(
-                          label: 'Invoice Type',
-                          value: _selectedInvoiceType,
-                          items: _invoiceTypes,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedInvoiceType = value;
-                            });
-                          },
-                          isRequired: true,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _aitAmountController,
-                          label: 'Invoice Amount',
-                          keyboardType: TextInputType.number,
-                          isRequired: true,
-                          onChanged: (value) => _calculateDifference(),
-                        ),
-                      ),
-                    ],
-                  ),
+                  SizedBox(height: 24),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _invoiceAmountController,
-                          label: 'Base Amount',
-                          keyboardType: TextInputType.number,
-                          isRequired: true,
-                          onChanged: (value) => _calculateDifference(),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _aitAmountController,
-                          label: 'AIT Amount',
-                          keyboardType: TextInputType.number,
-                          isRequired: true,
-                          onChanged: (value) => _calculateDifference(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _taxController,
-                          label: 'Tax(%)',
-                          keyboardType: TextInputType.number,
-                          isRequired: true,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _differenceController,
-                          label: 'Difference',
-                          readOnly: true,
-                          isRequired: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  _buildTextField(
-                    controller: _remarksController,
-                    label: 'Remarks',
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildAttachmentField(),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Handle form submission
+                  // Challan Date
+                  _buildFormLabel('Challan Date *'),
+                  TextFormField(
+                    controller: _challanDateController,
+                    readOnly: true,
+                    decoration: _buildInputDecoration(
+                      'Select challan date',
+                      Icons.event_outlined,
+                    ),
+                    onTap: () async {
+                      final DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              dialogTheme: DialogTheme(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (date != null) {
+                        setState(() {
+                          _challanDateController.text =
+                              DateFormat('MMM dd, yyyy').format(date);
+                        });
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select challan date';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Excluding VAT Checkbox
+                  CheckboxListTile(
+                    title: Text(
+                      'Excluding VAT',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[800],
+                      ),
                     ),
-                    child: const Text(
-                      'SUBMIT',
-                      style: TextStyle(color: Colors.white),
+                    value: _isExcludedVat,
+                    onChanged: (value) {
+                      setState(() {
+                        _isExcludedVat = value!;
+                        if (!_isExcludedVat) {
+                          _calculatedBaseAmount();
+                        }else {
+                          _baseAmountController.clear();
+                        }
+                      });
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+
+                  // Invoice Amount
+                  _buildFormLabel('Invoice Amount *'),
+                  TextFormField(
+                    controller: _invoiceAmountController,
+                    keyboardType:
+                    TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))
+                    ],
+                    decoration: _buildInputDecoration(
+                      'Enter invoice amount',
+                      Icons.attach_money_outlined,
+                    ),
+                    onChanged: (value) {
+                      if (!_isExcludedVat) {
+                        _calculatedBaseAmount();
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter invoice amount';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Base Amount
+                  _buildFormLabel('Base Amount *'),
+                  TextFormField(
+                    controller: _baseAmountController,
+                    readOnly: !_isExcludedVat,
+                    keyboardType:
+                    TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d+\.?\d{0,2}')
+                      )
+                    ],
+                    decoration: _buildInputDecoration(
+                      'Enter base amount',
+                      Icons.calculate_outlined,
+                    ),
+                    onChanged: (value) {
+
+                      _calculateDifference();
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter base amount';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  // AIT Amount
+                  _buildFormLabel('AIT Amount *'),
+                  TextFormField(
+                    controller: _aitAmountController,
+                    keyboardType:
+                    TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d+\.?\d{0,2}')
+                      )
+                    ],
+                    decoration: _buildInputDecoration(
+                      'Enter AIT amount',
+                      Icons.money_outlined,
+                    ),
+                    onChanged: (value) {
+
+                      _calculateDifference();
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter AIT amount';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Tax Amount
+                  _buildFormLabel('Tax(%) *'),
+                  TextFormField(
+                    controller: _taxController,
+                    keyboardType:
+                    TextInputType.numberWithOptions(decimal: true),
+                    decoration: _buildInputDecoration(
+                      'Enter tax amount',
+                      Icons.receipt_long_outlined,
+                    ),
+                    onChanged: (value) {
+                      _calculateDifference();
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter tax amount';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+
+                  // Difference (Read-only)
+                  _buildFormLabel('Difference'),
+                  TextFormField(
+                    controller: _differenceController,
+                    readOnly: true,
+                    decoration: _buildInputDecoration(
+                      'Calculated difference',
+                      Icons.difference_outlined,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+
+                  // Remarks
+                  _buildFormLabel('Remarks'),
+                  TextFormField(
+                    controller: _remarksController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'Enter any additional remarks...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[50],
+                      contentPadding: EdgeInsets.all(16),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+
+                  // File Attachment
+                  _buildFormLabel('Attachment'),
+                  // InkWell(
+                  //   onTap: _pickFile,
+                  //   child: Container(
+                  //     padding: EdgeInsets.all(16),
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(color: Colors.grey.shade300),
+                  //       borderRadius: BorderRadius.circular(12),
+                  //       color: Colors.grey[50],
+                  //     ),
+                  //     child: Row(
+                  //       children: [
+                  //         Icon(Icons.attach_file, color: Colors.grey[600]),
+                  //         SizedBox(width: 16),
+                  //         Expanded(
+                  //           child: Text(
+                  //             _attachedFile?.path.split('/').last ??
+                  //                 'Click to attach file',
+                  //             style: TextStyle(
+                  //               color: _attachedFile != null
+                  //                   ? Colors.black
+                  //                   : Colors.grey[600],
+                  //             ),
+                  //             overflow: TextOverflow.ellipsis,
+                  //           ),
+                  //         ),
+                  //         if (_attachedFile != null)
+                  //           IconButton(
+                  //             icon: Icon(Icons.close, color: Colors.grey[600]),
+                  //             onPressed: () {
+                  //               setState(() {
+                  //                 _attachedFile = null;
+                  //               });
+                  //             },
+                  //           ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                            height: Dimensions.MARGIN_SIZE_SMALL),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border:
+                            Border.all(color: Colors.black26),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Allowed file types: ${_allowedExtensions.join(', ')}',
+                                  style: titilliumRegular.copyWith(
+                                    color: Colors.grey[700],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                  children: _attachmentFiles != null
+                                      ? _attachmentFiles!
+                                      .map((file) {
+                                    return ListTile(
+                                      title: Text(
+                                        file.name,
+                                        maxLines: 1,
+                                      ),
+                                      subtitle: Text(
+                                        'Size: ${(file.size / 1024).toStringAsFixed(2)} KB',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color:
+                                            Colors.grey),
+                                      ),
+                                      trailing: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _attachmentFiles!
+                                                  .remove(
+                                                  file);
+                                            });
+                                          },
+                                          icon: Icon(
+                                            Icons.clear,
+                                            color: Colors.red,
+                                          )),
+                                    );
+                                  }).toList()
+                                      : [
+                                    ListTile(
+                                      title: Text(
+                                        'No file chosen',
+                                        style: TextStyle(
+                                            color: Colors
+                                                .grey[700]),
+                                      ),
+                                    )
+                                  ]),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton.icon(
+                                  onPressed: _pickFile,
+                                  icon: Icon(Icons.upload_file),
+                                  label: Text(_attachmentFiles!.isEmpty ?'Choose Files':'Add more'),
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ]),
+                  SizedBox(height: 32),
+
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _submitForm,
+                      child: _isLoading
+                          ? CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                          : Text(
+                        'Submit Challan',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        elevation: 2,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    bool isRequired = false,
-    bool readOnly = false,
-    TextInputType? keyboardType,
-    Widget? prefixIcon,
-    Widget? suffixIcon,
-    VoidCallback? onTap,
-    void Function(String)? onChanged,
-    int? maxLines,
-  }) {
+  Widget _buildFormLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: TextFormField(
-        controller: controller,
-        readOnly: readOnly,
-        keyboardType: keyboardType,
-        maxLines: maxLines ?? 1,
-        decoration: InputDecoration(
-          labelText: isRequired ? '$label *' : label,
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 12.0,
-          ),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey[800],
         ),
-        validator: isRequired
-            ? (value) {
-          if (value == null || value.isEmpty) {
-            return '$label is required';
-          }
-          return null;
-        }
-            : null,
-        onTap: onTap,
-        onChanged: onChanged,
       ),
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String? value,
-    required List<String> items,
-    required void Function(String?) onChanged,
-    bool isRequired = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-          labelText: isRequired ? '$label *' : label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 12.0,
-          ),
-        ),
-        items: items.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        validator: isRequired
-            ? (value) {
-          if (value == null || value.isEmpty) {
-            return '$label is required';
-          }
-          return null;
-        }
-            : null,
-        onChanged: onChanged,
+  InputDecoration _buildInputDecoration(String hint, IconData icon,
+      {Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon),
+      suffixIcon: suffixIcon,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
+      filled: true,
+      fillColor: Colors.grey[50],
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      errorStyle: TextStyle(height: 0.8),
     );
   }
 
-  Widget _buildAttachmentField() {
-    return InkWell(
-      onTap: () {
-        // Handle attachment selection
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: const [
-            Icon(Icons.attach_file, color: Colors.red),
-            SizedBox(width: 8),
-            Text(
-              'Attachment',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _challanNumberController.dispose();
+    _searchController.dispose();
+    _challanDateController.dispose();
+    _invoiceAmountController.dispose();
+    _baseAmountController.dispose();
+    _aitAmountController.dispose();
+    _taxController.dispose();
+    _differenceController.dispose();
+    _remarksController.dispose();
+    super.dispose();
   }
 }

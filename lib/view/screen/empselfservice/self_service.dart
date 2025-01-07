@@ -57,11 +57,10 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'PF Ledger', navigateTo: PFLedgerPage(),));
     _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'WPPF Ledger', navigateTo: WppfLedgerScreen()));
     _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT', navigateTo: AITAutomationScreen()));
-    _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT View', navigateTo: AITAutomationForm()));
+    _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT View', navigateTo: AITAutomationScreenTest()));
     _menuList.add(TopMenuItem(image: Images.notification, menuName: 'AIT approval', navigateTo: AitView()));
 
   }
-
 
   @override
   Widget build(BuildContext context) {

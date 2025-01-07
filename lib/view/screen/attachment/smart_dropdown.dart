@@ -5,7 +5,8 @@ class SmartDropdown<T> extends StatefulWidget {
   final T? value;
   final String Function(T) displayStringForOption;
   final void Function(T?) onChanged;
-  final String hint;
+  final String? hint;  // Optional hint
+  final String label;
   final bool enableSearch;
 
   const SmartDropdown({
@@ -14,7 +15,8 @@ class SmartDropdown<T> extends StatefulWidget {
     required this.value,
     required this.displayStringForOption,
     required this.onChanged,
-    this.hint = 'Select an option',
+    this.hint,  // Optional hint
+    this.label = 'Label',
     this.enableSearch = true,
   }) : super(key: key);
 
@@ -29,6 +31,9 @@ class _SmartDropdownState<T> extends State<SmartDropdown<T>> {
   bool _isOpen = false;
   List<T> _filteredItems = [];
   OverlayEntry? _overlayEntry;
+
+  // Track if the dropdown is focused or not
+  bool _isSelected = false;
 
   @override
   void initState() {
@@ -104,7 +109,7 @@ class _SmartDropdownState<T> extends State<SmartDropdown<T>> {
             borderRadius: BorderRadius.circular(4),
             child: Container(
               constraints: BoxConstraints(
-                maxHeight: 200,
+                maxHeight: 300,
                 minWidth: size.width,
               ),
               decoration: BoxDecoration(
@@ -140,6 +145,9 @@ class _SmartDropdownState<T> extends State<SmartDropdown<T>> {
                           selected: widget.value == item,
                           onTap: () {
                             widget.onChanged(item);
+                            setState(() {
+                              _isSelected = true; // Mark as selected when an item is tapped
+                            });
                             _closeDropdown();
                           },
                         );
@@ -161,23 +169,28 @@ class _SmartDropdownState<T> extends State<SmartDropdown<T>> {
       link: _layerLink,
       child: GestureDetector(
         onTap: _toggleDropdown,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: _isOpen
-                  ? Theme.of(context).primaryColor
-                  : Theme.of(context).dividerColor,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: widget.label,
+            hintText: widget.hint,  // Use the optional hint if provided
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: BorderSide(
+                color: _isSelected
+                    ? Theme.of(context).primaryColor  // Change border color when selected
+                    : Theme.of(context).dividerColor, // Default border color
+              ),
             ),
-            borderRadius: BorderRadius.circular(4),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          isEmpty: widget.value == null, // The field is considered empty when no value is selected
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   widget.value != null
                       ? widget.displayStringForOption(widget.value as T)
-                      : widget.hint,
+                      : '', // No hint text is shown when no value is selected
                   style: widget.value != null
                       ? null
                       : TextStyle(color: Theme.of(context).hintColor),

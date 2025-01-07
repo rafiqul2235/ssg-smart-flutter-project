@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
+import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/dropdown_model.dart';
 import 'package:ssg_smart2/data/model/response/AitResponse.dart';
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
@@ -19,6 +20,12 @@ class AttachmentProvider with ChangeNotifier {
   List<AitData> _aitData = [];
   AitResponse? _response;
 
+  List<CustomerDetails> _customerList = [];
+  CustomerDetails? _selectedCustomer;
+  List<FinancialYear> _finacialYearList = [];
+  FinancialYear? _selectFinancialYear;
+
+
   List<DropDownModel> _customerDetails = [];
   List<DropDownModel> get customerDetails => _customerDetails;
 
@@ -37,6 +44,11 @@ class AttachmentProvider with ChangeNotifier {
   List<AitData> get aitData => _aitData;
   ApiResonseNew? get aitResponse => _aitResponse;
   AitResponse? get response => _response;
+
+  List<CustomerDetails> get customersList => _customerList;
+  CustomerDetails? get selectedCustomer => _selectedCustomer;
+  List<FinancialYear> get financialYearsList => _finacialYearList;
+  FinancialYear? get selectedFinancialYear => _selectFinancialYear;
 
 
 
@@ -67,7 +79,7 @@ class AttachmentProvider with ChangeNotifier {
       _setLoading(true);
       _setError('');
       final List<CustomerDetails> _customers = await attachmentRepo.fetchCustomerDetailsInfo(orgId, salesId);
-      print("value of customers: $_customers");
+      print("value of habib customers: $_customers");
       _customerDetails = (_customers as List)
           .map((customer) => DropDownModel.fromJsonCustomerInfo(customer))
           .toList();
@@ -80,20 +92,23 @@ class AttachmentProvider with ChangeNotifier {
       _setError('');
     }
   }
+
   Future<void> fetchAitEssentails(String orgId, String salesId) async{
     try {
       _setLoading(true);
       _setError('');
       final AitEssentialResponse aitEssential = await attachmentRepo.fetchAitEssential(orgId, salesId);
+      _customerList = aitEssential.customerDetails;
+      _finacialYearList = aitEssential.financialYears;
 
       _customerDetails = (aitEssential.customerDetails as List)
           .map((customer) => DropDownModel.fromJsonCustomerInfo(customer))
           .toList();
-      print("customer: ${_customerDetails}");
+
       _financialYears = (aitEssential.financialYears as List)
           .map((fny) => DropDownModel.fromJsonFinancialYear(fny))
           .toList();
-      print("financial: ${_financialYears}");
+
       _setLoading(false);
     }catch (e) {
       _setError(e.toString());
@@ -156,4 +171,13 @@ class AttachmentProvider with ChangeNotifier {
   }
 
   fetchAitData() {}
+
+  void setSelectedCustomer(CustomerDetails? customer) {
+    _selectedCustomer = customer;
+    notifyListeners();
+  }
+  void setFinnacialYear(FinancialYear? fYear) {
+    _selectFinancialYear = fYear;
+    notifyListeners();
+  }
 }
