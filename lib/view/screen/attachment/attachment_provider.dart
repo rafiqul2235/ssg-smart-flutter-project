@@ -73,6 +73,27 @@ class AttachmentProvider with ChangeNotifier {
     }
   }
 
+  Future<void> updateAitEnty(String headerId, Map<String, dynamic> data) async {
+    _setLoading(true);
+    _setError('');
+    try {
+      final ApiResonseNew resonseNew = await attachmentRepo.updateAitEntry(headerId, data);
+      if (resonseNew.isSuccess) {
+        _setResponse(resonseNew);
+      }else{
+        _setError(resonseNew.error?? "Unknown error");
+      }
+    }catch(e){
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }finally{
+      _setLoading(false);
+      _setError('');
+    }
+  }
+
   
   Future<void> fetchCustomerDetailsInfo(String orgId, String salesId) async{
     try {
@@ -150,6 +171,10 @@ class AttachmentProvider with ChangeNotifier {
       _setLoading(false);
       _setError('');
     }
+  }
+
+  Future<bool> checkDuplicatechallan(String challanNumber) async {
+    return await attachmentRepo.isChallanNumberExists(challanNumber);
   }
 
   void _setResponse(ApiResonseNew response){

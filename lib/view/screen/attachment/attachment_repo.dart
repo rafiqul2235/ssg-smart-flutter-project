@@ -78,6 +78,55 @@ class AttachmentRepo {
       rethrow;
     }
   }
+
+  Future<ApiResonseNew> updateAitEntry(String headerId, Map<String, dynamic> data) async {
+    print("started api calling for ai automation");
+    print('headerId: $headerId');
+    print('Data: $data');
+    try {
+      List<MultipartFile> attachments = await _getMultipartFiles(data['attachments']);
+
+      FormData formData = FormData.fromMap({
+        'headerId' : headerId,
+        'customerId' : data['customerId'],
+        'customerAccount': data['customerAccount'],
+        'customerName' : data['customerName'],
+        'customerType' : data['customerType'],
+        'customerCategory' : data['customerCategory'],
+        'billToAddress' : data['billToAddress'],
+        'salesSection' : data['salesSection'],
+        'statusFlg' : data['statusFlg'],
+        'challanNo' : data['challanNo'],
+        'challanDate': data['challanDate'],
+        'financialYear': data['financialYear'],
+        'invoiceType': data['invoiceType'],
+        'invoiceAmount' : data['invoiceAmount'],
+        'baseAmount': data['baseAmount'],
+        'aitAmount' : data['aitAmount'],
+        'tax' : data['tax'],
+        'difference' : data['difference'],
+        'remarks': data['remarks'],
+        'empId': data['empId'],
+        'empName': data['empName'],
+        'personId': data['personId'],
+        'userId': data['userId'],
+        'deptName': data['deptName'],
+        'designation': data['designation'],
+        'orgId': data['orgId'],
+        'orgName': data['orgName'],
+        'attachments[]': attachments,
+      });
+
+      Response response = await dioClient.post(
+          AppConstants.UPDATE_AIT,
+          data: formData
+      );
+      return ApiResonseNew.withSuccess(response);
+    }catch(e){
+      rethrow;
+    }
+  }
+
   Future<List<MultipartFile>> _getMultipartFiles(List<File> files) async {
     List<MultipartFile> multipartFiles = [];
     for (File file in files) {
@@ -188,6 +237,22 @@ Future<AitResponse> fetchAitDetails(String headerId) async {
     } catch(e) {
       print("Details error in repository: $e");
       rethrow;
+    }
+}
+
+Future<bool> isChallanNumberExists(String challanNumber) async {
+    final response = await dioClient.postWithFormData(
+      AppConstants.CHECK_CHALLAN,
+      data: {
+        'challanNumber': challanNumber
+      }
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = response.data;
+      return data['exists'];
+    } else {
+      throw Exception('Failed to check challan number');
     }
 }
 }

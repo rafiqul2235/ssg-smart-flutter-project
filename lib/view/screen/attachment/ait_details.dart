@@ -6,6 +6,7 @@ import 'package:ssg_smart2/data/model/body/approver.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/attachment/file_view_screen.dart';
+import 'package:ssg_smart2/view/screen/attachment/test.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../basewidget/animated_custom_dialog.dart';
@@ -328,19 +329,35 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'AIT Details',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2C3E50),
-                  ),
+            Row(
+              children: [
+                Text(
+                  'AIT Details',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2C3E50),
+                      ),
+                ),
+                if(aitDetails.statusflag.contains("Rejected"))
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AITAutomationScreenTest(editAitDetail: aitDetails,))
+                        );
+                      },
+                      icon: Icon(Icons.edit)
+                  )
+              ],
             ),
             const SizedBox(height: 15),
             _buildDetailRow('Customer Name', '${aitDetails.customerName}'),
             _buildDetailRow('Challan No', '${aitDetails.challanNo}'),
             _buildDetailRow('Challan Date', '${aitDetails.challanDate}'),
             _buildDetailRow('Financial Year', '${aitDetails.financialYear}'),
+            _buildDetailRow('Invoice Type', '${aitDetails.invoiceType}'),
             _buildDetailRow('Invoice Amount', '${aitDetails.invoiceAmount}'),
+            _buildDetailRow('Base Amount', '${aitDetails.baseAmount}'),
             _buildDetailRow('AIT Amount', '${aitDetails.aitAmount}'),
             _buildDetailRow('Tax', '${aitDetails.tax}%'),
             _buildDetailRow('Difference', '${aitDetails.difference}')

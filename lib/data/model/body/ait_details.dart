@@ -4,7 +4,9 @@ class AitDetail {
   final String customerAccount;
   final String customerName;
   final String challanNo;
+  final String invoiceType;
   final String invoiceAmount;
+  final String baseAmount;
   final String aitAmount;
   final String tax;
   final String difference;
@@ -28,7 +30,9 @@ class AitDetail {
     required this.customerAccount,
     required this.customerName,
     required this.challanNo,
+    required this.invoiceType,
     required this.invoiceAmount,
+    required this.baseAmount,
     required this.aitAmount,
     required this.tax,
     required this.difference,
@@ -54,7 +58,9 @@ class AitDetail {
       customerAccount: json['customerAccount']?.toString() ?? '',
       customerName: json['customerName']?.toString() ?? '',
       challanNo: json['challanNo']?.toString() ?? '',
+      invoiceType: json['invoiceType']?.toString() ?? '',
       invoiceAmount: json['invoiceAmount']?.toString() ?? '',
+      baseAmount: json['baseAmount']?.toString() ?? '',
       aitAmount: json['aitAmount']?.toString() ?? '',
       tax: json['tax']?.toString() ?? '',
       difference: json['difference']?.toString() ?? '',

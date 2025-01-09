@@ -120,7 +120,7 @@ class _AitHistoryState extends State<AitHistory> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              const Text('Issued by Md Masum Manzil RSM'),
+                              Text('Issued by ${aitData.fromUser}'),
                             ],
                           ),
                         ),

@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
 
+import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
@@ -19,7 +21,9 @@ import 'ait_hisotry.dart';
 import 'attachment_provider.dart';
 
 class AITAutomationScreenTest extends StatefulWidget {
-  const AITAutomationScreenTest({Key? key}) : super(key: key);
+  final AitDetail? editAitDetail;
+
+  const AITAutomationScreenTest({Key? key, this.editAitDetail}) : super(key: key);
 
   @override
   _AITAutomationScreenTestState createState() => _AITAutomationScreenTestState();
@@ -30,25 +34,24 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
   final _scrollController = ScrollController();
 
   // Controllers for form fields
-  final TextEditingController _challanNumberController =
+  late TextEditingController _challanNumberController =
   TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _challanDateController = TextEditingController();
-  final TextEditingController _invoiceAmountController =
+  late TextEditingController _challanDateController = TextEditingController();
+  late TextEditingController _invoiceAmountController =
   TextEditingController();
-  final TextEditingController _baseAmountController = TextEditingController();
-  final TextEditingController _aitAmountController = TextEditingController();
-  final TextEditingController _taxController = TextEditingController();
-  final TextEditingController _differenceController = TextEditingController();
-  final TextEditingController _remarksController = TextEditingController();
+  late TextEditingController _baseAmountController = TextEditingController();
+  late TextEditingController _aitAmountController = TextEditingController();
+  late TextEditingController _taxController = TextEditingController();
+  late TextEditingController _differenceController = TextEditingController();
+  late TextEditingController _remarksController = TextEditingController();
   bool _isExcludedVat = false;
 
   UserInfoModel? userInfoModel;
 
   // Form state variables
   CustomerDetails? _selectedCustomer;
-  FinancialYear? _selectedFinancialYear;
-  File? _attachedFile;
+  String? _selectedFinancialYear;
   bool _isLoading = false;
 
 
@@ -57,7 +60,25 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
   @override
   void initState() {
     super.initState();
+    _addOldAit();
     _intData();
+  }
+  _addOldAit() async {
+    _selectedCustomer = CustomerDetails(
+        customerId: widget.editAitDetail?.customerId,
+        customarName: widget.editAitDetail?.customerName,
+        accountNumber: widget.editAitDetail?.customerAccount
+    );
+    _selectedFinancialYear = widget.editAitDetail?.financialYear;
+    _challanNumberController = TextEditingController(text: widget.editAitDetail?.challanNo ?? '');
+    _challanDateController = TextEditingController(text: widget.editAitDetail?.challanDate ?? '');
+    _invoiceAmountController = TextEditingController(text: widget.editAitDetail?.invoiceAmount ?? '');
+    _aitAmountController = TextEditingController(text: widget.editAitDetail?.aitAmount ?? '');
+    _baseAmountController = TextEditingController(text: widget.editAitDetail?.baseAmount ?? '');
+    _taxController = TextEditingController(text: widget.editAitDetail?.tax ?? '');
+    _differenceController = TextEditingController(text: widget.editAitDetail?.difference ?? '');
+    _remarksController = TextEditingController(text: widget.editAitDetail?.remarks ?? '');
+
   }
 
   _intData() async {
@@ -169,30 +190,6 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
       },
     );
   }
-
-  // File picker
-  // Future<void> _pickFile() async {
-  //   try {
-  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //       type: FileType.custom,
-  //       allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
-  //     );
-  //
-  //     if (result != null) {
-  //       setState(() {
-  //         _attachedFile = File(result.files.single.path!);
-  //       });
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('Error picking file: ${e.toString()}'),
-  //         backgroundColor: Colors.red,
-  //         behavior: SnackBarBehavior.floating,
-  //       ),
-  //     );
-  //   }
-  // }
 
   // file picker variable
   List<PlatformFile>? _attachmentFiles = [];
@@ -336,7 +333,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
         'statusFlg' : 'Initiated',
         'challanNo' : _challanNumberController.text,
         'challanDate': _challanDateController.text,
-        'financialYear': _selectedFinancialYear?.description,
+        'financialYear': _selectedFinancialYear,
         'invoiceType': !_isExcludedVat ? 'General' : 'Excluding VAT',
         'invoiceAmount' : _invoiceAmountController.text,
         'baseAmount': _baseAmountController.text,
@@ -358,12 +355,33 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
       try {
         // TODO: Implement your API call here
         final provider = Provider.of<AttachmentProvider>(context, listen: false);
-        await provider.submitAITAutomationForm(data);
+        bool isDuplicate = await provider.checkDuplicatechallan(_challanNumberController.text);
+
+        if (isDuplicate && widget.editAitDetail == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Challan number is already exist'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+          return;
+        }
+        // update: and entry
+        if (widget.editAitDetail != null) {
+          await provider.updateAitEnty(widget.editAitDetail!.headerId,data);
+        }else {
+          await provider.submitAITAutomationForm(data);
+        }
+
 
         if (provider.aitResponse!.isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('AIT form submitted successfully!'),
+              content: Text(widget.editAitDetail != null ? 'Updated successfully':'Submitted successfully!'),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -379,7 +397,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
           _selectedCustomer = null;
           _selectedFinancialYear = null;
           _isExcludedVat = false;
-          _attachedFile = null;
+          _attachmentFiles = null;
           _challanDateController.clear();
           _invoiceAmountController.clear();
           _baseAmountController.clear();
@@ -407,10 +425,13 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
     final provider = context.watch<AttachmentProvider>();
     final customers = provider.customersList;
     final financialYears = provider.financialYearsList;
-    _selectedFinancialYear = financialYears[0];
+    if (widget.editAitDetail == null && financialYears.isNotEmpty){
+      _selectedFinancialYear = financialYears[0].description;
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('AIT Automation'),
+        title: Text(widget.editAitDetail != null ? 'Edit AIT Automation':'AIT Automation'),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -423,7 +444,6 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
-          fontWeight: FontWeight.bold
         ),
         iconTheme: IconThemeData(
           color: Colors.white
@@ -472,7 +492,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
                   TextFormField(
                     readOnly: true,
                     decoration: _buildInputDecoration(
-                      _selectedCustomer?.customarName! ?? 'Select customer',
+                      _selectedCustomer?.customarName ?? 'Select customer',
                       Icons.business_outlined,
                       suffixIcon: Icon(Icons.arrow_drop_down),
                     ),
@@ -512,19 +532,19 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
 
                   // Financial Year
                   _buildFormLabel('Financial Year *'),
-                  DropdownButtonFormField<FinancialYear>(
+                  DropdownButtonFormField<String>(
                     value: _selectedFinancialYear,
                     decoration: _buildInputDecoration(
                       'Select financial year',
                       Icons.calendar_today_outlined,
                     ),
-                    items: financialYears.map((year) {
-                      return DropdownMenuItem<FinancialYear>(
-                        value: year,
-                        child: Text(year.description),
+                    items: financialYears.map((FinancialYear year) {
+                      return DropdownMenuItem<String>(
+                        value: year.description,
+                        child: Text(year.description ?? ''),
                       );
                     }).toList(),
-                    onChanged: (value) {
+                    onChanged: (String? value) {
                       setState(() {
                         _selectedFinancialYear = value;
                       });
@@ -747,44 +767,6 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
 
                   // File Attachment
                   _buildFormLabel('Attachment'),
-                  // InkWell(
-                  //   onTap: _pickFile,
-                  //   child: Container(
-                  //     padding: EdgeInsets.all(16),
-                  //     decoration: BoxDecoration(
-                  //       border: Border.all(color: Colors.grey.shade300),
-                  //       borderRadius: BorderRadius.circular(12),
-                  //       color: Colors.grey[50],
-                  //     ),
-                  //     child: Row(
-                  //       children: [
-                  //         Icon(Icons.attach_file, color: Colors.grey[600]),
-                  //         SizedBox(width: 16),
-                  //         Expanded(
-                  //           child: Text(
-                  //             _attachedFile?.path.split('/').last ??
-                  //                 'Click to attach file',
-                  //             style: TextStyle(
-                  //               color: _attachedFile != null
-                  //                   ? Colors.black
-                  //                   : Colors.grey[600],
-                  //             ),
-                  //             overflow: TextOverflow.ellipsis,
-                  //           ),
-                  //         ),
-                  //         if (_attachedFile != null)
-                  //           IconButton(
-                  //             icon: Icon(Icons.close, color: Colors.grey[600]),
-                  //             onPressed: () {
-                  //               setState(() {
-                  //                 _attachedFile = null;
-                  //               });
-                  //             },
-                  //           ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -856,7 +838,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
                                 child: ElevatedButton.icon(
                                   onPressed: _pickFile,
                                   icon: Icon(Icons.upload_file),
-                                  label: Text(_attachmentFiles!.isEmpty ?'Choose Files':'Add more'),
+                                  label: Text((_attachmentFiles == null || _attachmentFiles!.isEmpty) ?'Choose Files':'Add more'),
                                   style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 16,
@@ -880,11 +862,9 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
                         valueColor:
                         AlwaysStoppedAnimation<Color>(Colors.white),
                       )
-                          : Text(
-                        'Submit Challan',
+                          : Text(widget.editAitDetail != null ? 'Update':'Submit',
                         style: TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white
                         ),
                       ),

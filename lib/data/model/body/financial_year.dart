@@ -1,10 +1,10 @@
 class FinancialYear{
-  final String enableFlagId;
-  final String description;
+  String? enableFlagId;
+  String? description;
 
   FinancialYear({
-    required this.enableFlagId,
-    required this.description
+     this.enableFlagId,
+     this.description
   });
 
   factory FinancialYear.fromJson(Map<String, dynamic> json) {
@@ -14,4 +14,8 @@ class FinancialYear{
     );
   }
 
+  @override
+  String toString() {
+    return 'FinancialYear{enableFlagId: $enableFlagId, description: $description}';
+  }
 }
