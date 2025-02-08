@@ -73,7 +73,7 @@ class _AitHistoryState extends State<AitHistory> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,notificationId: aitData.notificationId,showApprovalSection: false,)
+                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,showApprovalSection: false,)
                             )
                         );
                       },
@@ -98,6 +98,7 @@ class _AitHistoryState extends State<AitHistory> {
                                             fontSize: 16,
                                           ),
                                         ),
+                                        Text('Header Id: ${aitData.headerId}'),
                                         Text('Challan No: ${aitData.challanNo}'),
                                         Text('Challan Date: ${aitData.challanDate}')
                                       ],
@@ -111,7 +112,7 @@ class _AitHistoryState extends State<AitHistory> {
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
-                                      "${aitData.status}",
+                                      "${aitData.statusFlg}",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
@@ -119,8 +120,6 @@ class _AitHistoryState extends State<AitHistory> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Text('Issued by ${aitData.fromUser}'),
                             ],
                           ),
                         ),

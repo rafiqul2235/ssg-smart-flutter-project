@@ -22,7 +22,7 @@ class AitDetail {
   final String status;
   final String salesSection;
   final String financialYear;
-  final List<String> filePaths;
+  final String downloadUrl;
 
   AitDetail({
     required this.headerId,
@@ -48,7 +48,7 @@ class AitDetail {
     required this.status,
     required this.salesSection,
     required this.financialYear,
-    required this.filePaths,
+    required this.downloadUrl,
   });
 
   factory AitDetail.fromJson(Map<String, dynamic> json) {
@@ -76,14 +76,12 @@ class AitDetail {
       status: json['status']?.toString() ?? '',
       salesSection: json['sales_section']?.toString() ?? '',
       financialYear: json['financialYear']?.toString()??'',
-      filePaths: (json['file_paths'] as List?)
-          ?.map((e) => e.toString())
-          .toList() ?? [],
+      downloadUrl: json['downloadUrl']?.toString()?? ''
     );
   }
 
   @override
   String toString() {
-    return 'AitDetail{headerId: $headerId, customerId: $customerId, customerAccount: $customerAccount, customerName: $customerName, challanNo: $challanNo, invoiceAmount: $invoiceAmount, aitAmount: $aitAmount, challanDate: $challanDate, remarks: $remarks, statusflag: $statusflag, orgId: $orgId, orgName: $orgName, department: $department, designation: $designation, empName: $empName, empNumber: $empNumber, status: $status, salesSection: $salesSection, filePaths: $filePaths}';
+    return 'AitDetail{headerId: $headerId, customerId: $customerId, customerAccount: $customerAccount, customerName: $customerName, challanNo: $challanNo, invoiceType: $invoiceType, invoiceAmount: $invoiceAmount, baseAmount: $baseAmount, aitAmount: $aitAmount, tax: $tax, difference: $difference, challanDate: $challanDate, remarks: $remarks, statusflag: $statusflag, orgId: $orgId, orgName: $orgName, department: $department, designation: $designation, empName: $empName, empNumber: $empNumber, status: $status, salesSection: $salesSection, financialYear: $financialYear, downloadUrl: $downloadUrl}';
   }
 }

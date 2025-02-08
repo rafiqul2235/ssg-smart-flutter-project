@@ -73,7 +73,7 @@ class _AitViewState extends State<AitView> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,notificationId: aitData.notificationId,showApprovalSection: true,)
+                                builder: (context) => AitDetailsScreen(headerId: aitData.headerId,showApprovalSection: true,)
                             )
                         );
                       },
@@ -110,7 +110,7 @@ class _AitViewState extends State<AitView> {
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
-                                      "${aitData.status}",
+                                      "${aitData.statusFlg}",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
@@ -118,8 +118,6 @@ class _AitViewState extends State<AitView> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Text('Issued by ${aitData.fromUser}'),
                             ],
                           ),
                         ),

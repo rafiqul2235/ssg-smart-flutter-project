@@ -22,7 +22,7 @@ class AitResponse {
     return AitResponse(
       success: json['success'] ?? 0,
       msg: json['msg'] ?? [],
-      aitDetails: AitDetail.fromJson(json['ait_details'][0]),
+      aitDetails: AitDetail.fromJson(json['ait_details']),
       approverList: (json['approver_list'] as List?)
           ?.map((e) => ApproverDetail.fromJson(e))
           .toList() ?? [],

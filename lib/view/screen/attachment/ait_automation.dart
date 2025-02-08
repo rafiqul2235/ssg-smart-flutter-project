@@ -16,20 +16,21 @@ import '../../../provider/user_provider.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
+import '../../../utill/file_security_helper.dart';
 import '../home/dashboard_screen.dart';
 import 'ait_hisotry.dart';
 import 'attachment_provider.dart';
 
-class AITAutomationScreenTest extends StatefulWidget {
+class AITAutomationScreen extends StatefulWidget {
   final AitDetail? editAitDetail;
 
-  const AITAutomationScreenTest({Key? key, this.editAitDetail}) : super(key: key);
+  const AITAutomationScreen({Key? key, this.editAitDetail}) : super(key: key);
 
   @override
-  _AITAutomationScreenTestState createState() => _AITAutomationScreenTestState();
+  _AITAutomationScreenState createState() => _AITAutomationScreenState();
 }
 
-class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
+class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
 
@@ -192,7 +193,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
   }
 
   // file picker variable
-  List<PlatformFile>? _attachmentFiles = [];
+  PlatformFile? _attachmentFile;
   final List<String> _allowedExtensions = [
     'pdf',
     'doc',
@@ -206,57 +207,102 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
 
 
 
-  // Method to handle file picking
+  // Future<void> _pickFile() async {
+  //   try {
+  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: _allowedExtensions,
+  //       allowMultiple: false, // Changed to false for single file
+  //       withData: true,
+  //     );
+  //
+  //     if (result != null) {
+  //       var file = result.files.first;
+  //
+  //       // Check file size
+  //       if (file.size > _maxFileSize) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text("File ${file.name} is too large. Max size: ${_maxFileSize ~/(1024*1024)} MB")),
+  //         );
+  //         return;
+  //       }
+  //
+  //       // Handle image compression if needed
+  //       if (['jpg', 'jpeg', 'png'].contains(file.extension?.toLowerCase())) {
+  //         final compressedFile = await _compressImageFile(file);
+  //         if (compressedFile != null) {
+  //           setState(() {
+  //             _attachmentFile = PlatformFile(
+  //                 name: compressedFile.path.split('/').last,
+  //                 path: compressedFile.path,
+  //                 size: compressedFile.lengthSync()
+  //             );
+  //           });
+  //         }
+  //       } else {
+  //         setState(() {
+  //           _attachmentFile = file;
+  //         });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Error: $e");
+  //   }
+  // }
   Future<void> _pickFile() async {
     try {
-      print("max file: $_maxFileCount");
-      print("no of attachments file: ${_attachmentFiles!.length}");
-      if (_attachmentFiles!.length >= _maxFileCount) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Maximum $_maxFileCount file allowed")),
-        );
-        return;
-      }
+      final secureFile = await pickSecureFile(context);
 
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: _allowedExtensions,
-        allowMultiple: true,
-        withData: true, // Keep file data in memory
-      );
+      if (secureFile != null) {
+        // Check file size again as an additional safety measure
+        if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('File is too large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
 
-      if (result != null) {
-        for (var file in result.files) {
-          if (_attachmentFiles!.length >= _maxFileCount) break;
-
-          // Check file size
-          if (file.size > _maxFileSize) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("File ${file.name} is too large. Max size: ${_maxFileSize ~/(1024*1024)} MB")),
-            );
-            continue;
-          }
-          // Compress if image
-          if (['jpg', 'jpeg', 'png'].contains(file.extension)) {
-            final compressFile = await _compressImageFile(file);
-            if (compressFile != null) {
-              setState(() {
-                _attachmentFiles!.add(PlatformFile(
-                    name: compressFile.path.split('/').last,
-                    path: compressFile.path,
-                    size: compressFile.lengthSync()
-                ));
-              });
+        // Handle image compression if needed
+        if (['jpg', 'jpeg', 'png'].contains(secureFile.extension?.toLowerCase())) {
+          final compressedFile = await _compressImageFile(secureFile);
+          if (compressedFile != null) {
+            // Check compressed file size
+            final compressedSize = await compressedFile.length();
+            if (compressedSize > FileSecurityHelper.MAX_FILE_SIZE) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Compressed file is still too large. Please select a smaller image.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
             }
-          }else {
+
             setState(() {
-              _attachmentFiles!.add(file);
+              _attachmentFile = PlatformFile(
+                  name: compressedFile.path.split('/').last,
+                  path: compressedFile.path,
+                  size: compressedSize
+              );
             });
           }
+        } else {
+          setState(() {
+            _attachmentFile = secureFile;
+          });
         }
       }
     } catch (e) {
-      print("Error:$e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error processing file: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print("Error: $e");
     }
   }
   // Compression for images
@@ -349,7 +395,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
         'designation': userInfoModel?.designation,
         'orgId': userInfoModel?.orgId,
         'orgName': userInfoModel?.orgName,
-        'attachments' : _attachmentFiles?.map((file) => File(file.path!)).toList()
+        'attachment': _attachmentFile != null ? File(_attachmentFile!.path!) : null
       };
 
       try {
@@ -390,6 +436,12 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
             ),
           );
         }
+        // Wait for snackbar to display
+        await Future.delayed(Duration(seconds: 2));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AitHistory())
+        );
 
         // Reset form after successful submission
         _formKey.currentState!.reset();
@@ -397,7 +449,7 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
           _selectedCustomer = null;
           _selectedFinancialYear = null;
           _isExcludedVat = false;
-          _attachmentFiles = null;
+          _attachmentFile = null;
           _challanDateController.clear();
           _invoiceAmountController.clear();
           _baseAmountController.clear();
@@ -768,87 +820,76 @@ class _AITAutomationScreenTestState extends State<AITAutomationScreenTest> {
                   // File Attachment
                   _buildFormLabel('Attachment'),
                   Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                            height: Dimensions.MARGIN_SIZE_SMALL),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border:
-                            Border.all(color: Colors.black26),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Allowed file types: ${_allowedExtensions.join(', ')}',
-                                  style: titilliumRegular.copyWith(
-                                    color: Colors.grey[700],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black26),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Allowed file types: ${_allowedExtensions.join(', ')}',
+                                style: titilliumRegular.copyWith(
+                                  color: Colors.grey[700],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            if (_attachmentFile != null)
+                              ListTile(
+                                title: Text(
+                                  _attachmentFile!.name,
+                                  maxLines: 1,
+                                ),
+                                subtitle: Text(
+                                  'Size: ${(_attachmentFile!.size / 1024).toStringAsFixed(2)} KB',
+                                  style: TextStyle(
                                     fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _attachmentFile = null; // Clear the selected file
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.clear,
+                                    color: Colors.red,
                                   ),
                                 ),
                               ),
-                              Column(
-                                  children: _attachmentFiles != null
-                                      ? _attachmentFiles!
-                                      .map((file) {
-                                    return ListTile(
-                                      title: Text(
-                                        file.name,
-                                        maxLines: 1,
-                                      ),
-                                      subtitle: Text(
-                                        'Size: ${(file.size / 1024).toStringAsFixed(2)} KB',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color:
-                                            Colors.grey),
-                                      ),
-                                      trailing: IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              _attachmentFiles!
-                                                  .remove(
-                                                  file);
-                                            });
-                                          },
-                                          icon: Icon(
-                                            Icons.clear,
-                                            color: Colors.red,
-                                          )),
-                                    );
-                                  }).toList()
-                                      : [
-                                    ListTile(
-                                      title: Text(
-                                        'No file chosen',
-                                        style: TextStyle(
-                                            color: Colors
-                                                .grey[700]),
-                                      ),
-                                    )
-                                  ]),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: _pickFile,
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text((_attachmentFiles == null || _attachmentFiles!.isEmpty) ?'Choose Files':'Add more'),
-                                  style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 12)),
+                            if (_attachmentFile == null)
+                              ListTile(
+                                title: Text(
+                                  'No file chosen',
+                                  style: TextStyle(color: Colors.grey[700]),
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton.icon(
+                                onPressed: _pickFile,
+                                icon: Icon(Icons.upload_file),
+                                label: Text(_attachmentFile == null ? 'Choose File' : 'Replace File'),
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ]),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 32),
 
                   // Submit Button

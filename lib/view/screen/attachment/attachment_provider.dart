@@ -50,8 +50,6 @@ class AttachmentProvider with ChangeNotifier {
   List<FinancialYear> get financialYearsList => _finacialYearList;
   FinancialYear? get selectedFinancialYear => _selectFinancialYear;
 
-
-
   Future<void> submitAITAutomationForm(Map<String, dynamic> data) async {
     _setLoading(true);
     _setError('');
@@ -165,6 +163,7 @@ class AttachmentProvider with ChangeNotifier {
       _setLoading(true);
       _setError('');
       _aitData = await attachmentRepo.fetchAitInfo(empId);
+      print("ait proverder: $_aitData");
     }catch(e) {
       _setError(e.toString());
     }finally {

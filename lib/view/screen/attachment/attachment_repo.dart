@@ -34,29 +34,79 @@ class AttachmentRepo {
     }
   }
 
+  // Future<ApiResonseNew> submitAITAutomationForm(Map<String, dynamic> data) async {
+  //   print("started api calling for ai automation");
+  //   try {
+  //     MultipartFile? attachment = await _getMultipartFile(data['attachment']);
+  //
+  //     FormData formData = FormData.fromMap({
+  //       'customerId' : data['customerId'],
+  //       'customerAccount': data['customerAccount'],
+  //       'customerName' : data['customerName'],
+  //       'customerType' : data['customerType'],
+  //       'customerCategory' : data['customerCategory'],
+  //       'billToAddress' : data['billToAddress'],
+  //       'salesSection' : data['salesSection'],
+  //       'statusFlg' : data['statusFlg'],
+  //       'challanNo' : data['challanNo'],
+  //       'challanDate': data['challanDate'],
+  //       'financialYear': data['financialYear'],
+  //       'invoiceType': data['invoiceType'],
+  //       'invoiceAmount' : data['invoiceAmount'],
+  //       'baseAmount': data['baseAmount'],
+  //       'aitAmount' : data['aitAmount'],
+  //       'tax' : data['tax'],
+  //       'difference' : data['difference'],
+  //       'remarks': data['remarks'],
+  //       'empId': data['empId'],
+  //       'empName': data['empName'],
+  //       'personId': data['personId'],
+  //       'userId': data['userId'],
+  //       'deptName': data['deptName'],
+  //       'designation': data['designation'],
+  //       'orgId': data['orgId'],
+  //       'orgName': data['orgName']
+  //     });
+  //
+  //     // Add attachment only if it exists
+  //     if (attachment != null) {
+  //       formMap['attachment'] = attachment;
+  //     }
+  //
+  //     Response response = await dioClient.post(
+  //       AppConstants.AIT_AUTOMATION,
+  //       data: formData
+  //     );
+  //     return ApiResonseNew.withSuccess(response);
+  //   }catch(e){
+  //     rethrow;
+  //   }
+  // }
   Future<ApiResonseNew> submitAITAutomationForm(Map<String, dynamic> data) async {
     print("started api calling for ai automation");
     try {
-      List<MultipartFile> attachments = await _getMultipartFiles(data['attachments']);
+      // Handle single file attachment
+      MultipartFile? attachment = await _getMultipartFile(data['attachment']);
 
-      FormData formData = FormData.fromMap({
-        'customerId' : data['customerId'],
+      // Create map of form data
+      Map<String, dynamic> formMap = {
+        'customerId': data['customerId'],
         'customerAccount': data['customerAccount'],
-        'customerName' : data['customerName'],
-        'customerType' : data['customerType'],
-        'customerCategory' : data['customerCategory'],
-        'billToAddress' : data['billToAddress'],
-        'salesSection' : data['salesSection'],
-        'statusFlg' : data['statusFlg'],
-        'challanNo' : data['challanNo'],
+        'customerName': data['customerName'],
+        'customerType': data['customerType'],
+        'customerCategory': data['customerCategory'],
+        'billToAddress': data['billToAddress'],
+        'salesSection': data['salesSection'],
+        'statusFlg': data['statusFlg'],
+        'challanNo': data['challanNo'],
         'challanDate': data['challanDate'],
         'financialYear': data['financialYear'],
         'invoiceType': data['invoiceType'],
-        'invoiceAmount' : data['invoiceAmount'],
+        'invoiceAmount': data['invoiceAmount'],
         'baseAmount': data['baseAmount'],
-        'aitAmount' : data['aitAmount'],
-        'tax' : data['tax'],
-        'difference' : data['difference'],
+        'aitAmount': data['aitAmount'],
+        'tax': data['tax'],
+        'difference': data['difference'],
         'remarks': data['remarks'],
         'empId': data['empId'],
         'empName': data['empName'],
@@ -66,27 +116,28 @@ class AttachmentRepo {
         'designation': data['designation'],
         'orgId': data['orgId'],
         'orgName': data['orgName'],
-        'attachments[]': attachments,
-      });
+      };
+
+      // Add attachment only if it exists
+      if (attachment != null) {
+        formMap['attachment'] = attachment;
+      }
+
+      FormData formData = FormData.fromMap(formMap);
 
       Response response = await dioClient.post(
-        AppConstants.AIT_AUTOMATION,
-        data: formData
+          AppConstants.AIT_AUTOMATION,
+          data: formData
       );
       return ApiResonseNew.withSuccess(response);
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
-
   Future<ApiResonseNew> updateAitEntry(String headerId, Map<String, dynamic> data) async {
-    print("started api calling for ai automation");
-    print('headerId: $headerId');
-    print('Data: $data');
     try {
-      List<MultipartFile> attachments = await _getMultipartFiles(data['attachments']);
-
-      FormData formData = FormData.fromMap({
+      MultipartFile? attachment = await _getMultipartFile(data['attachment']);
+      Map<String, dynamic> formMap = {
         'headerId' : headerId,
         'customerId' : data['customerId'],
         'customerAccount': data['customerAccount'],
@@ -113,10 +164,13 @@ class AttachmentRepo {
         'deptName': data['deptName'],
         'designation': data['designation'],
         'orgId': data['orgId'],
-        'orgName': data['orgName'],
-        'attachments[]': attachments,
-      });
-
+        'orgName': data['orgName']
+      };
+      // Add attachment only if it exists
+      if (attachment != null) {
+        formMap['attachment'] = attachment;
+      }
+      FormData formData = FormData.fromMap(formMap);
       Response response = await dioClient.post(
           AppConstants.UPDATE_AIT,
           data: formData
@@ -127,15 +181,18 @@ class AttachmentRepo {
     }
   }
 
-  Future<List<MultipartFile>> _getMultipartFiles(List<File> files) async {
-    List<MultipartFile> multipartFiles = [];
-    for (File file in files) {
-      multipartFiles.add(await MultipartFile.fromFile(
+  Future<MultipartFile?> _getMultipartFile(File? file) async {
+    if (file == null) return null;
+
+    try {
+      return await MultipartFile.fromFile(
         file.path,
         filename: file.path.split('/').last,
-      ));
+      );
+    } catch (e) {
+      print('Error creating MultipartFile: $e');
+      return null;
     }
-    return multipartFiles;
   }
 
   Future<List<CustomerDetails>> fetchCustomerDetailsInfo(String orgId, String salesRepId) async {

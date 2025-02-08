@@ -23,17 +23,17 @@ import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class AITAutomationScreen extends StatefulWidget {
+class AITAutomationScreenTest2 extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const AITAutomationScreen({Key? key, this.isBackButtonExist = true})
+  const AITAutomationScreenTest2({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  _AITAutomationScreenState createState() => _AITAutomationScreenState();
+  _AITAutomationScreenTest2State createState() => _AITAutomationScreenTest2State();
 }
 
-class _AITAutomationScreenState extends State<AITAutomationScreen> {
+class _AITAutomationScreenTest2State extends State<AITAutomationScreenTest2> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

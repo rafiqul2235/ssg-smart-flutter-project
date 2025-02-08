@@ -1,12 +1,18 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/ait_details.dart';
 import 'package:ssg_smart2/data/model/body/approver.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
 import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/attachment/file_view_screen.dart';
-import 'package:ssg_smart2/view/screen/attachment/test.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../basewidget/animated_custom_dialog.dart';
@@ -18,14 +24,14 @@ import '../home/dashboard_screen.dart';
 class AitDetailsScreen extends StatefulWidget {
   final bool isBackButtonExist;
   final String headerId;
-  final String notificationId;
+  final String? notificationId;
   final bool showApprovalSection;
 
   const AitDetailsScreen(
       {Key? key,
       this.isBackButtonExist = true,
       required this.headerId,
-      required this.notificationId,
+      this.notificationId,
       required this.showApprovalSection
       })
       : super(key: key);
@@ -37,6 +43,9 @@ class AitDetailsScreen extends StatefulWidget {
 class _AitDetailsScreenState extends State<AitDetailsScreen> {
   final TextEditingController _remarksController = TextEditingController();
   String? _statusMessage;
+  String? downloadUrl;
+  String? fileName;
+  bool isDownloading = false;
 
   @override
   void initState() {
@@ -56,12 +65,14 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
       );
       return;
     }
+
     print('NotificatinId: ${widget.notificationId} and action: ${action}');
+
     showAnimatedDialog(
       context,
       ConfirmationDialog(
           applicationType: 'AIT',
-          notificationId: widget.notificationId,
+          notificationId: widget.notificationId!,
           action: action,
           comment: _remarksController.text,
           isApprove: isApprove,
@@ -125,6 +136,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -157,7 +169,8 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                   }
                   final aitDetails = aitProvider.aitDetails;
                   final approverList = aitProvider.approverList;
-                  print("Approver list in screen: ${approverList}");
+
+                  downloadUrl = aitDetails?.downloadUrl;
                   // Check if the list is empty
                   if (aitDetails == null) {
                     return Center(
@@ -176,7 +189,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                         const SizedBox(height: 20.0),
 
                         // Attachments Section
-                        _buildAttachmentsSection(aitDetails.filePaths),
+                        _buildAttachmentsSection(aitDetails.downloadUrl),
                         const SizedBox(height: 20.0),
 
                         // Approver History Section
@@ -208,103 +221,50 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
     );
   }
 
-  Widget _buildAttachmentsSection(List<String> filePaths) {
+  _buildAttachmentsSection(String downloadUrl) {
+
+    fileName = "sample.pdf";
+    print('downloadUrl with starting page: $downloadUrl');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader("Attachments"),
         const SizedBox(height: 10.0),
-
-        // Attachments grid
-        filePaths.isEmpty
-            ? _buildEmptyAttachmentPlaceholder()
-            : GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 1.0),
-                itemCount: filePaths.length,
-                itemBuilder: (context, index) {
-                  return _buildAttachmentThumbnail(filePaths[index]);
-                },
-              ),
-      ],
-    );
-  }
-
-  Widget _buildEmptyAttachmentPlaceholder() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Text(
-        "No attachments available",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAttachmentThumbnail(String filePath) {
-    final fileName = filePath.split('/').last;
-    final isPdf = fileName.endsWith('.pdf');
-
-    return GestureDetector(
-      // onTap: () => _openFile(filePath),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FileViewScreen(url: filePath, title: fileName,)
-            )
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
-          color: Colors.white
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            isPdf
-                ? const Icon(
-                    Icons.picture_as_pdf,
-                    size: 50,
-                    color: Colors.red,
-                  )
-                : Image.network(
-                    filePath,
-                      fit: BoxFit.cover,
-                      height: 50,
-                      width: 50,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        );
-                      },
+        Center(
+          child: isDownloading
+              ? CircularProgressIndicator()
+              : GestureDetector(
+            onTap: downloadAndOpenFile,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity, // Expand full width
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      "Tap to Download & Open",
+                      textAlign: TextAlign.center, // Center text
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
                 ),
-            const SizedBox(height: 8,),
-            Text(
-              isPdf ? 'PDF File' : 'Image File',
-              style: const TextStyle(fontSize: 12),
-            )
-          ],
+              ],
+            ),
+          ),
         )
-      ),
+
+      ],
     );
   }
 
@@ -338,12 +298,12 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                         color: const Color(0xFF2C3E50),
                       ),
                 ),
-                if(aitDetails.statusflag.contains("Rejected"))
+                if(aitDetails.statusflag.contains("Rejected") || aitDetails.statusflag.contains("Initiated"))
                   IconButton(
                       onPressed: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AITAutomationScreenTest(editAitDetail: aitDetails,))
+                            MaterialPageRoute(builder: (context) => AITAutomationScreen(editAitDetail: aitDetails,))
                         );
                       },
                       icon: Icon(Icons.edit)
@@ -351,6 +311,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
               ],
             ),
             const SizedBox(height: 15),
+            _buildDetailRow('Header Id', '${aitDetails.headerId}'),
             _buildDetailRow('Customer Name', '${aitDetails.customerName}'),
             _buildDetailRow('Challan No', '${aitDetails.challanNo}'),
             _buildDetailRow('Challan Date', '${aitDetails.challanDate}'),
@@ -392,34 +353,6 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
       ),
     );
   }
-// sl:3
-//   Widget _buildDetailRow(String label, String value) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6.0),
-//       child: SingleChildScrollView(
-//         scrollDirection: Axis.horizontal,
-//         child: Row(
-//           children: [
-//             Text(
-//               label,
-//               style: const TextStyle(
-//                 color: Colors.grey,
-//                 fontWeight: FontWeight.w800,
-//               ),
-//             ),
-//             const SizedBox(width: 10),
-//             Text(
-//               value,
-//               style: const TextStyle(
-//                 fontWeight: FontWeight.bold,
-//                 color: Color(0xFF2C3E50),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
 
   Widget _buildSectionHeader(String title) {
     return Text(
@@ -561,15 +494,89 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
     );
   }
 
-  void _openFile(String filePath) async {
-    final Uri fileUri = Uri.parse(filePath);
-    if ( await canLaunchUrl(fileUri)) {
-      await launchUrl(fileUri, mode: LaunchMode.externalApplication);
-    }else {
-      _showCustomSnackBar(context, 'Could not open the file.');
+  Future<void> downloadAndOpenFile() async {
+    try {
+      setState(() => isDownloading = true);
+
+      // Get device storage directory
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = await getExternalStorageDirectory(); // Use external storage for Android
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+
+      if (directory == null) {
+        throw Exception("Cannot access storage directory");
+      }
+
+      // Generate timestamp to avoid cached files
+      String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      String filePath = "${directory.path}/document_$timestamp.pdf";
+
+      print("Starting download to: $filePath");
+
+      // Configure Dio with headers and options
+      final dio = Dio();
+      dio.options.headers = {
+        'Accept': '*/*',
+        'Connection': 'keep-alive',
+      };
+      dio.options.followRedirects = true;
+      dio.options.maxRedirects = 5;
+      dio.options.validateStatus = (status) => status! < 500;
+
+      // Download file with progress
+      await dio.download(
+        downloadUrl!,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            print("Download progress: ${(received / total * 100).toStringAsFixed(0)}%");
+          }
+        },
+      );
+
+      // Verify file exists and has size
+      File file = File(filePath);
+      if (await file.exists()) {
+        int fileSize = await file.length();
+        print("File downloaded. Size: ${fileSize} bytes");
+
+        if (fileSize > 0) {
+          setState(() => isDownloading = false);
+
+          // Open the file
+          final result = await OpenFile.open(
+            filePath,
+            type: 'application/pdf', // Explicitly specify PDF type// For iOS
+          );
+
+          print("Open file result: ${result.type} - ${result.message}");
+
+          if (result.type != ResultType.done) {
+            throw Exception("Failed to open file: ${result.message}");
+          }
+        } else {
+          throw Exception("Downloaded file is empty");
+        }
+      } else {
+        throw Exception("File does not exist after download");
+      }
+
+    } catch (e) {
+      setState(() => isDownloading = false);
+      print("Error downloading/opening file: $e");
+
+      // Show error to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to download or open file: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
-
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Initiated':
