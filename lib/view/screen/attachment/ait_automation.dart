@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
 
 import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
@@ -19,7 +18,7 @@ import '../../../utill/dimensions.dart';
 import '../../../utill/file_security_helper.dart';
 import '../home/dashboard_screen.dart';
 import 'ait_hisotry.dart';
-import 'attachment_provider.dart';
+import '../../../provider/attachment_provider.dart';
 
 class AITAutomationScreen extends StatefulWidget {
   final AitDetail? editAitDetail;
@@ -202,53 +201,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     'jpeg',
     'png'
   ];
-  static const int _maxFileCount = 5;
-  final int _maxFileSize = _maxFileCount * 1024 * 1024;
 
-
-
-  // Future<void> _pickFile() async {
-  //   try {
-  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //       type: FileType.custom,
-  //       allowedExtensions: _allowedExtensions,
-  //       allowMultiple: false, // Changed to false for single file
-  //       withData: true,
-  //     );
-  //
-  //     if (result != null) {
-  //       var file = result.files.first;
-  //
-  //       // Check file size
-  //       if (file.size > _maxFileSize) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text("File ${file.name} is too large. Max size: ${_maxFileSize ~/(1024*1024)} MB")),
-  //         );
-  //         return;
-  //       }
-  //
-  //       // Handle image compression if needed
-  //       if (['jpg', 'jpeg', 'png'].contains(file.extension?.toLowerCase())) {
-  //         final compressedFile = await _compressImageFile(file);
-  //         if (compressedFile != null) {
-  //           setState(() {
-  //             _attachmentFile = PlatformFile(
-  //                 name: compressedFile.path.split('/').last,
-  //                 path: compressedFile.path,
-  //                 size: compressedFile.lengthSync()
-  //             );
-  //           });
-  //         }
-  //       } else {
-  //         setState(() {
-  //           _attachmentFile = file;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Error: $e");
-  //   }
-  // }
   Future<void> _pickFile() async {
     try {
       final secureFile = await pickSecureFile(context);

@@ -6,10 +6,10 @@ import 'package:ssg_smart2/data/model/response/AitResponse.dart';
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
 
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
+import 'package:ssg_smart2/data/model/ait_data.dart';
 
-import '../../../data/datasource/remote/dio/dio_client.dart';
-import '../../../utill/app_constants.dart';
+import '../datasource/remote/dio/dio_client.dart';
+import '../../utill/app_constants.dart';
 
 class AttachmentRepo {
   final DioClient dioClient;
@@ -34,54 +34,6 @@ class AttachmentRepo {
     }
   }
 
-  // Future<ApiResonseNew> submitAITAutomationForm(Map<String, dynamic> data) async {
-  //   print("started api calling for ai automation");
-  //   try {
-  //     MultipartFile? attachment = await _getMultipartFile(data['attachment']);
-  //
-  //     FormData formData = FormData.fromMap({
-  //       'customerId' : data['customerId'],
-  //       'customerAccount': data['customerAccount'],
-  //       'customerName' : data['customerName'],
-  //       'customerType' : data['customerType'],
-  //       'customerCategory' : data['customerCategory'],
-  //       'billToAddress' : data['billToAddress'],
-  //       'salesSection' : data['salesSection'],
-  //       'statusFlg' : data['statusFlg'],
-  //       'challanNo' : data['challanNo'],
-  //       'challanDate': data['challanDate'],
-  //       'financialYear': data['financialYear'],
-  //       'invoiceType': data['invoiceType'],
-  //       'invoiceAmount' : data['invoiceAmount'],
-  //       'baseAmount': data['baseAmount'],
-  //       'aitAmount' : data['aitAmount'],
-  //       'tax' : data['tax'],
-  //       'difference' : data['difference'],
-  //       'remarks': data['remarks'],
-  //       'empId': data['empId'],
-  //       'empName': data['empName'],
-  //       'personId': data['personId'],
-  //       'userId': data['userId'],
-  //       'deptName': data['deptName'],
-  //       'designation': data['designation'],
-  //       'orgId': data['orgId'],
-  //       'orgName': data['orgName']
-  //     });
-  //
-  //     // Add attachment only if it exists
-  //     if (attachment != null) {
-  //       formMap['attachment'] = attachment;
-  //     }
-  //
-  //     Response response = await dioClient.post(
-  //       AppConstants.AIT_AUTOMATION,
-  //       data: formData
-  //     );
-  //     return ApiResonseNew.withSuccess(response);
-  //   }catch(e){
-  //     rethrow;
-  //   }
-  // }
   Future<ApiResonseNew> submitAITAutomationForm(Map<String, dynamic> data) async {
     print("started api calling for ai automation");
     try {
@@ -194,33 +146,6 @@ class AttachmentRepo {
       return null;
     }
   }
-
-  Future<List<CustomerDetails>> fetchCustomerDetailsInfo(String orgId, String salesRepId) async {
-    try {
-      final response = await dioClient.postWithFormData(
-        AppConstants.CUSTOMER_DETAILS,
-        data: {
-          'orgId': orgId,
-          'salesId': salesRepId
-        }
-      );
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        if (responseData['success'] == 1) {
-          return (responseData['customer_details'] as List)
-              .map((json) => CustomerDetails.fromJson(json))
-              .toList();
-        }else {
-          throw Exception("Failed to load customer details.");
-        }
-      }else {
-        throw Exception("Error to load customer details");
-      }
-    }catch (e) {
-      throw Exception("Error: ${e.toString()}");
-    }
-  }
-
 
   Future<AitEssentialResponse> fetchAitEssential(String orgId, String salesRepId) async {
     try {

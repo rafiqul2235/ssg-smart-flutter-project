@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_details.dart';
-import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
+import 'package:ssg_smart2/provider/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
 
 import '../../../provider/user_provider.dart';

@@ -5,11 +5,11 @@ import 'package:ssg_smart2/data/model/dropdown_model.dart';
 import 'package:ssg_smart2/data/model/response/AitResponse.dart';
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_data.dart';
+import 'package:ssg_smart2/data/model/ait_data.dart';
 
-import '../../../data/model/body/ait_details.dart';
-import '../../../data/model/body/approver.dart';
-import 'attachment_repo.dart';
+import '../data/model/body/ait_details.dart';
+import '../data/model/body/approver.dart';
+import '../data/repository/attachment_repo.dart';
 
 class AttachmentProvider with ChangeNotifier {
   final AttachmentRepo attachmentRepo;
@@ -24,13 +24,6 @@ class AttachmentProvider with ChangeNotifier {
   CustomerDetails? _selectedCustomer;
   List<FinancialYear> _finacialYearList = [];
   FinancialYear? _selectFinancialYear;
-
-
-  List<DropDownModel> _customerDetails = [];
-  List<DropDownModel> get customerDetails => _customerDetails;
-
-  List<DropDownModel> _financialYears = [];
-  List<DropDownModel> get financialYears => _financialYears;
 
   AitDetail? _aitDetails;
   List<ApproverDetail> _approverList = [];
@@ -92,25 +85,6 @@ class AttachmentProvider with ChangeNotifier {
     }
   }
 
-  
-  Future<void> fetchCustomerDetailsInfo(String orgId, String salesId) async{
-    try {
-      _setLoading(true);
-      _setError('');
-      final List<CustomerDetails> _customers = await attachmentRepo.fetchCustomerDetailsInfo(orgId, salesId);
-      print("value of habib customers: $_customers");
-      _customerDetails = (_customers as List)
-          .map((customer) => DropDownModel.fromJsonCustomerInfo(customer))
-          .toList();
-      print("provider: ${_customerDetails}");
-      _setLoading(false);
-    }catch (e) {
-      _setError(e.toString());
-    }finally {
-      _setLoading(false);
-      _setError('');
-    }
-  }
 
   Future<void> fetchAitEssentails(String orgId, String salesId) async{
     try {
@@ -119,15 +93,6 @@ class AttachmentProvider with ChangeNotifier {
       final AitEssentialResponse aitEssential = await attachmentRepo.fetchAitEssential(orgId, salesId);
       _customerList = aitEssential.customerDetails;
       _finacialYearList = aitEssential.financialYears;
-
-      _customerDetails = (aitEssential.customerDetails as List)
-          .map((customer) => DropDownModel.fromJsonCustomerInfo(customer))
-          .toList();
-
-      _financialYears = (aitEssential.financialYears as List)
-          .map((fny) => DropDownModel.fromJsonFinancialYear(fny))
-          .toList();
-
       _setLoading(false);
     }catch (e) {
       _setError(e.toString());

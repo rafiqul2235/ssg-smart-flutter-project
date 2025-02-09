@@ -54,12 +54,12 @@ class AppConstants {
   static const String WPPF_LEDGER = 'wppf_ledger';
 
   // R&D project
-  static const String ATTACHMENT_PROJECT = 'attachment_project';
-  static const String FETCH_ATTACHMENT = 'fetch_attachment';
+  // static const String ATTACHMENT_PROJECT = 'attachment_project';
+  // static const String FETCH_ATTACHMENT = 'fetch_attachment';
   static const String AIT_AUTOMATION = 'ait_automation';
   static const String AIT_VIEW = 'fetch_ait_info';
   static const String AIT_DETAILS = 'fetch_ait_details';
-  static const String CUSTOMER_DETAILS = 'ait_essential';
+  // static const String CUSTOMER_DETAILS = 'ait_essential';
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
   static const String UPDATE_AIT = 'update_ait_automation';

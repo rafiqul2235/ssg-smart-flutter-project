@@ -9,9 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/ait_details.dart';
 import 'package:ssg_smart2/data/model/body/approver.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_view.dart';
-import 'package:ssg_smart2/view/screen/attachment/attachment_provider.dart';
-import 'package:ssg_smart2/view/screen/attachment/file_view_screen.dart';
+import 'package:ssg_smart2/provider/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -104,9 +102,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
         rotateAngle: 0,
         positionButtonTxt: 'Ok',
         onPositiveButtonPressed: () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => AitView())
-          );
+
         },
       ),
       dismissible: false,
@@ -205,7 +201,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                           _buildRemarksTextField(),
                           const SizedBox(height: 20.0),
                           // Approve/Reject Buttons
-                          _buildActionButtons(),
+                          // _buildActionButtons(),
                         ],
                         // Status Message
                         if (_statusMessage != null) _buildStatusMessage(),
