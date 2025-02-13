@@ -56,8 +56,6 @@ dependencies:
   path_provider: ^2.1.4
   permission_handler: ^11.3.1
   flutter_downloader: ^1.11.8
-  android_path_provider: ^0.3.0
-  #device_info_plus: ^10.1.2
   device_info_plus: any
   share_plus: ^10.0.0
   charts_flutter: ^0.12.0
@@ -66,7 +64,7 @@ dependencies:
   fluttertoast: ^8.2.8
   flutter_polyline_points: ^1.0.0
   text_divider: ^1.0.0
-  simple_barcode_scanner: ^0.1.1
+#  simple_barcode_scanner: ^0.1.1
   badges: ^3.1.2
   toggle_switch: ^2.3.0
   pdf: ^3.11.1
