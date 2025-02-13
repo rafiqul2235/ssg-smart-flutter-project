@@ -1,5 +1,5 @@
 
-import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
+import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';

@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/ait_details.dart';
 import 'package:ssg_smart2/data/model/body/approver.dart';
 import 'package:ssg_smart2/provider/attachment_provider.dart';
-import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
+import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../basewidget/animated_custom_dialog.dart';
