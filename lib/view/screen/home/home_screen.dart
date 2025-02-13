@@ -1,4 +1,5 @@
 
+import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
@@ -212,6 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 url: 'https://apps.powerapps.com/play/e/default-acaaa1ae-6712-466b-8710-039ed61261a4/a/d9152109-d432-4b3b-8e2a-8b8e97e84e7c?tenantId=acaaa1ae-6712-466b-8710-039ed61261a4&hint=b24b6e27-69c3-4454-995c-04c08e77d595&sourcetime=1725943252723',
                               )
                                 ,count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            } else if(userMenu.id == '43') {
+                              return HomeMenuItemCircle(image: Images.ait_automation_48, title:  userMenu.name!, navigateTo: AITAutomationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else{
                               return HomeMenuItemCircle(image: Images.ic_service_req, title: 'TBD',count: 0,hasCount: false,navigateTo:null, bgColor: ColorResources.DARK_BLUE,);

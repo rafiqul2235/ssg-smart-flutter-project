@@ -41,12 +41,13 @@ class ApprovalRepo{
 
 
 
-  Future<ApiResponse> handleApproval(String notificationId, String action, String comments) async {
+  Future<ApiResponse> handleApproval(String applicationType, String notificationId, String action, String comments) async {
     print("noti_id: $notificationId, action: $action, comments: $comments");
     try {
       Response response = await dioClient.postWithFormData(
-        AppConstants.CHUTI_APPROVAL,
+        AppConstants.APPROVAL_FLOW,
         data: {
+          'application_type': applicationType,
           'notification_id': notificationId,
           'action': action,
           'comment': comments,

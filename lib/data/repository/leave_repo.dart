@@ -64,9 +64,10 @@ class LeaveRepo {
 
   Future<ApiResponse> applyLeave(LeaveData leaveData) async {
     try {
+
       Response response = await dioClient.post(
         AppConstants.LEAVE_APPLY,
-        data:leaveData.toJson(),
+        data:leaveData,
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -179,6 +180,23 @@ class LeaveRepo {
     } catch (e) {
       print('Leave Repo getLeaveType ${e}');
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+  // helper method to determine content type
+  String getContentType(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'application/octet-stream';
     }
   }
 

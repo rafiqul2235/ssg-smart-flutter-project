@@ -99,6 +99,8 @@ class Images {
   static const String cash_payment = 'assets/images/receivecash.png';
   static const String wppf_ledger = 'assets/images/icons-wppf-ledger.png';
   static const String wppf_ledger1 = 'assets/images/icon-wppf-ledger.png';
+  static const String ait_automation_64 = 'assets/images/ait-automation-64.png';
+  static const String ait_automation_48 = 'assets/images/ait-automation-48.png';
 
 
 

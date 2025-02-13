@@ -64,6 +64,7 @@ class LeaveProvider with ChangeNotifier {
   Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
     _resetState();
     showLoading();
+    print("submitted data: $leaveData");
 
     try{
       await _checkDuplicateLeave(leaveData);
@@ -77,6 +78,7 @@ class LeaveProvider with ChangeNotifier {
 
       await _submitLeaveApplication(leaveData);
     }catch(e){
+      print("Error in provider: $e");
       _error = "An error occurred: ${e.toString()}";
     }finally{
       hideLoading();
@@ -237,6 +239,7 @@ class LeaveProvider with ChangeNotifier {
   }
 
   Future<void> _submitLeaveApplication(LeaveData leaveData) async {
+    print("last stage of leave provider");
     final response = await leaveRepo.applyLeave(leaveData);
     if (response.response != null && response.response?.statusCode == 200) {
       Map<String, dynamic> responseData = jsonDecode(response.response.toString());

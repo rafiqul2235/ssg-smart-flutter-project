@@ -36,13 +36,13 @@ class ApprovalProvider with ChangeNotifier{
     }
   }
 
-  Future<void> handleApproval(BuildContext context, String notificationId, String action, String comments) async {
+  Future<void> handleApproval(BuildContext context, String applicationType, String notificationId, String action, String comments) async {
     _isLoading = true;
     _error = '';
     notifyListeners();
 
     try {
-      final response = await approvalRepo.handleApproval(notificationId, action, comments);
+      final response = await approvalRepo.handleApproval(applicationType, notificationId, action, comments);
       if (response.response != null && response.response?.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.response.toString());
         if (responseData['success'] == 1) {

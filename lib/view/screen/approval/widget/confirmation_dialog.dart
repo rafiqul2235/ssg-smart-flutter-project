@@ -10,19 +10,21 @@ import '../../../basewidget/animated_custom_dialog.dart';
 import '../../../basewidget/my_dialog.dart';
 
 class ConfirmationDialog extends StatelessWidget {
+  final String applicationType;
   final String notificationId;
   final String action;
   final String comment;
   final bool isApprove;
-  final Function(bool isSuccess, String message) onResult;
+  final Function(bool isSuccess, String message)? onResult;
 
   const ConfirmationDialog({
     Key? key,
+    required this.applicationType,
     required this.notificationId,
     required this.action,
     required this.comment,
     required this.isApprove,
-    required this.onResult
+    this.onResult
   }) : super(key: key);
 
   @override
@@ -65,14 +67,15 @@ class ConfirmationDialog extends StatelessWidget {
   Future<void> _handleConfirmation(BuildContext context) async {
     Navigator.pop(context);
     final approvalProvider = Provider.of<ApprovalProvider>(context, listen: false);
-    await approvalProvider.handleApproval(context, notificationId, action, comment);
-
-    if (approvalProvider.isSuccess != null) {
-      onResult(true, approvalProvider.isSuccess!);
-    } else if (approvalProvider.error != null) {
-      onResult(false, approvalProvider.error!);
-    } else {
-      onResult(false, "An unknown error occurred");
+    await approvalProvider.handleApproval(context, applicationType, notificationId, action, comment);
+    if (onResult != null) {
+      if (approvalProvider.isSuccess != null) {
+        onResult!(true, approvalProvider.isSuccess!);
+      } else if (approvalProvider.error != null) {
+        onResult!(false, approvalProvider.error!);
+      } else {
+        onResult!(false, "An unknown error occurred");
+      }
     }
   }
 

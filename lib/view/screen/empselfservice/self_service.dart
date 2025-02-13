@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
+import 'package:ssg_smart2/view/screen/attachment/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
+import 'package:ssg_smart2/view/screen/leave/leave_application_screen.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/salary_loan.dart';
 import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen.dart';
-import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen1.dart';
 import '../../../data/model/response/self_service.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
@@ -19,7 +20,6 @@ import '../../../utill/images.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
 import '../home/web_view_screen.dart';
-import '../leave/leave_application_screen.dart';
 import 'leave_approval_history.dart';
 
 class SelfService extends StatefulWidget {
@@ -48,9 +48,8 @@ class _SelfServiceState extends State<SelfService> {
     _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'PaySlip', navigateTo: PayslipScreen(),));
-
     // Allow *Salary Adv* for OFC employee
-    if(userInfoModel?.employmentCategory == 'OFC') {
+    if (userInfoModel!.employmentCategory!.contains("OFC")) {
       _menuList.add(TopMenuItem(image: Images.salary_advance, menuName: 'Salary Adv.', navigateTo: SalaryAdvanceScreen(),));
     }
     _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'PF Loan', navigateTo: PfLoanScreen(),));
@@ -107,7 +106,6 @@ class _SelfServiceState extends State<SelfService> {
                     builder: (context,userProvider,child){
 
                       List<SelfServiceModel> _applicationList = userProvider.applicationList;
-
                         return ListView.builder(
                             padding: EdgeInsets.all(0),
                             shrinkWrap: true,
