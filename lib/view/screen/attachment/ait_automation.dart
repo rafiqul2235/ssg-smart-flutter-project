@@ -220,6 +220,16 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       final secureFile = await pickSecureFile(context);
 
       if (secureFile != null) {
+        // Check if file is PDF
+        if (secureFile.extension?.toLowerCase() != 'pdf') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Only PDF files are allowed'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
         // Check file size again as an additional safety measure
         if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
           ScaffoldMessenger.of(context).showSnackBar(
