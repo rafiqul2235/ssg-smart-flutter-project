@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/cashpayment_model.dart';
+import 'package:ssg_smart2/data/model/response/rsm_approval_flow_model.dart';
 import 'package:ssg_smart2/data/repository/approval_repo.dart';
 import 'package:ssg_smart2/data/repository/cashpayment_repo.dart';
 
@@ -14,6 +15,7 @@ import 'auth_provider.dart';
 class CashPaymentProvider with ChangeNotifier{
   final CashPaymentRepo cashPaymentRepo;
   List<CashPaymentModel> _cashPaymentData = [];
+  List<RsmApprovalFlowModel> _rsmApprovaFlowData = [];
 
   bool _isLoading = false;
   String _error = '';
@@ -23,6 +25,8 @@ class CashPaymentProvider with ChangeNotifier{
   CashPaymentProvider({required this.cashPaymentRepo});
 
   List<CashPaymentModel> get cashPaymentModel => _cashPaymentData;
+  List<RsmApprovalFlowModel> get rsmApprovalFlowModel => _rsmApprovaFlowData;
+
   bool get isLoading => _isLoading;
   String get error => _error;
 
@@ -42,6 +46,39 @@ class CashPaymentProvider with ChangeNotifier{
     }
   }
 
+  Future<void> fetchRsmApprovalListData(String empId) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _rsmApprovaFlowData = await cashPaymentRepo.fetchRsmApprovalData(empId);
+      print("Rsm provider: $_rsmApprovaFlowData");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> fetchSrApprovalListData(String empId) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _rsmApprovaFlowData = await cashPaymentRepo.fetchRsmApprovalData(empId);
+      print("Rsm provider: $_rsmApprovaFlowData");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateCashPaymentAkg(BuildContext context, String transactionId, String action, String empId) async {
     _isLoading = true;
     _error = '';
@@ -49,6 +86,31 @@ class CashPaymentProvider with ChangeNotifier{
 
     try {
       final response = await cashPaymentRepo.handleCashPayment(transactionId, action,empId);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        if (responseData['success'] == 1) {
+          _isSuccess = responseData['msg'][0];
+        } else {
+          _error = "Update failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateSOBookedStatus(BuildContext context, String salesOrderId,String status,String commet,String lastUpdatedBy,String messageAtt3) async {
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try {
+      final response = await cashPaymentRepo.handleSoBookedRepo(salesOrderId, status,commet,lastUpdatedBy,messageAtt3);
       if (response.response != null && response.response?.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.response.toString());
         if (responseData['success'] == 1) {

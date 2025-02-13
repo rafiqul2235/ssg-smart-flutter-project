@@ -3,6 +3,7 @@ import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/datasource/remote/exception/api_error_handler.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
+import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
 import '../model/body/sales_order.dart';
@@ -114,6 +115,23 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getPendingSoRep(String salesPersonId, String customerId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['salerep_id'] = salesPersonId;
+      data['customer_id'] = customerId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.PENDINGSO,
+          data:data
+      );
+
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> salesOrderSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(
@@ -125,5 +143,51 @@ class SalesOrderRepo {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+  Future<ApiResponse> deliveryRequestSubmitRep (SalesOrder salesData) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.DELIVERY_RREQUEST_SUBMIT,
+        data:salesData.toJson(),
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<List<MsdReportModel>> fetchMsdReportRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.MSD_REPORT_DATA,
+        data: {
+          'type': type,
+          'salesrep_id': salesrep_id,
+          'cust_id': cust_id,
+          'fromDate': fromDate,
+          'toDate': toDate
+        },
+      );
+      print("msdSales response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['messages'] != null) {
+          return (responseData['messages'] as List)
+              .map((json) => MsdReportModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('No data found');
+        }
+      } else {
+        throw Exception('No data found');
+      }
+    } catch (e) {
+      throw Exception('Error fetching: $e');
+    }
+  }
+
+
+
 
 }

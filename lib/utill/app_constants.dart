@@ -11,8 +11,8 @@ class AppConstants {
   static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
 
 
-  static const int APP_VERSION_CODE = 6;
-  static const String APP_VERSION_NAME = '1.0.5';
+  static const int APP_VERSION_CODE = 7;
+  static const String APP_VERSION_NAME = '1.0.6';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
@@ -33,6 +33,7 @@ class AppConstants {
   static const String PF_DATA = 'pf_ledger';
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
+  static const String MSD_REPORT_DATA = 'notification';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
   static const String LEAVE_APPLY = 'leave_save';
@@ -43,8 +44,10 @@ class AppConstants {
   static const String LOAN_APPLICATION_HISTORY = 'salary_pf_approval_history';
   static const String APPROVAL_HISTORY = 'flutter_approval_history';
   static const String CASH_PAYMENT_AKG = 'cash_payment_akg';
+  static const String RSM_APPROVAL_FLOW_LIST = 'sales_order_booked_rsm_flow';
   static const String CASH_PAYMENT_HISTORY = 'cash_payment_akg_history';
   static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
+  static const String SOBOKKED_APPROVAL_UPDATE = 'rsm_sales_approval_booked';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
   static const String APPROVAL_FLOW = 'approval_flow';
   static const String PAY_SLIP = 'emp_pay_slip';
@@ -58,7 +61,9 @@ class AppConstants {
   static const String WPPF_LEDGER = 'wppf_ledger';
   static const String SALES = 'sales';
   static const String ORDERS = 'orders';
-  static const String NEW_SALE_SUBMIT = 'new-sale';
+  static const String PENDINGSO = 'pending_so_cust_id';
+  static const String NEW_SALE_SUBMIT = 'flutter-new-sale';
+  static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
 
   // R&D project
   // static const String ATTACHMENT_PROJECT = 'attachment_project';

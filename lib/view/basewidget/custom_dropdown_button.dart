@@ -93,8 +93,8 @@ class CustomDropdownButton extends StatelessWidget {
             alignment: valueAlignment,
             child: Text(
               item.name ?? '',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+              overflow: TextOverflow.visible,
+              maxLines: 3,
               style: const TextStyle(
                 fontSize: 14,
               ),

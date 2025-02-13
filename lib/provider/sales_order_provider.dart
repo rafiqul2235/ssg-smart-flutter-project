@@ -13,10 +13,12 @@ import '../data/model/response/salesorder/customer.dart';
 import '../data/model/response/salesorder/customer_location.dart';
 import '../data/model/response/salesorder/item.dart';
 import '../data/model/response/salesorder/order_type.dart';
+import '../data/model/response/salesorder/pending_so.dart';
 import '../data/model/response/salesorder/vehicle_type.dart';
 import '../data/model/response/salesorder/warehouse.dart';
 import '../data/repository/sales_order_repo.dart';
 import '../helper/api_checker.dart';
+import '../view/screen/msd_report/msd_report_model.dart';
 import 'auth_provider.dart';
 
 class SalesOrderProvider with ChangeNotifier {
@@ -45,6 +47,9 @@ class SalesOrderProvider with ChangeNotifier {
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
 
+  List<PendingSO>? _pendingSoList = [];
+  List<PendingSO> get pendingSoList => _pendingSoList ?? [];
+
   List<OrderType> _orderTypeList = [];
   List<OrderType> get orderTypeList => _orderTypeList ?? [];
 
@@ -69,6 +74,9 @@ class SalesOrderProvider with ChangeNotifier {
   /* Submit Order Object */
   SalesOrder? _salesOrder;
   SalesOrder get salesOrder => _salesOrder ?? SalesOrder();
+
+  /*DlvRequestItemDetail? _dlvRequestOrder;
+  DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
 
  /*
   ItemDetail? _itemDetails;
@@ -107,6 +115,23 @@ class SalesOrderProvider with ChangeNotifier {
     //notifyListeners();
   }
 
+  /*Future<void> addDeliveryReqItem(DlvRequestItemDetail item) async {
+    _dlvRequestOrder ??= DlvRequestItemDetail();
+    _dlvRequestOrder?.;
+
+    if(_dlvRequestOrder==null){
+      print(' null ');
+    }else{
+      print(' not null ');
+    }
+
+    print('addSalesOrderItem ${_dlvRequestOrder?.dlvItemDetail?.length}');
+    //notifyListeners();
+  }*/
+
+  List<MsdReportModel> _msdsalesReport = [];
+  List<MsdReportModel> get msdsalesReport => _msdsalesReport;
+
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
     try{
@@ -119,6 +144,7 @@ class SalesOrderProvider with ChangeNotifier {
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
         _customerList = [];
+       // _pendingSoList = [];
         _orderTypeList = [];
         _warehouseList = [];
         _vehicleTypeList = [];
@@ -127,6 +153,9 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['customers'] != null){
           apiResponse.response?.data['customers'].forEach((element) => _customerList?.add(Customer.fromJson(element)));
         }
+        /*if(apiResponse.response?.data['pending_so'] != null){
+          apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
+        }*/
         if(apiResponse.response?.data['order_types'] != null){
           apiResponse.response?.data['order_types'].forEach((element) => _orderTypeList.add(OrderType.fromJson(element)));
         }
@@ -135,6 +164,9 @@ class SalesOrderProvider with ChangeNotifier {
         }
         if( apiResponse.response?.data['vehicle_types'] != null){
           apiResponse.response?.data['vehicle_types'].forEach((element) => _vehicleTypeList.add(VehicleType.fromJson(element)));
+        }
+        if( apiResponse.response?.data['pending_so'] != null){
+          apiResponse.response?.data['pending_so'].forEach((element) => _vehicleTypeList.add(VehicleType.fromJson(element)));
         }
         if( apiResponse.response?.data['vehicle_types'] != null){
           apiResponse.response?.data['vehicle_types'].forEach((element) => _vehicleCategoryList.add(VehicleType.fromJson(element)));
@@ -176,6 +208,34 @@ class SalesOrderProvider with ChangeNotifier {
           apiResponse.response?.data['orders'].forEach((element) => _customerShipToLocationList.add(CustomerShipLocation.fromJson(element)));
         }
         print('CustomerShipToLocationList ${_customerShipToLocationList.length}');
+        notifyListeners();
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      // hideLoading();
+    }
+    // hideLoading();
+    return null;
+  }
+
+  Future<void> getPendingSo(BuildContext context) async {
+    //showLoading();
+    try{
+      //String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+
+      print('getPendingSo');
+
+      ApiResponse apiResponse = await salesOrderRepo.getPendingSoRep("100125041","939295");
+
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        _pendingSoList = [];
+        print('pendingSoLeanth ${apiResponse.response?.data['pending_so'].length}');
+        if(apiResponse.response?.data['pending_so'] != null){
+          apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
+        }
+        print('pendingSoLeanth ${_pendingSoList?.length}');
         notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
@@ -245,6 +305,37 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> deliveryRequestSubmit(BuildContext context, SalesOrder salesOrder) async {
+    // _resetState();
+    showLoading();
+    bool success = false;
+
+    try{
+      final response = await salesOrderRepo.deliveryRequestSubmitRep(salesOrder);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        print('salesOrderSubmit '+responseData.toString());
+        if (responseData['success'] == 1) {
+          //_isSuccess = responseData['msg'][0];
+          _salesOrder = SalesOrder();
+          success = true;
+        } else {
+          //_error = "Sales Order Submission failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+      print('DlvRequestSubmit '+e.toString());
+    }finally{
+      hideLoading();
+      // notifyListeners();
+      return success;
+    }
+  }
+
+
   Future<ItemPriceModel?> getItemPrice(BuildContext context,String account_id,String site_id,String item_id,String freght) async {
     String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
     ApiResponse apiResponse = await salesOrderRepo.getItemPriceRep(orgId,account_id,site_id,item_id,freght);
@@ -299,6 +390,36 @@ class SalesOrderProvider with ChangeNotifier {
 
     return AvailableCustBalModel(customerBalance: '');
 
+  }
+
+
+  /*Future<void> _submitSalesApplication(SalesDataModel salesdataModel) async {
+    final response = await salesOrderRepo.salesOrderSubmitRep(salesdataModel);
+    if (response.response != null && response.response?.statusCode == 200) {
+      Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+      if (responseData['success'] == 1) {
+        _isSuccess = responseData['msg'][0];
+      } else {
+        _error = "Sales Order Submission failed";
+      }
+    } else {
+      _error = "Server error occurred";
+    }
+  }*/
+
+
+  Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _msdsalesReport = await salesOrderRepo.fetchMsdReportRep(salesrep_id, cust_id,fromDate, toDate, type);
+    } catch (e) {
+      print('Error fetching: $e');
+      _msdsalesReport = [];
+    }
+    _isLoading = false;
+    notifyListeners();
   }
 
   void showLoading(){

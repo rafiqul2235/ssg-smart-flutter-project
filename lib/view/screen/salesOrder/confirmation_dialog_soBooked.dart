@@ -1,0 +1,100 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ssg_smart2/localization/language_constrants.dart';
+import 'package:ssg_smart2/provider/cashpayment_provider.dart';
+import 'package:ssg_smart2/utill/color_resources.dart';
+import 'package:ssg_smart2/utill/custom_themes.dart';
+import 'package:ssg_smart2/utill/dimensions.dart';
+
+class ConfirmationDialogSoBooked extends StatefulWidget {
+  final String salesOrderId;
+  final String status;
+  final String commet;
+  final String lastUpdatedBy;
+  final String messageAtt3;
+  final bool isApprove;
+  final Function(bool isSuccess, String message) onResult;
+
+  const ConfirmationDialogSoBooked({
+    Key? key,
+    required this.salesOrderId,
+    required this.status,
+    required this.commet,
+    required this.lastUpdatedBy,
+    required this.messageAtt3,
+    required this.isApprove,
+    required this.onResult
+  }) : super(key: key);
+
+  @override
+  _ConfirmationDialogSoBookedState createState() => _ConfirmationDialogSoBookedState();
+}
+
+class _ConfirmationDialogSoBookedState extends State<ConfirmationDialogSoBooked> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_LARGE, vertical: 50),
+          child: Text(
+              getTranslated(widget.isApprove ? 'want_to_so_booked' : 'want_to_so_cancel', context),
+              style: robotoBold,
+              textAlign: TextAlign.center),
+        ),
+        const Divider(height: 0, color: ColorResources.HINT_TEXT_COLOR),
+        Row(children: [
+          Expanded(child: InkWell(
+            onTap: () => _handleConfirmation(context),
+            //onTap: _handleYesButton,
+            child: Container(
+              padding: const EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(color: ColorResources.RED, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10))),
+              child: Text(getTranslated('YES', context), style: titilliumBold.copyWith(color: ColorResources.WHITE)),
+            ),
+          )),
+          Expanded(child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(Dimensions.PADDING_SIZE_SMALL),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(borderRadius: BorderRadius.only(bottomRight: Radius.circular(10))),
+              child: Text(getTranslated('NO', context), style: titilliumBold.copyWith(color: Theme.of(context).primaryColor)),
+            ),
+          )),
+        ]),
+      ]),
+    );
+  }
+
+  Future<void> _handleConfirmation(BuildContext context) async {
+    Navigator.pop(context);
+    final cashProvider = Provider.of<CashPaymentProvider>(context, listen: false);
+    await cashProvider.updateSOBookedStatus(context, widget.salesOrderId, widget.status, widget.commet,widget.lastUpdatedBy,widget.messageAtt3);
+    print("working handle function");
+
+    if (cashProvider.isSuccess != null) {
+      widget.onResult(true, cashProvider.isSuccess!);
+    } else if (cashProvider.error != null) {
+      widget.onResult(false, cashProvider.error!);
+    } else {
+      widget.onResult(false, "An unknown error occurred");
+    }
+
+    /*if (mounted) {
+      setState(() {
+        if (cashProvider.isSuccess != null) {
+          widget.onConfirmed();
+          _showSuccessDialog(cashProvider.isSuccess!);
+        } else if (cashProvider.error.isNotEmpty) {
+          _showErrorDialog(cashProvider.error);
+        } else {
+          _showErrorDialog("An unknown error occurred");
+        }
+      });
+    }*/
+  }
+
+}

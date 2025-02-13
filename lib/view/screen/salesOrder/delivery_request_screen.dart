@@ -36,17 +36,17 @@ import '../../basewidget/textfield/custom_textfield.dart';
 import '../home/dashboard_screen.dart';
 import 'dart:developer' as developer;
 
-class SalesOrderScreen extends StatefulWidget {
+class DeliveryRequestScreen extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const SalesOrderScreen({Key? key, this.isBackButtonExist = true})
+  const DeliveryRequestScreen({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<SalesOrderScreen> createState() => _SalesOrderScreenState();
+  State<DeliveryRequestScreen> createState() => _DeliveryRequestScreenState();
 }
 
-class _SalesOrderScreenState extends State<SalesOrderScreen> {
+class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   TextEditingController? _customerController;
   TextEditingController? _warehouseController;
   TextEditingController? _shipToSiteController;
@@ -54,6 +54,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   TextEditingController? _cusPONoController;
   TextEditingController? _depositDateController;
   TextEditingController? _qtyController;
+  TextEditingController? _coLoadSoController;
   TextEditingController? _deliverySiteDetailController;
 
   Customer? _selectedCustomer;
@@ -69,6 +70,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   List<DropDownModel> _itemsDropDown = [];
   DropDownModel? _selectedItem;
+
+  List<DropDownModel> _pendingSoDropDown = [];
+  DropDownModel? _selectPendingSo;
 
   List<DropDownModel> _orderTypeDropDown = [];
   DropDownModel? _selectedOrderType;
@@ -86,6 +90,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   DropDownModel? _selectedVehicleCat;
 
   List<DropDownModel> _shipToLocationDropDown = [];
+  //DropDownModel? _selectedShipToLocation;
+
+ // List<DropDownModel> _pendingSODropDown = [];
   //DropDownModel? _selectedShipToLocation;
 
 
@@ -115,6 +122,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   String _vehicleType ='';
   String _vehicleCate ='';
+  String _pendingS='';
 
   @override
   void initState() {
@@ -135,6 +143,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context);
+
   }
 
   void currentDateTime() {
@@ -147,7 +157,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     print("Formatted Date: $formattedDate"); // Outputs: DD-MM-YYYY
   }
 
-  Future<void> _onClickCustBal() async {
+  /*Future<void> _onClickCustBal() async {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.getCustBalance(context, '$_custId');
     _balanceModel = salesProvider.custBalance;
@@ -162,7 +172,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     // _showErrorDialog("Rafiqul");
     _showCustBalDialog('$customerBal');
     return;
-  }
+  }*/
 
   Future<void> _onClickItemPrice(int itemId, String siteId) async {
 
@@ -256,7 +266,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   }
 
   Future<void> _onClickSubmit() async {
-
     _customerFieldError = false;
     _warehouseFieldError = false;
     _freightTermsFieldError = false;
@@ -309,49 +318,27 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
     //salesInfoModel.orgName = _selectedCustomer?.orgName;
-    salesInfoModel.accountNumber = _selectedCustomer?.accountNumber;
+    //salesInfoModel.accountNumber = _selectedCustomer?.accountNumber;
     salesInfoModel.partySiteNumber = _selectedCustomer?.partySiteNumber;
     salesInfoModel.billToSiteId = _selectedCustomer?.billToSiteId;
-    salesInfoModel.customerName = _selectedCustomer?.customerName;
+    //salesInfoModel.customerName = _selectedCustomer?.customerName;
     salesInfoModel.billToAddress = _selectedCustomer?.billToAddress;
     salesInfoModel.priceListId = _selectedCustomer?.priceListId;
     salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
-    salesInfoModel.orderType = _selectedCustomer?.orderType;
-    salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
+    //salesInfoModel.orderType = _selectedCustomer?.orderType;
+    //salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
     salesInfoModel.freightTerms = _freightTerms;
     salesInfoModel.orderDate = formattedDate;
     salesInfoModel.warehouseId = _warehouseId;
-    salesInfoModel.warehouseName = _selectedWareHouse?.name;
+    //salesInfoModel.warehouseName = _selectedWareHouse?.name;
 
-    //salesInfoModel.customerPoNumber = _CusPONoController?.text;
-
-    //ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
-
-
-  /*  ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
->>>>>>> fc73904366df7d8350f744fcf011091661ceabd9
-    itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;
-    itemDetail.customerId = _shipLocationInfo?.customerId;
-    itemDetail.orgId = _shipLocationInfo?.orgId;
-    itemDetail.primaryShipTo = _shipLocationInfo?.primaryShipTo;
-    itemDetail.shipToSiteId = _shipLocationInfo?.shipToSiteId;
-    itemDetail.customerName = _shipLocationInfo?.customerName;
-    itemDetail.shipToLocation = _shipLocationInfo?.shipToLocation;
-    itemDetail.itemName = _selectedItem?.name;
-    itemDetail.itemName = _selectedItem?.id.toString();
-    //itemDetail.itemName = _selectedItem?.uom;
-    itemDetail.quantity = _qtyController.toString();
-    itemDetail.remarks = _deliverySiteDetailController?.text;
-    itemDetail.vehicleType = _selectedVehicleType?.name;
-    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();*/
-
-    salesInfoModel.customerPoNumber = _cusPONoController?.text;
+    salesInfoModel.vehicleInfo = _cusPONoController?.text;
 
 
     developer.log(salesInfoModel.toJson().toString());
 
-    await Provider.of<SalesOrderProvider>(context, listen: false).salesOrderSubmit(context, salesInfoModel).then((status) async {
+    await Provider.of<SalesOrderProvider>(context, listen: false).deliveryRequestSubmit(context, salesInfoModel).then((status) async {
 
       if(status){
         _customerController?.text= '';
@@ -399,7 +386,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     return Scaffold(
       body: Column(children: [
         CustomAppBar(
-            title: 'Sales Order',
+            title: 'Delivery Request Page',
             isBackButtonExist: widget.isBackButtonExist,
             icon: Icons.home,
             onActionPressed: () {
@@ -419,9 +406,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
                 _itemsDropDown = [];
-                provider.itemList.forEach((element) => _itemsDropDown.add(
-                    DropDownModel(id: element.itemId, name: element.itemName)));
+                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName,nameBl: element.itemUOM)));
               }
+
+
+              if (_pendingSoDropDown == null || _pendingSoDropDown.isEmpty) {
+                _pendingSoDropDown = [];
+                //_selectPendingSo =null;
+                // print("pendingS ${provider.pendingSoList.length}");
+                provider.pendingSoList.forEach((element) =>_pendingSoDropDown.add(DropDownModel(code: element.orderNumber,name: element.mainPartyName! +" " +element.orderNumber!)));
+              }
+
 
               if (_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
                 _orderTypeDropDown = [];
@@ -610,6 +605,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                     _custId = _selectedCustomer?.customerId ?? '';
                                     _custAccount = _selectedCustomer?.accountNumber ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
+                                    //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;
@@ -644,7 +640,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           const SizedBox(
                               width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
-                            text: 'Customer PO Number',
+                            text: 'Vehicle Information',
                             textStyle: titilliumRegular,
                             //mandatoryText: '*',
                           ),
@@ -657,7 +653,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             child: CustomTextField(
                               height: 35,
                               controller: _cusPONoController,
-                              hintText: 'Enter Customer PO Number',
+                              hintText: 'Enter Vehicle Information ',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
                               readOnly: false,
@@ -909,14 +905,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
                     ),
                     SizedBox(width: 16),
-                    Expanded(
+                    /*Expanded(
                       child: ElevatedButton(
                         child: Text(
                           'Balance',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
-                          _onClickCustBal();
+                          //_onClickCustBal();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange,
@@ -926,7 +922,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         ),
                       ),
 
-                    ),
+                    ),*/
                   ],
                 )
               : Center(
@@ -966,6 +962,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   /*  Table Header */
   List<DataColumn> _tableHeader() {
     return [
+      DataColumn(
+          label: Expanded(
+            child: Container(
+              width: 150,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Sales Order',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1017,7 +1030,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
-      DataColumn(
+      /*DataColumn(
           label: Expanded(
         child: Container(
           width: 100,
@@ -1050,7 +1063,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
             ),
           ),
         ),
-      )),
+      )),*/
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1092,7 +1105,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           height: 50,
           child: Center(
             child: Text(
-              'Delivery Site Details',
+              'Co-Load SO',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 16,
@@ -1102,6 +1115,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
+      DataColumn(
+          label: Expanded(
+            child: Container(
+              width: 200,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Delivery Site Details',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1125,13 +1155,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
     TextEditingController qtyController = TextEditingController();
-    TextEditingController deliverySiteDetailController =
-        TextEditingController();
+    TextEditingController deliverySiteDetailController = TextEditingController();
+    TextEditingController coLoadSoController = TextEditingController();
 
     qtyController.text = '${itemDetails.quantity}';
     deliverySiteDetailController.text = '${itemDetails.primaryShipTo}';
 
     return DataRow(cells: [
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.shipToLocation}')),
+      )),
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.itemName}')),
@@ -1161,7 +1195,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 : Text('${itemDetails.quantity}')),
       )),
 
-      DataCell(Padding(
+      /*DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.unitPrice}')),
       )),
@@ -1169,7 +1203,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
-      )),
+      )),*/
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -1179,6 +1213,26 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.vehicleType}')),
+      )),
+
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(
+            child: itemDetails.isEditable
+                ? CustomTextField(
+              controller: coLoadSoController,
+              width: 200,
+              height: 50,
+              maxLine: 3,
+              hintText: 'Co-Load SO',
+              borderColor: Colors.black12,
+              textInputType: TextInputType.text,
+              textInputAction: TextInputAction.next,
+              onChanged: (value) {
+                itemDetails.primaryShipTo = value;
+              },
+            )
+                : Text('${itemDetails.primaryShipTo}')),
       )),
 
       DataCell(Padding(
@@ -1248,6 +1302,27 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(
               buttonHeight: 45,
+              buttonWidth: 200,
+              dropdownWidth: 200,
+              hint: 'Select Pending SO',
+              hintColor: Colors.black87,
+              dropdownItems: _pendingSoDropDown,
+              value: _selectPendingSo,
+              buttonBorderColor:
+              _customerFieldError ? Colors.red : Colors.black87,
+              onChanged: (item) {
+                setState(() {
+                  //_selectCompanyError = false;
+                  _selectPendingSo = item;
+                  _pendingS = item?.name??'';
+                });
+              },
+            ),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: CustomDropdownButton(
+              buttonHeight: 45,
               buttonWidth: 150,
               dropdownWidth: 200,
               hint: 'Select Item',
@@ -1266,6 +1341,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               },
             ),
           )),
+
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomAutoComplete(
@@ -1291,6 +1367,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               },
             ),
           )),
+
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomTextField(
@@ -1311,14 +1388,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               },
             ),
           )),
-          DataCell(Padding(
+          /*DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: Center(child: Text('$itemPriceInt')),
           )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: Center(child: Text('$totalPriceInt')),
-          )),
+          )),*/
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(
@@ -1360,6 +1437,21 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                   _selectedVehicleCat = value;
                 });
               },
+            ),
+          )),
+          DataCell(Padding(
+            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+            child: CustomTextField(
+              width: 200,
+              height: 50,
+              maxLine: 3,
+              controller: _coLoadSoController,
+              hintText: 'Co-Load SO',
+              //focusNode: _qtyNode,
+              //nextNode: _unitPriceNode,
+              borderColor: Colors.black12,
+              textInputType: TextInputType.number,
+              textInputAction: TextInputAction.next,
             ),
           )),
           DataCell(Padding(

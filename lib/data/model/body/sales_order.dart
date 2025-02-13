@@ -19,8 +19,10 @@ class SalesOrder {
   String? warehouseId;
   String? warehouseName;
   String? customerPoNumber;
+  String? vehicleInfo;
 
   List<ItemDetail>? orderItemDetail = [];
+  //List<DlvRequestItemDetail>? dlvItemDetail = [];
 
   SalesOrder({
     this.customerId = '',
@@ -41,7 +43,8 @@ class SalesOrder {
     this.orderDate= '',
     this.warehouseId= '',
     this.warehouseName= '',
-    this.customerPoNumber= ''
+    this.customerPoNumber= '',
+    this.vehicleInfo = ''
   });
 
   void addItem(ItemDetail item){
@@ -52,6 +55,15 @@ class SalesOrder {
     orderItemDetail?.add(item);
 
   }
+
+  /*void dlvAddItem(DlvRequestItemDetail dlvIitem){
+    *//*if(orderItemDetail == null){
+      orderItemDetail = [];
+    }*//*
+    dlvItemDetail ??= [];
+    dlvItemDetail?.add(dlvIitem);
+
+  }*/
 
   SalesOrder.fromJson(Map<String, dynamic> json) {
     customerId= json['CUSTOMER_ID'];
@@ -73,6 +85,7 @@ class SalesOrder {
     warehouseId= json['WAREHOUSE_ID'];
     warehouseName= json['WAREHOUSE_NAME'];
     customerPoNumber= json['CUSTOMER_PO_NUMBER'];
+    vehicleInfo= json['VEHICLE_INFO'];
   }
 
   Map<String, dynamic> toJson() {
@@ -106,6 +119,7 @@ class SalesOrder {
     data['FREIGHT_TERMS'] = freightTerms??'';
     data['WAREHOUSE_ID'] = warehouseId??'0';
     data['CUSTOMER_PO_NUMBER'] = customerPoNumber??'';
+    data['VEHICLE_INFO'] = vehicleInfo??'';
     data['SALESREP_ID'] = salesPersonId??'0';
     data['PRICE_LIST_ID'] = priceListId??'0';
     data['PRIMARY_SHIP_TO_SITE_ID'] = primaryShipToSiteId??'';
@@ -206,3 +220,93 @@ class ItemDetail {
   }
 
 }
+
+
+/*class DlvRequestItemDetail {
+
+  String? salesPersonId;
+  String? customerId;
+  String? orgId;
+  String? primaryShipTo;
+  String? shipToSiteId;
+  String? customerName;
+  String? shipToLocation;
+  int? itemId;
+  String? itemName;
+  String? itemUOM;
+  String? quantity;
+  String? remarks;
+  String? vehicleTypeId;
+  String? vehicleType;
+  String? vehicleCate;
+  String? vehicleCateId;
+
+  bool isEditable = false;
+  int unitPrice = 0;
+  double totalPrice = 0.0;
+
+  DlvRequestItemDetail({
+    this.salesPersonId = '',
+    this.customerId= '',
+    this.orgId= '',
+    this.primaryShipTo= '',
+    this.shipToSiteId= '',
+    this.customerName= '',
+    this.shipToLocation= '',
+    this.itemId= 0,
+    this.itemName= '',
+    this.itemUOM= '',
+    this.quantity= '',
+    this.remarks= '',
+    this.vehicleTypeId = '',
+    this.vehicleType = ''
+  });
+
+  DlvRequestItemDetail.fromJson(Map<String, dynamic> json) {
+    salesPersonId = json['SALESREP_ID']??'';
+    customerId = json['CUSTOMER_ID']??'';
+    orgId = json['ORG_ID']??'';
+    primaryShipTo = json['PRIMARY_SHIP_TO']??'';
+    shipToSiteId = json['SHIP_TO_SITE_ID']??'';
+    customerName = json['CUSTOMER_NAME']??'';
+    shipToLocation = json['SHIP_TO_LOCATION']??'';
+    itemId = json['ITEM_ID']??0;
+    itemName = json['ITEM_NAME']??'';
+    itemUOM = json['ITEM_UOM']??'';
+    quantity = json['QUANTITY']??'';
+    remarks = json['REMARKS']??'';
+    vehicleTypeId = json['VEHICLE_TYPE_ID']??'';
+    vehicleType = json['VEHICLE_TYPE']??'';
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    *//*data['SALESREP_ID'] = salesPersonId;
+    data['CUSTOMER_ID'] = customerId;
+    data['ORG_ID'] = orgId;
+    data['PRIMARY_SHIP_TO'] = primaryShipTo;
+    data['SHIP_TO_SITE_ID'] = shipToSiteId;
+    data['CUSTOMER_NAME'] = customerName;
+    data['SHIP_TO_LOCATION'] = shipToLocation;
+    data['ITEM_ID'] = itemId??0;
+    data['ITEM_NAME'] = itemName;
+    data['ITEM_UOM'] = itemUOM;
+    data['QUANTITY'] = quantity;
+    data['REMARKS'] = remarks;
+    data['VEHICLE_TYPE_ID'] = vehicleTypeId;
+    data['VEHICLE_TYPE'] = vehicleType;*//*
+
+    data['ITEM_ID'] = itemId??0;
+    data['ITEM_NAME'] = itemName??'';
+    data['ITEM_UOM'] = itemUOM??"";
+    data['QUANTITY'] = quantity??'0';
+    data['SHIP_TO_SITE_ID'] = shipToSiteId??'';
+    data['SHIP_TO_LOCATION'] = shipToLocation??'';
+    data['VEHICLE_TYPE'] = vehicleType??'';
+    data['VEHICLE_CAT'] = vehicleCate??'';
+    data['REMARKS'] = remarks??'';
+
+    return data;
+  }
+
+}*/
