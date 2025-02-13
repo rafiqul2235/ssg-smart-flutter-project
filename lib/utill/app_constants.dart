@@ -2,11 +2,14 @@ import 'package:ssg_smart2/data/model/response/language_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 
+
 class AppConstants {
   static const String APP_NAME = 'SMART';
-  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
-  //static const String BASE_URL = 'http://10.25.4.120/';
+  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  // static const String BASE_URL = 'http://10.25.4.120/'; //production
+  // static const String BASE_URL = 'http://192.168.7.98/'; //test
+  static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+
 
   static const int APP_VERSION_CODE = 7;
   static const String APP_VERSION_NAME = '1.0.6';
@@ -46,6 +49,7 @@ class AppConstants {
   static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
   static const String SOBOKKED_APPROVAL_UPDATE = 'rsm_sales_approval_booked';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
+  static const String APPROVAL_FLOW = 'approval_flow';
   static const String PAY_SLIP = 'emp_pay_slip';
   static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
   static const String SAL_LOAN_INFO = 'salary_loan_info';
@@ -60,6 +64,18 @@ class AppConstants {
   static const String PENDINGSO = 'pending_so_cust_id';
   static const String NEW_SALE_SUBMIT = 'flutter-new-sale';
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
+
+  // R&D project
+  // static const String ATTACHMENT_PROJECT = 'attachment_project';
+  // static const String FETCH_ATTACHMENT = 'fetch_attachment';
+  static const String AIT_AUTOMATION = 'ait_automation';
+  static const String AIT_VIEW = 'fetch_ait_info';
+  static const String AIT_DETAILS = 'fetch_ait_details';
+  // static const String CUSTOMER_DETAILS = 'ait_essential';
+  static const String AIT_ESSENTIAL = 'ait_essential';
+  static const String CHECK_CHALLAN = 'check_challan_number';
+  static const String UPDATE_AIT = 'update_ait_automation';
+
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -108,5 +124,6 @@ class AppConstants {
     LanguageModel(imageUrl: '', languageName: 'English', countryCode: 'US', languageCode: 'en'),
     LanguageModel(imageUrl: '', languageName: 'বাংলা', countryCode: 'BD', languageCode: 'bn'),
   ];
+
 }
 

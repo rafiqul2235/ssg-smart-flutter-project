@@ -49,6 +49,8 @@ import 'package:ssg_smart2/provider/wppf_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ssg_smart2/provider/attachment_provider.dart';
+import 'package:ssg_smart2/data/repository/attachment_repo.dart';
 import 'data/datasource/remote/dio/logging_interceptor.dart';
 import 'data/repository/leave_repo.dart';
 import 'data/repository/master_data_repo.dart';
@@ -90,6 +92,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PfLoanRepo(dioClient: sl()));
   sl.registerLazySingleton(() => WppfRepo(dioClient: sl()));
   sl.registerLazySingleton(() => SalesOrderRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => AttachmentRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -118,6 +121,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PfLoanProvider(pfLoanRepo: sl()));
   sl.registerLazySingleton(() => WppfProvider(wppfRepo: sl()));
   sl.registerLazySingleton(() => SalesOrderProvider(salesOrderRepo: sl()));
+  sl.registerLazySingleton(() => AttachmentProvider(attachmentRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

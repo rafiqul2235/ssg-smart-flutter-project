@@ -8,7 +8,6 @@ import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
 import 'package:ssg_smart2/view/basewidget/show_custom_snakbar.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:provider/provider.dart';
-import 'code_picker_widget.dart';
 import 'otp_verification_screen.dart';
 
 class MobileVerificationScreen extends StatefulWidget {
@@ -67,40 +66,6 @@ class _MobileVerificationScreenState extends State<MobileVerificationScreen> {
 
                       ),
                       SizedBox(height: Dimensions.PADDING_SIZE_SMALL),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).highlightColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(children: [
-                          CodePickerWidget(
-                            onChanged: (CountryCode countryCode) {
-                              _countryDialCode = countryCode.dialCode!;
-                            },
-                            initialSelection: _countryDialCode,
-                            favorite: [_countryDialCode],
-                            showDropDownButton: true,
-                            padding: EdgeInsets.zero,
-                            showFlagMain: true,
-                            textStyle: TextStyle(color: Theme.of(context).textTheme.displayLarge?.color),
-
-                          ),
-                          Expanded(child: CustomTextField(
-                            hintText: getTranslated('number_hint', context),
-                            controller: _numberController,
-                            focusNode: _numberFocus,
-                            isPhoneNumber: true,
-                            textInputAction: TextInputAction.done,
-                            textInputType: TextInputType.phone,
-
-                          )),
-                        ]),
-                      ),
-
-                      SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
-
-
-
                       // for continue button
                       SizedBox(height: 12),
                       !authProvider.isPhoneNumberVerificationButtonLoading

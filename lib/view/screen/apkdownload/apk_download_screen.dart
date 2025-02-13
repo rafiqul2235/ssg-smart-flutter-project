@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
-import 'package:android_path_provider/android_path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 import 'package:ssg_smart2/utill/app_constants.dart';
@@ -455,7 +454,8 @@ class _ApkDownloadScreenState extends State<ApkDownloadScreen> {
     String? externalStorageDirPath;
     if (Platform.isAndroid) {
       try {
-        externalStorageDirPath = await AndroidPathProvider.downloadsPath;
+        final directory = await getExternalStorageDirectory();
+        externalStorageDirPath = directory?.path;
       } catch (e) {
         final directory = await getExternalStorageDirectory();
         externalStorageDirPath = directory?.path;

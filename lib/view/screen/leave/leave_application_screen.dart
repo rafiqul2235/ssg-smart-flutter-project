@@ -68,63 +68,60 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
-  File? file;
-  final _picker = ImagePicker();
-  bool firstTime = true;
-
   String workingAreaName = '';
 
   DropDownModel? selectedLeaveType;
 
   bool isLeaveTypeFieldError = false;
 
-  LeaveBalance? _leaveBalance = LeaveBalance(casual: 0,compensatory: 0,earned: 0.0,sick: 0);
+  LeaveBalance? _leaveBalance =
+      LeaveBalance(casual: 0, compensatory: 0, earned: 0.0, sick: 0);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-   // Provider.of<UserProvider>(context, listen: false).resetLoading();
+    // Provider.of<UserProvider>(context, listen: false).resetLoading();
 
     Provider.of<LeaveProvider>(context, listen: false).getLeaveType(context);
 
     _intData();
-
   }
 
   _intData() async {
-    _leaveBalance =  await Provider.of<LeaveProvider>(context, listen: false).getLeaveBalance(context);
-     setState(() {});
+    _leaveBalance = await Provider.of<LeaveProvider>(context, listen: false)
+        .getLeaveBalance(context);
+    setState(() {});
   }
 
   void _durationCalculation() {
     String _startDate = _startDateController.text!;
     String _endDate = _endDateController.text!;
-    if(_startDate.isNotEmpty && _endDate.isNotEmpty){
-      int duration = DateConverter.differanceTwoDate(_startDate, _endDate)+1;
-      if(duration > 0) {
+    if (_startDate.isNotEmpty && _endDate.isNotEmpty) {
+      int duration = DateConverter.differanceTwoDate(_startDate, _endDate) + 1;
+      if (duration > 0) {
         _durationController.text = '$duration';
       }
     }
   }
 
-  void _onClickSubmit () async {
-
-    if(!_formKey.currentState!.validate()){
+  void _onClickSubmit() async {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    if(selectedLeaveType == null ){
+    if (selectedLeaveType == null) {
       _showErrorDialog("Please select a leave type");
       return;
     }
 
-    if(!_isLeaveBalanceSufficient()){
+    if (!_isLeaveBalanceSufficient()) {
       _showErrorDialog("Unavailable leave balance");
       return;
     }
 
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    UserInfoModel? userInfoModel =
+        Provider.of<UserProvider>(context, listen: false).userInfoModel;
     LeaveData leaveData = LeaveData(
         empName: userInfoModel?.fullName,
         empNumber: userInfoModel?.employeeNumber,
@@ -139,8 +136,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
         startDate: _startDateController.text,
         endDate: _endDateController.text,
         duration: _durationController.text,
-        comment: _leaveCommentsController.text
-    );
+        comment: _leaveCommentsController.text);
     print("Leave data: $leaveData");
     final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
     await leaveProvider.applyLeave(context, leaveData);
@@ -178,29 +174,29 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
   }
 
-  String? _validateLeaveComments(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateLeaveComments(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave comments';
     }
     return null;
   }
 
-  String? _validateDuration(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateDuration(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave duration';
     }
     return null;
   }
 
-  String? _validateStartDate(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateStartDate(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave start date';
     }
     return null;
   }
 
-  String? _validateEndDate(String? value){
-    if( value == null || value.isEmpty){
+  String? _validateEndDate(String? value) {
+    if (value == null || value.isEmpty) {
       return 'Please enter the leave end date';
     }
     return null;
@@ -208,7 +204,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
@@ -237,24 +232,26 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                         decoration: BoxDecoration(
                             color: ColorResources.getIconBg(context),
                             borderRadius: BorderRadius.only(
-                              topLeft:
-                                  Radius.circular(Dimensions.MARGIN_SIZE_DEFAULT),
-                              topRight:
-                                  Radius.circular(Dimensions.MARGIN_SIZE_DEFAULT),
+                              topLeft: Radius.circular(
+                                  Dimensions.MARGIN_SIZE_DEFAULT),
+                              topRight: Radius.circular(
+                                  Dimensions.MARGIN_SIZE_DEFAULT),
                             )),
                         child: ListView(
                           padding: EdgeInsets.all(0),
                           physics: BouncingScrollPhysics(),
                           children: [
-
                             /* Leave Balance */
-                            Center(child: Text('Leave Balance',style: titilliumBold.copyWith(fontSize: 20))),
+                            Center(
+                                child: Text('Leave Balance',
+                                    style:
+                                        titilliumBold.copyWith(fontSize: 20))),
 
                             Container(
-                              color:Colors.blueAccent.withOpacity(0.7),
+                              color: Colors.blueAccent.withOpacity(0.7),
                               child: Table(
-                                //defaultColumnWidth: IntrinsicColumnWidth(),
-                                //defaultColumnWidth: FixedColumnWidth(),
+                                  //defaultColumnWidth: IntrinsicColumnWidth(),
+                                  //defaultColumnWidth: FixedColumnWidth(),
                                   columnWidths: {
                                     //0:FractionColumnWidth(0.23),
                                     0: IntrinsicColumnWidth(),
@@ -266,198 +263,296 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                   border: TableBorder.all(),
                                   children: [
                                     /* Header Row */
-                                    TableRow (
-                                        decoration: const BoxDecoration(color: Colors.transparent),
+                                    TableRow(
+                                        decoration: const BoxDecoration(
+                                            color: Colors.transparent),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Leave Type',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Leave Type',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('B/L',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('B/L',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Leave Type',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Leave Type',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('B/L',style:titilliumSemiBold.copyWith(fontSize: 16))),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('B/L',
+                                                    style: titilliumSemiBold
+                                                        .copyWith(
+                                                            fontSize: 16))),
                                           ),
-                                        ]
-                                    ),
+                                        ]),
                                     /* Data Row */
-                                    TableRow (
-                                        decoration: BoxDecoration(color:Colors.green.shade50),
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                            color: Colors.green.shade50),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Casual Leave',style:titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Casual Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.casual}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.casual}',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Comp. Leave',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Comp. Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.compensatory}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.compensatory}',
+                                                    style: titilliumRegular)),
                                           ),
-
-                                        ]
-                                    ),
-                                    TableRow (
-                                        decoration: BoxDecoration(color:Colors.orange.shade50),
+                                        ]),
+                                    TableRow(
+                                        decoration: BoxDecoration(
+                                            color: Colors.orange.shade50),
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Sick Leave',style:titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Sick Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.sick}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.sick}',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('Earned Leave',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text('Earned Leave',
+                                                    style: titilliumRegular)),
                                           ),
-
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0,left: 8.0,right: 8.0,bottom: 8.0),
-                                            child: Center(child: Text('${_leaveBalance?.earned}',style: titilliumRegular)),
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 8.0,
+                                                right: 8.0,
+                                                bottom: 8.0),
+                                            child: Center(
+                                                child: Text(
+                                                    '${_leaveBalance?.earned}',
+                                                    style: titilliumRegular)),
                                           ),
-
-                                        ]
-                                    )
-                                  ]
-                              ),
+                                        ])
+                                  ]),
                             ),
 
                             /* Apply Leave */
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
-                              child: Center(child: Text('Apply Your Leave',style: titilliumBold.copyWith(fontSize: 20))),
+                              child: Center(
+                                  child: Text('Apply Your Leave',
+                                      style: titilliumBold.copyWith(
+                                          fontSize: 20))),
                             ),
 
                             // for leave type
                             Consumer<LeaveProvider>(
-                                builder: (context,leaveProvider,child){
+                                builder: (context, leaveProvider, child) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 5.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.streetview,
+                                            color: ColorResources.getPrimary(
+                                                context),
+                                            size: 20),
+                                        const SizedBox(
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL,
+                                        ),
+                                        MandatoryText(
+                                            text: 'Leave Type',
+                                            mandatoryText: '*',
+                                            textStyle: titilliumRegular)
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                        height: Dimensions.MARGIN_SIZE_SMALL),
+                                    CustomDropdownButton(
+                                      buttonHeight: 45,
+                                      buttonWidth: double.infinity,
+                                      dropdownWidth: width - 40,
+                                      hint: 'Select Leave Type',
+                                      //hintColor: Colors.black: null,
+                                      dropdownItems: leaveProvider.leaveTypes,
+                                      value: selectedLeaveType,
+                                      buttonBorderColor: isLeaveTypeFieldError
+                                          ? Colors.red
+                                          : Colors.black12,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedLeaveType = value;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
 
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 5.0),
+                            // Date Selection Row (Horizontal Layout)
+                            Container(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Start Date
+                                  Expanded(
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
-                                            Icon(Icons.streetview,
+                                            Icon(Icons.date_range,
                                                 color:
-                                                ColorResources.getPrimary(context),
+                                                    ColorResources.getPrimary(
+                                                        context),
                                                 size: 20),
                                             const SizedBox(
-                                              width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
-                                            ),
-                                            MandatoryText(text: 'Leave Type', mandatoryText: '*',
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'Start Date',
+                                                mandatoryText: '*',
                                                 textStyle: titilliumRegular)
                                           ],
                                         ),
-
                                         const SizedBox(
-                                            height: Dimensions.MARGIN_SIZE_SMALL),
-                                        CustomDropdownButton(
-                                          buttonHeight: 45,
-                                          buttonWidth: double.infinity,
-                                          dropdownWidth: width - 40,
-                                          hint: 'Select Leave Type',
-                                          //hintColor: Colors.black: null,
-                                          dropdownItems: leaveProvider.leaveTypes,
-                                          value: selectedLeaveType,
-                                          buttonBorderColor: isLeaveTypeFieldError?Colors.red:Colors.black12,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              selectedLeaveType = value;
-                                            });
-                                          },
+                                            height:
+                                                Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDateTimeTextField(
+                                          controller: _startDateController,
+                                          focusNode: _startDateFocus,
+                                          nextNode: _endDateFocus,
+                                          textInputAction: TextInputAction.next,
+                                          isTime: false,
+                                          readyOnly: false,
+                                          onChanged: (v) =>
+                                              {_durationCalculation()},
+                                          validator: _validateStartDate,
                                         ),
                                       ],
                                     ),
-                                  );
-                                }
-                            ),
-
-                            // for Start Date
-                            Container(
-                                margin: EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.date_range,
-                                          color:
-                                              ColorResources.getPrimary(context),
-                                          size: 20),
-                                      const SizedBox(
-                                        width: Dimensions.MARGIN_SIZE_EXTRA_SMALL,
-                                      ),
-                                      MandatoryText(text: 'Start Date', mandatoryText: '*',
-                                          textStyle: titilliumRegular)
-                                    ],
                                   ),
-                                  const SizedBox(
-                                      height: Dimensions.MARGIN_SIZE_SMALL),
-                                  CustomDateTimeTextField(
-                                    controller: _startDateController,
-                                    focusNode: _startDateFocus,
-                                    nextNode: _endDateFocus,
-                                    textInputAction: TextInputAction.next,
-                                    isTime: false,
-                                    readyOnly: false,
-                                    onChanged: (v) => { _durationCalculation()},
-                                    validator: _validateStartDate,
-                                  ),
-
-                                ],
-                              ),
-                            ),
-
-                            // for End Date
-                            Container(
-                                margin: EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.date_range,
-                                          color:
-                                              ColorResources.getPrimary(context),
-                                          size: 20),
-                                      const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'End Date', mandatoryText: '*',
-                                          textStyle: titilliumRegular)
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                      height: Dimensions.MARGIN_SIZE_SMALL),
-                                  CustomDateTimeTextField(
-                                    controller: _endDateController,
-                                    focusNode: _endDateFocus,
-                                    //nextNode: _toDateFocus,
-                                    textInputAction: TextInputAction.next,
-                                    isTime: false,
-                                    readyOnly: false,
-                                    onChanged: (v) => { _durationCalculation()},
-                                    validator: _validateEndDate,
+                                  SizedBox(width: 16.0),
+                                  // End Date
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.date_range,
+                                                color:
+                                                    ColorResources.getPrimary(
+                                                        context),
+                                                size: 20),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .MARGIN_SIZE_EXTRA_SMALL),
+                                            MandatoryText(
+                                                text: 'End Date',
+                                                mandatoryText: '*',
+                                                textStyle: titilliumRegular)
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.MARGIN_SIZE_SMALL),
+                                        CustomDateTimeTextField(
+                                          controller: _endDateController,
+                                          focusNode: _endDateFocus,
+                                          textInputAction: TextInputAction.next,
+                                          isTime: false,
+                                          readyOnly: false,
+                                          onChanged: (v) =>
+                                              {_durationCalculation()},
+                                          validator: _validateEndDate,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -465,19 +560,21 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
                             // for Duration
                             Container(
-                                margin: EdgeInsets.only(top: 5.0),
+                              margin: EdgeInsets.only(top: 5.0),
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
                                       Icon(Icons.access_time_filled,
-                                          color:
-                                              ColorResources.getPrimary(context),
+                                          color: ColorResources.getPrimary(
+                                              context),
                                           size: 20),
                                       const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'Leave Duration', mandatoryText: '*',
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL),
+                                      MandatoryText(
+                                          text: 'Leave Duration',
+                                          mandatoryText: '*',
                                           textStyle: titilliumRegular)
                                     ],
                                   ),
@@ -498,19 +595,21 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
 
                             // for  leave comment
                             Container(
-                                margin: EdgeInsets.only(top: 5.0),
+                              margin: EdgeInsets.only(top: 5.0),
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
                                       Icon(Icons.note_add,
-                                          color:
-                                              ColorResources.getPrimary(context),
+                                          color: ColorResources.getPrimary(
+                                              context),
                                           size: 20),
                                       const SizedBox(
-                                          width:
-                                              Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                      MandatoryText(text: 'Leave Comments', mandatoryText: '*',
+                                          width: Dimensions
+                                              .MARGIN_SIZE_EXTRA_SMALL),
+                                      MandatoryText(
+                                          text: 'Leave Comments',
+                                          mandatoryText: '*',
                                           textStyle: titilliumRegular)
                                     ],
                                   ),
@@ -536,7 +635,11 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                           horizontal: Dimensions.MARGIN_SIZE_LARGE,
                           vertical: Dimensions.MARGIN_SIZE_SMALL),
                       child: !Provider.of<LeaveProvider>(context).loading
-                          ? CustomButton(onTap: () {_onClickSubmit();}, buttonText: 'SUBMIT')
+                          ? CustomButton(
+                              onTap: () {
+                                _onClickSubmit();
+                              },
+                              buttonText: 'SUBMIT')
                           : Center(
                               child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -549,31 +652,39 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
           ],
         ));
   }
-  void _showSuccessDialog(String message){
-    showAnimatedDialog(context, MyDialog(
-      icon: Icons.check,
-      title: 'Success',
-      description: message,
-      rotateAngle: 0,
-      positionButtonTxt: 'Go to Home',
-      onPositiveButtonPressed: () {
-        Navigator.of(context).pop(); // Close the dialog
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SelfService(isBackButtonExist: false,))
-        );
-      },
-    ), dismissible: false);
+
+  void _showSuccessDialog(String message) {
+    showAnimatedDialog(
+        context,
+        MyDialog(
+          icon: Icons.check,
+          title: 'Success',
+          description: message,
+          rotateAngle: 0,
+          positionButtonTxt: 'Go to Home',
+          onPositiveButtonPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SelfService(
+                          isBackButtonExist: false,
+                        )));
+          },
+        ),
+        dismissible: false);
   }
-  void _showErrorDialog(String message){
-    showAnimatedDialog(context, MyDialog(
-      icon: Icons.error,
-      title: 'Error',
-      description: message,
-      rotateAngle: 0,
-      positionButtonTxt: 'Ok',
-    ), dismissible: false);
+
+  void _showErrorDialog(String message) {
+    showAnimatedDialog(
+        context,
+        MyDialog(
+          icon: Icons.error,
+          title: 'Error',
+          description: message,
+          rotateAngle: 0,
+          positionButtonTxt: 'Ok',
+        ),
+        dismissible: false);
   }
 }
-
-

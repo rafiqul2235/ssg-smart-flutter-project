@@ -72,6 +72,7 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
     showAnimatedDialog(
         context,
         ConfirmationDialog(
+            applicationType: 'LEAVE',
             notificationId: notificationId,
             action: action,
             comment: _commentControllers[notificationId]!.text,

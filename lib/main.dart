@@ -27,6 +27,7 @@ import 'package:ssg_smart2/provider/splash_provider.dart';
 import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
+import 'package:ssg_smart2/provider/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<PfLoanProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<WppfProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SalesOrderProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<AttachmentProvider>()),
     ],
     child: const MyApp(),
   ));
