@@ -23,6 +23,7 @@ import '../../../provider/attachment_provider.dart';
 class AITAutomationScreen extends StatefulWidget {
   final AitDetail? editAitDetail;
 
+
   const AITAutomationScreen({Key? key, this.editAitDetail}) : super(key: key);
 
   @override
@@ -32,6 +33,7 @@ class AITAutomationScreen extends StatefulWidget {
 class _AITAutomationScreenState extends State<AITAutomationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
+
 
   // Controllers for form fields
   late TextEditingController _challanNumberController =
@@ -51,6 +53,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   // Form state variables
   CustomerDetails? _selectedCustomer;
+  List<CustomerDetails> _filteredCustomers = [];
   String? _selectedFinancialYear;
   bool _isLoading = false;
 
@@ -96,6 +99,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   // Customer search dialog
   void _showCustomerDialog(List<CustomerDetails> customers) {
+    _filteredCustomers = customers;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -137,7 +142,15 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                         ),
                       ),
                       onChanged: (value) {
-                        setState(() {});
+                        setState(() {
+                          // Filter customer baseed on search text
+                          _filteredCustomers = customers.where((customer) {
+                            final customerName = customer.customarName?.toLowerCase() ?? '';
+                            final accountNumber = customer.accountNumber?.toLowerCase() ?? '';
+                            final searchText = value.toLowerCase();
+                            return customerName.contains(searchText) || accountNumber.contains(searchText);
+                          }).toList();
+                        });
                       },
                     ),
                   ],
@@ -146,11 +159,11 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                   width: double.maxFinite,
                   height: 300,
                   child: ListView.builder(
-                    itemCount: customers.length,
+                    itemCount: _filteredCustomers.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         title: Text(
-                          '${customers[index].customarName!}(${customers[index].accountNumber})',
+                          '${_filteredCustomers[index].customarName!}(${_filteredCustomers[index].accountNumber})',
                           style: TextStyle(fontSize: 16),
                         ),
                         leading: Icon(Icons.business),
@@ -161,7 +174,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                         ),
                         onTap: () {
                           setState(() {
-                            _selectedCustomer = customers[index];
+                            _selectedCustomer = _filteredCustomers[index];
                           });
                           this.setState(() {});
                           Navigator.pop(context);
