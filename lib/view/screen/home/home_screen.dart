@@ -15,6 +15,7 @@ import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu_gcf
 import 'package:ssg_smart2/view/screen/more/more_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_notifications.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/delivery_request_screen.dart';
+import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report.dart';
 import '../../../data/model/response/user_menu.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
@@ -30,6 +31,7 @@ import '../profile/profile_screen.dart';
 import '../report/report_dashboard_screen.dart';
 import 'package:badges/badges.dart' as badges;
 
+import '../salesOrder/rsm_sales_approval_screen.dart';
 import '../salesOrder/sales_order_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -169,8 +171,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             if(userMenu.id == '1'){
                               return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:ReportDashboardScreen(),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
-                            }else if(userMenu.id == '2'){
-                              return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:PDFListScreen(title: getTranslated('PDF_Report', context),platform: TargetPlatform.android),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
                             }else if(userMenu.id == '4'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: DeliveryRequestScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
@@ -183,9 +183,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             else if(userMenu.id == '5'){
                               return HomeMenuItemCircle(image: Images.gcf_global, title:  userMenu.name!, navigateTo: ManagementDMenuGCF(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
-                            else if(userMenu.id == '10'){
+                            /*else if(userMenu.id == '10'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: SalesNotifications(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '11'){
+                            }*/
+
+                            else if(userMenu.id == '10'){
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: MsdSalesReport(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            else if(userMenu.id == '11'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '13'){
@@ -197,9 +202,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                             else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '20'){
+                            }else if(userMenu.id == '2'){
                               return HomeMenuItemCircle(image: Images.salesreport, title:  userMenu.name!, navigateTo: SalesOrderScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
-                            }else if(userMenu.id == '14'){
+                            }
+                            else if(userMenu.id == '21'){
+                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: RsmSalesApprovalScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              //return HomeMenuItemCircle(image: Images.cash_payment, title:  userMenu.name!, navigateTo: AitApprovalPage(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                            }
+                            else if(userMenu.id == '14'){
                               return HomeMenuItemCircle(image: Images.self_service, title:  userMenu.name!, navigateTo: SelfService(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '37'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);

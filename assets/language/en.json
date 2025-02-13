@@ -218,6 +218,8 @@
   "want_to_approve": "Are you sure you want to approve?",
   "want_to_accept": "Are you sure you want to Accept?",
   "want_to_reject": "Are you sure you want to reject?",
+  "want_to_so_booked": "Are you sure you want to Booked the Sales Order?",
+  "want_to_so_cancel": "Are you sure you want to Cancel the Sales Order?",
   "payment_done": "Payment Done",
   "payment_failed": "Payment Failed",
   "payment_cancelled": "Payment Cancelled",

@@ -71,6 +71,9 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   List<DropDownModel> _itemsDropDown = [];
   DropDownModel? _selectedItem;
 
+  List<DropDownModel> _pendingSoDropDown = [];
+  DropDownModel? _selectPendingSo;
+
   List<DropDownModel> _orderTypeDropDown = [];
   DropDownModel? _selectedOrderType;
 
@@ -87,6 +90,9 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   DropDownModel? _selectedVehicleCat;
 
   List<DropDownModel> _shipToLocationDropDown = [];
+  //DropDownModel? _selectedShipToLocation;
+
+ // List<DropDownModel> _pendingSODropDown = [];
   //DropDownModel? _selectedShipToLocation;
 
 
@@ -116,6 +122,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
   String _vehicleType ='';
   String _vehicleCate ='';
+  String _pendingS='';
 
   @override
   void initState() {
@@ -136,6 +143,8 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context);
+
   }
 
   void currentDateTime() {
@@ -257,7 +266,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   }
 
   Future<void> _onClickSubmit() async {
-
     _customerFieldError = false;
     _warehouseFieldError = false;
     _freightTermsFieldError = false;
@@ -398,9 +406,17 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
                 _itemsDropDown = [];
-                provider.itemList.forEach((element) => _itemsDropDown.add(
-                    DropDownModel(id: element.itemId, name: element.itemName,nameBl: element.itemUOM)));
+                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName,nameBl: element.itemUOM)));
               }
+
+
+              if (_pendingSoDropDown == null || _pendingSoDropDown.isEmpty) {
+                _pendingSoDropDown = [];
+                //_selectPendingSo =null;
+                // print("pendingS ${provider.pendingSoList.length}");
+                provider.pendingSoList.forEach((element) =>_pendingSoDropDown.add(DropDownModel(code: element.orderNumber,name: element.mainPartyName! +" " +element.orderNumber!)));
+              }
+
 
               if (_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
                 _orderTypeDropDown = [];
@@ -589,6 +605,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                     _custId = _selectedCustomer?.customerId ?? '';
                                     _custAccount = _selectedCustomer?.accountNumber ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
+                                    //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;
@@ -1283,25 +1300,21 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         cells: [
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: CustomAutoComplete(
-              dropdownItems: _shipToLocationDropDown,
-              value: _shipToSiteController != null
-                  ? _shipToSiteController!.text
-                  : '',
-              icon: const Icon(Icons.search),
+            child: CustomDropdownButton(
+              buttonHeight: 45,
+              buttonWidth: 200,
               dropdownWidth: 200,
-              hint: 'Select Sales Order',
+              hint: 'Select Pending SO',
               hintColor: Colors.black87,
-              borderColor: Colors.transparent,
-              onReturnTextController: (textController) => _shipToSiteController = textController,
-              onChanged: (value) {
+              dropdownItems: _pendingSoDropDown,
+              value: _selectPendingSo,
+              buttonBorderColor:
+              _customerFieldError ? Colors.red : Colors.black87,
+              onChanged: (item) {
                 setState(() {
                   //_selectCompanyError = false;
-                  //_selectedShipToLocation = value;
-                  _shipToSiteId = value?.code??'';
-                  _shipToLocation = value?.name??'';
-                  _primaryShipTo = value?.nameBl??'';
-                  _salesPersonId = value?.description??'';
+                  _selectPendingSo = item;
+                  _pendingS = item?.name??'';
                 });
               },
             ),

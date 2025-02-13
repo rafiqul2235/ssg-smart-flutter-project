@@ -257,55 +257,66 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                       // return Center(child: Text('No records found'));
                       return NoInternetOrDataScreen(isNoInternet: false);
                     } else {
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Center(
-                                child: Text(
-                              "MSD Notifications",
-                              style: TextStyle(fontSize: 18),
-                            )),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(
-                                      label: Text('Type',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
-                                  DataColumn(
-                                      label: Text('Date',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
-                                  DataColumn(
-                                      label: Text('Transation',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
-                                  // DataColumn(label: Text('Out-Time',
-                                  // style: TextStyle(fontWeight: FontWeight.bold))),
-                                  // DataColumn(label: Text('W_Hours',
-                                  //style: TextStyle(fontWeight: FontWeight.bold))),
-                                  //DataColumn(label: Text('Status', style: TextStyle(
-                                  // fontWeight: FontWeight.bold))),
-                                ],
-                                rows: provider.msdsalesReport
-                                    .map((record) => DataRow(
-                                          cells: [
-                                            DataCell(Text(
-                                                _selectedAttendanceType ?? '')),
-                                            DataCell(
-                                                Text(record.msg_date ?? '')),
-                                            DataCell(Text(record.msg ?? '')),
-                                            //DataCell(Text(record.actOutTime ?? '')),
-                                            //DataCell(Text(record.wHour ?? '')),
-                                            //DataCell(Text(record.status ?? '')),
-                                          ],
-                                        ))
-                                    .toList(),
-                              ),
-                            )
-                          ],
-                        ),
+                      return Column(
+                        children: [
+                          Center(
+                              child: Text(
+                            "MSD Notifications",
+                            style: TextStyle(fontSize: 18),
+                          )),
+                          SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: DataTable(
+                                    columns: const [
+                                      DataColumn(
+                                          label: Text('Type',
+                                              style: TextStyle(fontWeight: FontWeight.bold))),
+                                      DataColumn(
+                                          label: Text('Date',
+                                              style: TextStyle(fontWeight: FontWeight.bold))),
+                                      DataColumn(
+                                          label: Text('Transaction',
+                                              style: TextStyle(fontWeight: FontWeight.bold))),
+                                    ],
+                                    rows: provider.msdsalesReport
+                                        .map((record) => DataRow(
+                                      cells: [
+                                        DataCell(Text(_selectedAttendanceType ?? '')),
+                                        DataCell(
+                                          Tooltip(
+                                            message: record.msg_date ?? 'No Transaction',
+                                            child: Text(
+                                              record.msg_date ?? '',
+                                              overflow: TextOverflow.ellipsis, // Truncate text if it's too long
+                                            ),
+                                          ),
+                                        ),
+
+                                        DataCell(
+                                          Tooltip(
+                                            message: record.msg ?? 'No Transaction',
+                                            child: Text(
+                                              record.msg ?? '',
+                                              overflow: TextOverflow.ellipsis, // Truncate text if it's too long
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ))
+                                        .toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+
+
+                        ],
                       );
                     }
                   },

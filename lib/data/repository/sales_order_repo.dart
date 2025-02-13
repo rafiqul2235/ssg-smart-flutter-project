@@ -115,6 +115,23 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getPendingSoRep(String salesPersonId, String customerId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['salerep_id'] = salesPersonId;
+      data['customer_id'] = customerId;
+
+      final response = await dioClient.postWithFormData(
+          AppConstants.PENDINGSO,
+          data:data
+      );
+
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> salesOrderSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(
