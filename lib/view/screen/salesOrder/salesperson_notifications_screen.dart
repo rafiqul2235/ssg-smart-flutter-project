@@ -19,15 +19,15 @@ import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/my_dialog.dart';
 import '../cashpayment/cash_pay_akg_history_screen.dart';
 
-class RsmSalesApprovalScreen extends StatefulWidget {
+class SalespersonNotificationScreen extends StatefulWidget {
   final bool isBackButtonExist;
-  const RsmSalesApprovalScreen({Key? key, this.isBackButtonExist = true})
+  const SalespersonNotificationScreen({Key? key, this.isBackButtonExist = true})
       : super(key: key);
   @override
-  State<RsmSalesApprovalScreen> createState() => _RsmSalesApprovalScreenState();
+  State<SalespersonNotificationScreen> createState() => _SalespersonNotificationScreenState();
 }
 
-class _RsmSalesApprovalScreenState extends State<RsmSalesApprovalScreen> {
+class _SalespersonNotificationScreenState extends State<SalespersonNotificationScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
   String? employeeNumber;
@@ -108,7 +108,13 @@ class _RsmSalesApprovalScreenState extends State<RsmSalesApprovalScreen> {
     return Scaffold(
       appBar: CustomAppBar(
           title: 'Approval for SO Booked ',
-          isBackButtonExist: widget.isBackButtonExist
+          isBackButtonExist: widget.isBackButtonExist,
+          icon: Icons.history,
+
+          onActionPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => const CashPaymentHistory()));
+          }
       ),
 
 
