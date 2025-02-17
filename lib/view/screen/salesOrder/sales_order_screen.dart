@@ -235,7 +235,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
     itemDetail.itemName = _selectedItem?.name;
     itemDetail.itemId = _selectedItem?.id;
-    //itemDetail.itemName = _selectedItem?.uom;
+    itemDetail.itemUOM = _selectedItem?.code;
     itemDetail.quantity = _qtyController?.text.toString();
     itemDetail.remarks = _deliverySiteDetailController?.text;
     itemDetail.vehicleType = _vehicleType;
@@ -420,7 +420,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
                 _itemsDropDown = [];
                 provider.itemList.forEach((element) => _itemsDropDown.add(
-                    DropDownModel(id: element.itemId, name: element.itemName)));
+                    DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
               }
 
               if (_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
