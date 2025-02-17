@@ -364,5 +364,6 @@ class _ApprovalListPageState extends State<ApprovalListPage> {
       ),
     );
   }
+
 }
 
