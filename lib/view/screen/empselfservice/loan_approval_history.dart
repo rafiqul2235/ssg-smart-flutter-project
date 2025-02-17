@@ -4,6 +4,7 @@ import 'package:ssg_smart2/data/model/response/loan_application_info.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 
 import '../../../data/model/response/leaveapproval/application_info.dart';
+import '../../../data/model/response/leaveapproval/leave_approval.dart';
 import '../../../provider/approval_hisotry_provider.dart';
 import '../../basewidget/no_internet_screen.dart';
 import '../home/dashboard_screen.dart';
@@ -57,6 +58,9 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
                   _buildInfoCard(
                       provider.loanApprovalHistory!.applicationInfo[0]),
                   SizedBox(height: 16),
+                  Expanded(
+                    child: _buildDataTable(provider.loanApprovalHistory!.approverList),
+                  ),
                 ],
               ),
             );
@@ -102,6 +106,21 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
     );
   }
 
+  Widget _buildDataTable(List<PendingSO> pendingSOList) {
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: ListView.builder(
+        itemCount: pendingSOList.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _buildHeader();
+          }
+          final pendingSO = pendingSOList[index - 1];
+          return _buildDataRow(pendingSO);
+        },
+      ),
+    );
+  }
 
   Widget _buildHeader() {
     return Card(
@@ -121,6 +140,22 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
     );
   }
 
+  Widget _buildDataRow(PendingSO pendingSO) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Row(
+          children: [
+            Expanded(flex: 1, child: _buildDataCell(pendingSO.srlNum.toString())),
+            Expanded(flex: 3, child: _buildDataCell(pendingSO.approverName!)),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.approverAction!)),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.note ?? "")),
+            Expanded(flex: 2, child: _buildDataCell(pendingSO.actionDate ?? "")),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildHeaderCell(String text) {
     return Container(

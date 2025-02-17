@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 
 import '../../../data/model/response/leaveapproval/application_info.dart';
+import '../../../data/model/response/leaveapproval/leave_approval.dart';
 import '../../../provider/approval_hisotry_provider.dart';
 import '../../basewidget/no_internet_screen.dart';
 import '../home/dashboard_screen.dart';
@@ -56,7 +57,9 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
                   _buildInfoCard(
                       provider.leaveApprovalHistory!.applicationInfo[0]),
                   SizedBox(height: 16),
-
+                  Expanded(
+                    child: _buildDataTable(provider.leaveApprovalHistory!.pendingSO),
+                  ),
                 ],
               ),
             );
@@ -101,7 +104,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
     );
   }
 
-  /*Widget _buildDataTable(List<PendingSO> pendingSOList) {
+  Widget _buildDataTable(List<PendingSO> pendingSOList) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: ListView.builder(
@@ -115,7 +118,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
         },
       ),
     );
-  }*/
+  }
 
   Widget _buildHeader() {
     return Card(
@@ -135,7 +138,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
     );
   }
 
- /* Widget _buildDataRow(PendingSO pendingSO) {
+  Widget _buildDataRow(PendingSO pendingSO) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(3.0),
@@ -150,7 +153,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
         ),
       ),
     );
-  }*/
+  }
 
   Widget _buildHeaderCell(String text) {
     return Container(
