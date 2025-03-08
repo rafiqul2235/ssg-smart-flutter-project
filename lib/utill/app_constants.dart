@@ -7,7 +7,7 @@ class AppConstants {
   static const String APP_NAME = 'SMART';
    //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
   // static const String BASE_URL = 'http://10.25.4.120/'; //production
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
+   static const String BASE_URL = 'http://192.168.7.98/'; //test
   //static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
 
 
@@ -49,7 +49,7 @@ class AppConstants {
   static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
   static const String SOBOKKED_APPROVAL_UPDATE = 'rsm_sales_approval_booked';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
-  static const String APPROVAL_FLOW = 'approval_flow';
+  // static const String APPROVAL_FLOW = 'approval_flow';
   static const String PAY_SLIP = 'emp_pay_slip';
   static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
   static const String SAL_LOAN_INFO = 'salary_loan_info';

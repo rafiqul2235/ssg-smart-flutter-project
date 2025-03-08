@@ -45,7 +45,7 @@ class ApprovalRepo{
     print("noti_id: $notificationId, action: $action, comments: $comments");
     try {
       Response response = await dioClient.postWithFormData(
-        AppConstants.APPROVAL_FLOW,
+        AppConstants.CHUTI_APPROVAL,
         data: {
           'application_type': applicationType,
           'notification_id': notificationId,
