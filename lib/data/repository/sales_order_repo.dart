@@ -156,6 +156,37 @@ class SalesOrderRepo {
     }
   }
 
+  Future<List<MsdReportModel>> fetchSalesNotificationData(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.MSD_REPORT_DATA,
+        data: {
+          'type': type,
+          'salesrep_id': salesrep_id,
+          'cust_id': cust_id,
+          'fromDate': fromDate,
+          'toDate': toDate
+        },
+      );
+      print("Notification $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("notification data: $responseData");
+        if (responseData['success'] == 1 && responseData['messages'] != null) {
+          return (responseData['messages'] as List)
+              .map((json) => MsdReportModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
   Future<List<MsdReportModel>> fetchMsdReportRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
     try {
       final response = await dioClient.postWithFormData(

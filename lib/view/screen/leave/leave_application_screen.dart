@@ -62,8 +62,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
-  final TextEditingController _leaveCommentsController =
-      TextEditingController();
+  final TextEditingController _leaveCommentsController = TextEditingController();
 
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();

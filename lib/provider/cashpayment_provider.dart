@@ -6,6 +6,7 @@ import 'package:ssg_smart2/data/model/response/cashpayment_model.dart';
 import 'package:ssg_smart2/data/model/response/rsm_approval_flow_model.dart';
 import 'package:ssg_smart2/data/repository/approval_repo.dart';
 import 'package:ssg_smart2/data/repository/cashpayment_repo.dart';
+import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
 
 import '../data/model/response/approval_flow.dart';
 import '../data/model/response/base/api_response.dart';
@@ -16,6 +17,7 @@ class CashPaymentProvider with ChangeNotifier{
   final CashPaymentRepo cashPaymentRepo;
   List<CashPaymentModel> _cashPaymentData = [];
   List<RsmApprovalFlowModel> _rsmApprovaFlowData = [];
+  List<MsdReportModel> _salesNotification = [];
 
   bool _isLoading = false;
   String _error = '';
@@ -26,6 +28,7 @@ class CashPaymentProvider with ChangeNotifier{
 
   List<CashPaymentModel> get cashPaymentModel => _cashPaymentData;
   List<RsmApprovalFlowModel> get rsmApprovalFlowModel => _rsmApprovaFlowData;
+  List<MsdReportModel> get salesNotification =>_salesNotification;
 
   bool get isLoading => _isLoading;
   String get error => _error;
@@ -61,6 +64,22 @@ class CashPaymentProvider with ChangeNotifier{
       notifyListeners();
     }
   }
+
+  /*Future<void> fetchSalesNotification(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _salesNotification = await cashPaymentRepo.fetchSalesNotificationData(salesrep_id, cust_id, fromDate, toDate, type);
+      print("notification provider: $_salesNotification");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }*/
 
 
   Future<void> fetchSrApprovalListData(String empId) async{

@@ -112,6 +112,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   String _freightTerms = '';
   String _shipToSiteId = '';
   String _shipToLocation = '';
+  String _pendingSoNumber = '';
   String  _primaryShipTo = '';
   String  _salesPersonId = '';
   int _itemId = 0;
@@ -133,6 +134,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _qtyController = TextEditingController();
     _deliverySiteDetailController = TextEditingController();
     _cusPONoController = TextEditingController();
+    _coLoadSoController = TextEditingController();
     _intData();
   }
 
@@ -245,9 +247,11 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
     itemDetail.itemName = _selectedItem?.name;
     itemDetail.itemId = _selectedItem?.id;
-    //itemDetail.itemName = _selectedItem?.uom;
+    itemDetail.itemUOM = _selectedItem?.code;
+    itemDetail.soNumber = _selectPendingSo?.code;
     itemDetail.quantity = _qtyController?.text.toString();
     itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.additionalSo = _coLoadSoController?.text;
     itemDetail.vehicleType = _vehicleType;
     itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
     itemDetail.vehicleCate = _vehicleCate;
@@ -327,7 +331,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
     //salesInfoModel.orderType = _selectedCustomer?.orderType;
-    //salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
+    //salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId; 5652
     salesInfoModel.freightTerms = _freightTerms;
     salesInfoModel.orderDate = formattedDate;
     salesInfoModel.warehouseId = _warehouseId;
@@ -361,10 +365,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
       bool? action = await showAnimatedDialog(context, MyDialog(
         title: status?'Successfully submitted your order':"Fail, Please try again",
-        description: 'Are you sure you want to submit your order?',
+        description: 'Are you sure you want to submit your Delivery Request?',
         rotateAngle: 0,
-        negativeButtonTxt: 'Again Order',
-        positionButtonTxt: 'Go To Home',
+        negativeButtonTxt: 'YES',
+        positionButtonTxt: 'NO',
       ), dismissible: false);
 
       if(action!){
@@ -406,7 +410,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
                 _itemsDropDown = [];
-                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName,nameBl: element.itemUOM)));
+                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName,code: element.itemUOM)));
               }
 
 
@@ -1159,12 +1163,12 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     TextEditingController coLoadSoController = TextEditingController();
 
     qtyController.text = '${itemDetails.quantity}';
-    deliverySiteDetailController.text = '${itemDetails.primaryShipTo}';
+    deliverySiteDetailController.text = '${itemDetails.remarks}';
 
     return DataRow(cells: [
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.shipToLocation}')),
+        child: Center(child: Text('${itemDetails.soNumber}')),
       )),
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -1229,10 +1233,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               textInputType: TextInputType.text,
               textInputAction: TextInputAction.next,
               onChanged: (value) {
-                itemDetails.primaryShipTo = value;
+                itemDetails.additionalSo = value;
               },
             )
-                : Text('${itemDetails.primaryShipTo}')),
+                : Text('${itemDetails.additionalSo}')),
       )),
 
       DataCell(Padding(
@@ -1249,10 +1253,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     textInputType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
-                      itemDetails.primaryShipTo = value;
+                      itemDetails.remarks = value;
                     },
                   )
-                : Text('${itemDetails.primaryShipTo}')),
+                : Text('${itemDetails.remarks}')),
       )),
 
       DataCell(Padding(

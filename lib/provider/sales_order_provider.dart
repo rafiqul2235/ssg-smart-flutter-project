@@ -75,6 +75,9 @@ class SalesOrderProvider with ChangeNotifier {
   SalesOrder? _salesOrder;
   SalesOrder get salesOrder => _salesOrder ?? SalesOrder();
 
+  List<MsdReportModel> _salesNotification = [];
+  List<MsdReportModel> get salesNotification =>_salesNotification;
+
   /*DlvRequestItemDetail? _dlvRequestOrder;
   DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
 
@@ -406,6 +409,22 @@ class SalesOrderProvider with ChangeNotifier {
       _error = "Server error occurred";
     }
   }*/
+
+  Future<void> fetchSalesNotification(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _salesNotification = await salesOrderRepo.fetchSalesNotificationData(salesrep_id, cust_id, fromDate, toDate, type);
+      print("notification provider: $_salesNotification");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
 
   Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {

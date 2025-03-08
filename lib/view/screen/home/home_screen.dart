@@ -15,6 +15,7 @@ import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dar
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu_gcf.dart';
 import 'package:ssg_smart2/view/screen/more/more_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_notifications.dart';
+import 'package:ssg_smart2/view/screen/salesOrder/collection_screen.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/delivery_request_screen.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report.dart';
 import '../../../data/model/response/user_menu.dart';
@@ -171,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             UserMenu userMenu = userMenus[index];
 
                             if(userMenu.id == '1'){
-                              return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:ReportDashboardScreen(),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
+                              return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:CollectionScreen(),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
                             }else if(userMenu.id == '4'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: DeliveryRequestScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }

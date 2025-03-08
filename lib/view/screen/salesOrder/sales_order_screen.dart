@@ -189,6 +189,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
     final String qtyText = _qtyController?.text ?? '0';
+    //final TextEditingController _qtyController = TextEditingController();
     final int quantity = int.tryParse(qtyText) ?? 0;
     _itemPriveModel = salesProvider.itemPriceModel;
 
@@ -217,10 +218,19 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Select Ship to Location");
       return;
     }
+    if(_qtyController == null || _qtyController!.text.isEmpty){
+      _showErrorDialog("Enter SO qty");
+      return;
+    }
+
+
     if(_selectedVehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
     }
+
+
+
 
     FocusScope.of(context).requestFocus(FocusNode());
 
@@ -1124,12 +1134,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
-    TextEditingController qtyController = TextEditingController();
-    TextEditingController deliverySiteDetailController =
-        TextEditingController();
+    TextEditingController qtyController = TextEditingController();TextEditingController deliverySiteDetailController = TextEditingController();
+    /*TextEditingController unitPriceController = TextEditingController();TextEditingController _unitPriceController = TextEditingController();
+    TextEditingController totalPriceController = TextEditingController();TextEditingController _totalPriceController = TextEditingController();
+    TextEditingController remakes = TextEditingController();TextEditingController _remakes = TextEditingController();*/
 
     qtyController.text = '${itemDetails.quantity}';
-    deliverySiteDetailController.text = '${itemDetails.primaryShipTo}';
+ /*   unitPriceController.text = '${itemDetails.unitPrice}';
+    totalPriceController.text = '${itemDetails.totalPrice}';
+    remakes.text = '${itemDetails.remarks}';*/
 
     return DataRow(cells: [
       DataCell(Padding(
@@ -1178,7 +1191,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.vehicleType}')),
+        child: Center(child: Text('${itemDetails.vehicleCate}')),
       )),
 
       DataCell(Padding(

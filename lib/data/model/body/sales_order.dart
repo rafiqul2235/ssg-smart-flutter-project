@@ -150,6 +150,8 @@ class ItemDetail {
   String? vehicleType;
   String? vehicleCate;
   String? vehicleCateId;
+  String? soNumber;
+  String? additionalSo;
 
   bool isEditable = false;
   int unitPrice = 0;
@@ -169,7 +171,9 @@ class ItemDetail {
     this.quantity= '',
     this.remarks= '',
     this.vehicleTypeId = '',
-    this.vehicleType = ''
+    this.vehicleType = '',
+    this.soNumber='',
+    this.additionalSo
   });
 
   ItemDetail.fromJson(Map<String, dynamic> json) {
@@ -187,6 +191,8 @@ class ItemDetail {
     remarks = json['REMARKS']??'';
     vehicleTypeId = json['VEHICLE_TYPE_ID']??'';
     vehicleType = json['VEHICLE_TYPE']??'';
+    soNumber = json['SO_NUMBER']??'';
+    additionalSo = json['ADDITIOAL_SO']??'';
   }
 
   Map<String, dynamic> toJson() {
@@ -215,6 +221,8 @@ class ItemDetail {
     data['VEHICLE_TYPE'] = vehicleType??'';
     data['VEHICLE_CAT'] = vehicleCate??'';
     data['REMARKS'] = remarks??'';
+    data['SO_NUMBER'] = soNumber??'';
+    data['ADDITIOAL_SO'] = additionalSo??'';
 
     return data;
   }
