@@ -144,7 +144,7 @@ class ItemDetail {
   int? itemId;
   String? itemName;
   String? itemUOM;
-  String? quantity;
+  int? quantity = 0;
   String? remarks;
   String? vehicleTypeId;
   String? vehicleType;
@@ -168,7 +168,7 @@ class ItemDetail {
     this.itemId= 0,
     this.itemName= '',
     this.itemUOM= '',
-    this.quantity= '',
+    this.quantity= 0,
     this.remarks= '',
     this.vehicleTypeId = '',
     this.vehicleType = '',

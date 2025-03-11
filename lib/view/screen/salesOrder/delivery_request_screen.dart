@@ -249,7 +249,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     itemDetail.itemId = _selectedItem?.id;
     itemDetail.itemUOM = _selectedItem?.code;
     itemDetail.soNumber = _selectPendingSo?.code;
-    itemDetail.quantity = _qtyController?.text.toString();
+    itemDetail.quantity = _qtyController!=null && _qtyController!.text.isNotEmpty?int.parse(_qtyController!.text):0;
     itemDetail.remarks = _deliverySiteDetailController?.text;
     itemDetail.additionalSo = _coLoadSoController?.text;
     itemDetail.vehicleType = _vehicleType;
@@ -1193,7 +1193,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     textInputType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
-                      itemDetails.quantity = value.isEmpty ? '0' : value;
+                      itemDetails.quantity = (value.isEmpty ? '0' : value) as int?;
                     },
                   )
                 : Text('${itemDetails.quantity}')),

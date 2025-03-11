@@ -91,6 +91,20 @@ class SalesOrderProvider with ChangeNotifier {
     _salesOrder?.orderItemDetail?.clear();
   }
 
+  Future<void> deleteSalesOrderItem(int itemId, int amount) async{
+    _salesOrder?.orderItemDetail?.removeWhere((item) => item.itemId == itemId);
+    notifyListeners();
+  }
+
+  Future<void> EditableSalesOrderItem(int itemId, bool editable) async{
+    for(ItemDetail item in _salesOrder!.orderItemDetail!){
+      if(item.itemId == itemId){
+        item.isEditable = editable;
+        break;
+      }
+    }
+    notifyListeners();
+  }
 
   Future<List<DropDownModel>> getVehicleCategoryByType(String vehicleType) async {
     List<DropDownModel> vehicleCats = [];
@@ -195,6 +209,9 @@ class SalesOrderProvider with ChangeNotifier {
   }
 
   Future<void> getCustomerShipToLocation(BuildContext context, String customerId) async {
+
+    print('getCustomerShipToLocation ');
+
     //showLoading();
     try{
       String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
