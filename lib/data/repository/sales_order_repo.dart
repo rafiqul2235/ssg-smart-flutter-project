@@ -132,6 +132,22 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getSPCustListRep(String salesPersonId, String org_id) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['salesrep_id'] = salesPersonId;
+    data['org_id'] = org_id;
+    try {
+      Response response = await dioClient.postWithFormData(
+        AppConstants.SP_CUST_LIST,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('custList ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> salesOrderSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(

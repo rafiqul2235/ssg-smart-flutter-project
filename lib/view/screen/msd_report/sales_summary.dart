@@ -24,16 +24,16 @@ import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class SalesNotifications extends StatefulWidget {
+class SalesSummary extends StatefulWidget {
   final bool isBackButtonExist;
-  const SalesNotifications({Key? key, this.isBackButtonExist = true})
+  const SalesSummary({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<SalesNotifications> createState() => _SalesNotificationsState();
+  State<SalesSummary> createState() => _SalesSummaryState();
 }
 
-class _SalesNotificationsState extends State<SalesNotifications> {
+class _SalesSummaryState extends State<SalesSummary> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
 

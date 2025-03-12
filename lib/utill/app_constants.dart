@@ -36,6 +36,7 @@ class AppConstants {
   static const String MSD_REPORT_DATA = 'notification';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
+  static const String SP_CUST_LIST = 'cust_wise_notification_for_sp';
   static const String LEAVE_APPLY = 'leave_save';
   static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';

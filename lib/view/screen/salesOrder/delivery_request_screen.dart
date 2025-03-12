@@ -145,7 +145,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
-    Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context);
+    //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context,);
 
   }
 
@@ -609,7 +609,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                     _custId = _selectedCustomer?.customerId ?? '';
                                     _custAccount = _selectedCustomer?.accountNumber ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
-                                    //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context, _custId);
+                                    Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;

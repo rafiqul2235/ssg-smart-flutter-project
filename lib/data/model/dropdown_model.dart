@@ -29,6 +29,12 @@ class DropDownModel {
     name = json['LEAVE_TYPE'];
   }
 
+  DropDownModel.fromJsonForCustList(Map<String, dynamic>? json) {
+    if (json == null) return;
+    code = json['CUSTOMER_ID'];
+    name = json['CUSTOMER_NAME'];
+  }
+
   DropDownModel.fromJsonMasterKey(Map<String, dynamic>? json) {
     if (json == null) return;
     code = '${json['id']}';

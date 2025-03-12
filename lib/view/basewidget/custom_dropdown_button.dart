@@ -34,7 +34,7 @@ class CustomDropdownButton extends StatelessWidget {
   final Offset? offset;
   final FocusNode? focusNode;
 
-   CustomDropdownButton({
+    CustomDropdownButton({
     required this.hint,
     required this.value,
     required this.dropdownItems,
@@ -128,7 +128,7 @@ class CustomDropdownButton extends StatelessWidget {
           iconDisabledColor: iconDisabledColor,
         ),
         dropdownStyleData: DropdownStyleData(
-          maxHeight: dropdownHeight ?? 200,
+          maxHeight: dropdownHeight ?? 500,
           width: dropdownWidth ?? 140,
           padding: dropdownPadding,
           decoration: dropdownDecoration ??

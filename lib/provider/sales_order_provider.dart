@@ -44,6 +44,9 @@ class SalesOrderProvider with ChangeNotifier {
   AvailableCustBalModel? _availCustBalance;
   AvailableCustBalModel get availCustBalance => _availCustBalance??AvailableCustBalModel(customerBalance: '');
 
+  List<DropDownModel> _SpCustList = [] ;
+  List<DropDownModel> get SpCustList => _SpCustList??[] ;
+
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
 
@@ -223,14 +226,30 @@ class SalesOrderProvider with ChangeNotifier {
     return null;
   }
 
-  Future<void> getPendingSo(BuildContext context) async {
+
+  Future<void> getSpCustList(BuildContext context) async {
+    String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+
+    ApiResponse apiResponse = await salesOrderRepo.getSPCustListRep(salesPersonId,orgId);
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _SpCustList = [];
+      apiResponse.response?.data['pending_so'].forEach((custList) => _SpCustList.add(DropDownModel.fromJsonForCustList(custList)));
+      notifyListeners();
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+  Future<void> getPendingSo(BuildContext context,String customerId) async {
     //showLoading();
     try{
       //String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+      String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
       print('getPendingSo');
 
-      ApiResponse apiResponse = await salesOrderRepo.getPendingSoRep("100125041","939295");
+      ApiResponse apiResponse = await salesOrderRepo.getPendingSoRep(salesPersonId,customerId);
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
         _pendingSoList = [];
