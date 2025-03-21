@@ -20,6 +20,7 @@ import 'package:ssg_smart2/view/screen/notification/widget/notification_dialog.d
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
+import '../../../data/model/body/collection.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/salesorder/customer.dart';
 import '../../../provider/auth_provider.dart';
@@ -47,50 +48,38 @@ class CollectionScreen extends StatefulWidget {
 }
 
 class _CollectionScreenState extends State<CollectionScreen> {
+
   TextEditingController? _customerController;
-  TextEditingController? _shipToSiteController;
+  TextEditingController? _bankAccountController;
   TextEditingController? _orgNameController;
-  TextEditingController? _cusPONoController;
-  TextEditingController? _depositDateController;
+  TextEditingController? _depositNoController;
+  //TextEditingController? _depositDateController;
+  TextEditingController? _instrumentNoController;
+  TextEditingController? _remarksController;
+  TextEditingController? _amountController;
 
   Customer? _selectedCustomer;
 
   List<DropDownModel> _customersDropDown = [];
   DropDownModel? _selectedCustomerDropDown;
 
-  List<DropDownModel> _itemsDropDown = [];
-  DropDownModel? _selectedItem;
+  List<DropDownModel> _bankAccountsDropDown = [];
+  DropDownModel? _selectedBankAccount;
 
-  List<DropDownModel> _orderTypeDropDown = [];
-  DropDownModel? _selectedOrderType;
-
-  List<DropDownModel> _warehousesDropDown = [];
-  DropDownModel? _selectedWareHouse;
-
-  List<DropDownModel> _freightTermsDropDown = [];
-  DropDownModel? _selectedFreightTerms;
-
-  List<DropDownModel> _vehicleTypesDropDown = [];
-  DropDownModel? _selectedVehicleType;
-
-  List<DropDownModel> _vehicleCatDropDown = [];
-  DropDownModel? _selectedVehicleCat;
-
-  List<DropDownModel> _shipToLocationDropDown = [];
-  //DropDownModel? _selectedShipToLocation;
+  List<DropDownModel> _modesDropDown = [];
+  DropDownModel? _selectedModes;
 
 
   bool isViewOnly = false;
 
   bool _customerFieldError = false;
 
-
   //SalesOrder? _salesOrder;
 
   String _orgName = '';
   String _warehouseId = '';
   String _custId = '';
-  String _freightTerms = '';
+  String _modes = '';
   String _shipToSiteId = '';
   int _itemId = 0;
   String formattedDate = '';
@@ -105,9 +94,13 @@ class _CollectionScreenState extends State<CollectionScreen> {
   void initState() {
     super.initState();
     _customerController = TextEditingController();
+    _bankAccountController = TextEditingController();
     _orgNameController = TextEditingController();
-    _depositDateController = TextEditingController();
-    _cusPONoController = TextEditingController();
+    //_depositDateController = TextEditingController();
+    _instrumentNoController = TextEditingController();
+    _remarksController = TextEditingController();
+    _amountController = TextEditingController();
+    _depositNoController = TextEditingController();
     _intData();
   }
 
@@ -116,8 +109,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
-    _depositDateController?.text = formattedDate ?? '';
-    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    //_depositDateController?.text = formattedDate ?? '';
+    Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
   }
 
   void currentDateTime() {
@@ -136,33 +129,38 @@ class _CollectionScreenState extends State<CollectionScreen> {
 
     if (_selectedCustomer == null) {
       _customerFieldError = true;
-      _showMessage('Select Customer!',true);
+      _showErrorDialog('Select Customer!');
       return;
     }
 
-
-    /*if(_freightTerms == null || _freightTerms.isEmpty){
-      _showErrorDialog("Select Freight Terms");
+    if(_selectedBankAccount == null){
+      _showErrorDialog("Select Bank Account");
       return;
     }
 
-    if(_itemId == null || _itemId <= 0){
-      _showErrorDialog("Select Item");
+    if(_selectedModes == null){
+      _showErrorDialog("Select Mode");
       return;
     }
 
-    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
-      _showErrorDialog("Select Ship to Location");
+    if(_depositNoController == null || _depositNoController!.text.isEmpty){
+      _showErrorDialog("Enter Deposit No");
       return;
     }
-    if(_vehicleType == null){
-      _showMessage('Select Vehicle Type',true);
+
+    if(_instrumentNoController == null || _instrumentNoController!.text.isEmpty){
+      _showErrorDialog("Enter Instrument No");
       return;
-    }*/
+    }
+
+    if(_amountController == null || _amountController!.text.isEmpty){
+      _showErrorDialog("Enter Amount");
+      return;
+    }
 
     var isSubmit = await showAnimatedDialog(context, MyDialog(
       title: '',
-      description: 'Are you sure you want to submit your Collection?',
+      description: 'Are you sure you want to submit your collection?',
       rotateAngle: 0,
       negativeButtonTxt: 'No',
       positionButtonTxt: 'Yes',
@@ -170,49 +168,46 @@ class _CollectionScreenState extends State<CollectionScreen> {
 
     if(!isSubmit!) return;
 
-    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
-    salesInfoModel.customerId = _selectedCustomer?.customerId;
-    salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
-    salesInfoModel.orgId = _selectedCustomer?.orgId;
-    //salesInfoModel.orgName = _selectedCustomer?.orgName;
-    salesInfoModel.accountNumber = _selectedCustomer?.accountNumber;
-    salesInfoModel.partySiteNumber = _selectedCustomer?.partySiteNumber;
-    salesInfoModel.billToSiteId = _selectedCustomer?.billToSiteId;
-    salesInfoModel.customerName = _selectedCustomer?.customerName;
-    salesInfoModel.billToAddress = _selectedCustomer?.billToAddress;
-    salesInfoModel.priceListId = _selectedCustomer?.priceListId;
-    salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
-    salesInfoModel.orgId = _selectedCustomer?.orgId;
-    salesInfoModel.orderType = _selectedCustomer?.orderType;
-    salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
-    salesInfoModel.freightTerms = _freightTerms;
-    salesInfoModel.orderDate = formattedDate;
-    salesInfoModel.warehouseId = _warehouseId;
-    salesInfoModel.warehouseName = _selectedWareHouse?.name;
+    Collection? collection = Collection();
+    collection.customerId = _selectedCustomer?.customerId;
+    collection.salesPersonId = _selectedCustomer?.salesPersonId;
+    collection.orgId = _selectedCustomer?.orgId;
+    collection.bankAccountId = _selectedBankAccount?.code??'';
+    collection.bankAccountName = _selectedBankAccount?.name??'' ;
+    collection.receiptMethodId = _selectedBankAccount?.description??'' ;
+    collection.receiptMethod = _selectedBankAccount?.nameBl??'';
+    collection.remitBankAcctUseId = _selectedBankAccount?.type??'';
+    collection.collMode = _selectedModes?.code??'';
+    collection.instrument = _instrumentNoController?.text??'';
+    collection.remarks = _remarksController?.text??'';
+    collection.depositNo = _depositNoController?.text??'';
+    collection.collAmount = _amountController?.text??'0';
+    collection.billToSiteId = _selectedCustomer?.billToSiteId;
+    collection.billToSiteAddress = _selectedCustomer?.billToAddress;
+    collection.custAmount = _amountController?.text??'0';
 
-    salesInfoModel.customerPoNumber = _cusPONoController?.text;
+    developer.log(collection.toJson().toString());
 
-
-    developer.log(salesInfoModel.toJson().toString());
-
-    await Provider.of<SalesOrderProvider>(context, listen: false).salesOrderSubmit(context, salesInfoModel).then((status) async {
+    await Provider.of<SalesOrderProvider>(context, listen: false).collectionSubmit(context, collection).then((status) async {
 
       if(status){
         _customerController?.text= '';
-        if(_shipToSiteController!=null) {
-          _shipToSiteController!.text = '';
-        }
+        _bankAccountController?.text= '';
+        _selectedBankAccount = null;
         _selectedCustomer = null;
-        _warehouseId = '';
+        _selectedModes = null;
+        _instrumentNoController?.text = '';
+        _remarksController?.text = '';
+        _depositNoController?.text = '';
+        _amountController?.text = '';
         _custId = '';
       }
 
-
       bool? action = await showAnimatedDialog(context, MyDialog(
-        title: status?'Successfully submitted your order':"Fail, Please try again",
-        description: 'Are you sure you want to submit your order?',
+        title: status?'Successfully submitted your collection':"Fail, Please try again",
+        description: '',
         rotateAngle: 0,
-        negativeButtonTxt: 'Again Order',
+        negativeButtonTxt: 'Again Collection',
         positionButtonTxt: 'Go To Home',
       ), dismissible: false);
 
@@ -220,7 +215,6 @@ class _CollectionScreenState extends State<CollectionScreen> {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => const DashBoardScreen()));
       }
-
     });
 
   }
@@ -228,7 +222,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final freightTerm = Provider.of<SalesOrderProvider>(context).freightTermsList;
+    //final freightTerm = Provider.of<SalesOrderProvider>(context).freightTermsList;
     double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
 
@@ -246,60 +240,33 @@ class _CollectionScreenState extends State<CollectionScreen> {
         Expanded(
           child: Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
+
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
                 _customersDropDown = [];
                 provider.customerList.forEach((element) =>
                     _customersDropDown.add(DropDownModel(
-                        code: element.customerId, name: element.customerName)));
+                        code: element.customerId,
+                        name: element.customerName
+                    )));
               }
 
-              if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
-                _itemsDropDown = [];
-                provider.itemList.forEach((element) => _itemsDropDown.add(
-                    DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
+              if (_bankAccountsDropDown == null || _bankAccountsDropDown.isEmpty) {
+                _bankAccountsDropDown = [];
+                provider.bankInfoList.forEach((element) =>
+                    _bankAccountsDropDown.add(DropDownModel(
+                        code: element.bankAccountId,
+                        name: element.bankAccountName,
+                        nameBl: element.receiptMethod,
+                        description: element.receiptMethodId,
+                        type: element.remitBankAccountUseId
+                    )));
               }
 
-              /*if (_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
-                _orderTypeDropDown = [];
-                provider.orderTypeList.forEach((element) =>
-                    _orderTypeDropDown.add(DropDownModel(
-                        code: element.orderTypeId, name: element.orderType)));
+              if (_modesDropDown == null || _modesDropDown.isEmpty) {
+                _modesDropDown = [];
+                provider.modesList.forEach((element) =>
+                    _modesDropDown.add(DropDownModel(code: element, name: element)));
               }
-
-              if (_warehousesDropDown == null || _warehousesDropDown.isEmpty) {
-                _warehousesDropDown = [];
-                provider.warehouseList.forEach((element) =>
-                    _warehousesDropDown.add(DropDownModel(
-                        code: element.warehouseId,
-                        name: element.warehouseName)));
-              }
-
-              if (_freightTermsDropDown == null ||
-                  _freightTermsDropDown.isEmpty) {
-                _freightTermsDropDown = [];
-                provider.freightTermsList.forEach((element) =>
-                    _freightTermsDropDown
-                        .add(DropDownModel(code: element, name: element)));
-              }
-
-              if (_vehicleTypesDropDown == null ||
-                  _vehicleTypesDropDown.isEmpty) {
-                _vehicleTypesDropDown = [];
-                provider.vehicleTypeList.forEach((element) =>
-                    _vehicleTypesDropDown.add(DropDownModel(
-                        code: element.typeId, name: element.typeName)));
-              }
-
-              //if (_shipToLocationDropDown.isEmpty) {
-                _shipToLocationDropDown = [];
-                provider.customerShipToLocationList.forEach((element) =>
-                    _shipToLocationDropDown.add(DropDownModel(
-                        code: element.shipToSiteId,
-                        name: element.shipToLocation,
-                        nameBl: element.primaryShipTo,
-                        description: element.salesPersonId
-                    )));*/
-             // }
 
               return ListView(children: [
                 provider.isLoading
@@ -309,6 +276,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         child: CustomTextLoading(),
                       )
                     : const SizedBox.shrink(),
+
                 // for Org Name
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -407,30 +375,19 @@ class _CollectionScreenState extends State<CollectionScreen> {
                               onClearPressed: () {
                                 setState(() {
                                   _selectedCustomer = null;
-                                  //_warehouseId = '';
                                   _custId = '';
                                 });
                               },
                               onChanged: (value) {
                                 FocusScope.of(context).requestFocus(FocusNode());
 
-                                //_selectedShipToLocation = null;
-                                _shipToLocationDropDown = [];
-
-                                if(_shipToSiteController!=null) {
-                                  _shipToSiteController!.text = '';
-                                }
-
                                 for (Customer customer in provider.customerList) {
                                   if (customer.customerId == value.code) {
-
                                     provider.salesOrder.customerId = customer.customerId;
                                     provider.salesOrder.customerName = customer.customerName;
-
                                     _selectedCustomer = customer;
                                     _custId = _selectedCustomer?.customerId ?? '';
-                                    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
-
+                                    /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
                                     break;
                                   }
                                 }
@@ -443,6 +400,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
+
+                //Account / Bank
                 Container(
                   margin: const EdgeInsets.only(
                     top: Dimensions.MARGIN_SIZE_SMALL,
@@ -479,66 +438,28 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         children: [
                           Expanded(
                             child: CustomAutoComplete(
-                              dropdownItems: _customersDropDown,
+                              dropdownItems: _bankAccountsDropDown,
                               hint: 'Select a bank account',
-                              value: _customerController != null
-                                  ? _customerController!.text
+                              value: _bankAccountController != null
+                                  ? _bankAccountController!.text
                                   : '',
                               icon: const Icon(Icons.search),
-                              height: 35,
+                              height: 45,
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
                               borderColor: _customerFieldError?Colors.red:Colors.transparent,
                               onReturnTextController: (textController) =>
-                              _customerController = textController,
+                              _bankAccountController = textController,
                               onClearPressed: () {
                                 setState(() {
-
-                                  if(_shipToSiteController!=null) {
-                                    _shipToSiteController!.text = '';
-                                  }
-                                  _selectedCustomer = null;
-                                  _warehouseId = '';
-                                  _custId = '';
-                                  _freightTerms = '';
-                                  _selectedWareHouse = null;
-                                  _selectedFreightTerms = null;
-                                  //_selectedShipToLocation = null;
-                                  itemPriceInt=0;
-                                  totalPriceInt=0;
+                                  _selectedBankAccount = null;
                                 });
                               },
                               onChanged: (value) {
                                 FocusScope.of(context).requestFocus(FocusNode());
-
-                                //_selectedShipToLocation = null;
-                                _shipToLocationDropDown = [];
-
-                                if(_shipToSiteController!=null) {
-                                  _shipToSiteController!.text = '';
-                                }
-
-                                for (Customer customer in provider.customerList) {
-                                  if (customer.customerId == value.code) {
-
-                                    provider.salesOrder.customerId = customer.customerId;
-                                    provider.salesOrder.customerName = customer.customerName;
-                                    provider.salesOrder.warehouseId = customer.warehouseId;
-                                    provider.salesOrder.warehouseName = customer.warehouseName;
-                                    provider.salesOrder.freightTermsId = customer.freightTermsId;
-                                    provider.salesOrder.freightTerms = customer.freightTerms;
-
-                                    _selectedCustomer = customer;
-                                    _custId = _selectedCustomer?.customerId ?? '';
-                                    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
-                                    _warehouseId = _selectedCustomer?.warehouseId ?? '';
-                                    _freightTerms =  _selectedCustomer?.freightTerms ?? '';
-                                    _selectedWareHouse = null;
-                                    break;
-                                  }
-                                }
-                                setState(() {});
+                                _selectedBankAccount = value;
+                               // setState(() { });
                               },
                             ),
                           ),
@@ -548,7 +469,60 @@ class _CollectionScreenState extends State<CollectionScreen> {
                   ),
                 ),
 
-                // for Customer PO Number
+                // for Modes
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: Dimensions.MARGIN_SIZE_SMALL,
+                    left: Dimensions.MARGIN_SIZE_DEFAULT,
+                    right: Dimensions.MARGIN_SIZE_DEFAULT,
+                  ),
+                  child: Column(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start, // Align content to the left
+                    children: [
+                      // Row for Icon and Mandatory Text (Label)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: ColorResources.getPrimary(context),
+                            size: 20,
+                          ),
+                          const SizedBox(
+                              width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                          MandatoryText(
+                            text: 'Modes',
+                            textStyle: titilliumRegular,
+                            mandatoryText: '*',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                          height: Dimensions
+                              .MARGIN_SIZE_SMALL), // Space between label and dropdown
+                      // Dropdown Field
+                      CustomDropdownButton(
+                        buttonHeight: 35,
+                        buttonWidth: double.infinity,
+                        dropdownWidth: width - 40,
+                        hint: _modes,
+                        hintColor: Colors.black,
+                        dropdownItems: _modesDropDown,
+                        value: _selectedModes,
+                        buttonBorderColor: Colors.black12,
+                        onChanged: (value) {
+                          setState(() {
+                            _modes = value?.code??'0';
+                            _selectedModes = value;
+                          });
+                        },
+                      ),
+
+                    ],
+                  ),
+                ),
+
+                // for Deposit No
                 Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -578,7 +552,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                           Expanded(
                             child: CustomTextField(
                               height: 35,
-                              controller: _cusPONoController,
+                              controller: _depositNoController,
                               hintText: 'Enter Deposit Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
@@ -591,6 +565,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
+
+                //Instrument No
                 Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -620,7 +596,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                           Expanded(
                             child: CustomTextField(
                               height: 35,
-                              controller: _cusPONoController,
+                              controller: _instrumentNoController,
                               hintText: 'Enter Instrument Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
@@ -633,7 +609,9 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
-                Container(
+
+                //Order Date
+               /* Container(
                   margin: const EdgeInsets.only(
                     top: Dimensions.MARGIN_SIZE_SMALL,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -675,7 +653,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
+                // Remarks
                 Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -705,7 +684,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                           Expanded(
                             child: CustomTextField(
                               height: 35,
-                              controller: _cusPONoController,
+                              controller: _remarksController,
                               hintText: 'Enter Remarks',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
@@ -718,6 +697,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
+                //Amount
                 Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -747,10 +727,10 @@ class _CollectionScreenState extends State<CollectionScreen> {
                           Expanded(
                             child: CustomTextField(
                               height: 35,
-                              controller: _cusPONoController,
+                              controller: _amountController,
                               hintText: 'Enter Amount',
                               borderColor: Colors.black12,
-                              textInputType: TextInputType.text,
+                              textInputType: TextInputType.number,
                               readOnly: false,
                               textInputAction: TextInputAction.done,
                             ),

@@ -6,6 +6,7 @@ import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
+import '../model/body/collection.dart';
 import '../model/body/sales_order.dart';
 
 class SalesOrderRepo {
@@ -219,7 +220,33 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getCollectionInformation(String orgId, String salesPersonId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['org_id'] = orgId;
+      data['salesrep_id'] = salesPersonId;
 
+      final response = await dioClient.postWithFormData(
+          AppConstants.COLLECTION,
+          data:data
+      );
+      print("Respons for collection ; $response");
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
+  Future<ApiResponse> collectionSubmission (Collection collection) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.NEW_COLLECTION_SUBMIT,
+        data:collection.toJson(),
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
 }
