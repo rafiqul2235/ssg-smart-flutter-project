@@ -20,7 +20,7 @@ class NoInternetOrDataScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(isNoInternet ? Images.no_internet : Images.no_data, width: 150, height: 150),
-            Text(isNoInternet ? getTranslated('OPPS', context) : getTranslated('sorry', context), style: titilliumBold.copyWith(
+            Text(isNoInternet ? getTranslated('OPPS', context) : getTranslated('', context), style: titilliumBold.copyWith(
               fontSize: 30,
               color: isNoInternet ? Theme.of(context).textTheme.bodyLarge!.color : ColorResources.getColombiaBlue(context),
             )),

@@ -3,7 +3,10 @@ import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/datasource/remote/exception/api_error_handler.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
+import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
 import '../model/body/sales_order.dart';
@@ -192,6 +195,93 @@ class SalesOrderRepo {
         if (responseData['success'] == 1 && responseData['messages'] != null) {
           return (responseData['messages'] as List)
               .map((json) => MsdReportModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<SalesSummaryModel>> fetchSalesSummaryRep(String salesrepId,String custId, String fromDate, String toDate) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.SALES_SUMMARY_DATA,
+        data: {
+          'salesrep_id': salesrepId,
+          'cust_id': custId,
+          'from_date': fromDate,
+          'to_date': toDate,
+
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['get_summary_report'] != null) {
+          return (responseData['get_summary_report'] as List)
+              .map((json) => SalesSummaryModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<ItemWisePendingModel>> fetchItemWisePendingRep(String salesrepId,String custId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.ITEM_WISE_PENDING_DATA,
+        data: {
+          'salerep_id': salesrepId,
+          'customer_id': custId,
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['pending_so'] != null) {
+          return (responseData['pending_so'] as List)
+              .map((json) => ItemWisePendingModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<DeliveryInfoModel>> fetchDlvInfoRep(String salesrep_id,String trip_number) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.DLV_INFO_DATA,
+        data: {
+          'salerep_id': salesrep_id,
+          'trip_number': trip_number
+        },
+      );
+      print("dlv_info $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("dlv_info data: $responseData");
+        if (responseData['success'] == 1 && responseData['pending_so'] != null) {
+          return (responseData['pending_so'] as List)
+              .map((json) => DeliveryInfoModel.fromJson(json))
               .toList();
         } else {
           throw Exception('Failed to load data');

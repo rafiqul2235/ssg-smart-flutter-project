@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
+import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/dropdown_model.dart';
@@ -81,6 +84,16 @@ class SalesOrderProvider with ChangeNotifier {
   List<MsdReportModel> _salesNotification = [];
   List<MsdReportModel> get salesNotification =>_salesNotification;
 
+
+  List<DeliveryInfoModel> _dlvInfo = [];
+  List<DeliveryInfoModel> get dlvInfo => _dlvInfo;
+
+  List<SalesSummaryModel> _salesSummary = [];
+  List<SalesSummaryModel> get salesSummary => _salesSummary;
+
+  List<ItemWisePendingModel> _itemWisePending = [];
+  List<ItemWisePendingModel> get itemWisePending => _itemWisePending;
+
   /*DlvRequestItemDetail? _dlvRequestOrder;
   DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
 
@@ -151,6 +164,10 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<MsdReportModel> _msdsalesReport = [];
   List<MsdReportModel> get msdsalesReport => _msdsalesReport;
+
+
+
+
 
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
@@ -461,7 +478,69 @@ class SalesOrderProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+  /*Future<void> fetchDeliveryInfoData(String salesrep_id, String trip_number) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
 
+    try{
+      _dlvInfo = await salesOrderRepo.fetchDlvInfoRep(salesrep_id,trip_number);
+      print("dlvInfo provider: $_dlvInfo");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }*/
+
+
+
+  Future<void> fetchSaleSummary(salesrepId, custId, fromDate, toDate) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _salesSummary = await salesOrderRepo.fetchSalesSummaryRep(salesrepId, custId, fromDate, toDate);
+    } catch (e) {
+      print('Error fetching attendance sheet: $e');
+      _salesSummary = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchItemWisePending(salesrepId, custId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _itemWisePending = await salesOrderRepo.fetchItemWisePendingRep(salesrepId, custId);
+    } catch (e) {
+      print('Error fetching attendance sheet: $e');
+      _itemWisePending = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+  Future<void> fetchDeliveryInfoData(String salesrep_id, String trip_number) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _dlvInfo = await salesOrderRepo.fetchDlvInfoRep(salesrep_id,trip_number);
+      print('delivery: ${_dlvInfo}');
+    } catch (e) {
+      print('Error fetching: $e');
+      _dlvInfo = [];
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
 
   Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {
     _isLoading = true;
@@ -491,4 +570,10 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
-}
+  void clearSalesOrder(){
+    _salesNotification = [];
+    notifyListeners();
+  }
+
+
+  }

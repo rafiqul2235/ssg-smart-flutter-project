@@ -68,7 +68,7 @@ class Images {
   static const String paypal = 'assets/images/paypal.png';
   static const String edit = 'assets/images/edit.png';
   static const String currency = 'assets/images/currency.png';
-  static const String no_data = 'assets/images/no_data.png';
+  static const String no_data = 'assets/images/logo_no_data_found.png';
   static const String bag = 'assets/images/bag.png';
   static const String placeholder = 'assets/images/placeholder.jpg';
   static const String about_us = 'assets/images/about_us.png';

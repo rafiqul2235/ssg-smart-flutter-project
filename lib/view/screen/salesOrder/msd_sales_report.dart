@@ -5,6 +5,7 @@ import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
+import 'package:ssg_smart2/view/screen/msd_report/delivery_info_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
@@ -22,6 +23,7 @@ import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
 import '../home/web_view_screen.dart';
 import '../leave/leave_application_screen.dart';
+import '../msd_report/item_wise_pending.dart';
 import '../msd_report/sales_notifications.dart';
 
 
@@ -54,8 +56,8 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Sales Summary', navigateTo: SalesSummary(),));
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: PayslipScreen(),));
     _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'Target vs Achievement', navigateTo: WppfLedgerScreen()));
-    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'ItemWPending', navigateTo: PfLoanScreen(),));
-    _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'Delivery Info', navigateTo: PFLedgerPage(),));
+    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
+    _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
 
   }
 
