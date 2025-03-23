@@ -1,6 +1,5 @@
 class WppfLedger {
   final String payrollName;
-  final String personId;
   final String employeeNumber;
   final String employeeName;
   final String fiscalYear;
@@ -14,11 +13,9 @@ class WppfLedger {
   final String investProfitPayable;
   final String paymentStatus;
   final String wppfStatus;
-  final String wppfClosingDate;
 
   WppfLedger({
     required this.payrollName,
-    required this.personId,
     required this.employeeNumber,
     required this.employeeName,
     required this.fiscalYear,
@@ -32,13 +29,11 @@ class WppfLedger {
     required this.investProfitPayable,
     required this.paymentStatus,
     required this.wppfStatus,
-    required this.wppfClosingDate
   });
 
   factory WppfLedger.fromJson(Map<String, dynamic> json) {
     return WppfLedger(
       payrollName: json['PAYROLL_NAME'],
-      personId: json['PERSON_ID'],
       employeeNumber: json['EMPLOYEE_NUMBER'],
       employeeName: json['EMPLOYEE_NAME'],
       fiscalYear: json['FISCAL_YEAR'],
@@ -52,7 +47,6 @@ class WppfLedger {
       investProfitPayable: json['INVEST_FROFIT_PAYABLE'],
       paymentStatus: json['PAYMENT_STATUS'],
       wppfStatus: json['WPPF_STATUS'],
-      wppfClosingDate: json['WPPF_CLOSING_DATE']
     );
   }
 }

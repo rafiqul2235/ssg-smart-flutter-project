@@ -1,33 +1,23 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ssg_smart2/data/model/body/leave_data.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
-import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
-import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
 import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
-import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/basewidget/button/custom_button.dart';
-import 'package:ssg_smart2/view/basewidget/dialog/single_text_alertdialog.dart';
 import 'package:ssg_smart2/view/basewidget/mandatory_text.dart';
-import 'package:ssg_smart2/view/basewidget/textfield/custom_password_textfield.dart';
 import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/leave_balance.dart';
 import '../../../helper/date_converter.dart';
-import '../../../provider/auth_provider.dart';
 import '../../../provider/leave_provider.dart';
-import '../../../utill/app_constants.dart';
+
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_dropdown_button.dart';
-import '../../basewidget/custom_text.dart';
 import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../empselfservice/self_service.dart';
@@ -121,7 +111,9 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     }
 
     UserInfoModel? userInfoModel =
-        Provider.of<UserProvider>(context, listen: false).userInfoModel;
+        Provider
+            .of<UserProvider>(context, listen: false)
+            .userInfoModel;
     LeaveData leaveData = LeaveData(
         empName: userInfoModel?.fullName,
         empNumber: userInfoModel?.employeeNumber,
@@ -140,8 +132,9 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     print("Leave data: $leaveData");
     final leaveProvider = Provider.of<LeaveProvider>(context, listen: false);
     await leaveProvider.applyLeave(context, leaveData);
-
-    if (leaveProvider.isDuplicateLeave) {
+    if(!leaveProvider.isValidLeave){
+      _showErrorDialog("Casual leave cannot exceed three days.");
+    } else if (leaveProvider.isDuplicateLeave) {
       _showErrorDialog("Duplicate leave application detected");
     } else if (leaveProvider.isSingleOccasionLeave) {
       _showErrorDialog("Single occasion leave not allowed");
