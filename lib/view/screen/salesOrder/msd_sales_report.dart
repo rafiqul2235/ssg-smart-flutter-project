@@ -9,6 +9,7 @@ import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
 import 'package:ssg_smart2/view/screen/salaryloan/salary_loan.dart';
+import 'package:ssg_smart2/view/screen/salesOrder/msd_notification_screen.dart';
 import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/wppfledger/wppf_ledger_screen1.dart';
 import '../../../data/model/response/self_service.dart';
@@ -46,7 +47,9 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
   _getMenuList(){
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     _menuList = [];
+    //_menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Notification', navigateTo: MsdNotificationScreen(),));
     _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Notification', navigateTo: SalesNotifications(),));
+    //MsdNotificationScreen
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Sales Summary', navigateTo: LeaveApplicationScreen(),));
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: PayslipScreen(),));
     _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'Target vs Achievement', navigateTo: WppfLedgerScreen()));

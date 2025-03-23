@@ -6,6 +6,7 @@ import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
+import '../model/body/collection.dart';
 import '../model/body/sales_order.dart';
 
 class SalesOrderRepo {
@@ -103,6 +104,7 @@ class SalesOrderRepo {
       data['org_id'] = orgId;
       data['salesrep_id'] = salesPersonId;
       data['customer_id'] = customerId;
+      //data['customer_id'] = 2491;
 
       final response = await dioClient.postWithFormData(
           AppConstants.ORDERS,
@@ -156,6 +158,37 @@ class SalesOrderRepo {
     }
   }
 
+  Future<List<MsdReportModel>> fetchSalesNotificationData(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.MSD_REPORT_DATA,
+        data: {
+          'type': type,
+          'salesrep_id': salesrep_id,
+          'cust_id': cust_id,
+          'fromDate': fromDate,
+          'toDate': toDate
+        },
+      );
+      print("Notification $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("notification data: $responseData");
+        if (responseData['success'] == 1 && responseData['messages'] != null) {
+          return (responseData['messages'] as List)
+              .map((json) => MsdReportModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
   Future<List<MsdReportModel>> fetchMsdReportRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
     try {
       final response = await dioClient.postWithFormData(
@@ -187,7 +220,33 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> getCollectionInformation(String orgId, String salesPersonId) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{};
+      data['org_id'] = orgId;
+      data['salesrep_id'] = salesPersonId;
 
+      final response = await dioClient.postWithFormData(
+          AppConstants.COLLECTION,
+          data:data
+      );
+      print("Respons for collection ; $response");
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
+  Future<ApiResponse> collectionSubmission (Collection collection) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.NEW_COLLECTION_SUBMIT,
+        data:collection.toJson(),
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
 }

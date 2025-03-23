@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/provider/cashpayment_provider.dart';
 import 'package:ssg_smart2/provider/sales_order_provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/attendence/widget/attendance_summary_table.dart';
@@ -36,14 +37,14 @@ class _SalesNotificationsState extends State<SalesNotifications> {
 
   bool _showResult = false;
 
-  List<String> _attendanceTypes = [
+  List<String> _reportTypes = [
     'Collection',
     'Sales',
     'Delivery Request',
     'Pending SO',
     'Customer PI, Cr. Memo etc.'
   ];
-  String? _selectedAttendanceType;
+  String? _selectedReportType;
   //MsdReportModel msdReportModel
 
   final TextEditingController _startDateController = TextEditingController();
@@ -86,7 +87,7 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                         const DashBoardScreen()));
               }),
           // Attendance Type Dropdown
-          Consumer<AttendanceProvider>(
+          Consumer<SalesOrderProvider>(
             builder: (context, attendanceProvider, child) {
               return Container(
                 margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
@@ -115,16 +116,16 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                         width: width - 40,
                       ),
                       hint: Text('Select Report Type'),
-                      items: _attendanceTypes
+                      items: _reportTypes
                           .map((type) => DropdownMenuItem<String>(
                                 value: type == 'All' ? null : type,
                                 child: Text(type),
                               ))
                           .toList(),
-                      value: _selectedAttendanceType,
+                      value: _selectedReportType,
                       onChanged: (value) {
                         setState(() {
-                          _selectedAttendanceType = value;
+                          _selectedReportType = value;
                         });
                       },
                     ),
@@ -220,8 +221,8 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                 UserInfoModel? userInfoModel =
                     Provider.of<UserProvider>(context, listen: false)
                         .userInfoModel;
-                provider.fetchSalesMsadReport(
-                    /*'100002083',
+                provider.fetchSalesNotification(
+                   /* '100002083',
                   '',
                   '2024-05-26',
                   '2024-06-30',
@@ -230,10 +231,11 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                     '',
                     _startDateController.text,
                     _endDateController.text,
-                    _selectedAttendanceType ?? '');
+                    _selectedReportType ?? ''
+                );
                 setState(() {
                   //print ('notification data :')
-                  if (_selectedAttendanceType == null) {
+                  if (_selectedReportType == null) {
                     _showCustBalDialog("Select Report Type");
                   } else {
                     _showResult = true;
@@ -245,85 +247,99 @@ class _SalesNotificationsState extends State<SalesNotifications> {
               buttonText: 'SUBMIT',
             ),
           ),
-          Visibility(
-            visible: _showResult,
-            child: Expanded(
-              child: SingleChildScrollView(
-                child: Consumer<SalesOrderProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (provider.msdsalesReport.isEmpty) {
-                      // return Center(child: Text('No records found'));
-                      return NoInternetOrDataScreen(isNoInternet: false);
-                    } else {
-                      return Column(
-                        children: [
-                          Center(
-                              child: Text(
-                            "MSD Notifications",
-                            style: TextStyle(fontSize: 18),
-                          )),
-                          SingleChildScrollView(
+
+
+
+
+          Expanded(
+            child: Consumer<SalesOrderProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return Center(child: CircularProgressIndicator());
+                }else {
+                  return ListView.builder(
+                    itemCount: provider.salesNotification.length,
+                    itemBuilder: (context, index) {
+                      final approval = provider.salesNotification[index];
+                      //_commentControllers.putIfAbsent(approval.salesorderMstId, () => TextEditingController());
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        child: Card(
+                          elevation: 8,
+                          shadowColor: Colors.blue,
+                          child: InkWell(
+                            splashColor: Colors.blue.withOpacity(0.1),
+                            onTap: () {
+                              debugPrint("Card is pressed");
+                            },
                             child: Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  child: DataTable(
-                                    columns: const [
-                                      DataColumn(
-                                          label: Text('Type',
-                                              style: TextStyle(fontWeight: FontWeight.bold))),
-                                      DataColumn(
-                                          label: Text('Date',
-                                              style: TextStyle(fontWeight: FontWeight.bold))),
-                                      DataColumn(
-                                          label: Text('Transaction',
-                                              style: TextStyle(fontWeight: FontWeight.bold))),
-                                    ],
-                                    rows: provider.msdsalesReport
-                                        .map((record) => DataRow(
-                                      cells: [
-                                        DataCell(Text(_selectedAttendanceType ?? '')),
-                                        DataCell(
-                                          Tooltip(
-                                            message: record.msg_date ?? 'No Transaction',
-                                            child: Text(
-                                              record.msg_date ?? '',
-                                              overflow: TextOverflow.ellipsis, // Truncate text if it's too long
-                                            ),
-                                          ),
-                                        ),
-
-                                        DataCell(
-                                          Tooltip(
-                                            message: record.msg ?? 'No Transaction',
-                                            child: Text(
-                                              record.msg ?? '',
-                                              overflow: TextOverflow.ellipsis, // Truncate text if it's too long
-                                            ),
-                                          ),
-                                        ),
-
-                                      ],
-                                    ))
-                                        .toList(),
-                                  ),
-                                ),
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                top(context,approval),
                               ],
                             ),
                           ),
-
-
-
-                        ],
+                        ),
                       );
-                    }
-                  },
-                ),
-              ),
+                    },
+                  );
+
+              }
+              },
             ),
           ),
+
+        ],
+      ),
+    );
+  }
+
+  Widget top(BuildContext context,MsdReportModel msdReportModel) {
+
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.orange[50]!, Colors.orange[50]!],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${msdReportModel.msg_date}",
+                      style: TextStyle(fontWeight: FontWeight.normal,fontSize: 14, color: Colors.black),
+                    ),
+                    Text(
+                      "${msdReportModel.msg}",
+                      style: TextStyle(fontWeight: FontWeight.normal,fontSize: 14, color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
+              // SizedBox(height: 18),
+            ],
+          ),
+          SizedBox(height: 8),
+
         ],
       ),
     );

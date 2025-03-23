@@ -111,7 +111,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String formattedDate = '';
   String customerBal ='';
   int itemPriceInt = 0;
-  int totalPriceInt = 0;
+  double totalPriceInt = 0;
 
   String _vehicleType ='';
   String _vehicleCate ='';
@@ -189,13 +189,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
     final String qtyText = _qtyController?.text ?? '0';
+    //final TextEditingController _qtyController = TextEditingController();
     final int quantity = int.tryParse(qtyText) ?? 0;
     _itemPriveModel = salesProvider.itemPriceModel;
 
     setState(() {
       itemPriceInt = _itemPriveModel!.itemPrice;
-      totalPriceInt = itemPriceInt * quantity;
-      print("Item ptice : $itemPriceInt");
+      totalPriceInt = (itemPriceInt * quantity).toDouble();
+      // print("Item ptice : $itemPriceInt");
     });
     if( itemPriceInt <= 0){
       _showErrorDialog("Inactive price, Please contact with Finance department");
@@ -206,7 +207,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   }
 
   Future<void>  _onClickAddButton() async {
-    print('On Click Add Button');
+   // print('On Click Add Button');
 
     if(_itemId == null || _itemId <= 0){
       _showErrorDialog("Select Item");
@@ -217,10 +218,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Select Ship to Location");
       return;
     }
+    if(_qtyController == null || _qtyController!.text.isEmpty){
+      _showErrorDialog("Enter SO qty");
+      return;
+    }
+
+
     if(_selectedVehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
     }
+
 
     FocusScope.of(context).requestFocus(FocusNode());
 
@@ -236,8 +244,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     itemDetail.itemName = _selectedItem?.name;
     itemDetail.itemId = _selectedItem?.id;
     itemDetail.itemUOM = _selectedItem?.code;
-    itemDetail.quantity = _qtyController?.text.toString();
-    itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.quantity = _qtyController!=null && _qtyController!.text.isNotEmpty?int.parse(_qtyController!.text):0;
+    itemDetail.unitPrice = itemPriceInt??0;
+    itemDetail.totalPrice = totalPriceInt??0;
+    //itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.primaryShipTo = _deliverySiteDetailController?.text;
     itemDetail.vehicleType = _vehicleType;
     itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
     itemDetail.vehicleCate = _vehicleCate;
@@ -593,7 +604,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                 _shipToLocationDropDown = [];
 
                                 if(_shipToSiteController!=null) {
-                                  _shipToSiteController!.text = '';
+                                  //_shipToSiteController!.text = '';
                                 }
 
                                 for (Customer customer in provider.customerList) {
@@ -836,14 +847,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
                 // for order / item details
                 Container(
-                  color: Colors.red.withOpacity(0.3),
+                  color: Colors.red.withOpacity(0.2),
                   margin: const EdgeInsets.only(
                       left: 8.0, right: 8.0, top: 0.0, bottom: 10.0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                         headingRowColor: WidgetStateColor.resolveWith(
-                            (states) => Colors.red.withOpacity(0.2)),
+                            (states) => Colors.red.withOpacity(0.6)),
                         columnSpacing: 8,
                         horizontalMargin: 2,
                         border: TableBorder.all(width: 0.5, color: Colors.grey),
@@ -855,8 +866,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           ],
                           if (provider.salesOrder != null &&
                               provider.salesOrder.orderItemDetail != null) ...[
-                            for (var item
-                                in provider.salesOrder.orderItemDetail!)
+                            for (var item in provider.salesOrder.orderItemDetail!)
                               _dataRow(item)
                           ]
                         ]),
@@ -1125,11 +1135,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
     TextEditingController qtyController = TextEditingController();
-    TextEditingController deliverySiteDetailController =
-        TextEditingController();
+    TextEditingController deliverySiteDetailController = TextEditingController();
+    /*TextEditingController unitPriceController = TextEditingController();TextEditingController _unitPriceController = TextEditingController();
+    TextEditingController totalPriceController = TextEditingController();TextEditingController _totalPriceController = TextEditingController();*/
+    TextEditingController remakes = TextEditingController();
+    TextEditingController _remakes = TextEditingController();
 
     qtyController.text = '${itemDetails.quantity}';
     deliverySiteDetailController.text = '${itemDetails.primaryShipTo}';
+ /*   unitPriceController.text = '${itemDetails.unitPrice}';
+    totalPriceController.text = '${itemDetails.totalPrice}';
+    remakes.text = '${itemDetails.remarks}';*/
 
     return DataRow(cells: [
       DataCell(Padding(
@@ -1155,7 +1171,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                     textInputType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
-                      itemDetails.quantity = value.isEmpty ? '0' : value;
+                      setState(() {
+                        itemDetails.quantity = int.parse(value.isEmpty ? '0' : value);
+                        itemDetails.totalPrice = (itemDetails.quantity! * itemDetails.unitPrice!).toDouble();
+                      });
                     },
                   )
                 : Text('${itemDetails.quantity}')),
@@ -1178,7 +1197,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.vehicleType}')),
+        child: Center(child: Text('${itemDetails.vehicleCate}')),
       )),
 
       DataCell(Padding(
@@ -1209,24 +1228,20 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           children: [
             if (itemDetails.isEditable) ...[
               InkWell(
-                  onTap: () => _editItemDetail(itemDetails.itemId,
-                      itemDetails.itemId, itemDetails.customerId, false),
+                  onTap: () => _editItemDetail(itemDetails.itemId??0, false),
                   child: Icon(
                     Icons.done,
                     color: Colors.green,
                   ))
             ] else ...[
               InkWell(
-                  onTap: () => _editItemDetail(itemDetails.itemId,
-                      itemDetails.orgId, itemDetails.customerId, true),
-
+                  onTap: () => _editItemDetail(itemDetails.itemId??0, true),
                   child: Icon(
                     Icons.edit,
                     color: Colors.black,
                   )),
               InkWell(
-                  onTap: () => _deleteItemDetail(itemDetails.itemId,
-                      itemDetails.itemId, itemDetails.customerId),
+                  onTap: () => _deleteItemDetail(itemDetails.itemId,itemDetails.quantity),
                   child: Icon(
                     Icons.delete,
                     color: Colors.red,
@@ -1304,10 +1319,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               textInputType: TextInputType.number,
               textInputAction: TextInputAction.next,
               onChanged: (value) {
-                setState(() {
+                _onClickItemPrice(_itemId,_shipToSiteId);
+                /*setState(() {
                   // _selectCompanyError = false;
-                  _onClickItemPrice(_itemId,_shipToSiteId);
-                });
+                 // _onClickItemPrice(_itemId,_shipToSiteId);
+                });*/
               },
             ),
           )),
@@ -1384,7 +1400,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
               onTap: () {
                 _onClickAddButton();
               },
-              color: Colors.transparent,
+              color: Colors.lightGreenAccent,
               buttonText: '',
               icon: Icons.add,
             ),
@@ -1392,9 +1408,24 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         ]);
   }
 
-  _editItemDetail(masterId, detailsId, company, bool bool) {}
+  _editItemDetail(int itemId, bool bool) {
+    Provider.of<SalesOrderProvider>(context,listen: false).EditableSalesOrderItem(itemId,bool);
+  }
 
-  _deleteItemDetail(masterId, detailsId, company) {}
+  _deleteItemDetail(int? itemId, int? count) async {
+   // print(' itemId $itemId count $count');
+    var isSubmit = await showAnimatedDialog(context, MyDialog(
+      title: '',
+      description: 'Are you sure you want to delete the item?',
+      rotateAngle: 0,
+      negativeButtonTxt: 'No',
+      positionButtonTxt: 'Yes',
+    ), dismissible: false);
+
+    if(!isSubmit!) return;
+
+    Provider.of<SalesOrderProvider>(context,listen: false).deleteSalesOrderItem(itemId??0, count??0);
+  }
 
   _showMessage(String message, bool isError){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

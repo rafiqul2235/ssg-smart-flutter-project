@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 
 class AppConstants {
   static const String APP_NAME = 'SMART';
+
   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
   // static const String BASE_URL = 'http://192.168.7.98/'; //test
@@ -58,8 +59,10 @@ class AppConstants {
   static const String WPPF_LEDGER = 'wppf_ledger';
   static const String SALES = 'sales';
   static const String ORDERS = 'orders';
+  static const String COLLECTION = 'collection';
   static const String PENDINGSO = 'pending_so_cust_id';
   static const String NEW_SALE_SUBMIT = 'flutter-new-sale';
+  static const String NEW_COLLECTION_SUBMIT = 'flutter-new-collection';
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
 
   // R&D project

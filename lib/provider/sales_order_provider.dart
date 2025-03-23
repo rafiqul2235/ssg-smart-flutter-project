@@ -6,9 +6,11 @@ import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
+import '../data/model/body/collection.dart';
 import '../data/model/body/sales_order.dart';
 import '../data/model/dropdown_model.dart';
 import '../data/model/response/base/api_response.dart';
+import '../data/model/response/salesorder/bankinfo.dart';
 import '../data/model/response/salesorder/customer.dart';
 import '../data/model/response/salesorder/customer_location.dart';
 import '../data/model/response/salesorder/item.dart';
@@ -68,12 +70,21 @@ class SalesOrderProvider with ChangeNotifier {
   List<OrderItem> _itemList = [];
   List<OrderItem> get itemList => _itemList ?? [];
 
+  List<BankInfo> _bankInfoList = [];
+  List<BankInfo> get bankInfoList => _bankInfoList ?? [];
+
+  List<String> _modesList = [];
+  List<String> get modesList => _modesList ?? [];
+
   List<CustomerShipLocation> _customerShipToLocationList = [];
   List<CustomerShipLocation> get customerShipToLocationList => _customerShipToLocationList ?? [];
 
   /* Submit Order Object */
   SalesOrder? _salesOrder;
   SalesOrder get salesOrder => _salesOrder ?? SalesOrder();
+
+  List<MsdReportModel> _salesNotification = [];
+  List<MsdReportModel> get salesNotification =>_salesNotification;
 
   /*DlvRequestItemDetail? _dlvRequestOrder;
   DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
@@ -88,6 +99,20 @@ class SalesOrderProvider with ChangeNotifier {
     _salesOrder?.orderItemDetail?.clear();
   }
 
+  Future<void> deleteSalesOrderItem(int itemId, int amount) async{
+    _salesOrder?.orderItemDetail?.removeWhere((item) => item.itemId == itemId);
+    notifyListeners();
+  }
+
+  Future<void> EditableSalesOrderItem(int itemId, bool editable) async{
+    for(ItemDetail item in _salesOrder!.orderItemDetail!){
+      if(item.itemId == itemId){
+        item.isEditable = editable;
+        break;
+      }
+    }
+    notifyListeners();
+  }
 
   Future<List<DropDownModel>> getVehicleCategoryByType(String vehicleType) async {
     List<DropDownModel> vehicleCats = [];
@@ -192,6 +217,9 @@ class SalesOrderProvider with ChangeNotifier {
   }
 
   Future<void> getCustomerShipToLocation(BuildContext context, String customerId) async {
+
+    print('getCustomerShipToLocation ');
+
     //showLoading();
     try{
       String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
@@ -407,6 +435,21 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }*/
 
+  Future<void> fetchSalesNotification(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _salesNotification = await salesOrderRepo.fetchSalesNotificationData(salesrep_id, cust_id, fromDate, toDate, type);
+      print("notification provider: $_salesNotification");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {
     _isLoading = true;
@@ -420,6 +463,74 @@ class SalesOrderProvider with ChangeNotifier {
     }
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> getCollectionInformation(BuildContext context) async {
+    //showLoading();
+    try{
+      String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+      String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+
+      //print('orgId $orgId, salesPersonId $salesPersonId');
+
+      ApiResponse apiResponse = await salesOrderRepo.getCollectionInformation(orgId,salesPersonId);
+
+      if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+        _customerList = [];
+        _bankInfoList = [];
+        _modesList = [];
+
+        if(apiResponse.response?.data['banks'] != null){
+          apiResponse.response?.data['banks'].forEach((element) => _bankInfoList.add(BankInfo.fromJson(element)));
+        }
+
+        if(apiResponse.response?.data['customers'] != null){
+          apiResponse.response?.data['customers'].forEach((element) => _customerList?.add(Customer.fromJson(element)));
+        }
+
+        if(apiResponse.response?.data['modes'] != null){
+          apiResponse.response?.data['modes'].forEach((element) => _modesList.add(element));
+        }
+
+        print('Modes Count ${_modesList.length}');
+        notifyListeners();
+      }else{
+        ApiChecker.checkApi(context, apiResponse);
+      }
+    }catch(e){
+      print("error: $e");
+      // hideLoading();
+    }
+    // hideLoading();
+    return null;
+  }
+
+  Future<bool> collectionSubmit(BuildContext context, Collection collection) async {
+    // _resetState();
+    showLoading();
+    bool success = false;
+
+    try{
+      final response = await salesOrderRepo.collectionSubmission(collection);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        print('collectionSubmit '+responseData.toString());
+        if (responseData['success'] == 1) {
+          success = true;
+        } else {
+          _error = "Collection Submission failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+      print('collectionSubmit '+e.toString());
+    }finally{
+      hideLoading();
+      // notifyListeners();
+      return success;
+    }
   }
 
   void showLoading(){
