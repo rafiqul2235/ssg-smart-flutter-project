@@ -275,6 +275,7 @@ class LeaveProvider with ChangeNotifier {
   void _resetState() {
     _error = null;
     _isSuccess = null;
+     _isValidLeave = true;
     _isDuplicateLeave = false;
     _isSingleOccasionLeave = false;
     _isProbationPeriodEnd = false;
@@ -286,6 +287,7 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   void hideLoading(){
     if(_loading){
       _loading = false;
