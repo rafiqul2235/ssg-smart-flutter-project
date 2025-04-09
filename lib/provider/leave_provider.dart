@@ -61,12 +61,20 @@ class LeaveProvider with ChangeNotifier {
   bool _isProbationPeriodEnd = false;
   bool get isProbationPeriodEnd => _isProbationPeriodEnd;
 
+  bool _isValidLeave = true;
+  bool get isValidLeave => _isValidLeave;
+
   Future<void> applyLeave(BuildContext context, LeaveData leaveData) async {
     _resetState();
     showLoading();
     print("submitted data: $leaveData");
 
     try{
+      print('isValideleave before function calling: $_isValidLeave');
+      await _checkValidLeave(leaveData);
+      if(!_isValidLeave) return;
+      print('isValideleave after function calling: $_isValidLeave');
+
       await _checkDuplicateLeave(leaveData);
       if(_isDuplicateLeave) return;
 
@@ -214,6 +222,17 @@ class LeaveProvider with ChangeNotifier {
     }
   }
 
+  Future<void> _checkValidLeave(LeaveData leaveData) async {
+    print('Check Leave function called');
+    if(leaveData.leaveType == 'Casual Leave') {    // Restriction casual leave exceed 3 days
+      print('Check Leave function called for casual leave');
+      int leaveDuration = int.parse(leaveData.duration!);
+      if(leaveDuration > 3) {
+        _isValidLeave = false;
+      }
+    }
+  }
+
   Future<void> _checkDuplicateLeave(LeaveData leaveData) async {
     final response = await leaveRepo.checkDuplicateLeave(leaveData.empNumber, leaveData.startDate);
     print("duplicate leave(Provider): $response");
@@ -256,6 +275,7 @@ class LeaveProvider with ChangeNotifier {
   void _resetState() {
     _error = null;
     _isSuccess = null;
+     _isValidLeave = true;
     _isDuplicateLeave = false;
     _isSingleOccasionLeave = false;
     _isProbationPeriodEnd = false;
@@ -267,6 +287,7 @@ class LeaveProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
   void hideLoading(){
     if(_loading){
       _loading = false;
@@ -274,3 +295,4 @@ class LeaveProvider with ChangeNotifier {
     }
   }
 }
+
