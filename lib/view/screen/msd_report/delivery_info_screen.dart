@@ -38,10 +38,12 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
 
-  DropDownModel? selectedSpCustList;
+  DropDownModel? selectedSrTripList;
   bool isSpCustListFieldError = false;
 
   bool _showResult = false;
+
+  String _tripList='';
 
   //late String cust_id;
 
@@ -55,7 +57,7 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
   void initState() {
     super.initState();
 
-    //Provider.of<SalesOrderProvider>(context, listen: false).getSpCustList(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getTripNumberSr(context);
 
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,12 +111,12 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
                       buttonWidth: double.infinity,
                       dropdownWidth: MediaQuery.of(context).size.width - 40,
                       hint: 'Select Trip Number',
-                      dropdownItems: salesOrderProvider.SpCustList,
-                      value: selectedSpCustList,
+                      dropdownItems: salesOrderProvider.TripNumSrList,
+                      value: selectedSrTripList,
                       buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
                       onChanged: (value) {
                         setState(() {
-                          selectedSpCustList = value;
+                          selectedSrTripList = value;
                           // Reset result visibility when selection changes
                           _showResult = false;
                         });
@@ -155,8 +157,9 @@ class _DeliveryInfoScreenState extends State<DeliveryInfoScreen> {
 
                 provider.fetchDeliveryInfoData(
                     userInfoModel!.salesRepId!,
-                  //'100010042',
-                    '11623247'
+                    selectedSrTripList?.code??''
+
+                   // '11621757'
                 );
                 print('data from submit btn: ${provider.dlvInfo}');
                 setState(() {

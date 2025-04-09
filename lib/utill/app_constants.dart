@@ -38,8 +38,11 @@ class AppConstants {
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
   static const String SP_CUST_LIST = 'cust_wise_notification_for_sp';
+  static const String SP_TRIP_NUMBER = 'trip_num_for_sr';
   static const String SALES_SUMMARY_DATA = 'sales_person_summary_report';
   static const String ITEM_WISE_PENDING_DATA = 'item_wise_pending_sp';
+  static const String CUST_TARGET_VS_ACHIV_DATA = 'target_vs_achivement';
+  static const String BALANCE_CONFIRMATION_DATA = 'cust_balance_confirmation';
   static const String LEAVE_APPLY = 'leave_save';
   static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';

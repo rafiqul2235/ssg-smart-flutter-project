@@ -47,6 +47,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   String version = "";
+  String userId='';
+  String orgId='';
 
   @override
   void initState() {
@@ -58,6 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
   _initData() async {
      await Provider.of<UserProvider>(context, listen: false).getUserInfoFromSharedPref();
      Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
+     setState(() {
+       userId = Provider.of<AuthProvider>(context, listen: false).getEmpId();
+       orgId = Provider.of<AuthProvider>(context, listen: false).getOrgName();
+     });
+
+     print('empId: $userId');
   }
 
   @override
@@ -88,11 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // AppBar
           Positioned(
-            top: 40,
+            top: 30,
             left: Dimensions.PADDING_SIZE_SMALL,
             right: Dimensions.PADDING_SIZE_SMALL,
             child: Consumer<UserProvider>(
               builder: (context, profile, child) {
+                print('User id from widget: $userId');
                 return Row( mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                   Image.asset(Images.logo_with_name_image, height: 40,),
@@ -117,6 +126,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ]),
+                          Text('Emp Id :'+'$userId', softWrap: true,style: TextStyle(
+                              fontWeight: FontWeight.normal)
+                          ),
+                          Text('$orgId', softWrap: true,style: TextStyle(
+                              fontWeight: FontWeight.normal))
+
+                         // Text('$orgId'+'$userId')
                           /*Column(
                               mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
@@ -172,9 +188,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             UserMenu userMenu = userMenus[index];
 
                             if(userMenu.id == '1'){
-                              return HomeMenuItemCircle(image: Images.salesreport, title: userMenu.name!,navigateTo:CollectionScreen(),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
+                              return HomeMenuItemCircle(image: Images.collection_module, title: userMenu.name!,navigateTo:CollectionScreen(),count: 0,hasCount: false,bgColor:ColorResources.DARK_BLUE);
                             }else if(userMenu.id == '4'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: DeliveryRequestScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.delivery_module, title:  userMenu.name!, navigateTo: DeliveryRequestScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '7'){
                               return HomeMenuItemCircle(image: Images.approval, title:  userMenu.name!, navigateTo: ResetPasswordScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
@@ -190,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             }*/
 
                             else if(userMenu.id == '10'){
-                              return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: MsdSalesReport(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.report_module, title:  userMenu.name!, navigateTo: MsdSalesReport(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '11'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
@@ -205,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             else if(userMenu.id == '19'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: NotificationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }else if(userMenu.id == '2'){
-                              return HomeMenuItemCircle(image: Images.salesreport, title:  userMenu.name!, navigateTo: SalesOrderScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
+                              return HomeMenuItemCircle(image: Images.sales_module, title:  userMenu.name!, navigateTo: SalesOrderScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             }
                             else if(userMenu.id == '21'){
                               return HomeMenuItemCircle(image: Images.ic_communication_email, title:  userMenu.name!, navigateTo: RsmSalesApprovalScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);

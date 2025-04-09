@@ -35,10 +35,16 @@ class DropDownModel {
     name = json['CUSTOMER_NAME'];
   }
 
+  DropDownModel.fromJsonForSrTripList(Map<String, dynamic>? json) {
+    if (json == null) return;
+    name = json['TRIP_NUMBER'] +"   "+ json['CUSTOMER_NAME'];
+    code = json['TRIP_NUMBER'];
+  }
+
   DropDownModel.fromJsonMasterKey(Map<String, dynamic>? json) {
     if (json == null) return;
-    code = '${json['id']}';
-    name = json['value'];
+    name = '${json['id']}';
+    code = json['value'];
   }
 
   DropDownModel.fromJsonCampaignList(Map<String, dynamic>? json) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
 import 'package:ssg_smart2/view/screen/auth/change_password_screen.dart';
+import 'package:ssg_smart2/view/screen/home/home_screen.dart';
 import 'package:ssg_smart2/view/screen/more/widget/currency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
@@ -114,14 +115,14 @@ class _MoreScreenState extends State<MoreScreen> {
                         Image.asset(Images.logo_with_name_image, height: 40),
                          InkWell(
                            onTap: () {
-                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
                            },
-                           child:profile.userInfoModel == null ? CircleAvatar(child: Icon(Icons.person, size: 35)) : ClipRRect(
+                           child:profile.userInfoModel == null ? CircleAvatar(child: Icon(Icons.home, size: 20)) : ClipRRect(
                              borderRadius: BorderRadius.circular(15),
                              child: FadeInImage.assetNetwork(
                                placeholder: Images.logo_image, width: 35, height: 35, fit: BoxFit.fill,
                                image: '${AppConstants.BASE_URL}/${/*profile.userInfoModel?.photoUrl??*/''}',
-                               imageErrorBuilder: (c, o, s) => CircleAvatar(child: Icon(Icons.person, size: 35)),
+                               imageErrorBuilder: (c, o, s) => CircleAvatar(child: Icon(Icons.home, size: 35)),
                              ),
                            ),
                          ),

@@ -99,6 +99,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   //SalesOrder? _salesOrder;
 
   String _orgName = '';
+  String _userId= '';
   String _warehouseId = '';
   String _custId = '';
   String _custAccount = '';
@@ -135,6 +136,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
   }
 
   void currentDateTime() {
@@ -258,6 +260,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
     /* Clear Data */
     _selectedItem = null;
+    _shipToLocation='';
     _qtyController?.text = '';
     _deliverySiteDetailController?.text = '';
     _vehicleType = '';
@@ -290,16 +293,22 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
-    if(_itemId == null || _itemId <= 0){
+    if(_selectedItem == null){
       _showErrorDialog("Select Item");
       return;
     }
 
-    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
+    if(_shipToLocationDropDown == null){
       _showErrorDialog("Select Ship to Location");
       return;
     }
-    if(_vehicleType == null){
+
+    if(_qtyController == null || _qtyController!.text.isEmpty){
+      _showErrorDialog("Enter SO Qty");
+      return;
+    }
+
+    if(_selectedVehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
     }
@@ -328,6 +337,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.priceListId = _selectedCustomer?.priceListId;
     salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
+    salesInfoModel.userId = _userId;
     salesInfoModel.orderType = _selectedCustomer?.orderType;
     salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
     salesInfoModel.freightTerms = _freightTerms;
@@ -385,10 +395,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
       bool? action = await showAnimatedDialog(context, MyDialog(
         title: status?'Successfully submitted your order':"Fail, Please try again",
-        description: 'Are you sure you want to submit your order?',
+        description: 'Are you sure you want to submit your Another Sales Order?',
         rotateAngle: 0,
-        negativeButtonTxt: 'Again Order',
-        positionButtonTxt: 'Go To Home',
+        negativeButtonTxt: 'YES',
+        positionButtonTxt: 'NO',
       ), dismissible: false);
 
       if(action!){
@@ -572,7 +582,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   ? _customerController!.text
                                   : '',
                               icon: const Icon(Icons.search),
-                              height: 35,
+                              height: 45,
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
@@ -666,7 +676,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _cusPONoController,
                               hintText: 'Enter Customer PO Number',
                               borderColor: Colors.black12,
@@ -719,7 +729,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             ? _warehouseController!.text
                             : _warehouseId??'',
                         icon: const Icon(Icons.search),
-                        height: 35,
+                        height: 45,
                         width: width,
                         hint: _selectedCustomer?.warehouseName??"",
                         hintColor: Colors.black,
@@ -772,7 +782,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               .MARGIN_SIZE_SMALL), // Space between label and dropdown
                       // Dropdown Field
                       CustomDropdownButton(
-                        buttonHeight: 35,
+                        buttonHeight: 45,
                         buttonWidth: double.infinity,
                         dropdownWidth: width - 40,
                         hint: _freightTerms,

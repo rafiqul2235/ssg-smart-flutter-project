@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:async';
 import 'dart:async';
+import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
+import 'package:ssg_smart2/view/screen/msd_report/balance_confirmation_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/cust_target_vsAchiv_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
@@ -54,6 +58,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<DropDownModel> _SpCustList = [] ;
   List<DropDownModel> get SpCustList => _SpCustList??[] ;
+
+  List<DropDownModel> _TripNumSrList = [] ;
+  List<DropDownModel> get TripNumSrList => _TripNumSrList??[] ;
 
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
@@ -104,6 +111,12 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<ItemWisePendingModel> _itemWisePending = [];
   List<ItemWisePendingModel> get itemWisePending => _itemWisePending;
+
+  List<CustTargetVsAchivModel> _custTargetAchive = [];
+  List<CustTargetVsAchivModel> get custTargetAchive => _custTargetAchive;
+
+  List<BalanceConfirmationModel> _balanceConf = [];
+  List<BalanceConfirmationModel> get balanceConf => _balanceConf;
 
   /*DlvRequestItemDetail? _dlvRequestOrder;
   DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
@@ -280,6 +293,20 @@ class SalesOrderProvider with ChangeNotifier {
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
       _SpCustList = [];
       apiResponse.response?.data['pending_so'].forEach((custList) => _SpCustList.add(DropDownModel.fromJsonForCustList(custList)));
+      notifyListeners();
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+  Future<void> getTripNumberSr(BuildContext context) async {
+    String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+
+    ApiResponse apiResponse = await salesOrderRepo.getTripNumberSrRep(salesPersonId,orgId);
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _TripNumSrList = [];
+      apiResponse.response?.data['trips'].forEach((tripList) => _TripNumSrList.add(DropDownModel.fromJsonForSrTripList(tripList)));
       notifyListeners();
     }else{
       ApiChecker.checkApi(context, apiResponse);
@@ -528,10 +555,43 @@ class SalesOrderProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      print('saleId: $salesrepId and custId: $custId');
       _itemWisePending = await salesOrderRepo.fetchItemWisePendingRep(salesrepId, custId);
     } catch (e) {
-      print('Error fetching attendance sheet: $e');
+      print('Error fetching: $e');
       _itemWisePending = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+  Future<void> fetchTargetVsAchivData(orgId, period, custAc) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _custTargetAchive = await salesOrderRepo.fetchCustTargetVsAchivRep(orgId, period, custAc);
+    } catch (e) {
+      print('Error fetching: $e');
+      _custTargetAchive = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchBalanceConfirmation(salesrepId, custId,formMonth,toMonth) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      //print('saleId: $salesrepId and custId: $custId');
+      _balanceConf = await salesOrderRepo.fetchBalanceConfirmationRep(salesrepId, custId,formMonth,toMonth);
+    } catch (e) {
+      print('Error fetching: $e');
+      _balanceConf = [];
     }
 
     _isLoading = false;
@@ -554,8 +614,6 @@ class SalesOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-=======
->>>>>>> 8c22bd468989c6fe25cf3a47675cbc64464afbcb
   Future<void> fetchSalesMsadReport(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async {
     _isLoading = true;
     notifyListeners();

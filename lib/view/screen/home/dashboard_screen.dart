@@ -7,6 +7,7 @@ import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/screen/home/home_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report.dart';
 import '../../../provider/auth_provider.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/my_dialog.dart';
@@ -47,12 +48,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       _screens = [
         HomeScreen(),
         ReportDashboardScreen(isBackButtonExist: false),
+        //MsdSalesReport(),
         NotificationScreen(isBackButtonExist: false),
         MoreScreen()
       ];
     }else {
       _screens = [
         HomeScreen(),
+        //MsdSalesReport(),
         ReportDashboardScreen(isBackButtonExist: false),
         NotificationScreen(isBackButtonExist: false),
         MoreScreen()

@@ -3,6 +3,7 @@ class SalesOrder {
   String? customerId;
   String? salesPersonId;
   String? orgId;
+  String? userId;
   String? orgName;
   String? accountNumber;
   String? partySiteNumber;
@@ -28,6 +29,7 @@ class SalesOrder {
     this.customerId = '',
     this.salesPersonId= '',
     this.orgId= '',
+    this.userId='',
     this.orgName= '',
     this.accountNumber= '',
     this.partySiteNumber= '',
@@ -69,6 +71,7 @@ class SalesOrder {
     customerId= json['CUSTOMER_ID'];
     salesPersonId= json['SALESREP_ID'];
     orgId= json['ORG_ID'];
+    userId= json['USER_ID'];
     orgName= json['ORG_NAME'];
     accountNumber= json['ACCOUNT_NUMBER'];
     partySiteNumber= json['PARTY_SITE_NUMBER'];
@@ -111,6 +114,7 @@ class SalesOrder {
 
     data['CUSTOMER_ID'] = customerId??'0';
     data['ORG_ID'] = orgId??'0';
+    data['USER_ID'] = userId??'0';
     data['BILL_TO_SITE_ID'] = billToSiteId??'0';
     data['BILL_TO_ADDRESS'] = billToAddress??'';
     data['ORDER_TYPE_ID'] = orderTypeId??'0';

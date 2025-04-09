@@ -8,6 +8,8 @@ import 'package:ssg_smart2/provider/sales_order_provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/attendence/widget/attendance_summary_table.dart';
 import '../../../data/model/body/customer_details.dart';
+import '../../../data/model/dropdown_model.dart';
+import '../../../data/model/response/salesorder/customer.dart';
 import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/attachment_provider.dart';
 import '../../../provider/attendance_provider.dart';
@@ -17,6 +19,7 @@ import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
+import '../../basewidget/custom_auto_complete.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
@@ -37,7 +40,14 @@ class _SalesSummaryState extends State<SalesSummary> {
 
   UserInfoModel? userInfoModel;
 
-  CustomerDetails? _selectedCustomer;
+  List<DropDownModel> _customersDropDown = [];
+  DropDownModel? _selectedCustomerDropDown;
+  TextEditingController? _customerController;
+  String _custId = '';
+  Customer? _selectedCustomer;
+  bool _customerFieldError = false;
+
+
   List<CustomerDetails> _filteredCustomers = [];
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
@@ -66,136 +76,18 @@ class _SalesSummaryState extends State<SalesSummary> {
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
     //provider.fetchAitEssentails('100002083','101');
 
     setState(() {});
   }
 
-  void _showCustomerDialog(List<CustomerDetails> customers) {
-    _filteredCustomers = customers;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            dialogTheme: DialogTheme(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return AlertDialog(
-                title: Column(
-                  children: [
-                    Text(
-                      'Select Customer',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search customers...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        fillColor: Colors.grey[50],
-                        filled: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          // Filter customer baseed on search text
-                          _filteredCustomers = customers.where((customer) {
-                            final customerName = customer.customarName?.toLowerCase() ?? '';
-                            final accountNumber = customer.accountNumber?.toLowerCase() ?? '';
-                            final searchText = value.toLowerCase();
-                            return customerName.contains(searchText) || accountNumber.contains(searchText);
-                          }).toList();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                content: Container(
-                  width: double.maxFinite,
-                  height: 300,
-                  child: ListView.builder(
-                    itemCount: _filteredCustomers.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          '${_filteredCustomers[index].customarName!}(${_filteredCustomers[index].accountNumber})',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        leading: Icon(Icons.business),
-                        selected: customers[index] == _selectedCustomer,
-                        selectedTileColor: Colors.blue.withOpacity(0.1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _selectedCustomer = _filteredCustomers[index];
-                          });
-                          this.setState(() {});
-                          Navigator.pop(context);
-                          _searchController.clear();
-                        },
-                      );
-                    },
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _searchController.clear();
-                    },
-                    child: Text('Cancel'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-  InputDecoration _buildInputDecoration(String hint, IconData icon,
-      {Widget? suffixIcon}) {
-    return InputDecoration(
-      hintText: hint,
-      prefixIcon: Icon(icon),
-      suffixIcon: suffixIcon,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      filled: true,
-      fillColor: Colors.grey[50],
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      errorStyle: TextStyle(height: 0.8),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<AttachmentProvider>();
-    final customers = provider.customersList;
+    final provider = context.watch<SalesOrderProvider>();
     double width = MediaQuery
         .of(context)
         .size
@@ -214,36 +106,90 @@ class _SalesSummaryState extends State<SalesSummary> {
                         BuildContext context) => const DashBoardScreen()));
               }),
           // Attendance Type Dropdown
-          Consumer<AttendanceProvider>(
+          Consumer<SalesOrderProvider>(
             builder: (context, attendanceProvider, child) {
+              if (_customersDropDown == null || _customersDropDown.isEmpty) {
+                _customersDropDown = [];
+                provider.customerList.forEach((element) =>
+                    _customersDropDown.add(DropDownModel(
+                        code: element.customerId,
+                        name: element.customerName
+                    )));
+              }
+
               return Container(
-                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                margin: const EdgeInsets.only(
+                  top: Dimensions.MARGIN_SIZE_SMALL,
+                  left: Dimensions.MARGIN_SIZE_DEFAULT,
+                  right: Dimensions.MARGIN_SIZE_DEFAULT,
+                ),
                 child: Column(
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start, // Aligns content to the start
                   children: [
+                    // Row for Label and Icon
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
-                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Customer Name', textStyle: titilliumRegular),
+                        Icon(
+                          Icons.person,
+                          color: ColorResources.getPrimary(context),
+                          size: 20,
+                        ),
+                        const SizedBox(
+                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(
+                          text: 'Customer',
+                          textStyle: titilliumRegular,
+                          mandatoryText: '*',
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(
+                        height: Dimensions
+                            .MARGIN_SIZE_SMALL), // Spacing between rows
+                    // Row for Dropdown Field
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomAutoComplete(
+                            dropdownItems: _customersDropDown,
+                            hint: 'Select Customer Name',
+                            value: _customerController != null
+                                ? _customerController!.text
+                                : '',
+                            icon: const Icon(Icons.search),
+                            height: 35,
+                            width: width,
+                            dropdownHeight: 300,
+                            dropdownWidth: width - 40,
+                            borderColor: _customerFieldError?Colors.red:Colors.transparent,
+                            onReturnTextController: (textController) =>
+                            _customerController = textController,
+                            onClearPressed: () {
+                              setState(() {
+                                _selectedCustomer = null;
+                                _custId = '';
+                              });
+                            },
+                            onChanged: (value) {
+                              FocusScope.of(context).requestFocus(FocusNode());
 
-                    //  _buildFormLabel('Customer Name *'),
-                    TextFormField(
-                      readOnly: true,
-                      decoration: _buildInputDecoration(
-                        _selectedCustomer?.customarName ?? 'Select customer',
-                        Icons.business_outlined,
-                        suffixIcon: Icon(Icons.arrow_drop_down),
-                      ),
-                      onTap: () => _showCustomerDialog(customers),
-                      validator: (value) {
-                        if (_selectedCustomer == null) {
-                          return 'Please select a customer';
-                        }
-                        return null;
-                      },
+                              for (Customer customer in provider.customerList) {
+                                if (customer.customerId == value.code) {
+                                  provider.salesOrder.customerId = customer.customerId;
+                                  provider.salesOrder.customerName = customer.customerName;
+                                  _selectedCustomer = customer;
+                                  _custId = _selectedCustomer?.customerId ?? '';
+                                  /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
+                                  break;
+                                }
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -342,7 +288,8 @@ class _SalesSummaryState extends State<SalesSummary> {
                     '2024-01-01',
                     '2024-01-30'*/
                     userInfoModel!.salesRepId!,
-                    _selectedCustomer!.customerId ?? '',
+                    //_selectedCustomer!.customerId ?? '',
+                    _selectedCustomer?.customerId ?? '',
                     _startDateController.text,
                     _endDateController.text
                 );

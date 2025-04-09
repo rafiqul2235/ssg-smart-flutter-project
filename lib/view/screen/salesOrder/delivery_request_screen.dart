@@ -108,6 +108,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   String _orgName = '';
   String _warehouseId = '';
   String _custId = '';
+  String _userId= '';
   String _custAccount = '';
   String _freightTerms = '';
   String _shipToSiteId = '';
@@ -145,6 +146,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+    _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
     //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context,);
 
   }
@@ -248,6 +250,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     itemDetail.itemName = _selectedItem?.name;
     itemDetail.itemId = _selectedItem?.id;
     itemDetail.itemUOM = _selectedItem?.code;
+    //itemDetail.itemUOM = _selectPendingSo?.nameBl;
     itemDetail.soNumber = _selectPendingSo?.code;
     itemDetail.quantity = _qtyController!=null && _qtyController!.text.isNotEmpty?int.parse(_qtyController!.text):0;
     itemDetail.remarks = _deliverySiteDetailController?.text;
@@ -330,6 +333,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     salesInfoModel.priceListId = _selectedCustomer?.priceListId;
     salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
+    salesInfoModel.userId = _userId;
     //salesInfoModel.orderType = _selectedCustomer?.orderType;
     //salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId; 5652
     salesInfoModel.freightTerms = _freightTerms;
@@ -418,7 +422,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                 _pendingSoDropDown = [];
                 //_selectPendingSo =null;
                 // print("pendingS ${provider.pendingSoList.length}");
-                provider.pendingSoList.forEach((element) =>_pendingSoDropDown.add(DropDownModel(code: element.orderNumber,name: element.mainPartyName! +" " +element.orderNumber!)));
+                provider.pendingSoList.forEach((element) =>_pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
               }
 
 
@@ -560,7 +564,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                   ? _customerController!.text
                                   : '',
                               icon: const Icon(Icons.search),
-                              height: 35,
+                              height: 45,
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
@@ -655,7 +659,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _cusPONoController,
                               hintText: 'Enter Vehicle Information ',
                               borderColor: Colors.black12,
@@ -708,7 +712,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                             ? _warehouseController!.text
                             : _warehouseId??'',
                         icon: const Icon(Icons.search),
-                        height: 35,
+                        height: 45,
                         width: width,
                         hint: _selectedCustomer?.warehouseName??"",
                         hintColor: Colors.black,
@@ -761,7 +765,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                               .MARGIN_SIZE_SMALL), // Space between label and dropdown
                       // Dropdown Field
                       CustomDropdownButton(
-                        buttonHeight: 35,
+                        buttonHeight: 45,
                         buttonWidth: double.infinity,
                         dropdownWidth: width - 40,
                         hint: _freightTerms,

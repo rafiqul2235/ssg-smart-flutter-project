@@ -77,6 +77,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   //SalesOrder? _salesOrder;
 
   String _orgName = '';
+  String _userId= '';
   String _warehouseId = '';
   String _custId = '';
   String _modes = '';
@@ -111,6 +112,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
     _orgNameController?.text = _orgName ?? '';
     //_depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
+    _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
   }
 
   void currentDateTime() {
@@ -143,7 +145,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
       return;
     }
 
-    if(_depositNoController == null || _depositNoController!.text.isEmpty){
+    /*if(_depositNoController == null || _depositNoController!.text.isEmpty){
       _showErrorDialog("Enter Deposit No");
       return;
     }
@@ -151,16 +153,16 @@ class _CollectionScreenState extends State<CollectionScreen> {
     if(_instrumentNoController == null || _instrumentNoController!.text.isEmpty){
       _showErrorDialog("Enter Instrument No");
       return;
-    }
+    }*/
 
     if(_amountController == null || _amountController!.text.isEmpty){
       _showErrorDialog("Enter Amount");
       return;
     }
-
+    var amountText = _amountController?.text ?? '';
     var isSubmit = await showAnimatedDialog(context, MyDialog(
       title: '',
-      description: 'Are you sure you want to submit your collection?',
+      description: 'Your Collection Amount $amountText\n Are you sure you want to submit your collection?',
       rotateAngle: 0,
       negativeButtonTxt: 'No',
       positionButtonTxt: 'Yes',
@@ -172,6 +174,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
     collection.customerId = _selectedCustomer?.customerId;
     collection.salesPersonId = _selectedCustomer?.salesPersonId;
     collection.orgId = _selectedCustomer?.orgId;
+    collection.userId=_userId;
     collection.bankAccountId = _selectedBankAccount?.code??'';
     collection.bankAccountName = _selectedBankAccount?.name??'' ;
     collection.receiptMethodId = _selectedBankAccount?.description??'' ;
@@ -205,10 +208,10 @@ class _CollectionScreenState extends State<CollectionScreen> {
 
       bool? action = await showAnimatedDialog(context, MyDialog(
         title: status?'Successfully submitted your collection':"Fail, Please try again",
-        description: '',
+        description: 'Are you want to Submit another Collection?',
         rotateAngle: 0,
-        negativeButtonTxt: 'Again Collection',
-        positionButtonTxt: 'Go To Home',
+        negativeButtonTxt: 'Yes',
+        positionButtonTxt: 'No',
       ), dismissible: false);
 
       if(action!){
@@ -365,7 +368,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                                   ? _customerController!.text
                                   : '',
                               icon: const Icon(Icons.search),
-                              height: 35,
+                              height: 45,
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
@@ -502,7 +505,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                               .MARGIN_SIZE_SMALL), // Space between label and dropdown
                       // Dropdown Field
                       CustomDropdownButton(
-                        buttonHeight: 35,
+                        buttonHeight: 45,
                         buttonWidth: double.infinity,
                         dropdownWidth: width - 40,
                         hint: _modes,
@@ -551,7 +554,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _depositNoController,
                               hintText: 'Enter Deposit Number',
                               borderColor: Colors.black12,
@@ -595,7 +598,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _instrumentNoController,
                               hintText: 'Enter Instrument Number',
                               borderColor: Colors.black12,
@@ -683,7 +686,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _remarksController,
                               hintText: 'Enter Remarks',
                               borderColor: Colors.black12,
@@ -726,7 +729,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 35,
+                              height: 45,
                               controller: _amountController,
                               hintText: 'Enter Amount',
                               borderColor: Colors.black12,

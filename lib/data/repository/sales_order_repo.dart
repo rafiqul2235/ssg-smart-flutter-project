@@ -3,6 +3,8 @@ import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/datasource/remote/exception/api_error_handler.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
+import 'package:ssg_smart2/view/screen/msd_report/balance_confirmation_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/cust_target_vsAchiv_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
@@ -153,6 +155,23 @@ class SalesOrderRepo {
     }
   }
 
+
+  Future<ApiResponse> getTripNumberSrRep(String salesPersonId, String org_id) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['salesrep_id'] = salesPersonId;
+    data['org_id'] = org_id;
+    try {
+      Response response = await dioClient.postWithFormData(
+        AppConstants.SP_TRIP_NUMBER,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('tripNum ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> salesOrderSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(
@@ -255,6 +274,65 @@ class SalesOrderRepo {
             responseData['pending_so'] != null) {
           return (responseData['pending_so'] as List)
               .map((json) => ItemWisePendingModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<CustTargetVsAchivModel>> fetchCustTargetVsAchivRep(String orgId,String period, String custAc) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.CUST_TARGET_VS_ACHIV_DATA,
+        data: {
+          'org_id': orgId,
+          'period': period,
+          'cus_no': custAc,
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['cust_target'] != null) {
+          return (responseData['cust_target'] as List)
+              .map((json) => CustTargetVsAchivModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<BalanceConfirmationModel>> fetchBalanceConfirmationRep(String salesrepId,String custId,fromMonth,toMonth) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.BALANCE_CONFIRMATION_DATA,
+        data: {
+          'emp_id': salesrepId,
+          'customer_id': custId,
+          'fromDate': fromMonth,
+          'toDate': toMonth
+        },
+      );
+      print("balance confirmation response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['cust_balance_con'] != null) {
+          return (responseData['cust_balance_con'] as List)
+              .map((json) => BalanceConfirmationModel.fromJson(json))
               .toList();
         } else {
           throw Exception('Failed to load data');

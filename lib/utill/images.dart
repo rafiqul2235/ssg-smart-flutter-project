@@ -80,6 +80,16 @@ class Images {
   static const String google = 'assets/images/google.png';
   static const String term_condition = 'assets/images/terms-and-conditions.png';
 
+  static const String notification_sales = 'assets/images/notification_sales.png';
+  static const String sales_sammary = 'assets/images/sales_summary_48.png';
+  static const String item_pending = 'assets/images/pending_100.png';
+  static const String delivery_info = 'assets/images/delivery_48.png';
+  static const String cust_target_achivement = 'assets/images/cust_target_achivement.png';
+  static const String sales_module = 'assets/images/icons8-sales-64.png';
+  static const String collection_module = 'assets/images/collection_module_64.png';
+  static const String delivery_module = 'assets/images/delivery_module_64.png';
+  static const String report_module = 'assets/images/msd_report_icon.png';
+
   static const String attendance = 'assets/images/icon_attendance.png';
   static const String leave = 'assets/images/icon_leave.png';
   static const String pay_slip = 'assets/images/icon_payslip.png';

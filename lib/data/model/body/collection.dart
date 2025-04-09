@@ -3,6 +3,7 @@ class Collection {
   String? customerId;
   String? salesPersonId;
   String? orgId;
+  String? userId;
   String? bankAccountId;
   String? bankAccountName;
   String? receiptMethodId;
@@ -20,6 +21,7 @@ class Collection {
   Collection({ this.customerId = '',
       this.salesPersonId = '',
       this.orgId = '',
+      this.userId = '',
       this.bankAccountId = '',
       this.bankAccountName = '',
       this.receiptMethodId = '',
@@ -43,6 +45,7 @@ class Collection {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['customer_id'] = customerId;
     data['org_id'] = orgId;
+    data['user_id'] = userId;
     data['salesrep_id'] = salesPersonId;
     data['bank_account_id'] = bankAccountId;
     data['bank_account_name'] = bankAccountName;

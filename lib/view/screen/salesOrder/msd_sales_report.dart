@@ -5,6 +5,8 @@ import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
+import 'package:ssg_smart2/view/screen/msd_report/cust_balance_confirmation.dart';
+import 'package:ssg_smart2/view/screen/msd_report/cust_target_vs_achiv.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
@@ -51,13 +53,13 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     _menuList = [];
     //_menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Notification', navigateTo: MsdNotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Notification', navigateTo: SalesNotifications(),));
+    _menuList.add(TopMenuItem(image: Images.notification_sales, menuName: 'Notification', navigateTo: SalesNotifications(),));
     //MsdNotificationScreen
-    _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Sales Summary', navigateTo: SalesSummary(),));
-    _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: PayslipScreen(),));
-    _menuList.add(TopMenuItem(image: Images.wppf_ledger1, menuName: 'Target vs Achievement', navigateTo: WppfLedgerScreen()));
-    _menuList.add(TopMenuItem(image: Images.pf_loan, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
-    _menuList.add(TopMenuItem(image: Images.pf_ledger, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
+    _menuList.add(TopMenuItem(image: Images.sales_sammary, menuName: 'Sales Summary', navigateTo: SalesSummary(),));
+    _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: CustBalanceConfirmation(),));
+    _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
+    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
+    _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
 
   }
 
