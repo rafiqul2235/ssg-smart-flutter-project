@@ -131,6 +131,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   void _intData() async {
     currentDateTime();
+    Provider.of<SalesOrderProvider>(context, listen: false).clearData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
@@ -216,7 +217,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
-    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
+    if(_shipToLocationDropDown == null){
       _showErrorDialog("Select Ship to Location");
       return;
     }
@@ -230,6 +231,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showMessage('Select Vehicle Type',true);
       return;
     }
+
 
 
     FocusScope.of(context).requestFocus(FocusNode());
@@ -258,10 +260,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
     Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
 
+    //Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
     /* Clear Data */
     _selectedItem = null;
     _shipToLocation='';
     _qtyController?.text = '';
+    itemPriceInt=0;
+    totalPriceInt=0;
     _deliverySiteDetailController?.text = '';
     _vehicleType = '';
     _selectedVehicleType = null;
@@ -293,7 +298,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
-    if(_selectedItem == null){
+    /* if(_selectedItem == null){
       _showErrorDialog("Select Item");
       return;
     }
@@ -311,7 +316,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     if(_selectedVehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
-    }
+    }*/
 
 
     var isSubmit = await showAnimatedDialog(context, MyDialog(
@@ -345,27 +350,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.warehouseId = _warehouseId;
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
 
-    //salesInfoModel.customerPoNumber = _CusPONoController?.text;
-
-    //ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
-
-
-  /*  ItemDetail? itemDetail = Provider.of<SalesOrderProvider>(context, listen: false).itemDetails;
->>>>>>> fc73904366df7d8350f744fcf011091661ceabd9
-    itemDetail.salesPersonId = _shipLocationInfo?.salesPersonId;
-    itemDetail.customerId = _shipLocationInfo?.customerId;
-    itemDetail.orgId = _shipLocationInfo?.orgId;
-    itemDetail.primaryShipTo = _shipLocationInfo?.primaryShipTo;
-    itemDetail.shipToSiteId = _shipLocationInfo?.shipToSiteId;
-    itemDetail.customerName = _shipLocationInfo?.customerName;
-    itemDetail.shipToLocation = _shipLocationInfo?.shipToLocation;
-    itemDetail.itemName = _selectedItem?.name;
-    itemDetail.itemName = _selectedItem?.id.toString();
-    //itemDetail.itemName = _selectedItem?.uom;
-    itemDetail.quantity = _qtyController.toString();
-    itemDetail.remarks = _deliverySiteDetailController?.text;
-    itemDetail.vehicleType = _selectedVehicleType?.name;
-    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();*/
 
     salesInfoModel.customerPoNumber = _cusPONoController?.text;
 
@@ -616,6 +600,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                 if(_shipToSiteController!=null) {
                                   //_shipToSiteController!.text = '';
                                 }
+
+                                Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
 
                                 for (Customer customer in provider.customerList) {
                                   if (customer.customerId == value.code) {

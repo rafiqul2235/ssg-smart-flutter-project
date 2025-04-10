@@ -126,6 +126,38 @@ class SalesOrderProvider with ChangeNotifier {
   ItemDetail get itemDetails => _itemDetails ?? ItemDetail();
  */
 
+  Future<void> clearData() async{
+    _salesOrder = SalesOrder();
+    _customerList = [];
+    // _pendingSoList = [];
+    _orderTypeList = [];
+    _warehouseList = [];
+    _vehicleTypeList = [];
+    _freightTermsList = [];
+    _itemList = [];
+    _customerShipToLocationList = [];
+  }
+
+  Future<void> clearDeliveryRData() async{
+    _salesOrder = SalesOrder();
+    _customerList = [];
+    _pendingSoList = [];
+    _orderTypeList = [];
+    _warehouseList = [];
+    _vehicleTypeList = [];
+    _freightTermsList = [];
+    _itemList = [];
+    _customerShipToLocationList = [];
+  }
+
+  Future<void> clearShipToLocationData() async{
+    _customerShipToLocationList = [];
+  }
+
+  Future<void> clearPendingSOData() async{
+    _pendingSoList = [];
+  }
+
   Future<void> clearSalesOrderItem() async{
     _salesOrder ??= SalesOrder();
     _salesOrder?.orderItemDetail?.clear();
@@ -188,9 +220,6 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<MsdReportModel> _msdsalesReport = [];
   List<MsdReportModel> get msdsalesReport => _msdsalesReport;
-
-
-
 
 
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {

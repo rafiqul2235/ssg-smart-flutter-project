@@ -141,6 +141,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
   void _intData() async {
     currentDateTime();
+    Provider.of<SalesOrderProvider>(context, listen: false).clearDeliveryRData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
@@ -361,6 +362,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         _freightTerms = '';
         _selectedWareHouse = null;
         _selectedFreightTerms = null;
+        _selectPendingSo=null;
         //_selectedShipToLocation = null;
         itemPriceInt=0;
         totalPriceInt=0;
@@ -584,6 +586,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                   _freightTerms = '';
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
+                                  _selectPendingSo=null;
                                   //_selectedShipToLocation = null;
                                   itemPriceInt=0;
                                   totalPriceInt=0;
@@ -598,6 +601,13 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                 if(_shipToSiteController!=null) {
                                   _shipToSiteController!.text = '';
                                 }
+
+                                if(_selectPendingSo!=null) {
+                                  _selectPendingSo= null;
+                                }
+
+                                Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
+                                Provider.of<SalesOrderProvider>(context, listen: false).clearPendingSOData();
 
                                 for (Customer customer in provider.customerList) {
                                   if (customer.customerId == value.code) {
@@ -913,24 +923,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
                     ),
                     SizedBox(width: 16),
-                    /*Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Balance',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          //_onClickCustBal();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-
-                    ),*/
                   ],
                 )
               : Center(
@@ -1323,8 +1315,14 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                   //_selectCompanyError = false;
                   _selectPendingSo = item;
                   _pendingS = item?.name??'';
+
+                  /*if (_selectPendingSo!=null){
+                    _selectPendingSo=null;
+                  }*/
                 });
+
               },
+
             ),
           )),
           DataCell(Padding(
