@@ -29,6 +29,8 @@ import '../../basewidget/button/custom_button_with_icon.dart';
 import '../../basewidget/custom_auto_complete.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_loading.dart';
+import '../../basewidget/dialog/add_sales_order_item_dialog.dart';
+import '../../basewidget/guest_dialog.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
@@ -209,32 +211,40 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   }
 
+
   Future<void>  _onClickAddButton() async {
-   // print('On Click Add Button');
 
-    if(_itemId == null || _itemId <= 0){
-      _showErrorDialog("Select Item");
+    _customerFieldError = false;
+    _warehouseFieldError = false;
+    _freightTermsFieldError = false;
+    _orderDateFieldError = false;
+
+    if (_selectedCustomer == null) {
+      _customerFieldError = true;
+      _showMessage('Select Customer!',true);
       return;
     }
 
-    if(_shipToLocationDropDown == null){
-      _showErrorDialog("Select Ship to Location");
-      return;
-    }
-    if(_qtyController == null || _qtyController!.text.isEmpty){
-      _showErrorDialog("Enter SO qty");
+    if (_warehouseId == null || _warehouseId.isEmpty ) {
+      _warehouseFieldError = true;
+      _showMessage('Select Warehouse',true);
       return;
     }
 
-
-    if(_selectedVehicleType == null){
-      _showMessage('Select Vehicle Type',true);
+    if(_freightTerms == null || _freightTerms.isEmpty){
+      _showErrorDialog("Select Freight Terms");
       return;
     }
-
-
 
     FocusScope.of(context).requestFocus(FocusNode());
+
+    showAnimatedDialog(
+      context,
+      //GuestDialog(),
+      AddSalesOrderItemDialog(),
+      dismissible: false,
+    );
+  /*
 
     ItemDetail? itemDetail = ItemDetail();
     itemDetail.salesPersonId = _salesPersonId;
@@ -261,7 +271,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
 
     //Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
-    /* Clear Data */
+    *//* Clear Data *//*
     _selectedItem = null;
     _shipToLocation='';
     _qtyController?.text = '';
@@ -271,7 +281,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _vehicleType = '';
     _selectedVehicleType = null;
     _vehicleCate = '';
-    _selectedVehicleCat = null;
+    _selectedVehicleCat = null;*/
   }
 
   Future<void> _onClickSubmit() async {
@@ -367,8 +377,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         _selectedCustomer = null;
         _warehouseId = '';
         _custId = '';
+        Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = '';
         _custAccount = '';
         _freightTerms = '';
+        Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = '';
         _selectedWareHouse = null;
         _selectedFreightTerms = null;
         //_selectedShipToLocation = null;
@@ -580,10 +592,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                     _shipToSiteController!.text = '';
                                   }
                                   _selectedCustomer = null;
+                                  Provider.of<SalesOrderProvider>(context, listen: false).selectedCustomer = null;
                                   _warehouseId = '';
                                   _custId = '';
+                                  Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = '';
                                   _custAccount = '';
                                   _freightTerms = '';
+                                  Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = '';
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
                                   //_selectedShipToLocation = null;
@@ -605,7 +620,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
                                 for (Customer customer in provider.customerList) {
                                   if (customer.customerId == value.code) {
-
                                     provider.salesOrder.customerId = customer.customerId;
                                     provider.salesOrder.customerName = customer.customerName;
                                     provider.salesOrder.warehouseId = customer.warehouseId;
@@ -615,10 +629,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
                                     _selectedCustomer = customer;
                                     _custId = _selectedCustomer?.customerId ?? '';
+                                    Provider.of<SalesOrderProvider>(context, listen: false).selectedCustomer = customer;
+                                    Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = _selectedCustomer?.customerId ?? '';
                                     _custAccount = _selectedCustomer?.accountNumber ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
+                                    Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = _selectedCustomer?.freightTerms ?? '';
                                     _selectedWareHouse = null;
                                     break;
                                   }
@@ -779,6 +796,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         onChanged: (value) {
                           setState(() {
                             _freightTerms = value?.code??'0';
+                            Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = value?.code??'0';
                             _selectedFreightTerms = value;
                           });
                         },
@@ -793,6 +811,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                     top: Dimensions.MARGIN_SIZE_SMALL,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
                     right: Dimensions.MARGIN_SIZE_DEFAULT,
+                    bottom: Dimensions.MARGIN_SIZE_DEFAULT,
                   ),
                   child: Column(
                     crossAxisAlignment:
@@ -832,13 +851,37 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                   ),
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
-                  child: Center(
-                      child: Text('- Order Details - ',
-                          style: titilliumBold.copyWith(
-                              color: Colors.purple, fontSize: 18))),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
+                        child: Text('Order Items List ',
+                            style: titilliumBold.copyWith(
+                                color: Colors.purple, fontSize: 18)),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          'Add Item',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          _onClickAddButton();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
 
                 // for order / item details
@@ -857,9 +900,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         showCheckboxColumn: false,
                         columns: _tableHeader(),
                         rows: [
-                          if (!isViewOnly) ...[
+                         /* if (!isViewOnly) ...[
                             _inputDataRow(),
-                          ],
+                          ],*/
                           if (provider.salesOrder != null &&
                               provider.salesOrder.orderItemDetail != null) ...[
                             for (var item in provider.salesOrder.orderItemDetail!)
@@ -1130,6 +1173,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
+
     TextEditingController qtyController = TextEditingController();
     TextEditingController deliverySiteDetailController = TextEditingController();
     /*TextEditingController unitPriceController = TextEditingController();TextEditingController _unitPriceController = TextEditingController();
@@ -1251,6 +1295,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
   /* Input Data Row */
   DataRow _inputDataRow() {
+
     return DataRow(
         color: WidgetStateColor.resolveWith(
             (states) => Colors.blueAccent.withOpacity(0.3)),
