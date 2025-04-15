@@ -281,7 +281,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     : const SizedBox.shrink(),
 
                 // for Org Name
-                Container(
+               /* Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: Dimensions.MARGIN_SIZE_DEFAULT,
                   ),
@@ -323,7 +323,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
 
                 // for Customer
                 Container(

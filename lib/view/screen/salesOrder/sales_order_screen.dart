@@ -1127,7 +1127,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
     ];
   }
-
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
     TextEditingController qtyController = TextEditingController();
@@ -1142,7 +1141,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
  /*   unitPriceController.text = '${itemDetails.unitPrice}';
     totalPriceController.text = '${itemDetails.totalPrice}';
     remakes.text = '${itemDetails.remarks}';*/
-
     return DataRow(cells: [
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),

@@ -55,10 +55,17 @@ class CustomAutoComplete extends StatelessWidget {
       child: Autocomplete<DropDownModel>(
         optionsBuilder: (TextEditingValue textEditingValue) {
           return dropdownItems
+              .where((DropDownModel continent) =>
+              continent.name!.toLowerCase().contains(textEditingValue.text.toLowerCase()))
+              .toList();
+        },
+
+        /*optionsBuilder: (TextEditingValue textEditingValue) {
+          return dropdownItems
               .where((DropDownModel continent) => continent.name!.toLowerCase()
               .startsWith(textEditingValue.text.toLowerCase())
           ).toList();
-        },
+        },*/
         displayStringForOption: (DropDownModel option) => option.name!,
 
         fieldViewBuilder: (
