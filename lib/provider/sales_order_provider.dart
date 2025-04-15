@@ -118,6 +118,45 @@ class SalesOrderProvider with ChangeNotifier {
   List<BalanceConfirmationModel> _balanceConf = [];
   List<BalanceConfirmationModel> get balanceConf => _balanceConf;
 
+  List<DropDownModel> _shipToLocationDropDown = [];
+  List<DropDownModel> get shipToLocationDropDown => _shipToLocationDropDown;
+
+  List<DropDownModel> _vehicleTypesDropDown = [];
+  List<DropDownModel> get vehicleTypesDropDown => _vehicleTypesDropDown;
+  List<DropDownModel> _itemsDropDown = [];
+  List<DropDownModel> get itemsDropDown => _itemsDropDown;
+
+  Customer? _selectedCustomer;
+  String _selectedCustId = '';
+  String _selectedFreightTerms = '';
+  String _selectedSiteId = '';
+  String _selectedItemId = '';
+
+  Customer? get selectedCustomer => _selectedCustomer;
+  set selectedCustomer(Customer? value) {
+    _selectedCustomer = value;
+  }
+
+  String get selectedCustId => _selectedCustId;
+  set selectedCustId(String value) {
+    _selectedCustId = value;
+  }
+
+  String get selectedFreightTerms => _selectedFreightTerms;
+  set selectedFreightTerms(String value) {
+    _selectedFreightTerms = value;
+  }
+
+  String get selectedSiteId => _selectedSiteId;
+  set selectedSiteId(String value) {
+    _selectedSiteId = value;
+  }
+
+  String get selectedItemId => _selectedItemId;
+  set selectedItemId(String value) {
+    _selectedItemId = value;
+  }
+
   /*DlvRequestItemDetail? _dlvRequestOrder;
   DlvRequestItemDetail get dlvRequestOrder => _dlvRequestOrder ?? DlvRequestItemDetail();*/
 
@@ -199,9 +238,8 @@ class SalesOrderProvider with ChangeNotifier {
     }else{
       print(' not null ');
     }
-
     print('addSalesOrderItem ${_salesOrder?.orderItemDetail?.length}');
-    //notifyListeners();
+    notifyListeners();
   }
 
   /*Future<void> addDeliveryReqItem(DlvRequestItemDetail item) async {
@@ -268,6 +306,20 @@ class SalesOrderProvider with ChangeNotifier {
           apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
         }
         //print('Item data Count ${_itemList.length}');
+
+        _vehicleTypesDropDown = [];
+        if(_vehicleTypeList !=null && _vehicleTypeList.isNotEmpty) {
+          _vehicleTypeList.forEach((element) =>
+              _vehicleTypesDropDown.add(DropDownModel(
+                  code: element.typeId, name: element.typeName)));
+        }
+
+        _itemsDropDown = [];
+        if(_itemList !=null && _itemList.isNotEmpty) {
+          _itemList.forEach((element) => _itemsDropDown.add(
+              DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
+        }
+
         notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
@@ -290,7 +342,9 @@ class SalesOrderProvider with ChangeNotifier {
       String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
-      print('orgId $orgId, salesPersonId $salesPersonId customerId $customerId');
+      //print('orgId $orgId, salesPersonId $salesPersonId customerId $customerId');
+
+      _shipToLocationDropDown = [];
 
       ApiResponse apiResponse = await salesOrderRepo.getCustomerShipToLocation(orgId,salesPersonId,customerId);
 
@@ -300,7 +354,16 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['orders'] != null){
           apiResponse.response?.data['orders'].forEach((element) => _customerShipToLocationList.add(CustomerShipLocation.fromJson(element)));
         }
-        print('CustomerShipToLocationList ${_customerShipToLocationList.length}');
+        //print('CustomerShipToLocationList ${_customerShipToLocationList.length}');
+
+        _customerShipToLocationList.forEach((element) =>
+            _shipToLocationDropDown.add(DropDownModel(
+                code: element.shipToSiteId,
+                name: element.shipToLocation,
+                nameBl: element.primaryShipTo,
+                description: element.salesPersonId
+            )));
+
         notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
@@ -384,7 +447,14 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['items'] != null){
           apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
         }
-        print('_itemlist ${_itemList.length}');
+        //print('_itemlist ${_itemList.length}');
+
+        _itemsDropDown = [];
+        if(_itemList !=null && _itemList.isNotEmpty) {
+          _itemList.forEach((element) => _itemsDropDown.add(
+              DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
+        }
+
         notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
@@ -744,5 +814,7 @@ class SalesOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setSalesOrderItemInformation(String text, String text2, String text3, String text4, String text5, String text6) {}
 
-  }
+
+}
