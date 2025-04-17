@@ -341,6 +341,12 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }*/
 
+    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+    if(salesInfoModel == null || salesInfoModel.orderItemDetail == null || salesInfoModel.orderItemDetail!.length <= 0){
+      _showErrorDialog("Please add item");
+      return;
+    }
+
 
     var isSubmit = await showAnimatedDialog(context, MyDialog(
       title: '',
@@ -352,7 +358,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
     if(!isSubmit!) return;
 
-    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+
     salesInfoModel.customerId = _selectedCustomer?.customerId;
     salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
@@ -372,12 +378,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     salesInfoModel.orderDate = formattedDate;
     salesInfoModel.warehouseId = _warehouseId;
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
-
-
     salesInfoModel.customerPoNumber = _cusPONoController?.text;
 
-
-    developer.log(salesInfoModel.toJson().toString());
+   // developer.log(salesInfoModel.toJson().toString());
 
     await Provider.of<SalesOrderProvider>(context, listen: false).salesOrderSubmit(context, salesInfoModel).then((status) async {
 

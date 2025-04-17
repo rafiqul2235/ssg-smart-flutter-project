@@ -22,6 +22,8 @@
   "RESET_SUCCESS": "Your password successfully reset.",
   "SENT_OTP_TO_MAIL": "Sent your OTP below email, Check your email.",
 
+  "ADD_ITEM": "আইটেম যোগ করুন",
+
   "OR": "--- Or ---",
   "CONTINUE_AS_GUEST": "Continue as Guest",
   "FIRST_NAME": "First name",

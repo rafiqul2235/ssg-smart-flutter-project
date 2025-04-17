@@ -123,6 +123,8 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
   _onClickOkButton(){
 
+    FocusScope.of(context).requestFocus(FocusNode());
+
     int error = 0;
     String message = '';
     _isItemNameFieldError = false;
@@ -153,6 +155,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
     if(error == 0){
       ItemDetail? itemDetail = ItemDetail();
+      itemDetail.soNumber = _soNumber;
       itemDetail.salesPersonId = _salesPersonId;
       itemDetail.customerId = Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId;
       itemDetail.orgId = Provider.of<SalesOrderProvider>(context, listen: false).selectedCustomer?.orgId??'';
@@ -165,8 +168,8 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       itemDetail.itemId = _selectedItem?.id;
       itemDetail.itemUOM = _selectedItem?.code;
       itemDetail.quantity = _quantityController!=null && _quantityController!.text.isNotEmpty?int.parse(_quantityController!.text):0;
-      itemDetail.unitPrice = int.parse(_unitPriceController.text);
-      itemDetail.totalPrice = double.parse(_totalPriceController.text);
+      //itemDetail.unitPrice = int.parse(_unitPriceController.text);
+     // itemDetail.totalPrice = double.parse(_totalPriceController.text);
       //itemDetail.remarks = _deliverySiteDetailController?.text;
       itemDetail.primaryShipTo = _shipToSiteId;
       itemDetail.vehicleType = _vehicleType;
@@ -284,7 +287,8 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                               onChanged: (item) {
                                 setState(() {
                                   _selectedPendingSO = item;
-                                  _soNumber = item?.name??'';
+                                  _soNumber = item?.code??'';
+
                                   Provider.of<SalesOrderProvider>(context, listen: false).selectedSoNumber = '$_soNumber';
 
                                   //_getItemPrice();
@@ -586,7 +590,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                 onPressed: () {
                   _onClickOkButton();
                 },
-                child: Text(getTranslated('ok', context), style: robotoRegular.copyWith(color: ColorResources.getGreen(context))),
+                child: Text(getTranslated('ADD_ITEM', context), style: robotoRegular.copyWith(color: ColorResources.getGreen(context))),
               )),
             ]),
 

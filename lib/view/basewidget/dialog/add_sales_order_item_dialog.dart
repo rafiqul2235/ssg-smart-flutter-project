@@ -115,6 +115,8 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
 
   _onClickOkButton(){
 
+    FocusScope.of(context).requestFocus(FocusNode());
+
     int error = 0;
     String message = '';
     _isItemNameFieldError = false;
@@ -543,7 +545,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
                 onPressed: () {
                   _onClickOkButton();
                 },
-                child: Text(getTranslated('ok', context), style: robotoRegular.copyWith(color: ColorResources.getGreen(context))),
+                child: Text(getTranslated('ADD_ITEM', context), style: robotoRegular.copyWith(color: ColorResources.getGreen(context))),
               )),
             ]),
 

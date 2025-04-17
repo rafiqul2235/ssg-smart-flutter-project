@@ -21,6 +21,7 @@
   "RESET": "Reset",
   "RESET_SUCCESS": "Your password successfully reset.",
   "SENT_OTP_TO_MAIL": "Sent your OTP below email, Check your email.",
+  "ADD_ITEM": "Add Item",
 
   "OR": "--- Or ---",
   "CONTINUE_AS_GUEST": "Continue as Guest",

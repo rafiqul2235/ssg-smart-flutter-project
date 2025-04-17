@@ -282,7 +282,7 @@ class SalesOrderProvider with ChangeNotifier {
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
         _customerList = [];
-       // _pendingSoList = [];
+        //_pendingSoList = [];
         _orderTypeList = [];
         _warehouseList = [];
         _vehicleTypeList = [];
@@ -291,7 +291,7 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['customers'] != null){
           apiResponse.response?.data['customers'].forEach((element) => _customerList?.add(Customer.fromJson(element)));
         }
-        /*if(apiResponse.response?.data['pending_so'] != null){
+       /* if(apiResponse.response?.data['pending_so'] != null){
           apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
         }*/
         if(apiResponse.response?.data['order_types'] != null){
@@ -330,18 +330,16 @@ class SalesOrderProvider with ChangeNotifier {
               DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
         }
 
-        _pendingSoDropDown =[];
-        if(_pendingSoList !=null && _itemList.isNotEmpty) {
+        /*_pendingSoDropDown =[];
+        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
           _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
         }
-
-
-
+        */
         notifyListeners();
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
-      print("Frieight term: $freightTermsList");
+      print("Frieight term: ${_pendingSoList?.length}");
     }catch(e){
       print("error: $e");
      // hideLoading();
@@ -438,6 +436,11 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['pending_so'] != null){
           apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
         }
+        _pendingSoDropDown =[];
+        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
+        }
+
         print('pendingSoLeanth ${_pendingSoList?.length}');
         notifyListeners();
       }else{
