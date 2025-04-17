@@ -123,6 +123,10 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<DropDownModel> _vehicleTypesDropDown = [];
   List<DropDownModel> get vehicleTypesDropDown => _vehicleTypesDropDown;
+
+  List<DropDownModel> _pendingSoDropDown = [];
+  List<DropDownModel> get pendingSoDropDown => _pendingSoDropDown;
+
   List<DropDownModel> _itemsDropDown = [];
   List<DropDownModel> get itemsDropDown => _itemsDropDown;
 
@@ -131,6 +135,7 @@ class SalesOrderProvider with ChangeNotifier {
   String _selectedFreightTerms = '';
   String _selectedSiteId = '';
   String _selectedItemId = '';
+  String _selectedSoNumber = '';
 
   Customer? get selectedCustomer => _selectedCustomer;
   set selectedCustomer(Customer? value) {
@@ -155,6 +160,11 @@ class SalesOrderProvider with ChangeNotifier {
   String get selectedItemId => _selectedItemId;
   set selectedItemId(String value) {
     _selectedItemId = value;
+  }
+
+  String get selectedSoNumber => _selectedSoNumber;
+  set selectedSoNumber(String value) {
+    _selectedSoNumber = value;
   }
 
   /*DlvRequestItemDetail? _dlvRequestOrder;
@@ -319,6 +329,13 @@ class SalesOrderProvider with ChangeNotifier {
           _itemList.forEach((element) => _itemsDropDown.add(
               DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
         }
+
+        _pendingSoDropDown =[];
+        if(_pendingSoList !=null && _itemList.isNotEmpty) {
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
+        }
+
+
 
         notifyListeners();
       }else{

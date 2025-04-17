@@ -8,7 +8,9 @@ class AppConstants {
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
   static const String BASE_URL = 'http://192.168.7.98/'; //test
   // static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+  //static const String BASE_URL = 'http://10.0.2.2/';
 
+  //static const String BASE_URL = 'http://172.29.10.231/'; // local host
   static const int APP_VERSION_CODE = 8;
   static const String APP_VERSION_NAME = '1.0.6';
   static const double GEO_FENCING_DISTANCE = 100; // in meter

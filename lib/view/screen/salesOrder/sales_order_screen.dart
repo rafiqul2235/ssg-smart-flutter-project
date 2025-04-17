@@ -92,6 +92,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
 
   bool isViewOnly = false;
+  bool addItem = true;
 
   bool _customerFieldError = false;
   bool _warehouseFieldError = false;
@@ -99,6 +100,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   bool _orderDateFieldError = false;
 
   //SalesOrder? _salesOrder;
+
 
   String _orgName = '';
   String _userId= '';
@@ -308,6 +310,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
 
+
+    /*ItemDetail? itemDetail = ItemDetail();
+    Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
+
+    if (itemDetail== null) {
+      _showErrorDialog("Please add at least one order item.");
+      return;
+    }*/
+
+
+
     /* if(_selectedItem == null){
       _showErrorDialog("Select Item");
       return;
@@ -501,7 +514,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.home_outlined,
+                            Icons.business,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -709,7 +722,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.person,
+                            Icons.warehouse,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -767,7 +780,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.person,
+                            Icons.vaccines,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -806,7 +819,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                   ),
                 ),
 
-                Container(
+               /* Container(
                   margin: const EdgeInsets.only(
                     top: Dimensions.MARGIN_SIZE_SMALL,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -849,12 +862,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
+                const SizedBox(
+                    height: Dimensions
+                        .MARGIN_SIZE_SMALL),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
+                    /*Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
@@ -862,16 +878,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             style: titilliumBold.copyWith(
                                 color: Colors.purple, fontSize: 18)),
                       ),
-                    ),
+                    ),*/
                     Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
+                      padding: const EdgeInsets.only(left: 150.0),
                       child: ElevatedButton(
                         child: Text(
-                          'Add Item',
-                          style: TextStyle(color: Colors.white),
+                          addItem?'Add Item':'Add More',
+                          style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                         ),
                         onPressed: () async {
                           _onClickAddButton();
+                          addItem=false;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -881,6 +898,21 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         ),
                       ),
                     )
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
+                        child: Text('-Order Details- ',
+                            style: titilliumBold.copyWith(
+                                color: Colors.purple, fontSize: 18)),
+                      ),
+                    ),
                   ],
                 ),
 
@@ -1011,6 +1043,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         ),
         dismissible: false);
   }
+
+
 
   /*  Table Header */
   List<DataColumn> _tableHeader() {
@@ -1291,6 +1325,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     ]);
   }
 
+
+
   /* Input Data Row */
   DataRow _inputDataRow() {
 
@@ -1337,10 +1373,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                 setState(() {
                   //_selectCompanyError = false;
                   //_selectedShipToLocation = value;
-                  _shipToSiteId = value?.code??'';
-                  _shipToLocation = value?.name??'';
-                  _primaryShipTo = value?.nameBl??'';
-                  _salesPersonId = value?.description??'';
+                  _shipToSiteId = value.code??'';
+                  _shipToLocation = value.name??'';
+                  _primaryShipTo = value.nameBl??'';
+                  _salesPersonId = value.description??'';
                 });
               },
             ),

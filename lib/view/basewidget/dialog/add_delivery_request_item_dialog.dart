@@ -13,18 +13,18 @@ import '../custom_dropdown_button.dart';
 import '../mandatory_text.dart';
 import '../textfield/custom_textfield.dart';
 
-class AddSalesOrderItemDialog extends StatefulWidget {
+class AddDeliveryRequestItemDialog extends StatefulWidget {
 
   final String positiveButtonText;
   final String headerText;
 
-  AddSalesOrderItemDialog({this.positiveButtonText='',this.headerText='Add Item for Sales Order'});
+  AddDeliveryRequestItemDialog({this.positiveButtonText='',this.headerText='Add Item for Delivery Request'});
 
   @override
-  State<AddSalesOrderItemDialog> createState() => _AddSalesOrderItemDialogState();
+  State<AddDeliveryRequestItemDialog> createState() => _AddDeliveryRequestItemDialogState();
 }
 
-class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
+class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDialog> {
 
   bool _isItemNameFieldError = false,_isShipToLocationFieldError = false,
       _isQtyFieldError = false,_isVehicleTypeFieldError = false,_isVehicleCategoryFieldError = false;
@@ -47,6 +47,13 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
   bool _customerFieldError = false;
   DropDownModel? _selectedVehicleType;
 
+  List<DropDownModel> _pendingSODropDown=[];
+  DropDownModel? _selectedPendingSO;
+
+
+
+
+
   List<DropDownModel> _vehicleCatDropDown = [];
   DropDownModel? _selectedVehicleCat;
 
@@ -57,6 +64,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
   String _vehicleType ='';
   String _vehicleCate ='';
   int _itemId = 0;
+  String  _soNumber='';
   int _selectedItemUnitPrice = 0;
 
   @override
@@ -138,10 +146,6 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
     }else if(_vehicleType.isEmpty){
       _isVehicleTypeFieldError = true;
       message = 'Select Vehicle Type';
-      error++;
-    }else if(_vehicleCate.isEmpty){
-      _isVehicleCategoryFieldError = true;
-      message = 'Select Vehicle Category';
       error++;
     }
 
@@ -247,12 +251,51 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
 
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left:16.0,right: 16.0,top:5.0, bottom: 5.0),
+                padding: const EdgeInsets.only(left:10.0,right: 16.0,top:5.0, bottom: 5.0),
                 child: ListView(
                   padding: EdgeInsets.all(0.0),
                   shrinkWrap: true,
                   children: [
                     // for name
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.person, color: ColorResources.getPrimary(context), size: 20),
+                              //const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                              MandatoryText(text:'SO Number', textStyle: titilliumRegular,mandatoryText: '*',),
+                            ],
+                          ),
+                          //const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+                            child: CustomDropdownButton(
+                              buttonHeight: 45,
+                              buttonWidth: double.infinity,
+                              dropdownWidth: 250,
+                              hint: 'Select SO Number',
+                              hintColor: Colors.black87,
+                              dropdownItems: Provider.of<SalesOrderProvider>(context,listen: true).pendingSoDropDown,
+                              value: _selectedPendingSO,
+                             // buttonBorderColor:_isItemNameFieldError ? Colors.red : Colors.black87,
+                              onChanged: (item) {
+                                setState(() {
+                                  _selectedPendingSO = item;
+                                  _soNumber = item?.name??'';
+                                  Provider.of<SalesOrderProvider>(context, listen: false).selectedSoNumber = '$_soNumber';
+
+                                  //_getItemPrice();
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -383,7 +426,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
                         ],
                       ),
                     ),
-                    /*Padding(
+                   /* Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
@@ -524,7 +567,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
               ),
             ),
 
-            const Divider(height: Dimensions.PADDING_SIZE_EXTRA_SMALL, color: ColorResources.HINT_TEXT_COLOR),
+            //const Divider(height: Dimensions.PADDING_SIZE_EXTRA_SMALL, color: ColorResources.HINT_TEXT_COLOR),
             Row(children: [
               Expanded(child: TextButton(
                 onPressed: () {

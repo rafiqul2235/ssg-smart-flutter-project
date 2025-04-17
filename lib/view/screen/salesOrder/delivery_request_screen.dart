@@ -15,6 +15,7 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/basewidget/dialog/add_delivery_request_item_dialog.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/notification/widget/notification_dialog.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,7 @@ import '../../basewidget/button/custom_button_with_icon.dart';
 import '../../basewidget/custom_auto_complete.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_loading.dart';
+import '../../basewidget/dialog/add_sales_order_item_dialog.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
@@ -102,6 +104,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   bool _warehouseFieldError = false;
   bool _freightTermsFieldError = false;
   bool _orderDateFieldError = false;
+  bool addItem = true;
 
   //SalesOrder? _salesOrder;
 
@@ -219,8 +222,83 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     return;
 
   }
+  //new add item
 
   Future<void>  _onClickAddButton() async {
+
+    _customerFieldError = false;
+    _warehouseFieldError = false;
+    _freightTermsFieldError = false;
+    _orderDateFieldError = false;
+
+    if (_selectedCustomer == null) {
+      _customerFieldError = true;
+      _showMessage('Select Customer!',true);
+      return;
+    }
+
+    if (_warehouseId == null || _warehouseId.isEmpty ) {
+      _warehouseFieldError = true;
+      _showMessage('Select Warehouse',true);
+      return;
+    }
+
+    if(_freightTerms == null || _freightTerms.isEmpty){
+      _showErrorDialog("Select Freight Terms");
+      return;
+    }
+
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    showAnimatedDialog(
+      context,
+      //GuestDialog(),
+      AddDeliveryRequestItemDialog(),
+      dismissible: false,
+    );
+    /*
+
+    ItemDetail? itemDetail = ItemDetail();
+    itemDetail.salesPersonId = _salesPersonId;
+    itemDetail.customerId = _selectedCustomer?.customerId;
+    itemDetail.orgId = _selectedCustomer?.orgId;
+    itemDetail.shipToSiteId = _shipToSiteId;
+    itemDetail.primaryShipTo = _primaryShipTo;
+    itemDetail.shipToLocation = _shipToLocation;
+    itemDetail.customerName = _selectedCustomer?.customerName;
+
+    itemDetail.itemName = _selectedItem?.name;
+    itemDetail.itemId = _selectedItem?.id;
+    itemDetail.itemUOM = _selectedItem?.code;
+    itemDetail.quantity = _qtyController!=null && _qtyController!.text.isNotEmpty?int.parse(_qtyController!.text):0;
+    itemDetail.unitPrice = itemPriceInt??0;
+    itemDetail.totalPrice = totalPriceInt??0;
+    //itemDetail.remarks = _deliverySiteDetailController?.text;
+    itemDetail.primaryShipTo = _deliverySiteDetailController?.text;
+    itemDetail.vehicleType = _vehicleType;
+    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
+    itemDetail.vehicleCate = _vehicleCate;
+    itemDetail.vehicleCateId = _selectedVehicleCat?.id.toString();
+
+    Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
+
+    //Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
+    *//* Clear Data *//*
+    _selectedItem = null;
+    _shipToLocation='';
+    _qtyController?.text = '';
+    itemPriceInt=0;
+    totalPriceInt=0;
+    _deliverySiteDetailController?.text = '';
+    _vehicleType = '';
+    _selectedVehicleType = null;
+    _vehicleCate = '';
+    _selectedVehicleCat = null;*/
+  }
+
+  //old
+
+  /*Future<void>  _onClickAddButton() async {
     print('On Click Add Button');
 
     if(_itemId == null || _itemId <= 0){
@@ -263,7 +341,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
     Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
 
-    /* Clear Data */
+    *//* Clear Data *//*
     _selectedItem = null;
     _qtyController?.text = '';
     _deliverySiteDetailController?.text = '';
@@ -271,7 +349,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _selectedVehicleType = null;
     _vehicleCate = '';
     _selectedVehicleCat = null;
-  }
+  }*/
 
   Future<void> _onClickSubmit() async {
     _customerFieldError = false;
@@ -795,7 +873,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                   ),
                 ),
 
-                Container(
+               /* Container(
                   margin: const EdgeInsets.only(
                     top: Dimensions.MARGIN_SIZE_SMALL,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -837,6 +915,43 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                       ),
                     ],
                   ),
+                ),*/
+
+                const SizedBox(
+                    height: Dimensions.MARGIN_SIZE_SMALL),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /*Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
+                        child: Text('Order Items List ',
+                            style: titilliumBold.copyWith(
+                                color: Colors.purple, fontSize: 18)),
+                      ),
+                    ),*/
+                    Padding(
+                      padding: const EdgeInsets.only(left: 150.0),
+                      child: ElevatedButton(
+                        child: Text(
+                          addItem?'Add Item':'Add More',
+                          style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () async {
+                          _onClickAddButton();
+                          addItem=false;
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
 
                 Padding(
@@ -864,9 +979,9 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                         showCheckboxColumn: false,
                         columns: _tableHeader(),
                         rows: [
-                          if (!isViewOnly) ...[
+                          /*if (!isViewOnly) ...[
                             _inputDataRow(),
-                          ],
+                          ],*/
                           if (provider.salesOrder != null &&
                               provider.salesOrder.orderItemDetail != null) ...[
                             for (var item
@@ -958,6 +1073,11 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         ),
         dismissible: false);
   }
+
+
+
+
+
 
   /*  Table Header */
   List<DataColumn> _tableHeader() {
@@ -1291,6 +1411,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       ))
     ]);
   }
+
+
+
+
 
   /* Input Data Row */
   DataRow _inputDataRow() {
