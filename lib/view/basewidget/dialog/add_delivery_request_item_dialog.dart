@@ -37,6 +37,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
   late TextEditingController _unitPriceController ;
   late TextEditingController _quantityController ;
+  late TextEditingController _coLoadSoController ;
   late TextEditingController _phoneController ;
   late TextEditingController _totalPriceController ;
   late TextEditingController _deliverySiteDetailsController ;
@@ -73,6 +74,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
     _unitPriceController = TextEditingController();
     _quantityController = TextEditingController();
+    _coLoadSoController = TextEditingController();
     _phoneController = TextEditingController();
     _totalPriceController = TextEditingController();
     _deliverySiteDetailsController = TextEditingController();
@@ -96,6 +98,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
     _phoneController.text = '';
     _quantityController.text = '';
+    _coLoadSoController.text='';
     _unitPriceController.text = '';
     _totalPriceController.text = '';
     _deliverySiteDetailsController.text = '';
@@ -106,6 +109,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
     try{
       _unitPriceController.dispose();
       _quantityController.dispose();
+      _coLoadSoController.dispose();
       _phoneController.dispose();
       _totalPriceController.dispose();
       _deliverySiteDetailsController.dispose();
@@ -145,7 +149,13 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       _isQtyFieldError = true;
       message = 'Enter Item Qty';
       error++;
-    }else if(_vehicleType.isEmpty){
+    }
+    /*else if(_selectedItemUnitPrice<= 0){
+      _isQtyFieldError = true;
+      message = 'Inactive price, Please contact with Finance department';
+      error++;
+    }*/
+    else if(_vehicleType.isEmpty){
       _isVehicleTypeFieldError = true;
       message = 'Select Vehicle Type';
       error++;
@@ -167,10 +177,11 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       itemDetail.itemName = _selectedItem?.name;
       itemDetail.itemId = _selectedItem?.id;
       itemDetail.itemUOM = _selectedItem?.code;
+      itemDetail.additionalSo = _coLoadSoController.text;
       itemDetail.quantity = _quantityController!=null && _quantityController!.text.isNotEmpty?int.parse(_quantityController!.text):0;
       //itemDetail.unitPrice = int.parse(_unitPriceController.text);
      // itemDetail.totalPrice = double.parse(_totalPriceController.text);
-      //itemDetail.remarks = _deliverySiteDetailController?.text;
+      itemDetail.remarks = _deliverySiteDetailsController?.text;
       itemDetail.primaryShipTo = _shipToSiteId;
       itemDetail.vehicleType = _vehicleType;
       itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
@@ -182,8 +193,10 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
     //Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
     /* Clear Data */
     _selectedItem = null;
+      _soNumber='';
     _shipToLocation='';
       _quantityController.text = '';
+      _coLoadSoController.text='';
    // itemPriceInt=0;
    // totalPriceInt=0;
     //_deliverySiteDetailController?.text = '';
@@ -537,6 +550,31 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                                 _selectedVehicleCat = value;
                               });
                             },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.confirmation_num_outlined, color: ColorResources.getPrimary(context), size: 20),
+                              //const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                              Text('Co-Load SO', style: titilliumRegular)
+                            ],
+                          ),
+                          //const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                          CustomTextField(
+                            height: 50,
+                            textInputType: TextInputType.text,
+                            focusNode: _deliverySiteDetailsFocus,
+                            borderColor: Colors.transparent,
+                            textInputAction: TextInputAction.done,
+                            hintText: 'Enter Co-Load SO',
+                            maxLine: 2,
+                            controller: _coLoadSoController,
                           ),
                         ],
                       ),

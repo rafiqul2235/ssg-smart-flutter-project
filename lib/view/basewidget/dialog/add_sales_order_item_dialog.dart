@@ -137,7 +137,14 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
       _isQtyFieldError = true;
       message = 'Enter Item Qty';
       error++;
-    }else if(_vehicleType.isEmpty){
+    }
+    else if(_selectedItemUnitPrice<= 0){
+      _isQtyFieldError = true;
+      message = 'Inactive price, Please contact with Finance department';
+      error++;
+    }
+
+    else if(_vehicleType.isEmpty){
       _isVehicleTypeFieldError = true;
       message = 'Select Vehicle Type';
       error++;
@@ -165,7 +172,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
       itemDetail.quantity = _quantityController!=null && _quantityController!.text.isNotEmpty?int.parse(_quantityController!.text):0;
       itemDetail.unitPrice = int.parse(_unitPriceController.text);
       itemDetail.totalPrice = double.parse(_totalPriceController.text);
-      //itemDetail.remarks = _deliverySiteDetailController?.text;
+      itemDetail.remarks = _deliverySiteDetailsController?.text;
       itemDetail.primaryShipTo = _shipToSiteId;
       itemDetail.vehicleType = _vehicleType;
       itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();

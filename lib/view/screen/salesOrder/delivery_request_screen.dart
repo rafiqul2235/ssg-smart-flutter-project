@@ -374,7 +374,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       return;
     }
 
-    if(_itemId == null || _itemId <= 0){
+    /*if(_itemId == null || _itemId <= 0){
       _showErrorDialog("Select Item");
       return;
     }
@@ -385,6 +385,12 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     }
     if(_vehicleType == null){
       _showMessage('Select Vehicle Type',true);
+      return;
+    }*/
+
+    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+    if(salesInfoModel == null || salesInfoModel.orderItemDetail == null || salesInfoModel.orderItemDetail!.length <= 0){
+      _showErrorDialog("Please add item");
       return;
     }
 
@@ -399,7 +405,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
     if(!isSubmit!) return;
 
-    SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+    //SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
     salesInfoModel.customerId = _selectedCustomer?.customerId;
     salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
@@ -1279,6 +1285,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     TextEditingController coLoadSoController = TextEditingController();
 
     qtyController.text = '${itemDetails.quantity}';
+    coLoadSoController.text = '${itemDetails.additionalSo}';
     deliverySiteDetailController.text = '${itemDetails.remarks}';
 
     return DataRow(cells: [
@@ -1332,7 +1339,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.vehicleType}')),
+        child: Center(child: Text('${itemDetails.vehicleCate}')),
       )),
 
       DataCell(Padding(
@@ -1383,24 +1390,20 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
           children: [
             if (itemDetails.isEditable) ...[
               InkWell(
-                  onTap: () => _editItemDetail(itemDetails.itemId,
-                      itemDetails.itemId, itemDetails.customerId, false),
+                  onTap: () => _editItemDetail(itemDetails.itemId??0, false),
                   child: Icon(
                     Icons.done,
                     color: Colors.green,
                   ))
             ] else ...[
               InkWell(
-                  onTap: () => _editItemDetail(itemDetails.itemId,
-                      itemDetails.orgId, itemDetails.customerId, true),
-
+                  onTap: () => _editItemDetail(itemDetails.itemId??0, true),
                   child: Icon(
                     Icons.edit,
                     color: Colors.black,
                   )),
               InkWell(
-                  onTap: () => _deleteItemDetail(itemDetails.itemId,
-                      itemDetails.itemId, itemDetails.customerId),
+                  onTap: () => _deleteItemDetail(itemDetails.itemId,itemDetails.quantity),
                   child: Icon(
                     Icons.delete,
                     color: Colors.red,
@@ -1614,9 +1617,28 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         ]);
   }
 
-  _editItemDetail(masterId, detailsId, company, bool bool) {}
+ // _editItemDetail(masterId, detailsId, company, bool bool) {}
 
-  _deleteItemDetail(masterId, detailsId, company) {}
+  //_deleteItemDetail(masterId, detailsId, company) {}
+
+  _editItemDetail(int itemId, bool bool) {
+    Provider.of<SalesOrderProvider>(context,listen: false).EditableSalesOrderItem(itemId,bool);
+  }
+
+  _deleteItemDetail(int? itemId, int? count) async {
+    // print(' itemId $itemId count $count');
+    var isSubmit = await showAnimatedDialog(context, MyDialog(
+      title: '',
+      description: 'Are you sure you want to delete the item?',
+      rotateAngle: 0,
+      negativeButtonTxt: 'No',
+      positionButtonTxt: 'Yes',
+    ), dismissible: false);
+
+    if(!isSubmit!) return;
+
+    Provider.of<SalesOrderProvider>(context,listen: false).deleteSalesOrderItem(itemId??0, count??0);
+  }
 
   _showMessage(String message, bool isError){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

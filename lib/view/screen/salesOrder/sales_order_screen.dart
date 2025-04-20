@@ -1289,10 +1289,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                     textInputType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
-                      itemDetails.primaryShipTo = value;
+                      itemDetails.remarks = value;
                     },
                   )
-                : Text('${itemDetails.primaryShipTo}')),
+                : Text('${itemDetails.remarks}')),
       )),
 
       DataCell(Padding(
