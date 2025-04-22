@@ -875,6 +875,11 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                       'Calculated difference',
                       Icons.difference_outlined,
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Difference field can not be empty.";
+                      }
+                    },
                   ),
                   SizedBox(height: 24),
 
