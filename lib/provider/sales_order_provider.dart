@@ -438,7 +438,7 @@ class SalesOrderProvider with ChangeNotifier {
         }
         _pendingSoDropDown =[];
         if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
-          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")"+" -"+element.freight!)));
         }
 
         print('pendingSoLeanth ${_pendingSoList?.length}');

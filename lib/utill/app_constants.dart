@@ -11,8 +11,8 @@ class AppConstants {
   //static const String BASE_URL = 'http://10.0.2.2/';
 
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
-  static const int APP_VERSION_CODE = 8;
-  static const String APP_VERSION_NAME = '1.0.6';
+  static const int APP_VERSION_CODE = 9;
+  static const String APP_VERSION_NAME = '1.0.7';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;

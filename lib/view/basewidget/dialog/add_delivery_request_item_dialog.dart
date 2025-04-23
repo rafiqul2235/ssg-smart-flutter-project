@@ -34,6 +34,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
   late  FocusNode _addressFocus;
   late  FocusNode _carModelFocus;
   late  FocusNode _deliverySiteDetailsFocus;
+  late  FocusNode _deliveryCoLoadFocus;
 
   late TextEditingController _unitPriceController ;
   late TextEditingController _quantityController ;
@@ -85,6 +86,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
     _addressFocus = FocusNode();
     _carModelFocus = FocusNode();
     _deliverySiteDetailsFocus = FocusNode();
+    _deliveryCoLoadFocus=FocusNode();
 
     /*String customerName = Provider.of<SalesOrderProvider>(context, listen: false).customerName;
     String customerPhone = Provider.of<SalesOrderProvider>(context, listen: false).customerPhone;
@@ -120,6 +122,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       _addressFocus.dispose();
       _carModelFocus.dispose();
       _deliverySiteDetailsFocus.dispose();
+      _deliveryCoLoadFocus.dispose();
     }catch(e){}
 
     super.dispose();
@@ -160,10 +163,11 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       message = 'Select Vehicle Type';
       error++;
     }
-
+    //Provider.of<SalesOrderProvider>(context, listen: false).clearDeliveryRData();
     setState(() {});
 
     if(error == 0){
+
       ItemDetail? itemDetail = ItemDetail();
       itemDetail.soNumber = _soNumber;
       itemDetail.salesPersonId = _salesPersonId;
@@ -189,6 +193,8 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       itemDetail.vehicleCateId = _selectedVehicleCat?.id.toString();
 
       Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
+
+      //Provider.of<SalesOrderProvider>(context, listen: false).clearDeliveryRData();
 
     //Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
     /* Clear Data */
@@ -569,7 +575,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                           CustomTextField(
                             height: 50,
                             textInputType: TextInputType.text,
-                            focusNode: _deliverySiteDetailsFocus,
+                            focusNode: _deliveryCoLoadFocus,
                             borderColor: Colors.transparent,
                             textInputAction: TextInputAction.done,
                             hintText: 'Enter Co-Load SO',

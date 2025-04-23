@@ -1071,25 +1071,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
       DataColumn(
           label: Expanded(
-            child: Container(
-              width: 100,
-              height: 50,
-              child: Center(
-                child: Text(
-                  'Ship To Location',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black),
-                ),
-              ),
-            ),
-          )),
-      DataColumn(
-          label: Expanded(
         child: Container(
-          width: 100,
+          width: 50,
           height: 50,
           child: Center(
             child: Text(
@@ -1106,7 +1089,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataColumn(
           label: Expanded(
         child: Container(
-          width: 100,
+          width: 70,
           height: 50,
           child: Center(
             child: Text(
@@ -1123,7 +1106,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataColumn(
           label: Expanded(
         child: Container(
-          width: 100,
+          width: 80,
           height: 50,
           child: Center(
             child: Text(
@@ -1137,6 +1120,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
+      DataColumn(
+          label: Expanded(
+            child: Container(
+              width: 100,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Ship To Location',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1230,11 +1230,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.shipToLocation}')),
-      )),
-
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(
             child: itemDetails.isEditable
                 ? CustomTextField(
@@ -1263,6 +1258,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.shipToLocation}')),
       )),
 
       DataCell(Padding(
