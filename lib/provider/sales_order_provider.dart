@@ -199,6 +199,8 @@ class SalesOrderProvider with ChangeNotifier {
     _customerShipToLocationList = [];
   }
 
+ // Future<void>
+
   Future<void> clearShipToLocationData() async{
     _customerShipToLocationList = [];
   }
@@ -427,20 +429,22 @@ class SalesOrderProvider with ChangeNotifier {
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
       print('getPendingSo');
+      _pendingSoDropDown =[];
+      _pendingSoList = [];
 
       ApiResponse apiResponse = await salesOrderRepo.getPendingSoRep(salesPersonId,customerId);
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-        _pendingSoList = [];
+
         print('pendingSoLeanth ${apiResponse.response?.data['pending_so'].length}');
         if(apiResponse.response?.data['pending_so'] != null){
           apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
         }
-        _pendingSoDropDown =[];
-        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
-          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")"+" -"+element.freight!)));
-        }
 
+        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")")));
+        }
+       // " -"+element.freight!+" ,"+element.itemName!
         print('pendingSoLeanth ${_pendingSoList?.length}');
         notifyListeners();
       }else{

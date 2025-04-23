@@ -153,11 +153,11 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       message = 'Enter Item Qty';
       error++;
     }
-    /*else if(_selectedItemUnitPrice<= 0){
+    else if(_selectedItemUnitPrice<= 0){
       _isQtyFieldError = true;
       message = 'Inactive price, Please contact with Finance department';
       error++;
-    }*/
+    }
     else if(_vehicleType.isEmpty){
       _isVehicleTypeFieldError = true;
       message = 'Select Vehicle Type';
@@ -310,7 +310,6 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
                                   Provider.of<SalesOrderProvider>(context, listen: false).selectedSoNumber = '$_soNumber';
 
-                                  //_getItemPrice();
                                 });
                               },
                             ),

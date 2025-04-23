@@ -956,67 +956,87 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           margin: const EdgeInsets.symmetric(
               horizontal: Dimensions.MARGIN_SIZE_LARGE,
               vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: Colors.purple.withOpacity(0.2),
+                width: double.infinity,
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Grant Total -- ',
+                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                    children: const <TextSpan>[
+                      TextSpan(text: 'Total Qty', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Total Price '),
+                    ],
+                  ),
+                ),
+              ),
+              !Provider.of<SalesOrderProvider>(context).isLoading
+                  ? Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      child: Text('Clear'),
+                      onPressed: null,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        side: BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickSubmit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
 
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Balance',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickCustBal();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-
                     ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Balance',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickCustBal();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
 
-                    ),
-                  ],
-                )
-              : Center(
+                  ),
+                ],
+              )
+                  : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                           Theme.of(context).primaryColor))),
+            ],
+          )
+
         ) //:const SizedBox.shrink(),
       ]),
     );
