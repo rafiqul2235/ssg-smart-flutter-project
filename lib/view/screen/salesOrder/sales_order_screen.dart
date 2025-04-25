@@ -962,14 +962,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
             children: [
               Container(
                 color: Colors.purple.withOpacity(0.2),
+                padding: EdgeInsets.only(top: 5, bottom: 5,left: 5,right: 5),
                 width: double.infinity,
                 child: RichText(
                   text: TextSpan(
                     text: 'Grant Total -- ',
                     style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    children: const <TextSpan>[
-                      TextSpan(text: 'Total Qty', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: ' Total Price '),
+                    children: <TextSpan>[
+                      TextSpan(text: 'Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ',  Price : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
                     ],
                   ),
                 ),

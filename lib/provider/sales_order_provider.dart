@@ -199,7 +199,25 @@ class SalesOrderProvider with ChangeNotifier {
     _customerShipToLocationList = [];
   }
 
- // Future<void>
+  int getCalculatedTotalQty()  {
+    int result = 0;
+    if(_salesOrder != null && _salesOrder?.orderItemDetail != null && _salesOrder!.orderItemDetail!.length > 0 ){
+      for(ItemDetail item in _salesOrder!.orderItemDetail!){
+        result += item.quantity??0;
+      }
+    }
+    return result;
+  }
+
+  double getCalculatedTotalPrice(){
+    double result = 0;
+    if(_salesOrder != null && _salesOrder?.orderItemDetail != null && _salesOrder!.orderItemDetail!.length > 0 ){
+      for(ItemDetail item in _salesOrder!.orderItemDetail!){
+        result += item.totalPrice??0.0;
+      }
+    }
+    return result;
+  }
 
   Future<void> clearShipToLocationData() async{
     _customerShipToLocationList = [];
