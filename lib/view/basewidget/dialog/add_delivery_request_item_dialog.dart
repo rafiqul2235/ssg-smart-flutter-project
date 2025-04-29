@@ -130,6 +130,8 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
 
   _onClickOkButton(){
 
+
+
     FocusScope.of(context).requestFocus(FocusNode());
 
     int error = 0;
@@ -240,6 +242,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
       ItemPriceModel? itemPriceModel = await salesProvider.getItemPrice(context, Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId,_shipToSiteId,'$_itemId',Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms);
       if(itemPriceModel!=null && itemPriceModel.itemPrice !=null && itemPriceModel.itemPrice > 0){
         _selectedItemUnitPrice = itemPriceModel.itemPrice;
+        print("unit price:$_selectedItemUnitPrice");
       }
 
       final String qtyText = _quantityController?.text ?? '0';
@@ -397,6 +400,7 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                                 _shipToLocation = value?.name??'';
                                 _primaryShipTo = value?.nameBl??'';
                                 _salesPersonId = value?.description??'';
+
                                 _getItemPrice();
                               });
                             },

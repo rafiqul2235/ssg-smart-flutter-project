@@ -5,6 +5,7 @@ class SalesOrder {
   String? orgId;
   String? userId;
   String? orgName;
+  String? createdBy;
   String? accountNumber;
   String? partySiteNumber;
   String? billToSiteId;
@@ -21,6 +22,7 @@ class SalesOrder {
   String? warehouseName;
   String? customerPoNumber;
   String? vehicleInfo;
+  String? orderTotal;
 
   List<ItemDetail>? orderItemDetail = [];
   //List<DlvRequestItemDetail>? dlvItemDetail = [];
@@ -31,6 +33,7 @@ class SalesOrder {
     this.orgId= '',
     this.userId='',
     this.orgName= '',
+    this.createdBy='',
     this.accountNumber= '',
     this.partySiteNumber= '',
     this.billToSiteId= '',
@@ -46,7 +49,8 @@ class SalesOrder {
     this.warehouseId= '',
     this.warehouseName= '',
     this.customerPoNumber= '',
-    this.vehicleInfo = ''
+    this.vehicleInfo = '',
+    this.orderTotal=''
   });
 
   void addItem(ItemDetail item){
@@ -73,6 +77,7 @@ class SalesOrder {
     orgId= json['ORG_ID'];
     userId= json['USER_ID'];
     orgName= json['ORG_NAME'];
+    createdBy= json['CREATED_BY'];
     accountNumber= json['ACCOUNT_NUMBER'];
     partySiteNumber= json['PARTY_SITE_NUMBER'];
     billToSiteId= json['BILL_TO_SITE_ID'];
@@ -89,6 +94,7 @@ class SalesOrder {
     warehouseName= json['WAREHOUSE_NAME'];
     customerPoNumber= json['CUSTOMER_PO_NUMBER'];
     vehicleInfo= json['VEHICLE_INFO'];
+    orderTotal= json['ATTRIBUTE8'];
   }
 
   Map<String, dynamic> toJson() {
@@ -119,11 +125,13 @@ class SalesOrder {
     data['BILL_TO_ADDRESS'] = billToAddress??'';
     data['ORDER_TYPE_ID'] = orderTypeId??'0';
     data['ORDER_TYPE'] = orderType??'';
+    data['CREATED_BY'] = createdBy??'';
     data['FREIGHT_TERMS_ID'] = freightTermsId??'';
     data['FREIGHT_TERMS'] = freightTerms??'';
     data['WAREHOUSE_ID'] = warehouseId??'0';
     data['CUSTOMER_PO_NUMBER'] = customerPoNumber??'';
     data['VEHICLE_INFO'] = vehicleInfo??'';
+    data['ATTRIBUTE8'] = orderTotal??'';
     data['SALESREP_ID'] = salesPersonId??'0';
     data['PRICE_LIST_ID'] = priceListId??'0';
     data['PRIMARY_SHIP_TO_SITE_ID'] = primaryShipToSiteId??'';

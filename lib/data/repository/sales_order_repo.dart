@@ -184,6 +184,18 @@ class SalesOrderRepo {
     }
   }
 
+  Future<ApiResponse> salesOrderBookedSubmitRep (SalesOrder salesData) async {
+    try {
+      Response response = await dioClient.post(
+        AppConstants.NEW_SALE_BOOKED_SUBMIT,
+        data:salesData.toJson(),
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> deliveryRequestSubmitRep (SalesOrder salesData) async {
     try {
       Response response = await dioClient.post(
