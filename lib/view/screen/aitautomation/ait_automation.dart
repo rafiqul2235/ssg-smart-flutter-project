@@ -217,141 +217,56 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     'png'
   ];
 
-  // Future<void> _pickFile() async {
-  //   try {
-  //     final secureFile = await pickSecureFile(context);
-  //
-  //     if (secureFile != null) {
-  //       // Check if file is PDF
-  //       if (secureFile.extension?.toLowerCase() != 'pdf') {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(
-  //             content: Text('Only PDF files are allowed'),
-  //             backgroundColor: Colors.red,
-  //           ),
-  //         );
-  //         return;
-  //       }
-  //       // Check file size again as an additional safety measure
-  //       // if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
-  //       //   ScaffoldMessenger.of(context).showSnackBar(
-  //       //     SnackBar(
-  //       //       content: Text('File is too large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
-  //       //       backgroundColor: Colors.red,
-  //       //     ),
-  //       //   );
-  //       //   return;
-  //       // }
-  //
-  //       // Handle image compression if needed
-  //       if (['jpg', 'jpeg', 'png'].contains(secureFile.extension?.toLowerCase())) {
-  //         final compressedFile = await _compressImageFile(secureFile);
-  //         if (compressedFile != null) {
-  //           // Check compressed file size
-  //           final compressedSize = await compressedFile.length();
-  //           if (compressedSize > FileSecurityHelper.MAX_FILE_SIZE) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(
-  //                 content: Text('Compressed file is still too large. Please select a smaller image.'),
-  //                 backgroundColor: Colors.red,
-  //               ),
-  //             );
-  //             return;
-  //           }
-  //
-  //           setState(() {
-  //             _attachmentFile = PlatformFile(
-  //                 name: compressedFile.path.split('/').last,
-  //                 path: compressedFile.path,
-  //                 size: compressedSize
-  //             );
-  //           });
-  //         }
-  //       } else {
-  //         setState(() {
-  //           _attachmentFile = secureFile;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('Error processing file: ${e.toString()}'),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //     print("Error: $e");
-  //   }
-  // }
-
-  // New file picker
   Future<void> _pickFile() async {
     try {
       final secureFile = await pickSecureFile(context);
 
       if (secureFile != null) {
         // Check if file is PDF
-        if (secureFile.extension?.toLowerCase() == 'pdf') {
-          // Show loading indicator
-          _showLoadingDialog('Optimizing PDF...');
-          print("Secured file: $secureFile");
-          // Compress PDF file
-          final compressedPdfFile = await PdfCompressionHelper3.smartCompressPdf(secureFile);
+        if (secureFile.extension?.toLowerCase() != 'pdf') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Only PDF files are allowed'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+        //Check file size again as an additional safety measure
+        if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('File is too large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
 
-          print('compressed file: $compressedPdfFile');
-          print("Secured file: ${secureFile.name}");
-
-          // Close loading dialog
-          Navigator.of(context).pop();
-
-          if (compressedPdfFile != null) {
-            final compressedSize = await compressedPdfFile.length();
-
-            // Check if compression was effective
-            if (secureFile.path != null &&
-                await PdfCompressionHelper.isCompressionEffective(
-                    File(secureFile.path!),
-                    compressedPdfFile
-                )) {
-              // Make sure the PlatformFile has the correct name with extension
-              final String fileName = compressedPdfFile.path.split('/').last;
-              print("Compressed file name: $fileName");
-              final String fileNameWithExtension = fileName.endsWith('.pdf') ? fileName : '$fileName.pdf';
-
-              setState(() {
-                _attachmentFile = PlatformFile(
-                    name: fileNameWithExtension,
-                    path: compressedPdfFile.path,
-                    size: compressedSize
-                );
-              });
-
-              // Show compression success message
-              final originalSizeMB = (secureFile.size / (1024 * 1024)).toStringAsFixed(2);
-              final newSizeMB = (compressedSize / (1024 * 1024)).toStringAsFixed(2);
-
+        // Handle image compression if needed
+        if (['jpg', 'jpeg', 'png'].contains(secureFile.extension?.toLowerCase())) {
+          final compressedFile = await _compressImageFile(secureFile);
+          if (compressedFile != null) {
+            // Check compressed file size
+            final compressedSize = await compressedFile.length();
+            if (compressedSize > FileSecurityHelper.MAX_FILE_SIZE) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('PDF optimized: $originalSizeMB MB → $newSizeMB MB'),
-                  backgroundColor: Colors.green,
+                  content: Text('Compressed file is still too large. Please select a smaller image.'),
+                  backgroundColor: Colors.red,
                 ),
               );
-            } else {
-              // Use original file if compression wasn't effective
-              setState(() {
-                _attachmentFile = secureFile;
-              });
+              return;
             }
-          } else {
-            // Use original file if compression failed
+
             setState(() {
-              _attachmentFile = secureFile;
+              _attachmentFile = PlatformFile(
+                  name: compressedFile.path.split('/').last,
+                  path: compressedFile.path,
+                  size: compressedSize
+              );
             });
           }
-        } else if (['jpg', 'jpeg', 'png'].contains(secureFile.extension?.toLowerCase())) {
-          // Handle image compression (your existing code)
-          final compressedFile = await _compressImageFile(secureFile);
-          // Rest of your image handling code...
         } else {
           setState(() {
             _attachmentFile = secureFile;
@@ -368,6 +283,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       print("Error: $e");
     }
   }
+
   // Compression for images
   Future<File?> _compressImageFile(PlatformFile file) async {
     final tempDir = await getTemporaryDirectory();
@@ -878,6 +794,11 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                       'Calculated difference',
                       Icons.difference_outlined,
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Difference field can not be empty.";
+                      }
+                    },
                   ),
                   SizedBox(height: 24),
 

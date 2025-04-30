@@ -226,7 +226,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showMessage('Select Customer!',true);
       return;
     }
-
+   print('warehouseId: $_warehouseId');
     if (_warehouseId == null || _warehouseId.isEmpty ) {
       _warehouseFieldError = true;
       _showMessage('Select Warehouse',true);
@@ -956,67 +956,88 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           margin: const EdgeInsets.symmetric(
               horizontal: Dimensions.MARGIN_SIZE_LARGE,
               vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: Colors.purple.withOpacity(0.2),
+                padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
+                width: double.infinity,
+                child: RichText(
+                  text: TextSpan(
+                    //text: 'Grant Total -- ',
+                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                    children: <TextSpan>[
+                      TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
+                    ],
+                  ),
+                ),
+              ),
+              !Provider.of<SalesOrderProvider>(context).isLoading
+                  ? Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      child: Text('Clear'),
+                      onPressed: null,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        side: BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickSubmit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
 
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Balance',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickCustBal();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-
                     ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Balance',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickCustBal();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
 
-                    ),
-                  ],
-                )
-              : Center(
+                  ),
+                ],
+              )
+                  : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                           Theme.of(context).primaryColor))),
+            ],
+          )
+
         ) //:const SizedBox.shrink(),
       ]),
     );
@@ -1071,25 +1092,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       )),
       DataColumn(
           label: Expanded(
-            child: Container(
-              width: 100,
-              height: 50,
-              child: Center(
-                child: Text(
-                  'Ship To Location',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black),
-                ),
-              ),
-            ),
-          )),
-      DataColumn(
-          label: Expanded(
         child: Container(
-          width: 100,
+          width: 50,
           height: 50,
           child: Center(
             child: Text(
@@ -1106,7 +1110,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataColumn(
           label: Expanded(
         child: Container(
-          width: 100,
+          width: 70,
           height: 50,
           child: Center(
             child: Text(
@@ -1123,7 +1127,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataColumn(
           label: Expanded(
         child: Container(
-          width: 100,
+          width: 80,
           height: 50,
           child: Center(
             child: Text(
@@ -1137,6 +1141,23 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
           ),
         ),
       )),
+      DataColumn(
+          label: Expanded(
+            child: Container(
+              width: 100,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Ship To Location',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1230,11 +1251,6 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.shipToLocation}')),
-      )),
-
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(
             child: itemDetails.isEditable
                 ? CustomTextField(
@@ -1263,6 +1279,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.shipToLocation}')),
       )),
 
       DataCell(Padding(

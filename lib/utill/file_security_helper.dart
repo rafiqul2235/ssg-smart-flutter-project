@@ -18,7 +18,7 @@ class FileSecurityHelper {
   ];
 
   // Maximum allowed file size (in bytes) - 5MB
-  static const int MAX_FILE_SIZE = 10 * 24 * 1024;
+  static const int MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   // Check if file extension is in allowed list
   static bool isFileExtensionAllowed(String fileName) {
@@ -120,13 +120,13 @@ Future<PlatformFile?> pickSecureFile(BuildContext context) async {
       final file = result.files.first;
 
       // Check file size
-      // if (!FileSecurityHelper.isFileSizeSafe(file.size)) {
-      //   _showSecurityAlert(
-      //       context,
-      //       'File size exceeds maximum limit of ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'
-      //   );
-      //   return null;
-      // }
+      if (!FileSecurityHelper.isFileSizeSafe(file.size)) {
+        _showSecurityAlert(
+            context,
+            'File size exceeds maximum limit of ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'
+        );
+        return null;
+      }
 
       // Check if file extension is allowed
       if (!FileSecurityHelper.isFileExtensionAllowed(file.name)) {

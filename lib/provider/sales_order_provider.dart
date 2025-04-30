@@ -199,6 +199,26 @@ class SalesOrderProvider with ChangeNotifier {
     _customerShipToLocationList = [];
   }
 
+  int getCalculatedTotalQty()  {
+    int result = 0;
+    if(_salesOrder != null && _salesOrder?.orderItemDetail != null && _salesOrder!.orderItemDetail!.length > 0 ){
+      for(ItemDetail item in _salesOrder!.orderItemDetail!){
+        result += item.quantity??0;
+      }
+    }
+    return result;
+  }
+
+  double getCalculatedTotalPrice(){
+    double result = 0;
+    if(_salesOrder != null && _salesOrder?.orderItemDetail != null && _salesOrder!.orderItemDetail!.length > 0 ){
+      for(ItemDetail item in _salesOrder!.orderItemDetail!){
+        result += item.totalPrice??0.0;
+      }
+    }
+    return result;
+  }
+
   Future<void> clearShipToLocationData() async{
     _customerShipToLocationList = [];
   }
@@ -427,20 +447,22 @@ class SalesOrderProvider with ChangeNotifier {
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
       print('getPendingSo');
+      _pendingSoDropDown =[];
+      _pendingSoList = [];
 
       ApiResponse apiResponse = await salesOrderRepo.getPendingSoRep(salesPersonId,customerId);
 
       if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-        _pendingSoList = [];
+
         print('pendingSoLeanth ${apiResponse.response?.data['pending_so'].length}');
         if(apiResponse.response?.data['pending_so'] != null){
           apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
         }
-        _pendingSoDropDown =[];
-        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
-          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
-        }
 
+        if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")")));
+        }
+       // " -"+element.freight!+" ,"+element.itemName!
         print('pendingSoLeanth ${_pendingSoList?.length}');
         notifyListeners();
       }else{
@@ -514,6 +536,36 @@ class SalesOrderProvider with ChangeNotifier {
     }finally{
       hideLoading();
      // notifyListeners();
+      return success;
+    }
+  }
+
+  Future<bool> salesOrderBookedSubmit(BuildContext context, SalesOrder salesOrder) async {
+    // _resetState();
+    showLoading();
+    bool success = false;
+
+    try{
+      final response = await salesOrderRepo.salesOrderBookedSubmitRep(salesOrder);
+      if (response.response != null && response.response?.statusCode == 200) {
+        Map<String, dynamic> responseData = jsonDecode(response.response.toString());
+        print('salesOrderSubmit '+responseData.toString());
+        if (responseData['success'] == 1) {
+          //_isSuccess = responseData['msg'][0];
+          _salesOrder = SalesOrder();
+          success = true;
+        } else {
+          //_error = "Sales Order Submission failed";
+        }
+      } else {
+        _error = "Server error occurred";
+      }
+    }catch(e){
+      _error = "An error occurred: ${e.toString()}";
+      print('salesOrderSubmit '+e.toString());
+    }finally{
+      hideLoading();
+      // notifyListeners();
       return success;
     }
   }

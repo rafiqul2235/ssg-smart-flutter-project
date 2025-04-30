@@ -144,15 +144,18 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
       error++;
     }
 
+   /* else if(_vehicleCate.isEmpty){
+      _isVehicleCategoryFieldError = true;
+      message = 'Select Vehicle Category';
+      error++;
+    }*/
+
     else if(_vehicleType.isEmpty){
       _isVehicleTypeFieldError = true;
       message = 'Select Vehicle Type';
       error++;
-    }else if(_vehicleCate.isEmpty){
-      _isVehicleCategoryFieldError = true;
-      message = 'Select Vehicle Category';
-      error++;
     }
+
 
     setState(() {});
 
@@ -223,6 +226,7 @@ class _AddSalesOrderItemDialogState extends State<AddSalesOrderItemDialog> {
       ItemPriceModel? itemPriceModel = await salesProvider.getItemPrice(context, Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId,_shipToSiteId,'$_itemId',Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms);
       if(itemPriceModel!=null && itemPriceModel.itemPrice !=null && itemPriceModel.itemPrice > 0){
         _selectedItemUnitPrice = itemPriceModel.itemPrice;
+        print("unit price:$_selectedItemUnitPrice");
       }
 
       final String qtyText = _quantityController?.text ?? '0';

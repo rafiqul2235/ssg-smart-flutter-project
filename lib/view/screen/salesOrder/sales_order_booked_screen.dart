@@ -15,7 +15,6 @@ import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
 import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
-import 'package:ssg_smart2/view/basewidget/dialog/add_delivery_request_item_dialog.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/notification/widget/notification_dialog.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +30,7 @@ import '../../basewidget/custom_auto_complete.dart';
 import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/custom_loading.dart';
 import '../../basewidget/dialog/add_sales_order_item_dialog.dart';
+import '../../basewidget/guest_dialog.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
@@ -38,17 +38,17 @@ import '../../basewidget/textfield/custom_textfield.dart';
 import '../home/dashboard_screen.dart';
 import 'dart:developer' as developer;
 
-class DeliveryRequestScreen extends StatefulWidget {
+class SalesOrderBookedScreen extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const DeliveryRequestScreen({Key? key, this.isBackButtonExist = true})
+  const SalesOrderBookedScreen({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<DeliveryRequestScreen> createState() => _DeliveryRequestScreenState();
+  State<SalesOrderBookedScreen> createState() => _SalesOrderBookedScreenState();
 }
 
-class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
+class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
   TextEditingController? _customerController;
   TextEditingController? _warehouseController;
   TextEditingController? _shipToSiteController;
@@ -56,7 +56,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   TextEditingController? _cusPONoController;
   TextEditingController? _depositDateController;
   TextEditingController? _qtyController;
-  TextEditingController? _coLoadSoController;
   TextEditingController? _deliverySiteDetailController;
 
   Customer? _selectedCustomer;
@@ -72,9 +71,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
   List<DropDownModel> _itemsDropDown = [];
   DropDownModel? _selectedItem;
-
-  List<DropDownModel> _pendingSoDropDown = [];
-  DropDownModel? _selectPendingSo;
 
   List<DropDownModel> _orderTypeDropDown = [];
   DropDownModel? _selectedOrderType;
@@ -94,40 +90,38 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
   List<DropDownModel> _shipToLocationDropDown = [];
   //DropDownModel? _selectedShipToLocation;
 
- // List<DropDownModel> _pendingSODropDown = [];
-  //DropDownModel? _selectedShipToLocation;
-
 
   bool isViewOnly = false;
+  bool addItem = true;
 
   bool _customerFieldError = false;
   bool _warehouseFieldError = false;
   bool _freightTermsFieldError = false;
   bool _orderDateFieldError = false;
-  bool addItem = true;
 
   //SalesOrder? _salesOrder;
 
+
   String _orgName = '';
+  String _userId= '';
+  String _createdBy= '';
   String _warehouseId = '';
   String _custId = '';
-  String _userId= '';
   String _custAccount = '';
   String _freightTerms = '';
   String _shipToSiteId = '';
   String _shipToLocation = '';
-  String _pendingSoNumber = '';
   String  _primaryShipTo = '';
   String  _salesPersonId = '';
   int _itemId = 0;
   String formattedDate = '';
   String customerBal ='';
   int itemPriceInt = 0;
-  int totalPriceInt = 0;
+  double totalPriceInt = 0;
+  String orderTotal= '';
 
   String _vehicleType ='';
   String _vehicleCate ='';
-  String _pendingS='';
 
   @override
   void initState() {
@@ -138,21 +132,19 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _qtyController = TextEditingController();
     _deliverySiteDetailController = TextEditingController();
     _cusPONoController = TextEditingController();
-    _coLoadSoController = TextEditingController();
     _intData();
   }
 
   void _intData() async {
     currentDateTime();
-    Provider.of<SalesOrderProvider>(context, listen: false).clearDeliveryRData();
+    Provider.of<SalesOrderProvider>(context, listen: false).clearData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
-    //Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context,);
-
+    _createdBy = Provider.of<AuthProvider>(context, listen: false).getUserName();
   }
 
   void currentDateTime() {
@@ -165,7 +157,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     print("Formatted Date: $formattedDate"); // Outputs: DD-MM-YYYY
   }
 
-  /*Future<void> _onClickCustBal() async {
+  Future<void> _onClickCustBal() async {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.getCustBalance(context, '$_custId');
     _balanceModel = salesProvider.custBalance;
@@ -180,7 +172,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     // _showErrorDialog("Rafiqul");
     _showCustBalDialog('$customerBal');
     return;
-  }*/
+  }
 
   Future<void> _onClickItemPrice(int itemId, String siteId) async {
 
@@ -207,13 +199,14 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
     await salesProvider.getItemPrice(context, '$_custId',siteId,itemId.toString(),'$_freightTerms');
     final String qtyText = _qtyController?.text ?? '0';
+    //final TextEditingController _qtyController = TextEditingController();
     final int quantity = int.tryParse(qtyText) ?? 0;
     _itemPriveModel = salesProvider.itemPriceModel;
 
     setState(() {
       itemPriceInt = _itemPriveModel!.itemPrice;
-      totalPriceInt = itemPriceInt * quantity;
-      print("Item ptice : $itemPriceInt");
+      totalPriceInt = (itemPriceInt * quantity).toDouble();
+      // print("Item ptice : $itemPriceInt");
     });
     if( itemPriceInt <= 0){
       _showErrorDialog("Inactive price, Please contact with Finance department");
@@ -222,7 +215,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     return;
 
   }
-  //new add item
+
 
   Future<void>  _onClickAddButton() async {
 
@@ -253,10 +246,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     showAnimatedDialog(
       context,
       //GuestDialog(),
-      AddDeliveryRequestItemDialog(),
+      AddSalesOrderItemDialog(),
       dismissible: false,
     );
-    /*
+  /*
 
     ItemDetail? itemDetail = ItemDetail();
     itemDetail.salesPersonId = _salesPersonId;
@@ -296,62 +289,8 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     _selectedVehicleCat = null;*/
   }
 
-  //old
-
-  /*Future<void>  _onClickAddButton() async {
-    print('On Click Add Button');
-
-    if(_itemId == null || _itemId <= 0){
-      _showErrorDialog("Select Item");
-      return;
-    }
-
-    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
-      _showErrorDialog("Select Ship to Location");
-      return;
-    }
-    if(_selectedVehicleType == null){
-      _showMessage('Select Vehicle Type',true);
-      return;
-    }
-
-    FocusScope.of(context).requestFocus(FocusNode());
-
-    ItemDetail? itemDetail = ItemDetail();
-    itemDetail.salesPersonId = _salesPersonId;
-    itemDetail.customerId = _selectedCustomer?.customerId;
-    itemDetail.orgId = _selectedCustomer?.orgId;
-    itemDetail.shipToSiteId = _shipToSiteId;
-    itemDetail.primaryShipTo = _primaryShipTo;
-    itemDetail.shipToLocation = _shipToLocation;
-    itemDetail.customerName = _selectedCustomer?.customerName;
-
-    itemDetail.itemName = _selectedItem?.name;
-    itemDetail.itemId = _selectedItem?.id;
-    itemDetail.itemUOM = _selectedItem?.code;
-    //itemDetail.itemUOM = _selectPendingSo?.nameBl;
-    itemDetail.soNumber = _selectPendingSo?.code;
-    itemDetail.quantity = _qtyController!=null && _qtyController!.text.isNotEmpty?int.parse(_qtyController!.text):0;
-    itemDetail.remarks = _deliverySiteDetailController?.text;
-    itemDetail.additionalSo = _coLoadSoController?.text;
-    itemDetail.vehicleType = _vehicleType;
-    itemDetail.vehicleTypeId = _selectedVehicleType?.id.toString();
-    itemDetail.vehicleCate = _vehicleCate;
-    itemDetail.vehicleCateId = _selectedVehicleCat?.id.toString();
-
-    Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
-
-    *//* Clear Data *//*
-    _selectedItem = null;
-    _qtyController?.text = '';
-    _deliverySiteDetailController?.text = '';
-    _vehicleType = '';
-    _selectedVehicleType = null;
-    _vehicleCate = '';
-    _selectedVehicleCat = null;
-  }*/
-
   Future<void> _onClickSubmit() async {
+
     _customerFieldError = false;
     _warehouseFieldError = false;
     _freightTermsFieldError = false;
@@ -374,16 +313,36 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       return;
     }
 
-    /*if(_itemId == null || _itemId <= 0){
+
+    orderTotal= Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice() as String;
+
+
+    /*ItemDetail? itemDetail = ItemDetail();
+    Provider.of<SalesOrderProvider>(context, listen: false).addSalesOrderItem(itemDetail);
+
+    if (itemDetail== null) {
+      _showErrorDialog("Please add at least one order item.");
+      return;
+    }*/
+
+
+
+    /* if(_selectedItem == null){
       _showErrorDialog("Select Item");
       return;
     }
 
-    if(_shipToSiteId == null || _shipToSiteId.isEmpty){
+    if(_shipToLocationDropDown == null){
       _showErrorDialog("Select Ship to Location");
       return;
     }
-    if(_vehicleType == null){
+
+    if(_qtyController == null || _qtyController!.text.isEmpty){
+      _showErrorDialog("Enter SO Qty");
+      return;
+    }
+
+    if(_selectedVehicleType == null){
       _showMessage('Select Vehicle Type',true);
       return;
     }*/
@@ -405,33 +364,34 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
     if(!isSubmit!) return;
 
-    //SalesOrder? salesInfoModel = Provider.of<SalesOrderProvider>(context, listen: false).salesOrder;
+
     salesInfoModel.customerId = _selectedCustomer?.customerId;
     salesInfoModel.salesPersonId = _selectedCustomer?.salesPersonId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
+    salesInfoModel.createdBy=_createdBy;
     //salesInfoModel.orgName = _selectedCustomer?.orgName;
     salesInfoModel.accountNumber = _selectedCustomer?.accountNumber;
     salesInfoModel.partySiteNumber = _selectedCustomer?.partySiteNumber;
     salesInfoModel.billToSiteId = _selectedCustomer?.billToSiteId;
-    //salesInfoModel.customerName = _selectedCustomer?.customerName;
+    salesInfoModel.customerName = _selectedCustomer?.customerName;
     salesInfoModel.billToAddress = _selectedCustomer?.billToAddress;
     salesInfoModel.priceListId = _selectedCustomer?.priceListId;
     salesInfoModel.primaryShipToSiteId = _selectedCustomer?.primaryShipToSiteId;
     salesInfoModel.orgId = _selectedCustomer?.orgId;
     salesInfoModel.userId = _userId;
-    //salesInfoModel.orderType = _selectedCustomer?.orderType;
-    //salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId; 5652
+    salesInfoModel.orderType = _selectedCustomer?.orderType;
+    salesInfoModel.orderTypeId = _selectedCustomer?.orderTypeId;
     salesInfoModel.freightTerms = _freightTerms;
     salesInfoModel.orderDate = formattedDate;
     salesInfoModel.warehouseId = _warehouseId;
-    //salesInfoModel.warehouseName = _selectedWareHouse?.name;
+    salesInfoModel.warehouseName = _selectedWareHouse?.name;
+    salesInfoModel.customerPoNumber = _cusPONoController?.text;
+    salesInfoModel.orderTotal = orderTotal;
+    //Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()
 
-    salesInfoModel.vehicleInfo = _cusPONoController?.text;
+   // developer.log(salesInfoModel.toJson().toString());
 
-
-    developer.log(salesInfoModel.toJson().toString());
-
-    await Provider.of<SalesOrderProvider>(context, listen: false).deliveryRequestSubmit(context, salesInfoModel).then((status) async {
+    await Provider.of<SalesOrderProvider>(context, listen: false).salesOrderBookedSubmit(context, salesInfoModel).then((status) async {
 
       if(status){
         _customerController?.text= '';
@@ -441,14 +401,13 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
         _selectedCustomer = null;
         _warehouseId = '';
-        Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = '';
         _custId = '';
+        Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = '';
         _custAccount = '';
         _freightTerms = '';
         Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = '';
         _selectedWareHouse = null;
         _selectedFreightTerms = null;
-        _selectPendingSo=null;
         //_selectedShipToLocation = null;
         itemPriceInt=0;
         totalPriceInt=0;
@@ -457,7 +416,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
       bool? action = await showAnimatedDialog(context, MyDialog(
         title: status?'Successfully submitted your order':"Fail, Please try again",
-        description: 'Are you sure you want to submit your Delivery Request?',
+        description: 'Are you sure you want to submit your Another Sales Order?',
         rotateAngle: 0,
         negativeButtonTxt: 'YES',
         positionButtonTxt: 'NO',
@@ -482,7 +441,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
     return Scaffold(
       body: Column(children: [
         CustomAppBar(
-            title: 'Delivery Request Page',
+            title: 'Sales Order Booked',
             isBackButtonExist: widget.isBackButtonExist,
             icon: Icons.home,
             onActionPressed: () {
@@ -502,17 +461,9 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
                 _itemsDropDown = [];
-                provider.itemList.forEach((element) => _itemsDropDown.add(DropDownModel(id: element.itemId, name: element.itemName,code: element.itemUOM)));
+                provider.itemList.forEach((element) => _itemsDropDown.add(
+                    DropDownModel(id: element.itemId, name: element.itemName, code: element.itemUOM)));
               }
-
-
-              if (_pendingSoDropDown == null || _pendingSoDropDown.isEmpty) {
-                _pendingSoDropDown = [];
-                //_selectPendingSo =null;
-                // print("pendingS ${provider.pendingSoList.length}");
-                provider.pendingSoList.forEach((element) =>_pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
-              }
-
 
               if (_orderTypeDropDown == null || _orderTypeDropDown.isEmpty) {
                 _orderTypeDropDown = [];
@@ -575,7 +526,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.home_outlined,
+                            Icons.business,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -666,6 +617,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                     _shipToSiteController!.text = '';
                                   }
                                   _selectedCustomer = null;
+                                  Provider.of<SalesOrderProvider>(context, listen: false).selectedCustomer = null;
                                   _warehouseId = '';
                                   _custId = '';
                                   Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = '';
@@ -674,7 +626,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                   Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = '';
                                   _selectedWareHouse = null;
                                   _selectedFreightTerms = null;
-                                  _selectPendingSo=null;
                                   //_selectedShipToLocation = null;
                                   itemPriceInt=0;
                                   totalPriceInt=0;
@@ -687,19 +638,13 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                 _shipToLocationDropDown = [];
 
                                 if(_shipToSiteController!=null) {
-                                  _shipToSiteController!.text = '';
-                                }
-
-                                if(_selectPendingSo!=null) {
-                                  _selectPendingSo= null;
+                                  //_shipToSiteController!.text = '';
                                 }
 
                                 Provider.of<SalesOrderProvider>(context, listen: false).clearShipToLocationData();
-                                Provider.of<SalesOrderProvider>(context, listen: false).clearPendingSOData();
 
                                 for (Customer customer in provider.customerList) {
                                   if (customer.customerId == value.code) {
-
                                     provider.salesOrder.customerId = customer.customerId;
                                     provider.salesOrder.customerName = customer.customerName;
                                     provider.salesOrder.warehouseId = customer.warehouseId;
@@ -709,10 +654,10 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
                                     _selectedCustomer = customer;
                                     _custId = _selectedCustomer?.customerId ?? '';
+                                    Provider.of<SalesOrderProvider>(context, listen: false).selectedCustomer = customer;
                                     Provider.of<SalesOrderProvider>(context, listen: false).selectedCustId = _selectedCustomer?.customerId ?? '';
                                     _custAccount = _selectedCustomer?.accountNumber ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
-                                    Provider.of<SalesOrderProvider>(context, listen: false).getPendingSo(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
                                     Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = _selectedCustomer?.freightTerms ?? '';
@@ -748,7 +693,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                           const SizedBox(
                               width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
-                            text: 'Vehicle Information',
+                            text: 'Customer PO Number',
                             textStyle: titilliumRegular,
                             //mandatoryText: '*',
                           ),
@@ -761,7 +706,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                             child: CustomTextField(
                               height: 45,
                               controller: _cusPONoController,
-                              hintText: 'Enter Vehicle Information ',
+                              hintText: 'Enter Customer PO Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
                               readOnly: false,
@@ -789,7 +734,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.person,
+                            Icons.warehouse,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -847,7 +792,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                       Row(
                         children: [
                           Icon(
-                            Icons.person,
+                            Icons.vaccines,
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
@@ -876,6 +821,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                         onChanged: (value) {
                           setState(() {
                             _freightTerms = value?.code??'0';
+                            Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = value?.code??'0';
                             _selectedFreightTerms = value;
                           });
                         },
@@ -890,6 +836,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     top: Dimensions.MARGIN_SIZE_SMALL,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
                     right: Dimensions.MARGIN_SIZE_DEFAULT,
+                    bottom: Dimensions.MARGIN_SIZE_DEFAULT,
                   ),
                   child: Column(
                     crossAxisAlignment:
@@ -928,9 +875,9 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     ],
                   ),
                 ),*/
-
                 const SizedBox(
-                    height: Dimensions.MARGIN_SIZE_SMALL),
+                    height: Dimensions
+                        .MARGIN_SIZE_SMALL),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
@@ -966,38 +913,43 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                   ],
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
-                  child: Center(
-                      child: Text('- Order Details - ',
-                          style: titilliumBold.copyWith(
-                              color: Colors.purple, fontSize: 18))),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
+                        child: Text('-Order Details- ',
+                            style: titilliumBold.copyWith(
+                                color: Colors.purple, fontSize: 18)),
+                      ),
+                    ),
+                  ],
                 ),
 
                 // for order / item details
                 Container(
-                  color: Colors.red.withOpacity(0.3),
+                  color: Colors.red.withOpacity(0.2),
                   margin: const EdgeInsets.only(
                       left: 8.0, right: 8.0, top: 0.0, bottom: 10.0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                         headingRowColor: WidgetStateColor.resolveWith(
-                            (states) => Colors.red.withOpacity(0.2)),
+                            (states) => Colors.red.withOpacity(0.6)),
                         columnSpacing: 8,
                         horizontalMargin: 2,
                         border: TableBorder.all(width: 0.5, color: Colors.grey),
                         showCheckboxColumn: false,
                         columns: _tableHeader(),
                         rows: [
-                          /*if (!isViewOnly) ...[
+                         /* if (!isViewOnly) ...[
                             _inputDataRow(),
                           ],*/
                           if (provider.salesOrder != null &&
                               provider.salesOrder.orderItemDetail != null) ...[
-                            for (var item
-                                in provider.salesOrder.orderItemDetail!)
+                            for (var item in provider.salesOrder.orderItemDetail!)
                               _dataRow(item)
                           ]
                         ]),
@@ -1013,49 +965,88 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
           margin: const EdgeInsets.symmetric(
               horizontal: Dimensions.MARGIN_SIZE_LARGE,
               vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: Colors.purple.withOpacity(0.2),
+                padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
+                width: double.infinity,
+                child: RichText(
+                  text: TextSpan(
+                    //text: 'Grant Total -- ',
+                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                    children: <TextSpan>[
+                      TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
+                    ],
+                  ),
+                ),
+              ),
+              !Provider.of<SalesOrderProvider>(context).isLoading
+                  ? Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      child: Text('Clear'),
+                      onPressed: null,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        side: BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickSubmit();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
 
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      child: Text(
+                        'Balance',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        _onClickCustBal();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-
                     ),
-                    SizedBox(width: 16),
-                  ],
-                )
-              : Center(
+
+                  ),
+                ],
+              )
+                  : Center(
                   child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                           Theme.of(context).primaryColor))),
+            ],
+          )
+
         ) //:const SizedBox.shrink(),
       ]),
     );
@@ -1086,26 +1077,11 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         dismissible: false);
   }
 
+
+
   /*  Table Header */
   List<DataColumn> _tableHeader() {
     return [
-      DataColumn(
-          label: Expanded(
-            child: Container(
-              width: 150,
-              height: 50,
-              child: Center(
-                child: Text(
-                  'Sales Order',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black),
-                ),
-              ),
-            ),
-          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1114,6 +1090,57 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
           child: Center(
             child: Text(
               'Item Name',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black),
+            ),
+          ),
+        ),
+      )),
+      DataColumn(
+          label: Expanded(
+        child: Container(
+          width: 50,
+          height: 50,
+          child: Center(
+            child: Text(
+              'Qty',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black),
+            ),
+          ),
+        ),
+      )),
+      DataColumn(
+          label: Expanded(
+        child: Container(
+          width: 70,
+          height: 50,
+          child: Center(
+            child: Text(
+              'Unit Price',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black),
+            ),
+          ),
+        ),
+      )),
+      DataColumn(
+          label: Expanded(
+        child: Container(
+          width: 80,
+          height: 50,
+          child: Center(
+            child: Text(
+              'Total Price',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 16,
@@ -1140,57 +1167,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               ),
             ),
           )),
-      DataColumn(
-          label: Expanded(
-        child: Container(
-          width: 100,
-          height: 50,
-          child: Center(
-            child: Text(
-              'Qty',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-          ),
-        ),
-      )),
-      /*DataColumn(
-          label: Expanded(
-        child: Container(
-          width: 100,
-          height: 50,
-          child: Center(
-            child: Text(
-              'Unit Price',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-          ),
-        ),
-      )),
-      DataColumn(
-          label: Expanded(
-        child: Container(
-          width: 100,
-          height: 50,
-          child: Center(
-            child: Text(
-              'Total Price',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black),
-            ),
-          ),
-        ),
-      )),*/
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1232,7 +1208,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
           height: 50,
           child: Center(
             child: Text(
-              'Co-Load SO',
+              'Delivery Site Details',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 16,
@@ -1242,23 +1218,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
           ),
         ),
       )),
-      DataColumn(
-          label: Expanded(
-            child: Container(
-              width: 200,
-              height: 50,
-              child: Center(
-                child: Text(
-                  'Delivery Site Details',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black),
-                ),
-              ),
-            ),
-          )),
       DataColumn(
           label: Expanded(
         child: Container(
@@ -1278,30 +1237,25 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       )),
     ];
   }
-
   /* Data Row */
   DataRow _dataRow(ItemDetail itemDetails) {
+
     TextEditingController qtyController = TextEditingController();
     TextEditingController deliverySiteDetailController = TextEditingController();
-    TextEditingController coLoadSoController = TextEditingController();
+    /*TextEditingController unitPriceController = TextEditingController();TextEditingController _unitPriceController = TextEditingController();
+    TextEditingController totalPriceController = TextEditingController();TextEditingController _totalPriceController = TextEditingController();*/
+    TextEditingController remakes = TextEditingController();
+    TextEditingController _remakes = TextEditingController();
 
     qtyController.text = '${itemDetails.quantity}';
-    coLoadSoController.text = '${itemDetails.additionalSo}';
-    deliverySiteDetailController.text = '${itemDetails.remarks}';
-
+    deliverySiteDetailController.text = '${itemDetails.primaryShipTo}';
+ /*   unitPriceController.text = '${itemDetails.unitPrice}';
+    totalPriceController.text = '${itemDetails.totalPrice}';
+    remakes.text = '${itemDetails.remarks}';*/
     return DataRow(cells: [
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.soNumber}')),
-      )),
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.itemName}')),
-      )),
-
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(child: Text('${itemDetails.shipToLocation}')),
       )),
 
       DataCell(Padding(
@@ -1317,13 +1271,16 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     textInputType: TextInputType.number,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
-                      itemDetails.quantity = (value.isEmpty ? '0' : value) as int?;
+                      setState(() {
+                        itemDetails.quantity = int.parse(value.isEmpty ? '0' : value);
+                        itemDetails.totalPrice = (itemDetails.quantity! * itemDetails.unitPrice!).toDouble();
+                      });
                     },
                   )
                 : Text('${itemDetails.quantity}')),
       )),
 
-      /*DataCell(Padding(
+      DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.unitPrice}')),
       )),
@@ -1331,7 +1288,11 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.totalPrice}')),
-      )),*/
+      )),
+      DataCell(Padding(
+        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+        child: Center(child: Text('${itemDetails.shipToLocation}')),
+      )),
 
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -1341,26 +1302,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
       DataCell(Padding(
         padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
         child: Center(child: Text('${itemDetails.vehicleCate}')),
-      )),
-
-      DataCell(Padding(
-        padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-        child: Center(
-            child: itemDetails.isEditable
-                ? CustomTextField(
-              controller: coLoadSoController,
-              width: 200,
-              height: 50,
-              maxLine: 3,
-              hintText: 'Co-Load SO',
-              borderColor: Colors.black12,
-              textInputType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              onChanged: (value) {
-                itemDetails.additionalSo = value;
-              },
-            )
-                : Text('${itemDetails.additionalSo}')),
       )),
 
       DataCell(Padding(
@@ -1403,7 +1344,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                     Icons.edit,
                     color: Colors.black,
                   )),
-
               InkWell(
                   onTap: () => _deleteItemDetail(itemDetails.itemId,itemDetails.quantity),
                   child: Icon(
@@ -1419,41 +1359,13 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
 
 
-
-
   /* Input Data Row */
   DataRow _inputDataRow() {
+
     return DataRow(
         color: WidgetStateColor.resolveWith(
             (states) => Colors.blueAccent.withOpacity(0.3)),
         cells: [
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: CustomDropdownButton(
-              buttonHeight: 45,
-              buttonWidth: 200,
-              dropdownWidth: 200,
-              hint: 'Select Pending SO',
-              hintColor: Colors.black87,
-              dropdownItems: _pendingSoDropDown,
-              value: _selectPendingSo,
-              buttonBorderColor:
-              _customerFieldError ? Colors.red : Colors.black87,
-              onChanged: (item) {
-                setState(() {
-                  //_selectCompanyError = false;
-                  _selectPendingSo = item;
-                  _pendingS = item?.name??'';
-
-                  /*if (_selectPendingSo!=null){
-                    _selectPendingSo=null;
-                  }*/
-                });
-
-              },
-
-            ),
-          )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(
@@ -1476,7 +1388,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               },
             ),
           )),
-
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomAutoComplete(
@@ -1494,15 +1405,14 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                 setState(() {
                   //_selectCompanyError = false;
                   //_selectedShipToLocation = value;
-                  _shipToSiteId = value?.code??'';
-                  _shipToLocation = value?.name??'';
-                  _primaryShipTo = value?.nameBl??'';
-                  _salesPersonId = value?.description??'';
+                  _shipToSiteId = value.code??'';
+                  _shipToLocation = value.name??'';
+                  _primaryShipTo = value.nameBl??'';
+                  _salesPersonId = value.description??'';
                 });
               },
             ),
           )),
-
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomTextField(
@@ -1516,21 +1426,22 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               textInputType: TextInputType.number,
               textInputAction: TextInputAction.next,
               onChanged: (value) {
-                setState(() {
+                _onClickItemPrice(_itemId,_shipToSiteId);
+                /*setState(() {
                   // _selectCompanyError = false;
-                  _onClickItemPrice(_itemId,_shipToSiteId);
-                });
+                 // _onClickItemPrice(_itemId,_shipToSiteId);
+                });*/
               },
             ),
           )),
-          /*DataCell(Padding(
+          DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: Center(child: Text('$itemPriceInt')),
           )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: Center(child: Text('$totalPriceInt')),
-          )),*/
+          )),
           DataCell(Padding(
             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
             child: CustomDropdownButton(
@@ -1580,21 +1491,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               width: 200,
               height: 50,
               maxLine: 3,
-              controller: _coLoadSoController,
-              hintText: 'Co-Load SO',
-              //focusNode: _qtyNode,
-              //nextNode: _unitPriceNode,
-              borderColor: Colors.black12,
-              textInputType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-            ),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
-            child: CustomTextField(
-              width: 200,
-              height: 50,
-              maxLine: 3,
               controller: _deliverySiteDetailController,
               hintText: 'Delivery Site Details',
               //focusNode: _qtyNode,
@@ -1611,7 +1507,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
               onTap: () {
                 _onClickAddButton();
               },
-              color: Colors.transparent,
+              color: Colors.lightGreenAccent,
               buttonText: '',
               icon: Icons.add,
             ),
@@ -1619,16 +1515,12 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
         ]);
   }
 
- // _editItemDetail(masterId, detailsId, company, bool bool) {}
-
-  //_deleteItemDetail(masterId, detailsId, company) {}
-
   _editItemDetail(int itemId, bool bool) {
     Provider.of<SalesOrderProvider>(context,listen: false).EditableSalesOrderItem(itemId,bool);
   }
 
   _deleteItemDetail(int? itemId, int? count) async {
-    // print(' itemId $itemId count $count');
+   // print(' itemId $itemId count $count');
     var isSubmit = await showAnimatedDialog(context, MyDialog(
       title: '',
       description: 'Are you sure you want to delete the item?',
