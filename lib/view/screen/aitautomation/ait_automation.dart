@@ -12,6 +12,7 @@ import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor2.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor3.dart';
+
 import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
 import '../../../utill/custom_themes.dart';
