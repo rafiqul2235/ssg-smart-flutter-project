@@ -139,7 +139,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
       _showErrorDialog("Single occasion leave not allowed");
     } else if (leaveProvider.isProbationPeriodEnd) {
       _showErrorDialog("Casual leave not allowed during probation period");
-    } else if (leaveProvider.isSuccess != null) {
+    } else if (leaveProvider.isSuccess != null && leaveProvider.isSuccess!.isNotEmpty) {
       _showSuccessDialog(leaveProvider.isSuccess!);
     } else if (leaveProvider.error != null) {
       _showErrorDialog(leaveProvider.error!);

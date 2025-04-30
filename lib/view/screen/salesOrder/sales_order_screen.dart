@@ -226,7 +226,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showMessage('Select Customer!',true);
       return;
     }
-
+   print('warehouseId: $_warehouseId');
     if (_warehouseId == null || _warehouseId.isEmpty ) {
       _warehouseFieldError = true;
       _showMessage('Select Warehouse',true);
