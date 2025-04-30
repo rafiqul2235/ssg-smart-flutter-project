@@ -11,6 +11,7 @@ class EmployeePaySlip {
   final String medicalAllowance;
   final String conveyance;
   final String entertainment;
+  final String foodAllowance;
   final String otherAllowance;
   final String taAndTD;
   final String otherPayment;
@@ -38,6 +39,7 @@ class EmployeePaySlip {
     required this.medicalAllowance,
     required this.conveyance,
     required this.entertainment,
+    required this.foodAllowance,
     required this.otherAllowance,
     required this.taAndTD,
     required this.otherPayment,
@@ -67,6 +69,7 @@ class EmployeePaySlip {
       medicalAllowance: json['MEDICAL_ALLOWANCE'],
       conveyance: json['CONVEYANCE'],
       entertainment: json['ENTERTAINMENT']?.isEmpty ?? true ? '0.00' :json['ENTERTAINMENT'],
+      foodAllowance: json['FOOD_ALLOWANCE']?.isEmpty ?? true ? '0.00' :json['FOOD_ALLOWANCE'],
       otherAllowance: json['OTHER_ALLOWANCE']?.isEmpty ?? true ? '0.00' :json['OTHER_ALLOWANCE'],
       taAndTD: json['TA_OT']?.isEmpty ?? true ? '0.00' :json['TA_OT'],
       otherPayment: json['OTHERS_PAYMENTS']?.isEmpty ?? true ? '0.00' :json['OTHERS_PAYMENTS'],
