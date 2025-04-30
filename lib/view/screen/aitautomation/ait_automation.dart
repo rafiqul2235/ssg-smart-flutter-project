@@ -10,6 +10,8 @@ import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor.dart';
+import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor2.dart';
+import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor3.dart';
 import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
 import '../../../utill/custom_themes.dart';
@@ -293,7 +295,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
           _showLoadingDialog('Optimizing PDF...');
           print("Secured file: $secureFile");
           // Compress PDF file
-          final compressedPdfFile = await PdfCompressionHelper.smartCompressPdf(secureFile);
+          final compressedPdfFile = await PdfCompressionHelper3.smartCompressPdf(secureFile);
 
           print('compressed file: $compressedPdfFile');
           print("Secured file: ${secureFile.name}");

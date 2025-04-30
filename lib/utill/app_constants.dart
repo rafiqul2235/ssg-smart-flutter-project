@@ -5,9 +5,11 @@ class AppConstants {
   static const String APP_NAME = 'SMART';
 
   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  //static const String BASE_URL = 'http://smartappdev.ssgil.com/'; // dev server
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
-  // static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+  // static const String BASE_URL = 'http://192.168.7.98/'; //test
+  static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+  //static const String BASE_URL = 'http://10.27.1.225/'; //oracle cloud dev server
   //static const String BASE_URL = 'http://10.0.2.2/';
 
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
@@ -83,6 +85,10 @@ class AppConstants {
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
   static const String UPDATE_AIT = 'update_ait_automation';
+
+  //MO project
+  static const String MO_LIST = '';
+  static const String MO_DETAILS = '';
 
 
   //static const String LOGIN_USERID = 'USER_ID';
