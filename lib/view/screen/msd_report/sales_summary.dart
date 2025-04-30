@@ -320,8 +320,7 @@ class _SalesSummaryState extends State<SalesSummary> {
                                 child: DataTable(
                                   columnSpacing: 10, // Reduce spacing if needed
                                   columns: [
-                                    DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(fontWeight: FontWeight.bold))),
                                     DataColumn(label: Text('Collection', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
                                     DataColumn(label: Text('Sales', softWrap: true,style: TextStyle(
