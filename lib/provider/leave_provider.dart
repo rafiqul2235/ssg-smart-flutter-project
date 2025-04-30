@@ -84,7 +84,7 @@ class LeaveProvider with ChangeNotifier {
       await _checkProbationStatus(leaveData);
       if(_isProbationPeriodEnd) return;
 
-      await _submitLeaveApplication(leaveData);
+       await _submitLeaveApplication(leaveData);
     }catch(e){
       print("Error in provider: $e");
       _error = "An error occurred: ${e.toString()}";

@@ -9,8 +9,8 @@ class AppConstants {
   static const String BASE_URL = 'http://192.168.7.98/'; //test
   //static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
   //static const String BASE_URL = 'http://10.0.2.2/';
-
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
+
   static const int APP_VERSION_CODE = 10;
   static const String APP_VERSION_NAME = '1.0.8';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
@@ -85,6 +85,10 @@ class AppConstants {
   static const String CHECK_CHALLAN = 'check_challan_number';
   static const String UPDATE_AIT = 'update_ait_automation';
 
+  //MO project
+  static const String MO_LIST = '';
+  static const String MO_DETAILS = '';
+
 
   //static const String LOGIN_USERID = 'USER_ID';
 
@@ -113,6 +117,7 @@ class AppConstants {
   static const String CURRENCY = 'currency';
   static const String LANG_KEY = 'lang';
   static const String INTRO = 'intro';
+
 
   // order status
   static const String PENDING = 'pending';

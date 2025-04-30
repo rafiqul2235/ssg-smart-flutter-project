@@ -72,9 +72,9 @@ class PdfCompressionHelper {
     if (pdfFile.size <= SIZE_FOR_HIGH) {
       quality = HIGH_QUALITY;
     } else if (pdfFile.size <= SIZE_FOR_MEDIUM) {
-      quality = MEDIUM_QUALITY;
+      quality = HIGH_QUALITY;
     } else {
-      quality = LOW_QUALITY;
+      quality = HIGH_QUALITY;
     }
 
     return await compressPdf(pdfFile, quality: quality);

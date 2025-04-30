@@ -55,22 +55,30 @@ class PayslipGenerator {
     return pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('Employee name: ${employeePaySlip.empNameId}'),
-            pw.Text('Designation: ${employeePaySlip.designation}'),
-            pw.Text('Department: ${employeePaySlip.departmentSection}'),
-          ],
+        pw.Expanded(
+          flex: 2,
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Employee name: ${employeePaySlip.empNameId}'),
+              pw.Text('Designation: ${employeePaySlip.designation}'),
+              pw.Text('Department: ${employeePaySlip.departmentSection}'),
+            ],
+          ),
         ),
-        pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('Date of Joining: ${employeePaySlip.doj}'),
-            pw.Text('${employeePaySlip.payrollMonth}'),
-            // pw.Text('Worked Days: 26'),
-          ],
-        ),
+        pw.SizedBox(width: 20),
+        pw.Expanded(
+          flex: 1,
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Date of Joining: ${employeePaySlip.doj}'),
+              pw.Text('${employeePaySlip.payrollMonth}'),
+              // pw.Text('Worked Days: 26'),
+            ],
+          ),
+        )
+
       ],
     );
   }
@@ -106,7 +114,7 @@ class PayslipGenerator {
         _buildTableRow('Entertainment', '${employeePaySlip.entertainment}', 'Other Deduction', '${employeePaySlip.otherDeduction}'),
         _buildTableRow('Others Allowance', '${employeePaySlip.otherAllowance}', 'PF Employee Contribution', '${employeePaySlip.pfEmployee}'),
         _buildTableRow('Suspension Allowance', '0.00', 'PF Loan Recovery', '${employeePaySlip.pfLoanRecovery}'),
-        _buildTableRow('Food Allowance', '0.00', 'Welfare Fund Subscription', '0.00'),
+        _buildTableRow('Food Allowance', '${employeePaySlip.foodAllowance}', 'Welfare Fund Subscription', '0.00'),
         _buildTableRow('Bonus', '0.00', '',''),
         _buildTableRow('TA & OT', '${employeePaySlip.taAndTD}', '',''),
         _buildTableRow('Other Payment', '${employeePaySlip.otherPayment}', '',''),
