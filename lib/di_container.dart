@@ -10,6 +10,7 @@ import 'package:ssg_smart2/data/repository/brand_repo.dart';
 import 'package:ssg_smart2/data/repository/cashpayment_repo.dart';
 import 'package:ssg_smart2/data/repository/category_repo.dart';
 import 'package:ssg_smart2/data/repository/chat_repo.dart';
+import 'package:ssg_smart2/data/repository/mo_repo.dart';
 import 'package:ssg_smart2/data/repository/notification_repo.dart';
 import 'package:ssg_smart2/data/repository/onboarding_repo.dart';
 import 'package:ssg_smart2/data/repository/payslip_repo.dart';
@@ -32,6 +33,7 @@ import 'package:ssg_smart2/provider/category_provider.dart';
 import 'package:ssg_smart2/provider/chat_provider.dart';
 import 'package:ssg_smart2/provider/localization_provider.dart';
 import 'package:ssg_smart2/provider/location_provider.dart';
+import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/onboarding_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
@@ -93,6 +95,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => WppfRepo(dioClient: sl()));
   sl.registerLazySingleton(() => SalesOrderRepo(dioClient: sl()));
   sl.registerLazySingleton(() => AttachmentRepo(dioClient: sl()));
+  sl.registerLazySingleton(() => MoveOrderRepo(dioClient: sl()));
 
   // Provider
   sl.registerFactory(() => AuthProvider(authRepo: sl()));
@@ -122,6 +125,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => WppfProvider(wppfRepo: sl()));
   sl.registerLazySingleton(() => SalesOrderProvider(salesOrderRepo: sl()));
   sl.registerLazySingleton(() => AttachmentProvider(attachmentRepo: sl()));
+  sl.registerLazySingleton(() => MoveOrderProvider(moveOrderRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

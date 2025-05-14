@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
-import 'package:ssg_smart2/data/model/response/AitResponse.dart';
+import 'package:ssg_smart2/data/model/response/aitResponse.dart';
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
 
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';

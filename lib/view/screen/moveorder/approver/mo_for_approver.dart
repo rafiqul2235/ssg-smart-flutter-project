@@ -4,7 +4,6 @@ import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
 import 'package:ssg_smart2/view/screen/moveorder/approver/approval_mo_details.dart';
-import 'package:ssg_smart2/view/screen/moveorder/user/mo_details.dart';
 
 import '../../../../data/model/response/user_info_model.dart';
 import '../../../../provider/user_provider.dart';
@@ -44,7 +43,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
     setState(() {});
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList('2887');
+    Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
   }
 
   @override
@@ -84,7 +83,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ApproverMoDetails()
+                                    builder: (context) => ApproverMoDetails(moveOrderItem: mo,)
                                 )
                             );
                           },
@@ -114,7 +113,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
                                           ],
                                         ),
                                       ),
-                                      Text(TimeAgoUtils.formatTimeAgo(mo.lastUpdateDate), style: TextStyle(color: Colors.black54)),
+                                      Text(TimeAgoUtils.formatTimeAgo(mo.lastUpdateDate!), style: TextStyle(color: Colors.black54)),
                                     ],
                                   ),
                                   SizedBox(height: 4),
@@ -129,7 +128,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
-                                          mo.headerStatusName!,
+                                          'Pending',
                                           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                         ),
                                       ),

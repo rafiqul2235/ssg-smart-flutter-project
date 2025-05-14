@@ -5,6 +5,7 @@ class ScrollableTable extends StatefulWidget {
   final double fixedColumnWidth;
   final double scrollableColumnWidth;
   final double rowHeight;
+  final double? maxHeight; // Optional max height constraint
 
   const ScrollableTable({
     Key? key,
@@ -12,6 +13,7 @@ class ScrollableTable extends StatefulWidget {
     this.fixedColumnWidth = 120,
     this.scrollableColumnWidth = 100,
     this.rowHeight = 50,
+    this.maxHeight, // Add this parameter
   }) : super(key: key);
 
   @override
@@ -32,6 +34,14 @@ class _ScrollableTableState extends State<ScrollableTable> {
   @override
   Widget build(BuildContext context) {
     int length = widget.items.length;
+
+    // Calculate content height based on number of items
+    double contentHeight = widget.rowHeight * length;
+
+    // Apply max height constraint if provided
+    double tableHeight = widget.maxHeight != null
+        ? (contentHeight > widget.maxHeight! ? widget.maxHeight! : contentHeight)
+        : contentHeight;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,9 +107,9 @@ class _ScrollableTableState extends State<ScrollableTable> {
                 ],
               ),
 
-              // Table Body with Fixed Height
+              // Table Body with Dynamic Height
               SizedBox(
-                height: 300,
+                height: tableHeight,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,6 +138,7 @@ class _ScrollableTableState extends State<ScrollableTable> {
                             itemCount: widget.items.length,
                             itemBuilder: (context, index) {
                               var item = widget.items[index];
+                              print('item: $item');
                               return SizedBox(
                                 height: widget.rowHeight,
                                 child: Row(

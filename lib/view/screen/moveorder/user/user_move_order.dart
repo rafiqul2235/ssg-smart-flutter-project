@@ -1,123 +1,156 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:ssg_smart2/data/model/body/mo_list.dart';
+import 'package:ssg_smart2/provider/mo_provider.dart';
+import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
+import 'package:ssg_smart2/view/screen/moveorder/approver/approval_mo_details.dart';
+import 'package:ssg_smart2/view/screen/moveorder/user/mo_details.dart';
 
-class MoveOrderScreen extends StatefulWidget {
+import '../../../../data/model/response/user_info_model.dart';
+import '../../../../provider/user_provider.dart';
+import '../../../../utill/timeago_util.dart';
+import '../../../basewidget/custom_app_bar.dart';
+
+class UserMoveOrderScreen extends StatefulWidget {
   final bool isBackButtonExist;
-
-  const MoveOrderScreen({Key? key, this.isBackButtonExist = true})
-      : super(key: key);
+  const UserMoveOrderScreen({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<MoveOrderScreen> createState() => _MoveOrderScreenState();
+  _UserMoveOrderScreenState createState() => _UserMoveOrderScreenState();
 }
 
-class _MoveOrderScreenState extends State<MoveOrderScreen> {
+class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
+
+  Color getColorAsStatus(String status) {
+    switch (status) {
+      case 'In-complete':
+        return Colors.grey;
+      case 'In-Process':
+        return Colors.yellow;
+      case 'Approved':
+        return Colors.green;
+      default:
+        return Colors.black;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _intData();
+  }
+
+  _intData() async {
+    setState(() {});
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    String employeeNumber = userInfoModel?.employeeNumber ?? '';
+    Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          CustomAppBar(
-            title: "Move Order",
-            isBackButtonExist: widget.isBackButtonExist,
-            icon: Icons.home,
-            onActionPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => const DashBoardScreen()));
-            },
-          ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'MO List',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildMOItem(context, 'In-complete', Colors.grey.shade200),
-                const SizedBox(height: 16),
-                _buildMOItem(context, 'In-process', const Color(0xFFFFFF00)),
-                const SizedBox(height: 16),
-                _buildMOItem(context, 'Approved', const Color(0xFF90EE90)),
-                const SizedBox(height: 16),
-                _buildMOItem(context, 'Approved', const Color(0xFF90EE90)),
-                const SizedBox(height: 16),
-                _buildMOItem(context, 'Approved', const Color(0xFF90EE90)),
-              ],
-            ),
-          )
-        ],
+      appBar: CustomAppBar(
+        title: 'Move Order',
+        isBackButtonExist: widget.isBackButtonExist,
+        icon: Icons.home,
+        onActionPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => const DashBoardScreen()
+          ));
+        },
       ),
-    );
-  }
+      body: Consumer<MoveOrderProvider>(
+        builder: (context, moProvider, child) {
+          if (moProvider.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (moProvider.error!.isNotEmpty) {
+            return NoInternetOrDataScreen(isNoInternet: false);
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('MO List', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: moProvider.moList.length,
+                      itemBuilder: (context, index) {
+                        MoveOrderItem mo = moProvider.moList[index];
+                        String status = mo.status == null || mo.status!.isEmpty ? 'In-complete' : mo.status!;
+                        mo.status = status;
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MoveOrderDetail(moveOrderItem: mo)
+                                )
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Card(
+                            color: const Color(0xFFFFF2DE),
+                            margin: EdgeInsets.symmetric(vertical: 12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('MO: #${mo.moveOrderNumber}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                            Text(
+                                              'Org Name: ${mo.orgName}',
+                                              style: TextStyle(fontWeight: FontWeight.w500),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
 
-  Widget _buildMOItem(BuildContext context, String status, Color statusColor) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF2DE),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'MO: #472638',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                                          ],
+                                        ),
+                                      ),
+                                      Text(TimeAgoUtils.formatTimeAgo(mo.lastUpdateDate!), style: TextStyle(color: Colors.black54)),
+                                    ],
+                                  ),
+                                  SizedBox(height: 4),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('${mo.dateRequired}', style: TextStyle(color: Colors.black54)),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: getColorAsStatus(status),
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          status,
+                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '15-Jan-25',
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text(
-                '3 days ago',
-                style: TextStyle(
-                  fontSize: 14,
-                ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  status,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: status == 'In-process' ? Colors.black : Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }
