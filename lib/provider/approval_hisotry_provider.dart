@@ -35,12 +35,12 @@ class ApprovalHistoryProvider with ChangeNotifier{
     }
   }
 
-  Future<void> fetchLoanApprovalHistory(String headerId) async{
+  Future<void> fetchLoanApprovalHistory(String applicationType, String headerId) async{
     _isLoading = true;
     _error = null;
     notifyListeners();
     try{
-      _loanApprovalHistory = await approvalHistoryRepo.getLoanApprovalHistory(headerId);
+      _loanApprovalHistory = await approvalHistoryRepo.getLoanApprovalHistory(applicationType, headerId);
       print("Loan approval data: $_loanApprovalHistory");
     }catch(e){
       print("Error for pf: ${e.toString()}");

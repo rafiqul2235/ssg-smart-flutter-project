@@ -33,11 +33,12 @@ class ApprovalHistoryRepo{
     }
   }
 
-  Future<LoanApprovalHistory> getLoanApprovalHistory(String headerId) async {
+  Future<LoanApprovalHistory> getLoanApprovalHistory(String applicationType, String headerId) async {
     try {
       final response = await dioClient.postWithFormData(
         AppConstants.LOAN_APPLICATION_HISTORY,
         data: {
+          'application_type': applicationType,
           'header_id': headerId
         },
       );
@@ -52,4 +53,5 @@ class ApprovalHistoryRepo{
       throw Exception('Error: $e');
     }
   }
+
 }
