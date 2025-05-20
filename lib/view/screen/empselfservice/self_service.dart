@@ -119,7 +119,7 @@ class _SelfServiceState extends State<SelfService> {
                                   if ( application.applicationType!.contains("Leave")){
                                     Navigator.push(context, MaterialPageRoute(builder: (_) =>  ApprovalHistoryScreen(invoiceId: application.reportHeaderId!)));
                                   }else {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>  LoanApprovalHistoryScreen(headerId: application.reportHeaderId!)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) =>  LoanApprovalHistoryScreen(applicationType: application.applicationType!, headerId: application.reportHeaderId!)));
                                   }
 
                                 },

@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:ssg_smart2/data/model/body/customer_details.dart';
-import 'package:ssg_smart2/data/model/response/AitResponse.dart';
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
 
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
@@ -10,13 +8,12 @@ import 'package:ssg_smart2/data/model/ait_data.dart';
 
 import '../datasource/remote/dio/dio_client.dart';
 import '../../utill/app_constants.dart';
+import '../model/response/AitResponse.dart';
 
 class AttachmentRepo {
   final DioClient dioClient;
 
   AttachmentRepo({required this.dioClient});
-
-
 
   String getContentType(String extension) {
     switch (extension.toLowerCase()) {
