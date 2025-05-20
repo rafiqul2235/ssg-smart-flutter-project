@@ -215,6 +215,7 @@ class _PayslipScreen extends State<PayslipScreen> {
         _buildEarningItem('Medical Allowance', '৳${employeePaySlip.medicalAllowance}'),
         _buildEarningItem('Conveyance', '৳${employeePaySlip.conveyance}'),
         _buildEarningItem('Entertainment', '৳${employeePaySlip.entertainment}'),
+        _buildEarningItem('Food Allowance', '৳${employeePaySlip.foodAllowance}'),
         _buildEarningItem('Others Allowance', '৳${employeePaySlip.otherAllowance}'),
         _buildEarningItem('TA and TD', '৳${employeePaySlip.taAndTD}'),
         _buildEarningItem('Other Payment', '৳${employeePaySlip.otherPayment}')

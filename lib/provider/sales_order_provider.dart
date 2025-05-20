@@ -31,6 +31,7 @@ import '../data/model/response/salesorder/warehouse.dart';
 import '../data/repository/sales_order_repo.dart';
 import '../helper/api_checker.dart';
 import '../view/screen/msd_report/msd_report_model.dart';
+import '../view/screen/msd_report/notification_summary_model.dart';
 import 'auth_provider.dart';
 
 class SalesOrderProvider with ChangeNotifier {
@@ -46,6 +47,8 @@ class SalesOrderProvider with ChangeNotifier {
 
   String? _isSuccess;
   String? get isSuccess => _isSuccess;
+
+  NotificationSummaryModel? _summaryModel;
 
   ItemPriceModel? _itemPriceModel;
   ItemPriceModel get itemPriceModel => _itemPriceModel??ItemPriceModel(itemPrice: 0);
@@ -101,6 +104,10 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<MsdReportModel> _salesNotification = [];
   List<MsdReportModel> get salesNotification =>_salesNotification;
+
+  NotificationSummaryModel? get summaryModel => _summaryModel;
+  List<NotificationSummaryModel> _salesNotiSummry = [];
+  List<NotificationSummaryModel> get salesNotiSummry =>_salesNotiSummry;
 
 
   List<DeliveryInfoModel> _dlvInfo = [];
@@ -460,7 +467,7 @@ class SalesOrderProvider with ChangeNotifier {
         }
 
         if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
-          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")")));
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")"+" -"+element.freight!+" ,"+element.uom!)));
         }
        // " -"+element.freight!+" ,"+element.itemName!
         print('pendingSoLeanth ${_pendingSoList?.length}');
@@ -489,7 +496,7 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['items'] != null){
           apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
         }
-        //print('_itemlist ${_itemList.length}');
+        print('_itemlist ${_itemList.length}');
 
         _itemsDropDown = [];
         if(_itemList !=null && _itemList.isNotEmpty) {
@@ -679,6 +686,38 @@ class SalesOrderProvider with ChangeNotifier {
 
     try{
       _salesNotification = await salesOrderRepo.fetchSalesNotificationData(salesrep_id, cust_id, fromDate, toDate, type);
+      print("notification provider: $_salesNotification");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchSalesNotiSummary(String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _summaryModel = await salesOrderRepo.fetchSalesNotiSummaryRep(salesrep_id, cust_id, fromDate, toDate, type);
+      print("notification provider: $_summaryModel");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchSalesNotificationSupervisor(String user_name,String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _salesNotification = await salesOrderRepo.fetchSalesNotifiSupervisorData(user_name,salesrep_id, cust_id, fromDate, toDate, type);
       print("notification provider: $_salesNotification");
     }catch(e){
       _error = e.toString();
@@ -883,6 +922,11 @@ class SalesOrderProvider with ChangeNotifier {
 
   void clearSalesOrder(){
     _salesNotification = [];
+    notifyListeners();
+  }
+
+  void clearSummaryData(){
+    _salesNotiSummry = [];
     notifyListeners();
   }
 

@@ -8,6 +8,7 @@ import 'package:ssg_smart2/view/screen/msd_report/cust_target_vsAchiv_model.dart
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/notification_summary_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
@@ -208,6 +209,8 @@ class SalesOrderRepo {
     }
   }
 
+
+
   Future<List<MsdReportModel>> fetchSalesNotificationData(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
     try {
       final response = await dioClient.postWithFormData(
@@ -228,6 +231,69 @@ class SalesOrderRepo {
           return (responseData['messages'] as List)
               .map((json) => MsdReportModel.fromJson(json))
               .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<MsdReportModel>> fetchSalesNotifiSupervisorData(String user_name,String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.MSD_REPORT_SUPERVISOR_DATA,
+        data: {
+          'user_name':user_name,
+          'type': type,
+          'salesrep_id': salesrep_id,
+          'cust_id': cust_id,
+          'fromDate': fromDate,
+          'toDate': toDate
+        },
+      );
+      print("NotificationS $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("notificationS data: $responseData");
+        if (responseData['success'] == 1 && responseData['messages'] != null) {
+          return (responseData['messages'] as List)
+              .map((json) => MsdReportModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<NotificationSummaryModel> fetchSalesNotiSummaryRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.NOTIFICATION_SUMMARY,
+        data: {
+          'type': type,
+          'salesrep_id': salesrep_id,
+          'cust_id': cust_id,
+          'fromDate': fromDate,
+          'toDate': toDate
+        },
+      );
+      print("Notif summary $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("noti summary: $responseData");
+        if (responseData['success'] == 1 && responseData['messages'] != null) {
+          final summaryModel = NotificationSummaryModel.fromJson(responseData['messages'][0]);
+          print('summary(repo):${responseData['messages'][0]}');
+          return summaryModel;
         } else {
           throw Exception('Failed to load data');
         }

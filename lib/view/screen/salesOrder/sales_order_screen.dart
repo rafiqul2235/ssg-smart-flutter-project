@@ -227,11 +227,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
    print('warehouseId: $_warehouseId');
-    if (_warehouseId == null || _warehouseId.isEmpty ) {
+    /*if (_warehouseId == null || _warehouseId.isEmpty ) {
       _warehouseFieldError = true;
       _showMessage('Select Warehouse',true);
       return;
-    }
+    }*/
 
     if(_freightTerms == null || _freightTerms.isEmpty){
       _showErrorDialog("Select Freight Terms");
@@ -651,7 +651,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
+                                    //Provider.of<SalesOrderProvider>(context, listen: false).getItemName(context, _warehouseId);
                                     Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = _selectedCustomer?.freightTerms ?? '';
+
                                     _selectedWareHouse = null;
                                     break;
                                   }

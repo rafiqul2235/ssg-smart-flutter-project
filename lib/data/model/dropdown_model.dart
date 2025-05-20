@@ -37,7 +37,7 @@ class DropDownModel {
 
   DropDownModel.fromJsonForSrTripList(Map<String, dynamic>? json) {
     if (json == null) return;
-    name = json['TRIP_NUMBER'] +"   "+ json['CUSTOMER_NAME'];
+    name = json['TRIP_NUMBER'] +" - ("+ json['DO_QTY'] +')'+' -'+json['TRIP_STATUS']+"\n"+json['CUSTOMER_NAME'];
     code = json['TRIP_NUMBER'];
   }
 

@@ -6,13 +6,15 @@ class AppConstants {
 
   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
-  static const String BASE_URL = 'http://192.168.7.98/'; //test
-  //static const String BASE_URL = 'http://10.27.1.177/'; //oracle cloud test
+  //static const String BASE_URL = 'http://192.168.7.98/'; //test
+
+  static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
+
   //static const String BASE_URL = 'http://10.0.2.2/';
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
 
-  static const int APP_VERSION_CODE = 10;
-  static const String APP_VERSION_NAME = '1.0.8';
+  static const int APP_VERSION_CODE = 11;
+  static const String APP_VERSION_NAME = '1.0.9';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
@@ -34,6 +36,8 @@ class AppConstants {
   static const String PF_SUMMARY_DATA = 'pf_ledger_summary';
   static const String ATTENDANCE_DATA = 'attendence_sheet';
   static const String MSD_REPORT_DATA = 'notification';
+  static const String MSD_REPORT_SUPERVISOR_DATA = 'notification_supervisor';
+  static const String NOTIFICATION_SUMMARY = 'transaction_summary';
   static const String DLV_INFO_DATA = 'delivery_info_by_smart_for_sp';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
@@ -74,7 +78,6 @@ class AppConstants {
   static const String NEW_SALE_BOOKED_SUBMIT = 'flutter-new-sale_booked';
   static const String NEW_COLLECTION_SUBMIT = 'flutter-new-collection';
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
-
   // R&D project
   // static const String ATTACHMENT_PROJECT = 'attachment_project';
   // static const String FETCH_ATTACHMENT = 'fetch_attachment';

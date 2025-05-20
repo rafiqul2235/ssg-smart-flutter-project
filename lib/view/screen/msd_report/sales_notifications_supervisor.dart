@@ -30,17 +30,17 @@ import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../../basewidget/textfield/custom_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class SalesNotifications extends StatefulWidget {
+class SalesNotificationsSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const SalesNotifications({Key? key, this.isBackButtonExist = true})
+  const SalesNotificationsSupervisor({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<SalesNotifications> createState() => _SalesNotificationsState();
+  State<SalesNotificationsSupervisor> createState() => _SalesNotificationsSupervisorState();
 }
 
-class _SalesNotificationsState extends State<SalesNotifications> {
+class _SalesNotificationsSupervisorState extends State<SalesNotificationsSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -123,7 +123,7 @@ class _SalesNotificationsState extends State<SalesNotifications> {
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Sales Report Page',
+              title: 'Supervisor Sales Report Page',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -391,7 +391,8 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                 provider.clearSalesOrder();
                 //notifiCaSummary = notifiSummary!.summary!;
 
-                await provider.fetchSalesNotification(
+                await provider.fetchSalesNotificationSupervisor(
+                    userInfoModel!.userName!,
                     userInfoModel!.salesRepId!,
                     //'3138',
                     _selectedCustomer?.customerId ?? '',
