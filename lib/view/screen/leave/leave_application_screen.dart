@@ -660,7 +660,7 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => SelfService(
-                          isBackButtonExist: false,
+                          isBackButtonExist: true,
                         )));
           },
         ),

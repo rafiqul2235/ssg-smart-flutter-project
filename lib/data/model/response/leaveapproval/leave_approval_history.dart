@@ -9,7 +9,7 @@ class LeaveApprovalHistory {
   final List<PendingSO> pendingSO;
   final List<ApplicationInfo> applicationInfo;
   final Map<String, dynamic> post;
-  final Map<String, dynamic> get;
+  final List<dynamic> get;
 
   LeaveApprovalHistory({
     required this.success,

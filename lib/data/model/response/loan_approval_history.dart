@@ -8,7 +8,7 @@ class LoanApprovalHistory {
   final List<PendingSO> approverList;
   final List<LoanApplicationInfo> applicationInfo;
   final Map<String, dynamic> post;
-  final Map<String, dynamic> get;
+  final List<dynamic> get;
 
   LoanApprovalHistory({
     required this.success,
