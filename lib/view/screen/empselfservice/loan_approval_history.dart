@@ -185,3 +185,4 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
     );
   }
 }
+
