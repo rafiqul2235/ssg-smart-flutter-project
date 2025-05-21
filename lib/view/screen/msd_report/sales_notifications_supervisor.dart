@@ -386,24 +386,28 @@ class _SalesNotificationsSupervisorState extends State<SalesNotificationsSupervi
                     final provider = Provider.of<SalesOrderProvider>(context, listen: false);
                     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
 
-
                 // Clear previous data before fetching new data
                 provider.clearSalesOrder();
                 //notifiCaSummary = notifiSummary!.summary!;
 
                 await provider.fetchSalesNotificationSupervisor(
                     userInfoModel!.userName!,
-                    userInfoModel!.salesRepId!,
+                    //userInfoModel!.salesRepId!,
+                    '',
                     //'3138',
                     _selectedCustomer?.customerId ?? '',
+                    userInfoModel!.orgId!,
                     //selectedSpCustList!.code ?? '',
                     _startDateController.text,
                     _endDateController.text,
                     _selectedReportType ?? '');
-                await provider.fetchSalesNotiSummary(
-                    userInfoModel!.salesRepId!,
+                await provider.fetchSalesNotiSummarySupervisor(
+                    userInfoModel!.userName!,
+                    //userInfoModel!.salesRepId!,
+                    '',
                     //'3138',
                     _selectedCustomer?.customerId ?? '',
+                    userInfoModel!.orgId!,
                     //selectedSpCustList!.code ?? '',
                     _startDateController.text,
                     _endDateController.text,

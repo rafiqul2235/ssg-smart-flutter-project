@@ -711,13 +711,29 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchSalesNotificationSupervisor(String user_name,String salesrep_id, String cust_id,String fromDate, String toDate, String type) async{
+  Future<void> fetchSalesNotiSummarySupervisor(String user_name,String salesrep_id, String cust_id,String org_id,String fromDate, String toDate, String type) async{
     _isLoading = true;
     _error = '';
     notifyListeners();
 
     try{
-      _salesNotification = await salesOrderRepo.fetchSalesNotifiSupervisorData(user_name,salesrep_id, cust_id, fromDate, toDate, type);
+      _summaryModel = await salesOrderRepo.fetchSalesNotiSummarySupervRep(user_name,salesrep_id, cust_id, org_id,fromDate, toDate, type);
+      print("notification provider: $_summaryModel");
+    }catch(e){
+      _error = e.toString();
+    }finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchSalesNotificationSupervisor(String user_name,String salesrep_id, String cust_id,String org_id,String fromDate, String toDate, String type) async{
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try{
+      _salesNotification = await salesOrderRepo.fetchSalesNotifiSupervisorData(user_name,salesrep_id, cust_id, org_id,fromDate, toDate, type);
       print("notification provider: $_salesNotification");
     }catch(e){
       _error = e.toString();
