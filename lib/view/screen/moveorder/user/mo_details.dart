@@ -86,6 +86,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
       appBar: CustomAppBar(title: 'MO Details'),
       body: Consumer<MoveOrderProvider>(builder: (context, moProvider, child) {
         int itemLength = moProvider.moDetails.length;
+        double sum = 0;
         if (moProvider.isLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (moProvider.error!.isNotEmpty) {
@@ -271,6 +272,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                                   ),
                                 ),
                                 ...List.generate(moProvider.moDetails.length, (index) {
+                                  sum = sum + double.parse(moProvider.moDetails[index].totalValue!);
                                   return _buildTableRow(
                                     moProvider.moDetails[index].description!,
                                     '${moProvider.moDetails[index].quantityRequired} ${moProvider.moDetails[index].uom}',
@@ -280,7 +282,61 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                                         ? const Color(0xFFE0F2F1)
                                         : Colors.white,
                                   );
-                                })
+                                }),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          'Total',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '_',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '_',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '${sum}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),

@@ -1,4 +1,3 @@
-
 import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/approval/approval_main.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';

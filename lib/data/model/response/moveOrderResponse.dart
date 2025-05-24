@@ -10,7 +10,7 @@ class MoveOrderResponse {
   final List<MoveOrderDetails> moveOrderDetails;
   final List<ApproverDetail> approverList;
   final Map<String, dynamic> post;
-  final Map<String, dynamic> get;
+  final List<dynamic> get;
 
   MoveOrderResponse({
     required this.success,
