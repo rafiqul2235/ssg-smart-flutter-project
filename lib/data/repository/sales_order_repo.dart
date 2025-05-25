@@ -79,7 +79,7 @@ class SalesOrderRepo {
       data['org_id'] = orgId;
       data['customer_id'] = customerId;
       Response response = await dioClient.postWithFormData(
-        AppConstants.AVAIL_Cust_BAL,
+        AppConstants.AVAIL_CUST_BAL,
         data:data,
       );
       return ApiResponse.withSuccess(response);
@@ -169,6 +169,38 @@ class SalesOrderRepo {
       return ApiResponse.withSuccess(response);
     } catch (e) {
       print('tripNum ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> getSrForSupervisorRep(String userName, String org_id) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_name'] = userName;
+    data['org_id'] = org_id;
+    try {
+      Response response = await dioClient.postWithFormData(
+        AppConstants.SP_FOR_SUPERVISOR,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('spList ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  Future<ApiResponse> getCustForSupervisorRep(String userName, String org_id) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_name'] = userName;
+    data['org_id'] = org_id;
+    try {
+      Response response = await dioClient.postWithFormData(
+        AppConstants.CUSTOMER_FOR_SUPERVISOR,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('custList ${e}');
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
@@ -344,6 +376,38 @@ class SalesOrderRepo {
       final response = await dioClient.postWithFormData(
         AppConstants.SALES_SUMMARY_DATA,
         data: {
+          'salesrep_id': salesrepId,
+          'cust_id': custId,
+          'from_date': fromDate,
+          'to_date': toDate,
+
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['get_summary_report'] != null) {
+          return (responseData['get_summary_report'] as List)
+              .map((json) => SalesSummaryModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<SalesSummaryModel>> fetchSalesSummarySuperRep(String userName,String salesrepId,String custId, String fromDate, String toDate) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.SALES_SUMMARY_SUPER_DATA,
+        data: {
+          'user_name': userName,
           'salesrep_id': salesrepId,
           'cust_id': custId,
           'from_date': fromDate,

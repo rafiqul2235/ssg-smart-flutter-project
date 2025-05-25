@@ -56,6 +56,9 @@ class SalesOrderProvider with ChangeNotifier {
   CustomerBalanceModel? _custBalance;
   CustomerBalanceModel get custBalance => _custBalance??CustomerBalanceModel(customerBalance: '');
 
+  AvailableCustBalModel? _availableCustBal;
+  AvailableCustBalModel get availableCustBal => _availableCustBal??AvailableCustBalModel(customerBalance: '');
+
   AvailableCustBalModel? _availCustBalance;
   AvailableCustBalModel get availCustBalance => _availCustBalance??AvailableCustBalModel(customerBalance: '');
 
@@ -64,6 +67,13 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<DropDownModel> _TripNumSrList = [] ;
   List<DropDownModel> get TripNumSrList => _TripNumSrList??[] ;
+
+
+  List<DropDownModel> _SpListForSupervisor = [] ;
+  List<DropDownModel> get SpListForSupervisor => _SpListForSupervisor??[] ;
+
+  List<DropDownModel> _CustListForSupervisor = [] ;
+  List<DropDownModel> get CustListForSupervisor => _CustListForSupervisor??[] ;
 
   List<Customer>? _customerList = [];
   List<Customer> get customerList => _customerList ?? [];
@@ -447,6 +457,36 @@ class SalesOrderProvider with ChangeNotifier {
     }
   }
 
+
+  Future<void> getSalespersonForSupervisor(BuildContext context) async {
+    String userName =  Provider.of<AuthProvider>(context, listen: false).getUserName();
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+
+    ApiResponse apiResponse = await salesOrderRepo.getSrForSupervisorRep(userName,orgId);
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _SpListForSupervisor = [];
+      apiResponse.response?.data['sales_p'].forEach((spList) => _SpListForSupervisor.add(DropDownModel.fromJsonForSpList(spList)));
+      notifyListeners();
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+  Future<void> getCustomerForSupervisor(BuildContext context) async {
+    String userName =  Provider.of<AuthProvider>(context, listen: false).getUserName();
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+
+    ApiResponse apiResponse = await salesOrderRepo.getCustForSupervisorRep(userName,orgId);
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _CustListForSupervisor = [];
+      apiResponse.response?.data['pending_so'].forEach((tripList) => _CustListForSupervisor.add(DropDownModel.fromJsonForCustSupervisorList(tripList)));
+      notifyListeners();
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+  }
+
+
   Future<void> getPendingSo(BuildContext context,String customerId) async {
     //showLoading();
     try{
@@ -653,6 +693,8 @@ class SalesOrderProvider with ChangeNotifier {
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
       _availCustBalance = AvailableCustBalModel.fromJson(apiResponse.response?.data['cust_balance'][0]);
+      print('available balance: ${_availCustBalance?.customerBalance}');
+
 
       return _availCustBalance;
 
@@ -775,6 +817,23 @@ class SalesOrderProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+
+  Future<void> fetchSaleSummaryForSuper(userName,salesrepId, custId, fromDate, toDate) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _salesSummary = await salesOrderRepo.fetchSalesSummarySuperRep(userName,salesrepId, custId, fromDate, toDate);
+    } catch (e) {
+      print('Error fetching attendance sheet: $e');
+      _salesSummary = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
 
   Future<void> fetchItemWisePending(salesrepId, custId) async {
     _isLoading = true;

@@ -103,6 +103,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
 
   String _orgName = '';
+  String _orgId ='';
   String _userId= '';
   String _warehouseId = '';
   String _custId = '';
@@ -113,10 +114,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String  _primaryShipTo = '';
   String  _salesPersonId = '';
   int _itemId = 0;
+  double custVal= 0;
+  double grantTotal=0;
   String formattedDate = '';
   String customerBal ='';
   int itemPriceInt = 0;
   double totalPriceInt = 0;
+  String custAvailableBal = '';
+
 
   String _vehicleType ='';
   String _vehicleCate ='';
@@ -138,6 +143,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     Provider.of<SalesOrderProvider>(context, listen: false).clearData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
+    _orgId = Provider.of<AuthProvider>(context, listen: false).getOrgId();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
@@ -169,6 +175,20 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     // _showErrorDialog("Rafiqul");
     _showCustBalDialog('$customerBal');
     return;
+  }
+
+  Future<void> getCustAvailableBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustAvailBalance(context, '$_custId');
+    // _availableBalanceModel = salesProvider.availableCustBal;
+    _availableBalanceModel = salesProvider.availCustBalance;
+
+    print('available balance(screen): ${_availableBalanceModel?.customerBalance}');
+    custVal= double.parse(_availableBalanceModel!.customerBalance);
+   // custAvailableBal= _availableBalanceModel!.customerBalance??'';
+     print("customer available Balance showing : ${custVal}");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
   }
 
   Future<void> _onClickItemPrice(int itemId, String siteId) async {
@@ -221,6 +241,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
 
+    getCustAvailableBal();
+    //grantTotal = Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice();
+
     if (_selectedCustomer == null) {
       _customerFieldError = true;
       _showMessage('Select Customer!',true);
@@ -239,13 +262,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
-
     showAnimatedDialog(
       context,
       //GuestDialog(),
       AddSalesOrderItemDialog(),
       dismissible: false,
     );
+
   /*
 
     ItemDetail? itemDetail = ItemDetail();
@@ -293,6 +316,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
 
+    grantTotal= Provider.of<SalesOrderProvider>(context, listen: false).getCalculatedTotalPrice();
+    print("balance restriction :${custVal}'-'${grantTotal}'-'${_orgId}");
+    double orderDiffBal = custVal - grantTotal;
+
     if (_selectedCustomer == null) {
       _customerFieldError = true;
       _showMessage('Select Customer!',true);
@@ -309,6 +336,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Select Freight Terms");
       return;
     }
+
+    if(custVal<grantTotal && _orgId=='401'){
+      _showErrorDialog("Insufficient Balance for the Sales Order\n\n"
+          "   Customer B/L   : $custVal\n"
+          "Order Total B/L : $grantTotal\n"
+          "  Difference B/L   : $orderDiffBal");
+      return;
+    }
+
+
+
 
 
     /*ItemDetail? itemDetail = ItemDetail();
@@ -346,6 +384,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Please add item");
       return;
     }
+
+
 
 
     var isSubmit = await showAnimatedDialog(context, MyDialog(

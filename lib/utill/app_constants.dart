@@ -13,8 +13,8 @@ class AppConstants {
   //static const String BASE_URL = 'http://10.0.2.2/';
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
 
-  static const int APP_VERSION_CODE = 12;
-  static const String APP_VERSION_NAME = '2.0.0';
+  static const int APP_VERSION_CODE = 13;
+  static const String APP_VERSION_NAME = '2.0.1';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
@@ -28,7 +28,7 @@ class AppConstants {
   static const String LEAVE_BALANCE = 'leave_balance';
   static const String Customer_BALANCE = 'customer_balance';
   static const String Item_PRICE = 'item_price_display';
-  static const String AVAIL_Cust_BAL = 'cust_balance';
+  static const String AVAIL_CUST_BAL = 'cust_balance';
   static const String ITEM = 'items';
   static const String MANAGEMENT_DATA = 'bod_target_aciv_scbl';
   static const String MANAGEMENT_DATA_GCF = 'bod_target_aciv_gcf';
@@ -44,7 +44,10 @@ class AppConstants {
   static const String LEAVE_TYPE = 'leave_type';
   static const String SP_CUST_LIST = 'cust_wise_notification_for_sp';
   static const String SP_TRIP_NUMBER = 'trip_num_for_sr';
+  static const String SP_FOR_SUPERVISOR = 'salesperson_wise_notification';
+  static const String CUSTOMER_FOR_SUPERVISOR = 'cust_sp_wise_notification';
   static const String SALES_SUMMARY_DATA = 'sales_person_summary_report';
+  static const String SALES_SUMMARY_SUPER_DATA = 'supervisor_summary_report';
   static const String ITEM_WISE_PENDING_DATA = 'item_wise_pending_sp';
   static const String CUST_TARGET_VS_ACHIV_DATA = 'target_vs_achivement';
   static const String BALANCE_CONFIRMATION_DATA = 'cust_balance_confirmation';

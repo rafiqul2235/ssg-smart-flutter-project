@@ -41,6 +41,18 @@ class DropDownModel {
     code = json['TRIP_NUMBER'];
   }
 
+  DropDownModel.fromJsonForSpList(Map<String, dynamic>? json) {
+    if (json == null) return;
+    name = json['SALESPERSON'];
+    code = json['SALESREP_ID'];
+  }
+
+  DropDownModel.fromJsonForCustSupervisorList(Map<String, dynamic>? json) {
+    if (json == null) return;
+    name = json['CUSTOMER_NAME'];
+    code = json['CUSTOMER_ID'];
+  }
+
   DropDownModel.fromJsonMasterKey(Map<String, dynamic>? json) {
     if (json == null) return;
     name = '${json['id']}';
