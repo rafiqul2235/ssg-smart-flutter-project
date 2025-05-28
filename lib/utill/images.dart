@@ -1,11 +1,10 @@
-
 class Images {
-
   static const String splash_logo = 'assets/images/logo_splash.png';
   static const String more_filled_image = 'assets/images/more_filled.png';
   static const String cart_arrow_down_image = 'assets/images/cart_arrow_down.png';
   static const String ac = 'assets/images/ac.jpg';
   static const String warranty = 'assets/images/warranty.png';
+
 
   static const String report = 'assets/images/report.png';
   static const String ic_sales_item = 'assets/images/ic_sales_item.png';
@@ -111,8 +110,6 @@ class Images {
   static const String wppf_ledger1 = 'assets/images/icon-wppf-ledger.png';
   static const String ait_automation_64 = 'assets/images/ait-automation-64.png';
   static const String ait_automation_48 = 'assets/images/ait-automation-48.png';
-
-
-
-
+  static const String move_order = 'assets/images/move_order.png';
+  static const String mo_approval = 'assets/images/check-box-48.png';
 }

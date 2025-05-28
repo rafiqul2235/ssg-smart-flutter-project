@@ -1,5 +1,5 @@
-
 import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
+import 'package:ssg_smart2/view/screen/approval/approval_main.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu.dart';
 import 'package:ssg_smart2/view/screen/managementdashboard/managemrnt_d_menu_gcf.dart';
 import 'package:ssg_smart2/view/screen/more/more_screen.dart';
+import 'package:ssg_smart2/view/screen/moveorder/approver/mo_for_approver.dart';
 import 'package:ssg_smart2/view/screen/moveorder/user/user_move_order.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_notifications.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/collection_screen.dart';
@@ -251,9 +252,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             } else if(userMenu.id == '43') {
                               return HomeMenuItemCircle(image: Images.ait_automation_48, title:  userMenu.name!, navigateTo: AITAutomationScreen(),count: 0,hasCount: false,bgColor: ColorResources.DARK_BLUE,);
                             } else if(userMenu.id == '44') {
-                              return HomeMenuItemCircle(image: Images.notification, title: userMenu.name!, navigateTo: MoveOrderScreen(), count: 0, hasCount: false, bgColor: ColorResources.DARK_BLUE);
-                            }
-                            else{
+                              return HomeMenuItemCircle(image: Images.move_order, title: userMenu.name!, navigateTo: UserMoveOrderScreen(), count: 0, hasCount: false, bgColor: ColorResources.DARK_BLUE);
+                            } else if(userMenu.id == '45') {
+                              return HomeMenuItemCircle(image: Images.mo_approval, title: userMenu.name!, navigateTo: ApprovalMoveOrderScreen(), count: 0, hasCount: false, bgColor: ColorResources.DARK_BLUE);
+                            } else {
                               return HomeMenuItemCircle(image: Images.ic_service_req, title: 'TBD',count: 0,hasCount: false,navigateTo:null, bgColor: ColorResources.DARK_BLUE,);
                             }
                           }

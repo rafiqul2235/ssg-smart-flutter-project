@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
+import 'package:ssg_smart2/data/model/response/aitResponse.dart';
+
 import 'package:ssg_smart2/data/model/response/ait_essential.dart';
 import 'package:ssg_smart2/data/model/response/base/new_api_resonse.dart';
 import 'package:ssg_smart2/data/model/ait_data.dart';
 
 import '../data/model/body/ait_details.dart';
 import '../data/model/body/approver.dart';
-import '../data/model/response/AitResponse.dart';
 import '../data/repository/attachment_repo.dart';
 
 class AttachmentProvider with ChangeNotifier {

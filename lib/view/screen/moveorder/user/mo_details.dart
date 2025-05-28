@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/mo_list.dart';
 import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
+import 'package:ssg_smart2/view/screen/moveorder/user/user_move_order.dart';
 
+import '../../../../data/model/body/approver.dart';
 import '../../../basewidget/no_internet_screen.dart';
 
 class MoveOrderDetail extends StatefulWidget {
@@ -20,10 +22,57 @@ class MoveOrderDetail extends StatefulWidget {
 }
 
 class _MoveOrderDetailState extends State<MoveOrderDetail> {
+
   @override
   void initState() {
     super.initState();
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchMoDetails(widget.moveOrderItem.orgId, widget.moveOrderItem.moveOrderNumber);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MoveOrderProvider>(context, listen: false)
+          .fetchMoDetails(widget.moveOrderItem.orgId, widget.moveOrderItem.moveOrderNumber);
+    });
+  }
+
+
+  void _onClickSubmit() async {
+    final provider = context.read<MoveOrderProvider>();
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator(),)
+    );
+    await provider.submitMoveOrder(widget.moveOrderItem.headerId);
+
+    // Close the loading indicator
+    Navigator.of(context).pop();
+
+    if (provider.isSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(provider.error!),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+        ),
+      );
+      Navigator.of(context).pop(); // Close the dialog
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserMoveOrderScreen(
+                isBackButtonExist: true,
+              )));
+      // Navigator.pop(context);
+    }else{
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text('Submission Failed'),
+            content: Text(provider.error!),
+          )
+      );
+    }
   }
 
   @override
@@ -31,6 +80,8 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     return Scaffold(
       appBar: CustomAppBar(title: 'MO Details'),
       body: Consumer<MoveOrderProvider>(builder: (context, moProvider, child) {
+        int itemLength = moProvider.moDetails.length;
+        double sum = 0;
         if (moProvider.isLoading) {
           return Center(child: CircularProgressIndicator());
         } else if (moProvider.error!.isNotEmpty) {
@@ -44,6 +95,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Header Info Card
                         Container(
@@ -99,7 +151,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      '${widget.moveOrderItem.headerStatusName}',
+                                      '${widget.moveOrderItem.status}',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
@@ -122,7 +174,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
+                            children: [
                               Text(
                                 'Items',
                                 style: TextStyle(
@@ -131,7 +183,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                                 ),
                               ),
                               Text(
-                                'Total: 5 items',
+                                'Total: ${itemLength} items',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black87,
@@ -215,63 +267,137 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
                                   ),
                                 ),
                                 ...List.generate(moProvider.moDetails.length, (index) {
+                                  sum = sum + double.parse(moProvider.moDetails[index].totalValue!);
                                   return _buildTableRow(
-                                    moProvider.moDetails[index].description,
+                                    moProvider.moDetails[index].description!,
                                     '${moProvider.moDetails[index].quantityRequired} ${moProvider.moDetails[index].uom}',
-                                    moProvider.moDetails[index].mtActualCost,
-                                    moProvider.moDetails[index].totalValue,
+                                    moProvider.moDetails[index].mtActualCost!,
+                                    moProvider.moDetails[index].totalValue!,
                                     index % 2 == 0
                                         ? const Color(0xFFE0F2F1)
                                         : Colors.white,
                                   );
-                                })
+                                }),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Text(
+                                          'Total',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '_',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '_',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          '${sum}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
+
+                        if (['In-Process','Approved'].contains(moProvider.moDetails[0].status)) ...[
+                          const SizedBox(height: 20.0),
+                          // Approval History header - now aligned to the left
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: _buildSectionHeader("Approver History"),
+                          ),
+                          const SizedBox(height: 10.0),
+                          _buildApproverHistoryList(moProvider.approverList),
+                        ],
                       ],
+
                     ),
                   ),
                 ),
               ),
 
               // Bottom Buttons
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+              if(!['In-Process','Approved'].contains(moProvider.moDetails[0].status))...[
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _onClickSubmit();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
+                          child: Text('Submit', style: TextStyle(fontSize: 16)),
                         ),
-                        child: Text('Submit', style: TextStyle(fontSize: 16)),
                       ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
+                          child: Text('Cancel', style: TextStyle(fontSize: 16)),
                         ),
-                        child: Text('Cancel', style: TextStyle(fontSize: 16)),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ]
+
             ],
           );
         }
@@ -310,5 +436,78 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
         ],
       ),
     );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF2C3E50),
+      ),
+    );
+  }
+
+  Widget _buildApproverHistoryList(List<ApproverDetail> approverList) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: approverList.length,
+        separatorBuilder: (context, index) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final history = approverList[index];
+          return ListTile(
+            title: Text(history.responderName),
+            subtitle: Text(history.note),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  history.action,
+                  style: TextStyle(
+                      color: _getStatusColor(history.action),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14
+                  ),
+                ),
+                Text(
+                  history.actionDate,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Initiated':
+        return Colors.amber;
+      case 'Approved':
+        return Colors.green;
+      case 'Rejected':
+        return Colors.red;
+      case 'Pending':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
   }
 }
