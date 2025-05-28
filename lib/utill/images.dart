@@ -111,4 +111,5 @@ class Images {
   static const String ait_automation_64 = 'assets/images/ait-automation-64.png';
   static const String ait_automation_48 = 'assets/images/ait-automation-48.png';
   static const String move_order = 'assets/images/move_order.png';
+  static const String mo_approval = 'assets/images/check-box-48.png';
 }

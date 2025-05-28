@@ -65,7 +65,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
         builder: (context, moProvider, child) {
           if (moProvider.isLoading) {
             return Center(child: CircularProgressIndicator());
-          } else if (moProvider.error!.isNotEmpty) {
+          } else if (moProvider.approverList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);
           } else {
             return Padding(
