@@ -11,11 +11,13 @@ import '../home/dashboard_screen.dart';
 
 class LoanApprovalHistoryScreen extends StatefulWidget {
   final bool isBackButtonExist;
+  final String applicationType;
   final String headerId;
 
   const LoanApprovalHistoryScreen(
       {Key? key,
         this.isBackButtonExist = true,
+        required this.applicationType,
         required this.headerId})
       : super(key: key);
 
@@ -28,7 +30,7 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
   void initState() {
     super.initState();
     Provider.of<ApprovalHistoryProvider>(context, listen: false)
-        .fetchLoanApprovalHistory(widget.headerId);
+        .fetchLoanApprovalHistory(widget.applicationType, widget.headerId);
   }
 
   @override
@@ -82,6 +84,7 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _buildInfoRow('Application Id', widget.headerId),
             _buildInfoRow('Application Type', applicationInfo.applicationType!),
             _buildInfoRow('Eligible Amount', applicationInfo.eligibilityAmount!),
             _buildInfoRow('Applied Amount', applicationInfo.appliedAmount!),
@@ -182,3 +185,4 @@ class _LoanApprovalHistoryScreenState extends State<LoanApprovalHistoryScreen> {
     );
   }
 }
+

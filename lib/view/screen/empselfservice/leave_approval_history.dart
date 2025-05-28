@@ -81,6 +81,7 @@ class _ApprovalHistoryScreenState extends State<ApprovalHistoryScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _buildInfoRow('Application Id', widget.invoiceId),
             _buildInfoRow('Leave Type', applicationInfo.leaveType),
             _buildInfoRow('Start Date', applicationInfo.leaveStartDate),
             _buildInfoRow('End Date', applicationInfo.leaveEndDate),
