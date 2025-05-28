@@ -22,11 +22,6 @@ class MoveOrderDetail extends StatefulWidget {
 }
 
 class _MoveOrderDetailState extends State<MoveOrderDetail> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Provider.of<MoveOrderProvider>(context, listen: false).fetchMoDetails(widget.moveOrderItem.orgId, widget.moveOrderItem.moveOrderNumber);
-  // }
 
   @override
   void initState() {

@@ -58,9 +58,6 @@ class _ScrollableTableState extends State<ScrollableTable> {
   @override
   Widget build(BuildContext context) {
     int length = widget.items.length;
-    print('table screen');
-    print('length: ${length}');
-
     // Calculate content height based on number of items
     double contentHeight = widget.rowHeight * length;
 

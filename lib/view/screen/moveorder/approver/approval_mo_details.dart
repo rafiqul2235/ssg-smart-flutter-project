@@ -104,28 +104,15 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
           }
 
           // Convert MoveOrderDetails objects to Map<String, dynamic>
-          // final items = moProvider.moDetails.map((detail) => {
-          //   'name': detail.description,
-          //   'qty': '${detail.quantityRequired} ${detail.uom}',
-          //   'unit': detail.mtActualCost,
-          //   'total': detail.totalValue,
-          //   'last_issue': detail.lastIssueInfo,
-          //   'use_area': detail.useOfArea,
-          //   'locator': detail.itemLocator,
-          // }).toList();
-
-          // demo data
-
-          final items = List.generate(15, (index) => {
-            'name': 'Item ${index + 1}',
-            'qty': '${(index + 1) * 2} PCS',
-            'unit': (5.0 + index).toStringAsFixed(2),
-            'total': ((index + 1) * 2 * (5.0 + index)).toStringAsFixed(2),
-            'last_issue': '2025-05-${(index % 28 + 1).toString().padLeft(2, '0')}',
-            'use_area': 'Area ${(index % 5) + 1}',
-            'locator': 'Rack ${(index % 3) + 1}',
-          });
-
+          final items = moProvider.moDetails.map((detail) => {
+            'name': detail.description,
+            'qty': '${detail.quantityRequired} ${detail.uom}',
+            'unit': detail.mtActualCost,
+            'total': detail.totalValue,
+            'last_issue': detail.lastIssueInfo,
+            'use_area': detail.useOfArea,
+            'locator': detail.itemLocator,
+          }).toList();
 
           // Calculate available height for the table
           // This is a smart approach to limit the table height based on content
@@ -169,7 +156,7 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
                                 ),
                               const SizedBox(height: 5),
                               Text(
-                                'Requester Name: ${widget.moveOrderItem.fromRole ?? "N/A"}',
+                                'Requester Name: ${widget.moveOrderItem.fullName ?? "N/A"}',
                                 style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 5),

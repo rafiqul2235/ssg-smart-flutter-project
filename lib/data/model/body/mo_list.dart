@@ -13,6 +13,7 @@ class MoveOrderItem {
   final String? creationDate;
   final DateTime? lastUpdateDate;
   final String? notificationId;
+  final String? fullName;
   final String? fromRole;
   final String? toUser;
 
@@ -31,6 +32,7 @@ class MoveOrderItem {
     this.creationDate,
     required this.lastUpdateDate,
     this.notificationId,
+    required this.fullName,
     this.fromRole,
     this.toUser,
   });
@@ -51,6 +53,7 @@ class MoveOrderItem {
       creationDate: json['CREATION_DATE'],
       lastUpdateDate: DateTime.tryParse(json['LAST_UPDATE_DATE']),
       notificationId: json['NOTIFICATION_ID'],
+      fullName: json['FULL_NAME'] ?? '',
       fromRole: json['FROM_ROLE'],
       toUser: json['TO_USER'],
     );

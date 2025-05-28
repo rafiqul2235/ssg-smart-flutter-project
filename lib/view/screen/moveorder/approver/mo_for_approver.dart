@@ -73,7 +73,28 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('MO List', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'MO list',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Total: ${moProvider.moList.length} items',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 10),
                   Expanded(
                     child: ListView.builder(
