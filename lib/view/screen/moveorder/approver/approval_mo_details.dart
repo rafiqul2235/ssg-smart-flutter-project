@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/moveorder/approver/mo_for_approver.dart';
-import 'package:ssg_smart2/view/screen/moveorder/test_table.dart';
 
 import '../../../../data/model/body/approver.dart';
 import '../../../../data/model/body/mo_list.dart';

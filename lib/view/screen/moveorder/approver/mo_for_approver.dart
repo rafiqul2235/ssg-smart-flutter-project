@@ -3,13 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
-import 'package:ssg_smart2/view/screen/moveorder/test_table.dart';
 
 import '../../../../data/model/response/user_info_model.dart';
 import '../../../../provider/user_provider.dart';
 import '../../../../utill/timeago_util.dart';
 import '../../../basewidget/custom_app_bar.dart';
-import '../easy_table.dart';
 import 'approval_mo_details.dart';
 
 class ApprovalMoveOrderScreen extends StatefulWidget {
