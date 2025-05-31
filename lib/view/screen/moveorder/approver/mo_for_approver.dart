@@ -43,7 +43,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
     setState(() {});
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
+    Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList('6');
   }
 
   @override
@@ -63,7 +63,7 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
         builder: (context, moProvider, child) {
           if (moProvider.isLoading) {
             return Center(child: CircularProgressIndicator());
-          } else if (moProvider.approverList.isEmpty) {
+          } else if (moProvider.moList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);
           } else {
             return Padding(
@@ -105,7 +105,6 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ApproverMoDetails(moveOrderItem: mo,)
-                                  // builder: (context) => FixedHeaderTable(),
                                 )
                             );
                           },

@@ -65,7 +65,7 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
         builder: (context, moProvider, child) {
           if (moProvider.isLoading) {
             return Center(child: CircularProgressIndicator());
-          } else if (moProvider.error!.isNotEmpty) {
+          } else if (moProvider.moList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);
           } else {
             return Padding(
@@ -103,7 +103,7 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
                       itemCount: moProvider.moList.length,
                       itemBuilder: (context, index) {
                         MoveOrderItem mo = moProvider.moList[index];
-                        String status = mo.status == null || mo.status!.isEmpty ? 'In-complete' : mo.status!;
+                        String status = mo.status == null || mo.status!.isEmpty ? mo.headerStatusName : mo.status!;
                         mo.status = status;
                         return InkWell(
                           onTap: () {

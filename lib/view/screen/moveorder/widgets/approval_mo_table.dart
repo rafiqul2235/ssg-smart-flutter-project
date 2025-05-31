@@ -28,14 +28,21 @@ class _ScrollableTableState extends State<ScrollableTable> {
   @override
   void initState() {
     super.initState();
+    headerController.addListener(() {
+      if (headerController.hasClients && headerController.offset != bodyController.offset && headerController.offset != summaryController.offset) {
+        bodyController.jumpTo(headerController.offset);
+        summaryController.jumpTo(headerController.offset);
+      }
+    });
+
     bodyController.addListener(() {
-      if (headerController.hasClients && headerController.offset != bodyController.offset) {
+      if (bodyController.hasClients && headerController.offset != bodyController.offset) {
         headerController.jumpTo(bodyController.offset);
         summaryController.jumpTo(bodyController.offset);
       }
     });
     summaryController.addListener(() {
-      if(headerController.hasClients && headerController.offset != summaryController.offset && bodyController.offset != summaryController.offset) {
+      if(summaryController.hasClients && headerController.offset != summaryController.offset && bodyController.offset != summaryController.offset) {
         headerController.jumpTo(summaryController.offset);
         bodyController.jumpTo(summaryController.offset);
       }

@@ -32,7 +32,6 @@ class MoveOrderProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print("Before calling : $empId");
       _moList = await moveOrderRepo.fetchMoveOrderList(empId);
     } catch(e) {
       _error = e.toString();
@@ -49,7 +48,6 @@ class MoveOrderProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print("Before calling : $empId");
       _moList = await moveOrderRepo.fetchApproverMoveOrderList(empId);
     } catch(e) {
       _error = e.toString();
@@ -66,12 +64,9 @@ class MoveOrderProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print('mo provider input: ${orgId} and $moNo');
       _moResponse = await moveOrderRepo.fetchMoveOrderDetails(orgId, moNo);
-      print("mo response: $_moResponse");
       _moDetails = _moResponse!.moveOrderDetails;
       _approverList = _moResponse!.approverList!;
-      print("Mo list: $_moDetails}");
     } catch(e) {
       _error = e.toString();
     } finally {
@@ -86,7 +81,6 @@ class MoveOrderProvider with ChangeNotifier {
 
     try {
       final result = await moveOrderRepo.submitMoveOrder(headerId);
-      print('result(provider): $result');
       _isSuccess = result['success'] == 1;
       _error = result['msg'] ?? 'Unknown response';
     }catch(e){
