@@ -247,6 +247,8 @@ class _BottomSheetContentForSalaryAdvState extends State<BottomSheetContentForSa
         const SizedBox(height: 10),
         TextFormField(
           controller: _reasonController,
+          maxLength: 99,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
           decoration: const InputDecoration(
             hintText: 'Reason for loan application',
             border: OutlineInputBorder(),
@@ -255,6 +257,9 @@ class _BottomSheetContentForSalaryAdvState extends State<BottomSheetContentForSa
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please provide a reason';
+            }
+            if (value.length > 99) {
+              return 'Maximum 100 characters allowed';
             }
             return null;
           },
