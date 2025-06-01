@@ -173,6 +173,24 @@ class SalesOrderRepo {
     }
   }
 
+
+
+  Future<ApiResponse> getTripNumberSupervisorRep(String salesPersonId, String org_id) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['salesrep_id'] = salesPersonId;
+    data['org_id'] = org_id;
+    try {
+      Response response = await dioClient.postWithFormData(
+        AppConstants.SP_TRIP_NUMBER,
+        data:data,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      print('tripNum ${e}');
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   Future<ApiResponse> getSrForSupervisorRep(String userName, String org_id) async {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['user_name'] = userName;
@@ -527,6 +545,34 @@ class SalesOrderRepo {
         AppConstants.DLV_INFO_DATA,
         data: {
           'salerep_id': salesrep_id,
+          'trip_number': trip_number
+        },
+      );
+      print("dlv_info $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print("dlv_info data: $responseData");
+        if (responseData['success'] == 1 && responseData['pending_so'] != null) {
+          return (responseData['pending_so'] as List)
+              .map((json) => DeliveryInfoModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<DeliveryInfoModel>> fetchSupervisorDlvInfoRep(String UserName,String trip_number) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.DLV_INFO_DATA,
+        data: {
+          'salerep_id': UserName,
           'trip_number': trip_number
         },
       );

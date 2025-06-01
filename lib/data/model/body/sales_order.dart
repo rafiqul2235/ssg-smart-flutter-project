@@ -22,7 +22,7 @@ class SalesOrder {
   String? warehouseName;
   String? customerPoNumber;
   String? vehicleInfo;
-  String? orderTotal;
+  double? orderTotal;
 
   List<ItemDetail>? orderItemDetail = [];
   //List<DlvRequestItemDetail>? dlvItemDetail = [];
@@ -50,7 +50,7 @@ class SalesOrder {
     this.warehouseName= '',
     this.customerPoNumber= '',
     this.vehicleInfo = '',
-    this.orderTotal=''
+    this.orderTotal=0
   });
 
   void addItem(ItemDetail item){

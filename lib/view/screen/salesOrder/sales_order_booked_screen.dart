@@ -344,7 +344,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     }
 
 
-    orderTotal= Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice() as String;
+    //orderTotal= Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice() as String;
 
 
     /*ItemDetail? itemDetail = ItemDetail();
@@ -416,7 +416,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     salesInfoModel.warehouseId = _warehouseId;
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
     salesInfoModel.customerPoNumber = _cusPONoController?.text;
-    salesInfoModel.orderTotal = orderTotal;
+    salesInfoModel.orderTotal = grantTotal;
     //Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()
 
    // developer.log(salesInfoModel.toJson().toString());

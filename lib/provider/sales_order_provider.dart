@@ -456,7 +456,21 @@ class SalesOrderProvider with ChangeNotifier {
       ApiChecker.checkApi(context, apiResponse);
     }
   }
+//---------------- supervisor---------------
 
+  Future<void> getSupervisorTripNumberSr(BuildContext context) async {
+    String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
+    String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
+
+    ApiResponse apiResponse = await salesOrderRepo.getTripNumberSrRep(salesPersonId,orgId);
+    if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
+      _TripNumSrList = [];
+      apiResponse.response?.data['trips'].forEach((tripList) => _TripNumSrList.add(DropDownModel.fromJsonForSrTripList(tripList)));
+      notifyListeners();
+    }else{
+      ApiChecker.checkApi(context, apiResponse);
+    }
+  }
 
   Future<void> getSalespersonForSupervisor(BuildContext context) async {
     String userName =  Provider.of<AuthProvider>(context, listen: false).getUserName();
@@ -890,6 +904,21 @@ class SalesOrderProvider with ChangeNotifier {
 
     try {
       _dlvInfo = await salesOrderRepo.fetchDlvInfoRep(salesrep_id,trip_number);
+      print('delivery: ${_dlvInfo}');
+    } catch (e) {
+      print('Error fetching: $e');
+      _dlvInfo = [];
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+//forSupervisor
+  Future<void> fetchDSupervisoreliveryInfoData(String userName, String trip_number) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _dlvInfo = await salesOrderRepo.fetchDlvInfoRep(userName,trip_number);
       print('delivery: ${_dlvInfo}');
     } catch (e) {
       print('Error fetching: $e');

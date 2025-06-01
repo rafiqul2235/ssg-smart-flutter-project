@@ -59,6 +59,7 @@ class _SalesNotificationsSupervisorState extends State<SalesNotificationsSupervi
 
   List<String> _reportTypes = [
     'Collection',
+    'Collection(VA)',
     'Sales',
     'Delivery Request',
     'Pending SO',

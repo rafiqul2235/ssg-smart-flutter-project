@@ -4,11 +4,11 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
-  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
   //static const String BASE_URL = 'http://192.168.7.98/'; //test
 
-  //static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
+  static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
 
   //static const String BASE_URL = 'http://10.0.2.2/';
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
@@ -40,10 +40,14 @@ class AppConstants {
   static const String NOTIFICATION_SUMMARY = 'transaction_summary';
   static const String NOTIFICATION_SUMMARY_SUPERVISOR = 'transaction_summary_supervisor';
   static const String DLV_INFO_DATA = 'delivery_info_by_smart_for_sp';
+  static const String SUPERVISOR_DLV_INFO_DATA = 'trip_num_for_supervisor';
   static const String ATTENDANCE_SUMMARY = 'attendence_summary';
   static const String LEAVE_TYPE = 'leave_type';
   static const String SP_CUST_LIST = 'cust_wise_notification_for_sp';
   static const String SP_TRIP_NUMBER = 'trip_num_for_sr';
+
+  static const String SUPERVISOR_TRIP_NUMBER = 'trip_num_for_supervisor';
+
   static const String SP_FOR_SUPERVISOR = 'salesperson_wise_notification';
   static const String CUSTOMER_FOR_SUPERVISOR = 'cust_sp_wise_notification';
   static const String SALES_SUMMARY_DATA = 'sales_person_summary_report';
