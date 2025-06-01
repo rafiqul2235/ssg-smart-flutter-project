@@ -4,40 +4,42 @@ class MoveOrderDetails {
   final String sl;
   final String organizationId;
   final String inventoryItemId;
+  final String? status;
   final String moveOrderNumber;
-  final String itemCode;
-  final String description;
-  final String lineNumber;
-  final String transactionType;
-  final String dateRequired;
-  final String uom;
-  final String quantityRequired;
-  final String quantityDelivered;
+  final String? itemCode;
+  final String? description;
+  final String? lineNumber;
+  final String? transactionType;
+  final String? dateRequired;
+  final String? uom;
+  final String? quantityRequired;
+  final String? quantityDelivered;
   final String? lotNumber;
-  final String transactionTypeId;
+  final String? transactionTypeId;
   final String? oldReturn;
-  final String userId;
-  final String createBy;
-  final String itemLocator;
+  final String? userId;
+  final String? createBy;
+  final String? itemLocator;
   final String? txnSourceId;
-  final String subinventoryCode;
+  final String? subinventoryCode;
   final String? toSubinventoryCode;
-  final String transactionDate;
-  final String transactionQuantity;
-  final String mtActualCost;
+  final String? transactionDate;
+  final String? transactionQuantity;
+  final String? mtActualCost;
   final String? reasonId;
-  final String preparedBy;
-  final String totalValue;
-  final String transactionId;
-  final String headerStatusName;
-  final String useOfAreaSection;
-  final String useOfArea;
+  final String? preparedBy;
+  final String? totalValue;
+  final String? transactionId;
+  final String? headerStatusName;
+  final String? useOfAreaSection;
+  final String? useOfArea;
   final String? sectionRtd;
-  final String lastIssueInfo;
+  final String? lastIssueInfo;
 
   MoveOrderDetails({
     required this.sl,
     required this.organizationId,
+    required this.status,
     required this.inventoryItemId,
     required this.moveOrderNumber,
     required this.itemCode,
@@ -75,6 +77,7 @@ class MoveOrderDetails {
     return MoveOrderDetails(
       sl: json["SL"] ?? '',
       organizationId: json["ORGANIZATION_ID"] ?? '',
+      status: json["STATUS"] ?? '',
       inventoryItemId: json["INVENTORY_ITEM_ID"] ?? '',
       moveOrderNumber: json["MOVE_ORDER_NUMBER"] ?? '',
       itemCode: json["ITEM_CODE"] ?? '',
@@ -96,10 +99,14 @@ class MoveOrderDetails {
       toSubinventoryCode: json["TO_SUBINVENTORY_CODE"],
       transactionDate: json["TRANSACTION_DATE"] ?? '',
       transactionQuantity: json["TRANSACTION_QUANTITY"] ?? '',
-      mtActualCost: double.parse(json["MT_ACTUAL_COST"]).toStringAsFixed(2) ?? '',
+      mtActualCost: json["MT_ACTUAL_COST"] != null
+          ? double.parse(json["MT_ACTUAL_COST"].toString()).toStringAsFixed(2)
+          : '0.00',
       reasonId: json["REASON_ID"],
       preparedBy: json["PREPARED_BY"] ?? '',
-      totalValue: double.parse(json["TOTAL_VALUE"]).toStringAsFixed(2) ?? '',
+      totalValue: json["TOTAL_VALUE"] != null
+          ? double.parse(json["TOTAL_VALUE"].toString()).toStringAsFixed(2)
+          : '0.00',
       transactionId: json["TRANSACTION_ID"] ?? '',
       headerStatusName: json["HEADER_STATUS_NAME"] ?? '',
       useOfAreaSection: json["USE_OF_AREA_SECTION"] ?? '',

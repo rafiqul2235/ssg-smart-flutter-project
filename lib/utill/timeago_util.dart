@@ -2,7 +2,6 @@ class TimeAgoUtils {
   static String formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-
     if (difference.inSeconds < 60) {
       return '${difference.inSeconds} sec ago';
     } else if (difference.inMinutes < 60) {

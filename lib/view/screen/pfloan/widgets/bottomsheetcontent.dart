@@ -294,6 +294,8 @@ class _BottomSheetContentForPFState extends State<BottomSheetContentForPF> {
         const SizedBox(height: 10),
         TextFormField(
           controller: _reasonController,
+          maxLength: 99,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
           decoration: const InputDecoration(
             hintText: 'Reason for loan application',
             border: OutlineInputBorder(),
@@ -302,6 +304,9 @@ class _BottomSheetContentForPFState extends State<BottomSheetContentForPF> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please provide a reason';
+            }
+            if (value.length > 99) {
+              return 'Maximum 100 characters allowed';
             }
             return null;
           },

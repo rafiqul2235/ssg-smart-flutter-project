@@ -68,7 +68,7 @@ class AppConstants {
   static const String CASH_PAYMENT_UPDATE = 'cash_payment_update';
   static const String SOBOKKED_APPROVAL_UPDATE = 'rsm_sales_approval_booked';
   static const String CHUTI_APPROVAL = 'chuti_approval_flow';
-  // static const String APPROVAL_FLOW = 'approval_flow';
+
   static const String PAY_SLIP = 'emp_pay_slip';
   static const String SAL_ELIGIBLE_INFO = 'salary_eligible_info';
   static const String SAL_LOAN_INFO = 'salary_loan_info';
@@ -97,9 +97,14 @@ class AppConstants {
   static const String UPDATE_AIT = 'update_ait_automation';
 
   //MO project
-  static const String MO_LIST = '';
-  static const String MO_DETAILS = '';
+  static const String MO_LIST = 'mo_list';
+  static const String APPROVER_MO_LIST = 'approver_mo_list';
+  static const String MO_DETAILS = 'mo_details';
+  static const String MO_SUBMISSION = 'mo_submission';
 
+
+  // Approval
+  static const String APPROVAL_FLOW = 'approval_flow';
 
   //static const String LOGIN_USERID = 'USER_ID';
 

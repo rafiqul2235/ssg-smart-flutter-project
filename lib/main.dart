@@ -6,6 +6,7 @@ import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
 import 'package:ssg_smart2/provider/banner_provider.dart';
 import 'package:ssg_smart2/provider/location_provider.dart';
+import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
 import 'package:ssg_smart2/provider/pfloan_provider.dart';
@@ -28,6 +29,7 @@ import 'package:ssg_smart2/provider/theme_provider.dart';
 import 'package:ssg_smart2/utill/app_constants.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 import 'package:ssg_smart2/provider/attachment_provider.dart';
+import 'package:ssg_smart2/view/screen/moveorder/approver/mo_for_approver.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -77,6 +79,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<WppfProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SalesOrderProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<AttachmentProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<MoveOrderProvider>()),
     ],
     child: const MyApp(),
   ));
