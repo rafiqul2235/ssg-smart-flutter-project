@@ -355,7 +355,9 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
               ),
 
               // Bottom Buttons
-              if(!['In-Process','Approved'].contains(moProvider.moDetails[0].status))...[
+              if(moProvider.moDetails[0].headerStatusName == 'Incomplete' &&
+                  moProvider.moDetails[0].status != 'In-Process'
+                  )...[
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(
