@@ -35,48 +35,131 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
       widget.moveOrderItem.moveOrderNumber,
     );
   }
-
+  //
+  // void _onClickSubmit(bool isApproved) async {
+  //   String? notificationId = widget.moveOrderItem.notificationId;
+  //   String action = isApproved ? "APPROVED" : "REJECTED";
+  //   String applicationType = "MOVEORDER";
+  //   String comment = _commentController.text;
+  //   final provider = context.read<MoveOrderProvider>();
+  //   showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (_) => const Center(child: CircularProgressIndicator(),)
+  //   );
+  //   await provider.handleMoveOrder(applicationType, notificationId!, action, comment);
+  //   // Close the loading indicator
+  //   Navigator.of(context).pop();
+  //
+  //   if (provider.isSuccess) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(provider.error!),
+  //         backgroundColor: Colors.green,
+  //         behavior: SnackBarBehavior.floating,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //         ),
+  //       ),
+  //     );
+  //     Navigator.of(context).pop(); // Close the dialog
+  //     Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => ApprovalMoveOrderScreen(
+  //               isBackButtonExist: true,
+  //             )));
+  //     // Navigator.pop(context);
+  //   }else{
+  //     showDialog(
+  //         context: context,
+  //         builder: (_) => AlertDialog(
+  //           title: Text('Approval Failed'),
+  //           content: Text(provider.error!),
+  //         )
+  //     );
+  //   }
+  // }
   void _onClickSubmit(bool isApproved) async {
     String? notificationId = widget.moveOrderItem.notificationId;
     String action = isApproved ? "APPROVED" : "REJECTED";
     String applicationType = "MOVEORDER";
     String comment = _commentController.text;
     final provider = context.read<MoveOrderProvider>();
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator(),)
-    );
-    await provider.handleMoveOrder(applicationType, notificationId!, action, comment);
-    // Close the loading indicator
-    Navigator.of(context).pop();
 
-    if (provider.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(provider.error!),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      await provider.handleMoveOrder(applicationType, notificationId!, action, comment);
+
+      // Always close the loading dialog first
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (provider.isSuccess) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.error ?? 'Move order ${action.toLowerCase()} successfully'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-        ),
-      );
-      Navigator.of(context).pop(); // Close the dialog
-      Navigator.pushReplacement(
+        );
+
+        // Close current dialog and navigate back
+        Navigator.of(context).pop();
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => ApprovalMoveOrderScreen(
-                isBackButtonExist: true,
-              )));
-      // Navigator.pop(context);
-    }else{
-      showDialog(
+            builder: (context) => ApprovalMoveOrderScreen(
+              isBackButtonExist: true,
+            ),
+          ),
+        );
+      } else {
+        // Show error dialog
+        showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text('Approval Failed'),
-            content: Text(provider.error!),
-          )
+            title: Text('${isApproved ? "Approval" : "Rejection"} Failed'),
+            content: Text(provider.error ?? 'An error occurred during ${action.toLowerCase()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error dialog for exceptions
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('An unexpected error occurred: ${e.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
