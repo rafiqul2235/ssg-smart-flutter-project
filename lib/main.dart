@@ -189,7 +189,8 @@ class _MyAppState extends State<MyApp> {
         FallbackLocalizationDelegate()
       ],
       supportedLocales: _locals,
-      home:  const SplashScreen(),
+      // home:  const SplashScreen(),
+      home: const ApprovalMoveOrderScreen(),
     );
   }
 }

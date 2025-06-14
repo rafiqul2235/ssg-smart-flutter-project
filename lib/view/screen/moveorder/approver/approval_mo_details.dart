@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/basewidget/no_internet_screen.dart';
 import 'package:ssg_smart2/view/screen/moveorder/approver/mo_for_approver.dart';
+import 'package:ssg_smart2/view/screen/moveorder/widgets/scrollable_table.dart';
 
 import '../../../../data/model/body/approver.dart';
 import '../../../../data/model/body/mo_list.dart';
@@ -272,9 +273,15 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
                         const SizedBox(height: 40),
 
                         // Scrollable Table with dynamic height
-                        ScrollableTable(
+                        // ScrollableTable(
+                        //   items: items,
+                        //   maxHeight: maxTableHeight, // Set maximum height constraint
+                        // ),
+                        ScrollableTable2(
                           items: items,
-                          maxHeight: maxTableHeight, // Set maximum height constraint
+                          fixedColumnWidth: 130,    // Adjust based on your longest item names
+                          minRowHeight: 50,         // Minimum height for all rows
+                          maxHeight: 400,           // Optional max table height
                         ),
 
                         const SizedBox(height: 20),

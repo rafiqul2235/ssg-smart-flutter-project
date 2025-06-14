@@ -41,7 +41,14 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
 
   _intData() async {
     setState(() {});
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+    String employeeNumber = userInfoModel?.employeeNumber ?? '';
+    Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList('218');
+  }
+
+  // Method to retry loading data
+  void _retry() {
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
     Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
   }
@@ -62,112 +69,189 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
       body: Consumer<MoveOrderProvider>(
         builder: (context, moProvider, child) {
           if (moProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (moProvider.moList.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          // Check for error state
+          else if (moProvider.error != null && moProvider.error!.isNotEmpty) {
+            return _buildErrorWidget(moProvider.error!);
+          }
+          // Check for empty data
+          else if (moProvider.moList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);
-          } else {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'MO list',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Total: ${moProvider.moList.length} items',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: moProvider.moList.length,
-                      itemBuilder: (context, index) {
-                        final mo = moProvider.moList[index];
-                        return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ApproverMoDetails(moveOrderItem: mo,)
-                                )
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(8),
-                          child: Card(
-                            color: const Color(0xFFFFF2DE),
-                            margin: EdgeInsets.symmetric(vertical: 12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('MO: #${mo.moveOrderNumber}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                            Text(
-                                              'Org Name: ${mo.orgName}',
-                                              style: TextStyle(fontWeight: FontWeight.w500),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                      Text(TimeAgoUtils.formatTimeAgo(mo.lastUpdateDate!), style: TextStyle(color: Colors.black54)),
-                                    ],
-                                  ),
-                                  SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('${mo.dateRequired}', style: TextStyle(color: Colors.black54)),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: getColorAsStatus(mo.headerStatusName!),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: Text(
-                                          'Pending',
-                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
+          }
+          // Show data
+          else {
+            return _buildDataWidget(moProvider);
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Error Loading Data',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _retry,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataWidget(MoveOrderProvider moProvider) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'MO list',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Total: ${moProvider.moList.length} items',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                _retry();
+                // Wait for the loading to complete
+                while (moProvider.isLoading) {
+                  await Future.delayed(const Duration(milliseconds: 100));
+                }
+              },
+              child: ListView.builder(
+                itemCount: moProvider.moList.length,
+                itemBuilder: (context, index) {
+                  final mo = moProvider.moList[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ApproverMoDetails(moveOrderItem: mo),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Card(
+                      color: const Color(0xFFFFF2DE),
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'MO: #${mo.moveOrderNumber}',
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        'Org Name: ${mo.orgName}',
+                                        style: const TextStyle(fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  TimeAgoUtils.formatTimeAgo(mo.lastUpdateDate!),
+                                  style: const TextStyle(color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${mo.dateRequired}',
+                                  style: const TextStyle(color: Colors.black54),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: getColorAsStatus(mo.headerStatusName ?? ''),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'Pending',
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

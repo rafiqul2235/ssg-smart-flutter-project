@@ -12,7 +12,7 @@ class ScrollableTable extends StatefulWidget {
     required this.items,
     this.fixedColumnWidth = 120,
     this.scrollableColumnWidth = 100,
-    this.rowHeight = 50,
+    this.rowHeight = 80,
     this.maxHeight, // Add this parameter
   }) : super(key: key);
 
@@ -124,10 +124,10 @@ class _ScrollableTableState extends State<ScrollableTable> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildHeaderCell('R Qty'),
+                          _buildHeaderCell('Req. Qty'),
                           _buildHeaderCell('Unit Price'),
                           _buildHeaderCell('Total Price'),
-                          _buildHeaderCell('Last Issue'),
+                          _buildHeaderCell('Last Issued'),
                           _buildHeaderCell('Use Area'),
                           _buildHeaderCell('Locator'),
                         ],
@@ -289,7 +289,8 @@ class _ScrollableTableState extends State<ScrollableTable> {
       ),
       child: Text(
         text ?? "",
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
+        softWrap: true,
       ),
     );
   }
@@ -310,7 +311,34 @@ class _ScrollableTableState extends State<ScrollableTable> {
       child: Text(
         text ?? "",
         textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
+        softWrap: true,
+      ),
+    );
+  }
+
+  // Solution 1: Tooltip on Hover/Tap (Recommended)
+  Widget _buildTableCellWithTooltip(String? text, int index) {
+    return Tooltip(
+      message: text ?? "",
+      child: Container(
+        width: widget.scrollableColumnWidth,
+        height: widget.rowHeight,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: index.isEven ? const Color(0xFFE0F2F1) : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+            right: BorderSide(color: Colors.grey.shade300, width: 1),
+          ),
+        ),
+        child: Text(
+          text ?? "",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          style: const TextStyle(fontSize: 12),
+        ),
       ),
     );
   }

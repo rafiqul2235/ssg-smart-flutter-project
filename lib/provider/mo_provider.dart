@@ -29,6 +29,7 @@ class MoveOrderProvider with ChangeNotifier {
   Future<void> fetchMoList(String empId) async {
     _isLoading = true;
     _error = '';
+    _moList.clear();
     notifyListeners();
 
     try {
@@ -45,6 +46,7 @@ class MoveOrderProvider with ChangeNotifier {
   Future<void> fetchApproverMoList(String empId) async {
     _isLoading = true;
     _error = '';
+    _moList.clear();
     notifyListeners();
 
     try {
