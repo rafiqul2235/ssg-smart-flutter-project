@@ -175,13 +175,13 @@ class SalesOrderRepo {
 
 
 
-  Future<ApiResponse> getTripNumberSupervisorRep(String salesPersonId, String org_id) async {
+  Future<ApiResponse> getTripNumberSupervisorRep(String user_name, String org_id) async {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['salesrep_id'] = salesPersonId;
+    data['user_name'] = user_name;
     data['org_id'] = org_id;
     try {
       Response response = await dioClient.postWithFormData(
-        AppConstants.SP_TRIP_NUMBER,
+        AppConstants.SUPERVISOR_TRIP_NUMBER,
         data:data,
       );
       return ApiResponse.withSuccess(response);
@@ -480,6 +480,35 @@ class SalesOrderRepo {
     }
   }
 
+  Future<List<ItemWisePendingModel>> fetchSupervisorItemWisePendingRep(String user_name,String salesrepId,String custId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.SUP_ITEM_WISE_PENDING_DATA,
+        data: {
+          'user_name': user_name,
+          'salerep_id': salesrepId,
+          'customer_id': custId,
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['pending_so'] != null) {
+          return (responseData['pending_so'] as List)
+              .map((json) => ItemWisePendingModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
   Future<List<CustTargetVsAchivModel>> fetchCustTargetVsAchivRep(String orgId,String period, String custAc) async {
     try {
       final response = await dioClient.postWithFormData(
@@ -567,12 +596,13 @@ class SalesOrderRepo {
     }
   }
 
-  Future<List<DeliveryInfoModel>> fetchSupervisorDlvInfoRep(String UserName,String trip_number) async {
+
+  Future<List<DeliveryInfoModel>> fetchSupervisorDlvInfoRep(String trip_number) async {
     try {
       final response = await dioClient.postWithFormData(
-        AppConstants.DLV_INFO_DATA,
+        AppConstants.SUPERVISOR_DLV_INFO_DATA,
         data: {
-          'salerep_id': UserName,
+         // 'salerep_id': salesrep_id,
           'trip_number': trip_number
         },
       );
@@ -594,6 +624,7 @@ class SalesOrderRepo {
       throw Exception('Error fetching data: $e');
     }
   }
+
 
   Future<List<MsdReportModel>> fetchMsdReportRep(String salesrep_id,String cust_id, String fromDate, String toDate, String type) async {
     try {

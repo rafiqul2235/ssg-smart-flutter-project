@@ -29,6 +29,8 @@ import '../home/web_view_screen.dart';
 import '../leave/leave_application_screen.dart';
 import '../msd_report/item_wise_pending.dart';
 import '../msd_report/sales_notifications.dart';
+import '../msd_report/supervisor_delivery_info_screen.dart';
+import '../msd_report/supervisor_item_wise_pending.dart';
 
 
 class MsdSalesReportSupervisor extends StatefulWidget {
@@ -61,8 +63,8 @@ class _MsdSalesReportSupervisorState extends State<MsdSalesReportSupervisor> {
 
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: CustBalanceConfirmation(),));
     _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
-    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
-    _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
+    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: SupervisorItemWisePending(),));
+    _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: SupervisorDeliveryInfoScreen(),));
 
   }
 

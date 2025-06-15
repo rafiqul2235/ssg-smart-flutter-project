@@ -57,7 +57,7 @@ class _SupervisorDeliveryInfoScreenState extends State<SupervisorDeliveryInfoScr
   void initState() {
     super.initState();
 
-    Provider.of<SalesOrderProvider>(context, listen: false).getTripNumberSr(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getSupervisorTripNumberSr(context);
 
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,7 +74,7 @@ class _SupervisorDeliveryInfoScreenState extends State<SupervisorDeliveryInfoScr
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Delivery Info Page',
+              title: 'Supervisor Delivery Info Page',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -155,8 +155,7 @@ class _SupervisorDeliveryInfoScreenState extends State<SupervisorDeliveryInfoScr
                 // Clear previous data before fetching new data
                 provider.clearSalesOrder();
 
-                provider.fetchDeliveryInfoData(
-                    userInfoModel!.salesRepId!,
+                provider.fetchDSupervisoreliveryInfoData(
                     selectedSrTripList?.code??''
 
                    // '11621757'

@@ -632,7 +632,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                           const SizedBox(
                               width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
-                            text: 'Customer',
+                            text: 'Customer Name',
                             textStyle: titilliumRegular,
                             mandatoryText: '*',
                           ),
@@ -652,7 +652,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                                   ? _customerController!.text
                                   : '',
                               icon: const Icon(Icons.search),
-                              height: 45,
+                              height: 50,
                               width: width,
                               dropdownHeight: 300,
                               dropdownWidth: width - 40,
@@ -759,7 +759,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                         children: [
                           Expanded(
                             child: CustomTextField(
-                              height: 45,
+                              height: 50,
                               controller: _cusPONoController,
                               hintText: 'Enter Vehicle Information ',
                               borderColor: Colors.black12,
