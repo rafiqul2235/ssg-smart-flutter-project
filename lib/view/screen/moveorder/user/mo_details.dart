@@ -33,48 +33,125 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
   }
 
 
+  // void _onClickSubmit() async {
+  //   final provider = context.read<MoveOrderProvider>();
+  //   showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (_) => const Center(child: CircularProgressIndicator(),)
+  //   );
+  //   await provider.submitMoveOrder(widget.moveOrderItem.headerId);
+  //
+  //   // Close the loading indicator
+  //   Navigator.of(context).pop();
+  //
+  //   if (provider.isSuccess) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //           content: Text(provider.error!),
+  //           backgroundColor: Colors.green,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(10),
+  //           ),
+  //       ),
+  //     );
+  //     Navigator.of(context).pop(); // Close the dialog
+  //     Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => UserMoveOrderScreen(
+  //               isBackButtonExist: true,
+  //             )));
+  //     // Navigator.pop(context);
+  //   }else{
+  //     showDialog(
+  //         context: context,
+  //         builder: (_) => AlertDialog(
+  //           title: Text('Submission Failed'),
+  //           content: Text(provider.error!),
+  //         )
+  //     );
+  //   }
+  // }
   void _onClickSubmit() async {
     final provider = context.read<MoveOrderProvider>();
+
+    // Show loading dialog
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator(),)
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
     );
-    await provider.submitMoveOrder(widget.moveOrderItem.headerId);
 
-    // Close the loading indicator
-    Navigator.of(context).pop();
+    try {
+      await provider.submitMoveOrder(widget.moveOrderItem.headerId);
 
-    if (provider.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(provider.error!),
+      // Always close the loading dialog first
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      if (provider.isSuccess) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.error ?? 'Move order submitted successfully'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-        ),
-      );
-      Navigator.of(context).pop(); // Close the dialog
-      Navigator.pushReplacement(
+          ),
+        );
+
+        // Navigate back to move order list
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => UserMoveOrderScreen(
-                isBackButtonExist: true,
-              )));
-      // Navigator.pop(context);
-    }else{
-      showDialog(
+            builder: (context) => UserMoveOrderScreen(
+              isBackButtonExist: true,
+            ),
+          ),
+        );
+      } else {
+        // Show error dialog
+        showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text('Submission Failed'),
-            content: Text(provider.error!),
-          )
+            title: const Text('Submission Failed'),
+            content: Text(provider.error ?? 'An error occurred during submission'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error dialog for exceptions
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('An unexpected error occurred: ${e.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -355,7 +432,9 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
               ),
 
               // Bottom Buttons
-              if(!['In-Process','Approved'].contains(moProvider.moDetails[0].status))...[
+              if(moProvider.moDetails[0].headerStatusName == 'Incomplete' &&
+                  moProvider.moDetails[0].status != 'In-Process'
+                  )...[
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(

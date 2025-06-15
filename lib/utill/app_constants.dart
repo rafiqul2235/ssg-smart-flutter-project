@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
+
   static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
   //static const String BASE_URL = 'http://192.168.7.98/'; //test
@@ -11,6 +12,7 @@ class AppConstants {
   //static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
 
   //static const String BASE_URL = 'http://10.0.2.2/';
+
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
 
   static const int APP_VERSION_CODE = 14;
@@ -134,7 +136,6 @@ class AppConstants {
   static const String CURRENCY = 'currency';
   static const String LANG_KEY = 'lang';
   static const String INTRO = 'intro';
-
 
   // order status
   static const String PENDING = 'pending';
