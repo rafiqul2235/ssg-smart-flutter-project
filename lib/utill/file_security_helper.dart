@@ -17,8 +17,8 @@ class FileSecurityHelper {
     'com', 'scr', 'pif', 'jar', 'ps1'
   ];
 
-  // Maximum allowed file size (in bytes) - 5MB
-  static const int MAX_FILE_SIZE = 5 * 1024 * 1024;
+  // Maximum allowed file size (in bytes) - 3MB
+  static const int MAX_FILE_SIZE = 3 * 1024 * 1024;
 
   // Check if file extension is in allowed list
   static bool isFileExtensionAllowed(String fileName) {
