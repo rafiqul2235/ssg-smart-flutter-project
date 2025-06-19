@@ -7,6 +7,7 @@ import 'package:ssg_smart2/view/screen/moveorder/widgets/scrollable_table.dart';
 import '../../../../data/model/body/approver.dart';
 import '../../../../data/model/body/mo_list.dart';
 import '../../../../provider/mo_provider.dart';
+import '../../../../provider/user_provider.dart';
 import '../../../basewidget/custom_app_bar.dart';
 import '../../home/dashboard_screen.dart';
 import '../widgets/approval_mo_table.dart';
@@ -36,57 +37,14 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
       widget.moveOrderItem.moveOrderNumber,
     );
   }
-  //
-  // void _onClickSubmit(bool isApproved) async {
-  //   String? notificationId = widget.moveOrderItem.notificationId;
-  //   String action = isApproved ? "APPROVED" : "REJECTED";
-  //   String applicationType = "MOVEORDER";
-  //   String comment = _commentController.text;
-  //   final provider = context.read<MoveOrderProvider>();
-  //   showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (_) => const Center(child: CircularProgressIndicator(),)
-  //   );
-  //   await provider.handleMoveOrder(applicationType, notificationId!, action, comment);
-  //   // Close the loading indicator
-  //   Navigator.of(context).pop();
-  //
-  //   if (provider.isSuccess) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(provider.error!),
-  //         backgroundColor: Colors.green,
-  //         behavior: SnackBarBehavior.floating,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(10),
-  //         ),
-  //       ),
-  //     );
-  //     Navigator.of(context).pop(); // Close the dialog
-  //     Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => ApprovalMoveOrderScreen(
-  //               isBackButtonExist: true,
-  //             )));
-  //     // Navigator.pop(context);
-  //   }else{
-  //     showDialog(
-  //         context: context,
-  //         builder: (_) => AlertDialog(
-  //           title: Text('Approval Failed'),
-  //           content: Text(provider.error!),
-  //         )
-  //     );
-  //   }
-  // }
+
   void _onClickSubmit(bool isApproved) async {
     String? notificationId = widget.moveOrderItem.notificationId;
     String action = isApproved ? "APPROVED" : "REJECTED";
     String applicationType = "MOVEORDER";
     String comment = _commentController.text;
     final provider = context.read<MoveOrderProvider>();
+    final userProvider = context.read<UserProvider>();
 
     // Show loading dialog
     showDialog(
@@ -115,17 +73,15 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
             ),
           ),
         );
+        // Get employee number from user provider
+        String employeeNumber = userProvider.userInfoModel?.employeeNumber ?? '';
 
-        // Close current dialog and navigate back
-        Navigator.of(context).pop();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ApprovalMoveOrderScreen(
-              isBackButtonExist: true,
-            ),
-          ),
-        );
+        // Reset provider state and fetch fresh data
+        provider.resetState();
+        await provider.fetchApproverMoList(employeeNumber);
+        // Navigate back with result to indicate refresh is needed
+        Navigator.pop(context, true);
+
       } else {
         // Show error dialog
         showDialog(
@@ -165,11 +121,13 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Approval MO List',
+        title: 'Approval MO Details',
         isBackButtonExist: widget.isBackButtonExist,
         icon: Icons.home,
         onActionPressed: () {

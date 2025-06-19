@@ -7,6 +7,7 @@ import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import 'package:ssg_smart2/view/screen/moveorder/user/user_move_order.dart';
 
 import '../../../../data/model/body/approver.dart';
+import '../../../../provider/user_provider.dart';
 import '../../../basewidget/no_internet_screen.dart';
 
 class MoveOrderDetail extends StatefulWidget {
@@ -32,53 +33,11 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     });
   }
 
-
-  // void _onClickSubmit() async {
-  //   final provider = context.read<MoveOrderProvider>();
-  //   showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (_) => const Center(child: CircularProgressIndicator(),)
-  //   );
-  //   await provider.submitMoveOrder(widget.moveOrderItem.headerId);
-  //
-  //   // Close the loading indicator
-  //   Navigator.of(context).pop();
-  //
-  //   if (provider.isSuccess) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //           content: Text(provider.error!),
-  //           backgroundColor: Colors.green,
-  //           behavior: SnackBarBehavior.floating,
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(10),
-  //           ),
-  //       ),
-  //     );
-  //     Navigator.of(context).pop(); // Close the dialog
-  //     Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //             builder: (context) => UserMoveOrderScreen(
-  //               isBackButtonExist: true,
-  //             )));
-  //     // Navigator.pop(context);
-  //   }else{
-  //     showDialog(
-  //         context: context,
-  //         builder: (_) => AlertDialog(
-  //           title: Text('Submission Failed'),
-  //           content: Text(provider.error!),
-  //         )
-  //     );
-  //   }
-  // }
   void _onClickSubmit() async {
     final provider = context.read<MoveOrderProvider>();
+    final userProvider = context.read<UserProvider>();
 
     // Show loading dialog
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -86,10 +45,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     );
 
     try {
-
       await provider.submitMoveOrder(widget.moveOrderItem.headerId);
-
-      Provider.of<MoveOrderProvider>(context, listen: false).hideLoading();
 
       // Always close the loading dialog first
       if (Navigator.of(context).canPop()) {
@@ -108,16 +64,16 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
             ),
           ),
         );
+        // Get employee number from user provider
+        String employeeNumber = userProvider.userInfoModel?.employeeNumber ?? '';
 
-        // Navigate back to move order list
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UserMoveOrderScreen(
-              isBackButtonExist: true,
-            ),
-          ),
-        );
+        // Reset provider state and fetch fresh data
+        provider.resetState();
+        await provider.fetchMoList(employeeNumber);
+
+        // Navigate back with result to indicate refresh is needed
+        Navigator.pop(context, true);
+
       } else {
         // Show error dialog
         showDialog(
@@ -156,6 +112,8 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
       );
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

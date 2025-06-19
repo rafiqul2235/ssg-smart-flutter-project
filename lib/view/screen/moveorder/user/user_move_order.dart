@@ -38,15 +38,18 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<MoveOrderProvider>(context, listen: false).hideLoading();
     _intData();
   }
 
   _intData() async {
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    final provider = Provider.of<MoveOrderProvider>(context, listen: false);
+    // Reset the provider state before fetching new data
+    provider.resetState();
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    await Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
+    await provider.fetchMoList(employeeNumber);
   }
+
 
   @override
   Widget build(BuildContext context) {
