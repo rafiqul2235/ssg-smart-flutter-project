@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 
@@ -10,17 +10,18 @@ class NetworkInfo {
   NetworkInfo(this.connectivity);
 
    Future<bool> get isConnected async {
-    ConnectivityResult _result = await connectivity.checkConnectivity();
-    return _result != ConnectivityResult.none;
+    List<ConnectivityResult> results = await connectivity.checkConnectivity();
+    return results.any((result) => result != ConnectivityResult.none);
   }
 
   static void checkConnectivity(BuildContext context) {
     bool _firstTime = true;
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) async {
       if(!_firstTime) {
-        //bool isNotConnected = result != ConnectivityResult.wifi && result != ConnectivityResult.mobile;
         bool isNotConnected;
-        if(result == ConnectivityResult.none) {
+
+        bool hasNoConnection = results.every((result) => result == ConnectivityResult.none);
+        if(hasNoConnection) {
           isNotConnected = true;
         }else {
           isNotConnected = !await _updateConnectivityStatus();

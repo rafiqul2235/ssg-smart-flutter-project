@@ -26,6 +26,16 @@ class MoveOrderProvider with ChangeNotifier {
   bool get isSuccess => _isSuccess;
   String? get error => _error;
 
+
+  // ADD THIS METHOD
+  void resetState() {
+    _isLoading = false;
+    _isSuccess = false;
+    _moList = [];
+    _error = '';
+    notifyListeners();
+  }
+
   Future<void> fetchMoList(String empId) async {
     _isLoading = true;
     _error = '';

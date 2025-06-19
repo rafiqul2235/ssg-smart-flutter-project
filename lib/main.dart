@@ -5,7 +5,6 @@ import 'package:ssg_smart2/provider/cashpayment_provider.dart';
 import 'package:ssg_smart2/provider/leave_provider.dart';
 import 'package:ssg_smart2/provider/master_data_provider.dart';
 import 'package:ssg_smart2/provider/banner_provider.dart';
-import 'package:ssg_smart2/provider/location_provider.dart';
 import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/payslip_provider.dart';
@@ -31,15 +30,13 @@ import 'package:ssg_smart2/view/screen/empselfservice/self_service.dart';
 import 'package:ssg_smart2/provider/attachment_provider.dart';
 import 'package:ssg_smart2/view/screen/moveorder/approver/mo_for_approver.dart';
 import 'package:ssg_smart2/view/screen/splash/splash_screen.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'di_container.dart' as di;
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
 import 'utill/global_context.dart';
 
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-late AndroidNotificationChannel channel;
+
 late bool isFlutterLocalNotificationsInitialized = false;
 
 Future<void> main() async {
@@ -66,7 +63,6 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<NotificationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SearchProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<BannerProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<LocationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<MasterDataProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LeaveProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<AttendanceProvider>()),
@@ -102,68 +98,73 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
 
-    init();
+    // init();
 
     super.initState();
   }
 
-  Future<void> showFlutterNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-    if (notification != null && android != null && !kIsWeb) {
-      flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channel.id,
-            channel.name,
-            channelDescription: channel.description,
-            icon: '@drawable/ic_launcher', //notification_icon
-          ),
-        ),
-      );
-    }
-  }
+  // Future<void> showFlutterNotification(RemoteMessage message) async {
+  //   RemoteNotification? notification = message.notification;
+  //   AndroidNotification? android = message.notification?.android;
+  //   if (notification != null && android != null && !kIsWeb) {
+  //     flutterLocalNotificationsPlugin.show(
+  //       notification.hashCode,
+  //       notification.title,
+  //       notification.body,
+  //       NotificationDetails(
+  //         android: AndroidNotificationDetails(
+  //           channel.id,
+  //           channel.name,
+  //           channelDescription: channel.description,
+  //           icon: '@drawable/ic_launcher', //notification_icon
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
-  void init() async{
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@drawable/ic_launcher');
-    final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-        onDidReceiveLocalNotification: (id, title, body, payload) {
-          if (payload != null) {
-            debugPrint('notification payload: $payload');
-          }
-        });
-    final InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsDarwin);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
-  }
+  // void init() async {
+  //   const AndroidInitializationSettings initializationSettingsAndroid =
+  //   AndroidInitializationSettings('@drawable/ic_launcher');
+  //
+  //   const DarwinInitializationSettings initializationSettingsDarwin =
+  //   DarwinInitializationSettings(
+  //     requestAlertPermission: true,
+  //     requestBadgePermission: true,
+  //     requestSoundPermission: true,
+  //   );
+  //
+  //   const InitializationSettings initializationSettings = InitializationSettings(
+  //     android: initializationSettingsAndroid,
+  //     iOS: initializationSettingsDarwin,
+  //   );
+  //
+  //   await flutterLocalNotificationsPlugin.initialize(
+  //     initializationSettings,
+  //     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+  //   );
+  // }
 
-  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
-    //when user click on notification this method call
-    /* var route = NavigationHistoryObserver().top;
-    if(route!=null && route.settings.name!=NotificationScreen.routeName){
-      NavigationService.navigatorKey.currentState?.pushNamed(NotificationScreen.routeName).then((value) {
-        FBroadcast.instance().broadcast(
-          "update_count",
-          value: 0,
-        );
-      });
-    }
-    else{
-      NavigationService.navigatorKey.currentState?.pushReplacementNamed(NotificationScreen.routeName).then((value) {
-        FBroadcast.instance().broadcast(
-          "update_count",
-          value: 0,
-        );
-      });
-    }*/
-  }
+  // void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
+  //   //when user click on notification this method call
+  //   /* var route = NavigationHistoryObserver().top;
+  //   if(route!=null && route.settings.name!=NotificationScreen.routeName){
+  //     NavigationService.navigatorKey.currentState?.pushNamed(NotificationScreen.routeName).then((value) {
+  //       FBroadcast.instance().broadcast(
+  //         "update_count",
+  //         value: 0,
+  //       );
+  //     });
+  //   }
+  //   else{
+  //     NavigationService.navigatorKey.currentState?.pushReplacementNamed(NotificationScreen.routeName).then((value) {
+  //       FBroadcast.instance().broadcast(
+  //         "update_count",
+  //         value: 0,
+  //       );
+  //     });
+  //   }*/
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -235,23 +236,23 @@ Future<void> setupFlutterNotifications() async {
     return;
   }
 
-  channel = const AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
-    description:
-    'This channel is used for important notifications.', // description
-    importance: Importance.high,
-  );
+  // channel = const AndroidNotificationChannel(
+  //   'high_importance_channel', // id
+  //   'High Importance Notifications', // title
+  //   description:
+  //   'This channel is used for important notifications.', // description
+  //   importance: Importance.high,
+  // );
 
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   /// Create an Android Notification Channel.
   /// We use this channel in the `AndroidManifest.xml` file to override the
   /// default FCM channel to enable heads up notifications.
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  // await flutterLocalNotificationsPlugin
+  //     .resolvePlatformSpecificImplementation<
+  //     AndroidFlutterLocalNotificationsPlugin>()
+  //     ?.createNotificationChannel(channel);
 
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.

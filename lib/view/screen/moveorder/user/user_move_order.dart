@@ -41,11 +41,19 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
     _intData();
   }
 
+  // _intData() async {
+  //   UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+  //   String employeeNumber = userInfoModel?.employeeNumber ?? '';
+  //   await Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
+  // }
+
   _intData() async {
-    setState(() {});
-    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    final provider = Provider.of<MoveOrderProvider>(context, listen: false);
+    // Reset the provider state before fetching new data
+    provider.resetState();
+    UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
+    await provider.fetchMoList(employeeNumber);
   }
 
   @override
@@ -63,6 +71,7 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
       ),
       body: Consumer<MoveOrderProvider>(
         builder: (context, moProvider, child) {
+          print('loading value: ${moProvider.isLoading}');
           if (moProvider.isLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (moProvider.moList.isEmpty) {

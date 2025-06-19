@@ -1,11 +1,11 @@
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 class Connection {
 
   static Future<bool> checkConnectivity() async {
-    ConnectivityResult result = await Connectivity().checkConnectivity();
-    bool status = result != ConnectivityResult.wifi && result != ConnectivityResult.mobile;
+    List<ConnectivityResult> results = await Connectivity().checkConnectivity();
+    bool status = results != ConnectivityResult.wifi && results != ConnectivityResult.mobile;
 
     return !status;
   }
@@ -24,13 +24,18 @@ class Connection {
 
   }
 
-  static void showConnectivityMessage(BuildContext context, {ConnectivityResult? result}) async {
+  static void showConnectivityMessage(BuildContext context, {List<ConnectivityResult>? results}) async {
 
-    if(result == null) {
-      result = await Connectivity().checkConnectivity();
+    if(results == null) {
+      results = await Connectivity().checkConnectivity();
     }
 
-    bool isNotConnected = result != ConnectivityResult.wifi && result != ConnectivityResult.mobile;
+    bool isNotConnected = !results.any((result) =>
+      result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.ethernet
+    );
+
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
