@@ -328,7 +328,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                 // for Customer
                 Container(
                   margin: const EdgeInsets.only(
-                    top: Dimensions.MARGIN_SIZE_SMALL,
+                    //top: Dimensions.MARGIN_SIZE_DEFAULT,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
                     right: Dimensions.MARGIN_SIZE_DEFAULT,
                   ),
@@ -584,8 +584,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
-                          const SizedBox(
-                              width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
                             text: 'Instrument No *',
                             textStyle: titilliumRegular,
@@ -743,54 +742,49 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
-              ]);
-            },
-          ),
-        ),
+                Container(
 
-        // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.MARGIN_SIZE_SMALL,
+                      vertical: Dimensions.MARGIN_SIZE_SMALL),
+                  child: !Provider.of<SalesOrderProvider>(context).isLoading
+                      ? Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          child: Text('Clear'),
+                          onPressed: null,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            side: BorderSide(color: Colors.grey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
                       ),
 
-                    ),
-                    SizedBox(width: 16),
-                    /*Expanded(
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            _onClickSubmit();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+
+                      ),
+                      SizedBox(width: 16),
+                      /*Expanded(
                       child: ElevatedButton(
                         child: Text(
                           'Balance',
@@ -808,13 +802,20 @@ class _CollectionScreenState extends State<CollectionScreen> {
                       ),
 
                     ),*/
-                  ],
+                    ],
+                  )
+                      : Center(
+                      child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor))),
                 )
-              : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-        ) //:const SizedBox.shrink(),
+              ]);
+            },
+          ),
+        ),
+
+        // for Submit Button
+       //:const SizedBox.shrink(),
       ]),
     );
   }

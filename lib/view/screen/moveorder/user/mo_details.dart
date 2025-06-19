@@ -78,6 +78,7 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     final provider = context.read<MoveOrderProvider>();
 
     // Show loading dialog
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -85,7 +86,10 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     );
 
     try {
+
       await provider.submitMoveOrder(widget.moveOrderItem.headerId);
+
+      Provider.of<MoveOrderProvider>(context, listen: false).hideLoading();
 
       // Always close the loading dialog first
       if (Navigator.of(context).canPop()) {

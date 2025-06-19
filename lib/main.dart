@@ -126,7 +126,6 @@ class _MyAppState extends State<MyApp> {
       );
     }
   }
-
   void init() async{
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@drawable/ic_launcher');

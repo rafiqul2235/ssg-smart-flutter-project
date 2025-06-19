@@ -10,6 +10,7 @@ import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/msd_report_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/notification_summary_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/va_bank_list_model.dart';
 
 import '../../view/screen/salesOrder/sales_data_model.dart';
 import '../model/body/collection.dart';
@@ -468,6 +469,34 @@ class SalesOrderRepo {
             responseData['pending_so'] != null) {
           return (responseData['pending_so'] as List)
               .map((json) => ItemWisePendingModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<VaBankListModel>> fetchVaBankListRep(String salesrepId,String custId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.VA_BANK_LIST_DATA,
+        data: {
+          'salesrep_id': salesrepId,
+          'customer_account': custId,
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['va_account_list'] != null) {
+          return (responseData['va_account_list'] as List)
+              .map((json) => VaBankListModel.fromJson(json))
               .toList();
         } else {
           throw Exception('Failed to load data');

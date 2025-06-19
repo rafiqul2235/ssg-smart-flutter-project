@@ -15,6 +15,7 @@ import 'package:ssg_smart2/view/screen/msd_report/cust_target_vsAchiv_model.dart
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/va_bank_list_model.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_data_model.dart';
 import '../data/model/body/collection.dart';
 import '../data/model/body/sales_order.dart';
@@ -128,6 +129,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<ItemWisePendingModel> _itemWisePending = [];
   List<ItemWisePendingModel> get itemWisePending => _itemWisePending;
+
+  List<VaBankListModel> _vaBankList = [];
+  List<VaBankListModel> get vaBankList => _vaBankList;
 
   List<CustTargetVsAchivModel> _custTargetAchive = [];
   List<CustTargetVsAchivModel> get custTargetAchive => _custTargetAchive;
@@ -521,7 +525,7 @@ class SalesOrderProvider with ChangeNotifier {
         }
 
         if(_pendingSoList !=null && _pendingSoList!.isNotEmpty) {
-          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")"+" -"+element.freight!+" ,"+element.uom!)));
+          _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!+" ("+element.pendingQty!+")"+" -"+element.freight!+" ,"+" -"+element.itemName!+" ,"+element.uom!)));
         }
        // " -"+element.freight!+" ,"+element.itemName!
         print('pendingSoLeanth ${_pendingSoList?.length}');
@@ -859,6 +863,22 @@ class SalesOrderProvider with ChangeNotifier {
     } catch (e) {
       print('Error fetching: $e');
       _itemWisePending = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchVaBankList(salesrepId, custId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      print('saleId: $salesrepId and custId: $custId');
+      _vaBankList = await salesOrderRepo.fetchVaBankListRep(salesrepId, custId);
+    } catch (e) {
+      print('Error fetching: $e');
+      _vaBankList = [];
     }
 
     _isLoading = false;

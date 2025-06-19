@@ -40,10 +40,9 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
   }
 
   _intData() async {
-    setState(() {});
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
+    await Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
   }
 
   // Method to retry loading data

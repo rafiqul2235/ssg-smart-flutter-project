@@ -38,14 +38,14 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<MoveOrderProvider>(context, listen: false).hideLoading();
     _intData();
   }
 
   _intData() async {
-    setState(() {});
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     String employeeNumber = userInfoModel?.employeeNumber ?? '';
-    Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
+    await Provider.of<MoveOrderProvider>(context, listen: false).fetchMoList(employeeNumber);
   }
 
   @override

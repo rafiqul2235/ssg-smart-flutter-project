@@ -2,7 +2,7 @@ name: ssg_smart2
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.0.2+14
+version: 2.0.3+15
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -48,7 +48,8 @@ dependencies:
   google_maps_flutter: ^2.3.1
   flutter_google_places: ^0.3.0
   geocoding: any
-  geolocator: ^9.0.2
+  geolocator: ^10.0.1
+  geolocator_android: 4.6.1
   flutter_typeahead: ^5.2.0
   flutter_datetime_picker_plus: ^2.2.0
   dropdown_button2: ^2.3.9

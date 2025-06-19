@@ -9,6 +9,7 @@ import 'package:ssg_smart2/view/screen/msd_report/cust_balance_confirmation.dart
 import 'package:ssg_smart2/view/screen/msd_report/cust_target_vs_achiv.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary.dart';
+import 'package:ssg_smart2/view/screen/msd_report/va_bank_list.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
@@ -60,7 +61,7 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
     _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
     _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
     _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
-
+    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'VA Bank List', navigateTo: VaBankList(),));
   }
 
   @override

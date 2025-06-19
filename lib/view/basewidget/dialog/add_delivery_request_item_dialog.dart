@@ -298,9 +298,10 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                           Padding(
                             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
                             child: CustomDropdownButton(
-                              buttonHeight: 45,
+                              buttonHeight: 50,
                               buttonWidth: double.infinity,
                               dropdownWidth: 250,
+                              itemHeight: 70,
                               hint: 'Select SO Number',
                               hintColor: Colors.black87,
                               dropdownItems: Provider.of<SalesOrderProvider>(context,listen: true).pendingSoDropDown,
