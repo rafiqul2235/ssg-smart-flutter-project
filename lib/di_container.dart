@@ -1,4 +1,4 @@
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:ssg_smart2/data/datasource/remote/dio/dio_client.dart';
 import 'package:ssg_smart2/data/repository/approval_history_repo.dart';
@@ -32,7 +32,6 @@ import 'package:ssg_smart2/provider/banner_provider.dart';
 import 'package:ssg_smart2/provider/category_provider.dart';
 import 'package:ssg_smart2/provider/chat_provider.dart';
 import 'package:ssg_smart2/provider/localization_provider.dart';
-import 'package:ssg_smart2/provider/location_provider.dart';
 import 'package:ssg_smart2/provider/mo_provider.dart';
 import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/onboarding_provider.dart';
@@ -112,7 +111,6 @@ Future<void> init() async {
   sl.registerFactory(() => SupportTicketProvider(supportTicketRepo: sl()));
   sl.registerFactory(() => LocalizationProvider(sharedPreferences: sl()));
   sl.registerFactory(() => ThemeProvider(sharedPreferences: sl()));
-  sl.registerFactory(() => LocationProvider(sharedPreferences: sl(), locationRepo: sl()));
   sl.registerLazySingleton(() => MasterDataProvider(masterDataRepo: sl()));
   sl.registerLazySingleton(() => LeaveProvider(leaveRepo: sl()));
   sl.registerLazySingleton(() => AttendanceProvider(attendanceRepo: sl()));

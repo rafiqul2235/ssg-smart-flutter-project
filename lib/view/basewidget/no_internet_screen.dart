@@ -1,4 +1,5 @@
-import 'package:connectivity/connectivity.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';

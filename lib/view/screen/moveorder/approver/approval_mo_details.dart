@@ -7,6 +7,7 @@ import 'package:ssg_smart2/view/screen/moveorder/widgets/scrollable_table.dart';
 import '../../../../data/model/body/approver.dart';
 import '../../../../data/model/body/mo_list.dart';
 import '../../../../provider/mo_provider.dart';
+import '../../../../provider/user_provider.dart';
 import '../../../basewidget/custom_app_bar.dart';
 import '../../home/dashboard_screen.dart';
 import '../widgets/approval_mo_table.dart';
@@ -87,6 +88,7 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
     String applicationType = "MOVEORDER";
     String comment = _commentController.text;
     final provider = context.read<MoveOrderProvider>();
+    final userProvider = context.read<UserProvider>();
 
     // Show loading dialog
     showDialog(
@@ -115,17 +117,15 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
             ),
           ),
         );
+        // Get employee number from user provider
+        String employeeNumber = userProvider.userInfoModel?.employeeNumber ?? '';
 
-        // Close current dialog and navigate back
-        Navigator.of(context).pop();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ApprovalMoveOrderScreen(
-              isBackButtonExist: true,
-            ),
-          ),
-        );
+        // Reset provider state and fetch fresh data
+        provider.resetState();
+        await provider.fetchApproverMoList(employeeNumber);
+        // Navigate back with result to indicate refresh is needed
+        Navigator.pop(context, true);
+
       } else {
         // Show error dialog
         showDialog(
@@ -169,7 +169,7 @@ class _ApproverMoDetailsState extends State<ApproverMoDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Approval MO List',
+        title: 'Approval MO Details',
         isBackButtonExist: widget.isBackButtonExist,
         icon: Icons.home,
         onActionPressed: () {

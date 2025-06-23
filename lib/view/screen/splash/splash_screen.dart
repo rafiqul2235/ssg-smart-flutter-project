@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/splash_provider.dart';
@@ -22,20 +22,20 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   GlobalKey<ScaffoldMessengerState> _globalKey = GlobalKey();
-  late StreamSubscription<ConnectivityResult> _onConnectivityChanged;
+  late StreamSubscription<List<ConnectivityResult>> _onConnectivityChanged;
 
   @override
   void initState() {
     super.initState();
 
     bool _firstTime = true;
-    _onConnectivityChanged = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _onConnectivityChanged = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
       if(!_firstTime) {
-        bool isNotConnected = result != ConnectivityResult.wifi && result != ConnectivityResult.mobile;
+        bool isNotConnected = results.contains(ConnectivityResult.none);
         isNotConnected ? const SizedBox() : ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: isNotConnected ? Colors.red : Colors.green,
-          duration: Duration(seconds: isNotConnected ? 6000 : 3),
+          duration: Duration(seconds: isNotConnected ? 6 : 3), // Fixed: was 6000 seconds
           content: Text(
             isNotConnected ? getTranslated('no_connection', context) : getTranslated('connected', context),
             textAlign: TextAlign.center,
@@ -85,8 +85,8 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisSize: MainAxisSize.min,
 
             children: [
-             /* Image.asset(Images.splash_logo, height: 250.0, fit: BoxFit.scaleDown, width: 250.0,  color: Provider.of<ThemeProvider>(context).darkTheme ? Colors.white : ColorResources.getPrimary(context),),*/
-           /*   Image.asset(Images.durti_left, fit: BoxFit.fitWidth, width: 250.0,  color: Provider.of<ThemeProvider>(context).darkTheme ? Colors.white : Colors.white,),
+              /* Image.asset(Images.splash_logo, height: 250.0, fit: BoxFit.scaleDown, width: 250.0,  color: Provider.of<ThemeProvider>(context).darkTheme ? Colors.white : ColorResources.getPrimary(context),),*/
+              /*   Image.asset(Images.durti_left, fit: BoxFit.fitWidth, width: 250.0,  color: Provider.of<ThemeProvider>(context).darkTheme ? Colors.white : Colors.white,),
               SizedBox(height: 16.0,),*/
               Image.asset(Images.splash_logo, fit: BoxFit.fitWidth, width: 300.0,),
             ],
