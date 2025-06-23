@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ssg_smart2/data/model/body/login_model.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/auth_provider.dart';
-import 'package:ssg_smart2/provider/banner_provider.dart';
-import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
@@ -38,6 +36,7 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   bool _isErrorUserCode = false;
   bool _isErrorPassword = false;
+  bool _rememberMe = false;
 
   final FocusNode _userNode = FocusNode();
   final FocusNode _passNode = FocusNode();
@@ -220,6 +219,15 @@ class _SignInWidgetState extends State<SignInWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Row(
+                  children: [
+                    Checkbox(
+                        value: _rememberMe,
+                        onChanged: (bool? value) {  },
+                    ),
+                    const Text('Remember Me'),
+                  ],
+                ),
                 InkWell(
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ForgetPasswordScreen())),
                   child: Text(getTranslated('FORGET_PASSWORD', context), style: titilliumRegular.copyWith(color: Theme.of(context).primaryColor)),

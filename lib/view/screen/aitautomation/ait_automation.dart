@@ -9,9 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
-import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor.dart';
-import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor2.dart';
-import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_compressor3.dart';
 
 import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
@@ -109,7 +106,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
       builder: (BuildContext context) {
         return Theme(
           data: Theme.of(context).copyWith(
-            dialogTheme: DialogTheme(
+            dialogTheme: DialogThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -625,7 +622,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
-                              dialogTheme: DialogTheme(
+                              dialogTheme: DialogThemeData(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
