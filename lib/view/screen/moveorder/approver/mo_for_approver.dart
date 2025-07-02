@@ -39,6 +39,13 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
     _intData();
   }
 
+  // _intData() async {
+  //   setState(() {});
+  //   UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+  //   String employeeNumber = userInfoModel?.employeeNumber ?? '';
+  //   await Provider.of<MoveOrderProvider>(context, listen: false).fetchApproverMoList(employeeNumber);
+  // }
+
   _intData() async {
     final provider = Provider.of<MoveOrderProvider>(context, listen: false);
     // Reset the provider state before fetching new data
@@ -71,13 +78,13 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
       ),
       body: Consumer<MoveOrderProvider>(
         builder: (context, moProvider, child) {
+          print('loading value: ${moProvider.isLoading}');
           if (moProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          // Check for error state
-          // else if (moProvider.error != null && moProvider.error!.isNotEmpty) {
-          //   return _buildErrorWidget(moProvider.error!);
-          // }
+          else if (moProvider.error != null && moProvider.error!.isNotEmpty) {
+            return _buildErrorWidget(moProvider.error!);
+          }
           // Check for empty data
           else if (moProvider.moList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);

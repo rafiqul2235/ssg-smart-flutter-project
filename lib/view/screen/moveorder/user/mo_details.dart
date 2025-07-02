@@ -33,6 +33,85 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
     });
   }
 
+  // void _onClickSubmit() async {
+  //   final provider = context.read<MoveOrderProvider>();
+  //
+  //   // Show loading dialog
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (_) => const Center(child: CircularProgressIndicator()),
+  //   );
+  //
+  //   try {
+  //     await provider.submitMoveOrder(widget.moveOrderItem.headerId);
+  //
+  //     // Always close the loading dialog first
+  //     if (Navigator.of(context).canPop()) {
+  //       Navigator.of(context).pop();
+  //     }
+  //
+  //     if (provider.isSuccess) {
+  //       // Show success message
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(provider.error ?? 'Move order submitted successfully'),
+  //           backgroundColor: Colors.green,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(10),
+  //           ),
+  //         ),
+  //       );
+  //
+  //       // Navigate back to move order list
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => UserMoveOrderScreen(
+  //             isBackButtonExist: true,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       // Show error dialog
+  //       showDialog(
+  //         context: context,
+  //         builder: (_) => AlertDialog(
+  //           title: const Text('Submission Failed'),
+  //           content: Text(provider.error ?? 'An error occurred during submission'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.of(context).pop(),
+  //               child: const Text('OK'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     // Close loading dialog if still open
+  //     if (Navigator.of(context).canPop()) {
+  //       Navigator.of(context).pop();
+  //     }
+  //
+  //     // Show error dialog for exceptions
+  //     showDialog(
+  //       context: context,
+  //       builder: (_) => AlertDialog(
+  //         title: const Text('Error'),
+  //         content: Text('An unexpected error occurred: ${e.toString()}'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text('OK'),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  // }
+
   void _onClickSubmit() async {
     final provider = context.read<MoveOrderProvider>();
     final userProvider = context.read<UserProvider>();
@@ -66,14 +145,12 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
         );
         // Get employee number from user provider
         String employeeNumber = userProvider.userInfoModel?.employeeNumber ?? '';
-
         // Reset provider state and fetch fresh data
         provider.resetState();
         await provider.fetchMoList(employeeNumber);
 
         // Navigate back with result to indicate refresh is needed
         Navigator.pop(context, true);
-
       } else {
         // Show error dialog
         showDialog(
@@ -112,7 +189,6 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

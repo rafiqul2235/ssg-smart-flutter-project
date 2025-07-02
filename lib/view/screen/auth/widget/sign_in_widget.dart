@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ssg_smart2/data/model/body/login_model.dart';
 import 'package:ssg_smart2/localization/language_constrants.dart';
 import 'package:ssg_smart2/provider/auth_provider.dart';
-import 'package:ssg_smart2/provider/banner_provider.dart';
-import 'package:ssg_smart2/provider/notification_provider.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/custom_themes.dart';
 import 'package:ssg_smart2/utill/dimensions.dart';
@@ -38,6 +37,8 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   bool _isErrorUserCode = false;
   bool _isErrorPassword = false;
+  bool _rememberMe = false;
+  final _secureStorage = FlutterSecureStorage();
 
   final FocusNode _userNode = FocusNode();
   final FocusNode _passNode = FocusNode();
@@ -50,6 +51,20 @@ class _SignInWidgetState extends State<SignInWidget> {
     _formKeyLogin = GlobalKey<FormState>();
     _userController = TextEditingController();
     _passwordController = TextEditingController();
+    _loadSaveCredentials();
+  }
+
+  Future<void> _loadSaveCredentials() async {
+    final username = await _secureStorage.read(key: 'username');
+    final password = await _secureStorage.read(key: 'password');
+
+    if (username != null && password != null) {
+      setState(() {
+        _userController?.text = username;
+        _passwordController?.text = password;
+        _rememberMe = true;
+      });
+    }
   }
 
   @override
@@ -123,6 +138,14 @@ class _SignInWidgetState extends State<SignInWidget> {
               Timer(const Duration(seconds: 1), () {
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>  DashBoardScreen()), (route) => false);
               });
+            }
+            // Remember password            
+            if ( _rememberMe ) {
+              await _secureStorage.write(key: 'username', value: _user);
+              await _secureStorage.write(key: 'password', value: _password);
+            } else {
+              await _secureStorage.delete(key: 'username');
+              await _secureStorage.delete(key: 'password');
             }
 
 
@@ -220,6 +243,19 @@ class _SignInWidgetState extends State<SignInWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Row(
+                  children: [
+                    Checkbox(
+                        value: _rememberMe,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _rememberMe = value ?? false;
+                          });
+                        },
+                    ),
+                    const Text('Remember Me'),
+                  ],
+                ),
                 InkWell(
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ForgetPasswordScreen())),
                   child: Text(getTranslated('FORGET_PASSWORD', context), style: titilliumRegular.copyWith(color: Theme.of(context).primaryColor)),

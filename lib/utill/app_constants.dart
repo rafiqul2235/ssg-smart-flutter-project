@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
+  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  //  static const String BASE_URL = 'http://10.25.4.120/'; //production
 
   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
@@ -98,7 +100,7 @@ class AppConstants {
   static const String AIT_DETAILS = 'fetch_ait_details';
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
-  static const String UPDATE_AIT = 'update_ait_automation';
+  static const String UPDATE_AIT = 'ait_automation_update';
 
   //MO project
   static const String MO_LIST = 'mo_list';
