@@ -490,7 +490,7 @@ class SalesOrderRepo {
           'customer_account': custId,
         },
       );
-      print("Repo response $response");
+      print("va bank list Repo response $response");
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = response.data;
         if (responseData['success'] == 1 &&
@@ -539,6 +539,36 @@ class SalesOrderRepo {
   }
 
   Future<List<CustTargetVsAchivModel>> fetchCustTargetVsAchivRep(String orgId,String period, String custAc) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.CUST_TARGET_VS_ACHIV_DATA,
+        data: {
+          'org_id': orgId,
+          'period': period,
+          'cus_no': custAc,
+        },
+      );
+      print("Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['cust_target'] != null) {
+          return (responseData['cust_target'] as List)
+              .map((json) => CustTargetVsAchivModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+
+  Future<List<CustTargetVsAchivModel>> fetchSupervisorCustTargetVsAchivRep(String orgId,String period, String custAc) async {
     try {
       final response = await dioClient.postWithFormData(
         AppConstants.CUST_TARGET_VS_ACHIV_DATA,

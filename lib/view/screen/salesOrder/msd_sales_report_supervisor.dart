@@ -11,6 +11,7 @@ import 'package:ssg_smart2/view/screen/msd_report/delivery_info_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_notifications_supervisor.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_for_supervisor.dart';
+import 'package:ssg_smart2/view/screen/msd_report/supervisor_cust_target_vs_achiv.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
@@ -62,7 +63,7 @@ class _MsdSalesReportSupervisorState extends State<MsdSalesReportSupervisor> {
     _menuList.add(TopMenuItem(image: Images.sales_sammary, menuName: 'Sales Summary', navigateTo: SalesSummaryForSupervisor(),));
 
     _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: CustBalanceConfirmation(),));
-    _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
+    _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: SupervisorCustTargetVsAchiv()));
     _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: SupervisorItemWisePending(),));
     _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: SupervisorDeliveryInfoScreen(),));
 

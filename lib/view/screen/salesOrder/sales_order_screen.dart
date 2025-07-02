@@ -742,6 +742,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               hintText: 'Enter Customer PO Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
+                              maxLength: 50,
                               readOnly: false,
                               textInputAction: TextInputAction.done,
                             ),
@@ -955,7 +956,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
                         child: Text('-Order Details- ',
                             style: titilliumBold.copyWith(
-                                color: Colors.purple, fontSize: 18)),
+                                color: Colors.purple, fontSize: 16)),
                       ),
                     ),
                   ],
@@ -987,6 +988,93 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           ]
                         ]),
                   ),
+                ),
+                Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                        vertical: Dimensions.MARGIN_SIZE_SMALL),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.purple.withOpacity(0.2),
+                          padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
+                          width: double.infinity,
+                          child: RichText(
+                            text: TextSpan(
+                              //text: 'Grant Total -- ',
+                              style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        !Provider.of<SalesOrderProvider>(context).isLoading
+                            ? Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                child: Text('Clear'),
+                                onPressed: null,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  side: BorderSide(color: Colors.grey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickSubmit();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Balance',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickCustBal();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                          ],
+                        )
+                            : Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).primaryColor))),
+                      ],
+                    )
+
                 )
               ]);
             },
@@ -994,93 +1082,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         ),
 
         // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.purple.withOpacity(0.2),
-                padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
-                width: double.infinity,
-                child: RichText(
-                  text: TextSpan(
-                    //text: 'Grant Total -- ',
-                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    children: <TextSpan>[
-                      TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
-                    ],
-                  ),
-                ),
-              ),
-              !Provider.of<SalesOrderProvider>(context).isLoading
-                  ? Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      child: Text('Clear'),
-                      onPressed: null,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickSubmit();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Balance',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickCustBal();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                ],
-              )
-                  : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-            ],
-          )
-
-        ) //:const SizedBox.shrink(),
+         //:const SizedBox.shrink(),
       ]),
     );
   }

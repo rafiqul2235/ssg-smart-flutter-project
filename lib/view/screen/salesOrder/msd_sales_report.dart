@@ -61,7 +61,7 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
     _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
     _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
     _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
-    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'VA Bank List', navigateTo: VaBankList(),));
+    _menuList.add(TopMenuItem(image: Images.va_bank_list, menuName: 'VA Bank List', navigateTo: VaBankList(),));
   }
 
   @override

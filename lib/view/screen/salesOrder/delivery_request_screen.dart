@@ -972,7 +972,7 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                   child: Center(
                       child: Text('- Order Details - ',
                           style: titilliumBold.copyWith(
-                              color: Colors.purple, fontSize: 18))),
+                              color: Colors.purple, fontSize: 16))),
                 ),
 
                 // for order / item details
@@ -1002,61 +1002,63 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
                           ]
                         ]),
                   ),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                      vertical: Dimensions.MARGIN_SIZE_SMALL),
+                  child: !Provider.of<SalesOrderProvider>(context).isLoading
+                      ? Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          child: Text('Clear'),
+                          onPressed: null,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            side: BorderSide(color: Colors.grey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            _onClickSubmit();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+
+                      ),
+                      SizedBox(width: 16),
+                    ],
+                  )
+                      : Center(
+                      child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor))),
                 )
+
               ]);
             },
           ),
         ),
 
         // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-
-                    ),
-                    SizedBox(width: 16),
-                  ],
-                )
-              : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-        ) //:const SizedBox.shrink(),
+       //:const SizedBox.shrink(),
       ]),
     );
   }

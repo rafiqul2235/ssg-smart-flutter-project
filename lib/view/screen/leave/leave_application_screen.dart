@@ -618,25 +618,29 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                 ],
                               ),
                             ),
+
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                                  vertical: Dimensions.MARGIN_SIZE_SMALL),
+                              child: !Provider.of<LeaveProvider>(context).loading
+                                  ? CustomButton(
+                                  onTap: () {
+                                    _onClickSubmit();
+                                  },
+                                  buttonText: 'SUBMIT')
+                                  : Center(
+                                  child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Theme.of(context).primaryColor))
+                              ),
+
+                            ),
                           ],
                         ),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: Dimensions.MARGIN_SIZE_LARGE,
-                          vertical: Dimensions.MARGIN_SIZE_SMALL),
-                      child: !Provider.of<LeaveProvider>(context).loading
-                          ? CustomButton(
-                              onTap: () {
-                                _onClickSubmit();
-                              },
-                              buttonText: 'SUBMIT')
-                          : Center(
-                              child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Theme.of(context).primaryColor))),
-                    ),
+
                   ],
                 ),
               ),

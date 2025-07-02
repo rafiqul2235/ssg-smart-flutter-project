@@ -185,8 +185,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
     collection.remarks = _remarksController?.text??'';
     collection.depositNo = _depositNoController?.text??'';
     collection.collAmount = _amountController?.text??'0';
-    collection.billToSiteId = _selectedCustomer?.billToSiteId;
-    collection.billToSiteAddress = _selectedCustomer?.billToAddress;
+    collection.billToSiteId = _selectedCustomer?.billToSiteId??'';
+    collection.billToSiteAddress = _selectedCustomer?.billToAddress??'';
     collection.custAmount = _amountController?.text??'0';
 
     developer.log(collection.toJson().toString());

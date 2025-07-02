@@ -917,6 +917,23 @@ class SalesOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
+
+  Future<void> fetchSupervisorTargetVsAchivData(orgId, period, custAc) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _custTargetAchive = await salesOrderRepo.fetchSupervisorCustTargetVsAchivRep(orgId, period, custAc);
+    } catch (e) {
+      print('Error fetching: $e');
+      _custTargetAchive = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
   Future<void> fetchBalanceConfirmation(salesrepId, custId,formMonth,toMonth) async {
     _isLoading = true;
     notifyListeners();

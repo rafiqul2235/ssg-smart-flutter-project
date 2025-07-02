@@ -67,9 +67,24 @@ class AuthScreen extends StatelessWidget{
                                 ),
                                 child: Text(index==0?'বাংলা':'English', style: titilliumRegular),
                             ),
+
                           ),
                         ),
                       ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: Dimensions.MARGIN_SIZE_SMALL,
+                          right: Dimensions.MARGIN_SIZE_SMALL),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            //onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ForgetPasswordScreen())),
+                            //trailing: const Text('v-${AppConstants.APP_VERSION_NAME}'),
+                            child: Text(('Version : ${AppConstants.APP_VERSION_NAME}'), style: titilliumRegular.copyWith(color: Theme.of(context).primaryColor)),
+                          ),
+                        ],
+                      ),
                     ),
 
                     // for logo with text
