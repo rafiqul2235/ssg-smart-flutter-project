@@ -85,7 +85,7 @@ class AppConstants {
   static const String AIT_DETAILS = 'fetch_ait_details';
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
-  static const String UPDATE_AIT = 'update_ait_automation';
+  static const String UPDATE_AIT = 'ait_automation_update';
 
   //MO project
   static const String MO_LIST = 'mo_list';

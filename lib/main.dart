@@ -125,7 +125,7 @@ class _MyAppState extends State<MyApp> {
 
   // void init() async {
   //   const AndroidInitializationSettings initializationSettingsAndroid =
-  //   AndroidInitializationSettings('@drawable/ic_launcher');
+  //+   AndroidInitializationSettings('@drawable/ic_launcher');
   //
   //   const DarwinInitializationSettings initializationSettingsDarwin =
   //   DarwinInitializationSettings(

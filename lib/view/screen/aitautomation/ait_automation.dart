@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/customer_details.dart';
 import 'package:ssg_smart2/data/model/body/financial_year.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
+import 'package:ssg_smart2/utill/number_formatter.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/widgets/pdf_preview.dart';
 import '../../../data/model/body/ait_details.dart';
 import '../../../provider/user_provider.dart';
@@ -65,6 +66,21 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     super.initState();
     _addOldAit();
     _intData();
+    _setupCommaFormatting(_invoiceAmountController);
+    _setupCommaFormatting(_baseAmountController);
+    _setupCommaFormatting(_aitAmountController);
+  }
+  void _setupCommaFormatting(TextEditingController controller) {
+    controller.addListener((){
+      final text = controller.text;
+      final formatted = NumberFormatterUtil.format(text);
+      if (text != formatted) {
+        controller.value = TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(offset: formatted.length)
+        );
+      }
+    });
   }
   _addOldAit() async {
     _selectedCustomer = CustomerDetails(
@@ -314,7 +330,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   void _calculatedBaseAmount() {
     if (_invoiceAmountController.text.isNotEmpty) {
-      final invoiceAmount = double.tryParse(_invoiceAmountController.text) ?? 0.0;
+      final invoiceAmount = double.tryParse(NumberFormatterUtil.unformat(_invoiceAmountController.text)) ?? 0.0;
       final baseAmount = (invoiceAmount * 100) /115;
       _baseAmountController.text = baseAmount.toStringAsFixed(2);
     }else {
@@ -341,18 +357,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     }
   }
 
-  // Format currency input
-  void _formatCurrency(TextEditingController controller) {
-    if (controller.text.isNotEmpty) {
-      try {
-        final value = double.parse(controller.text.replaceAll(',', ''));
-        controller.text = _currencyFormatter.format(value);
-      } catch (e) {
-        // Handle parsing error
-      }
-    }
-  }
-
   // Form submission
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
@@ -371,9 +375,9 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         'challanDate': _challanDateController.text,
         'financialYear': _selectedFinancialYear,
         'invoiceType': !_isExcludedVat ? 'General' : 'Excluding VAT',
-        'invoiceAmount' : _invoiceAmountController.text,
+        'invoiceAmount' : NumberFormatterUtil.unformat(_invoiceAmountController.text),
         'baseAmount': _baseAmountController.text,
-        'aitAmount' : _aitAmountController.text,
+        'aitAmount' : NumberFormatterUtil.unformat(_aitAmountController.text),
         'tax' : _taxController.text,
         'difference' : _differenceController.text,
         'remarks': _remarksController.text,
@@ -406,6 +410,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
           );
           return;
         }
+
         // update: and entry
         if (widget.editAitDetail != null) {
           await provider.updateAitEnty(widget.editAitDetail!.headerId,data);
@@ -681,7 +686,10 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                     keyboardType:
                     TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))
+                      FilteringTextInputFormatter.allow(
+                          // RegExp(r'^\d+\.?\d{0,2}')
+                          RegExp(r'^\d+\.?\d{0,2}$|^[0-9,]+\.?\d{0,2}$')
+                      )
                     ],
                     decoration: _buildInputDecoration(
                       'Enter invoice amount',
@@ -710,7 +718,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                     TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d+\.?\d{0,2}')
+                          // RegExp(r'^\d+\.?\d{0,2}')
+                          RegExp(r'^\d+\.?\d{0,2}$|^[0-9,]+\.?\d{0,2}$')
                       )
                     ],
                     decoration: _buildInputDecoration(
@@ -737,7 +746,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                     TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d+\.?\d{0,2}')
+                          // RegExp(r'^\d+\.?\d{0,2}')
+                          RegExp(r'^\d+\.?\d{0,2}$|^[0-9,]+\.?\d{0,2}$')
                       )
                     ],
                     decoration: _buildInputDecoration(
@@ -871,7 +881,9 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     return FormField<PlatformFile?>(
       initialValue: _attachmentFile,
       validator: (value) {
-        if (value == null) {
+        print('logic1:${value==null}');
+        print('logic2:${widget.editAitDetail == null}');
+        if (value == null && widget.editAitDetail == null) {
           return 'Please select an attachment file';
         }
         return null;
