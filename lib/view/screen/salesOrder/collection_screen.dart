@@ -24,6 +24,7 @@ import '../../../data/model/body/collection.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/salesorder/customer.dart';
 import '../../../provider/auth_provider.dart';
+import '../../../utill/number_formatter.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/button/custom_button_with_icon.dart';
@@ -103,6 +104,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
     _amountController = TextEditingController();
     _depositNoController = TextEditingController();
     _intData();
+    _setupCommaFormatting(_amountController!);
   }
 
   void _intData() async {
@@ -113,6 +115,19 @@ class _CollectionScreenState extends State<CollectionScreen> {
     //_depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
     _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
+  }
+
+  void _setupCommaFormatting(TextEditingController controller) {
+    controller.addListener((){
+      final text = controller.text;
+      final formatted = NumberFormatterUtil.format(text);
+      if (text != formatted) {
+        controller.value = TextEditingValue(
+            text: formatted,
+            selection: TextSelection.collapsed(offset: formatted.length)
+        );
+      }
+    });
   }
 
   void currentDateTime() {
@@ -184,10 +199,10 @@ class _CollectionScreenState extends State<CollectionScreen> {
     collection.instrument = _instrumentNoController?.text??'';
     collection.remarks = _remarksController?.text??'';
     collection.depositNo = _depositNoController?.text??'';
-    collection.collAmount = _amountController?.text??'0';
+    collection.collAmount = NumberFormatterUtil.unformat(_amountController?.text??'0');
     collection.billToSiteId = _selectedCustomer?.billToSiteId??'';
     collection.billToSiteAddress = _selectedCustomer?.billToAddress??'';
-    collection.custAmount = _amountController?.text??'0';
+    collection.custAmount = NumberFormatterUtil.unformat(_amountController?.text??'0');
 
     developer.log(collection.toJson().toString());
 
