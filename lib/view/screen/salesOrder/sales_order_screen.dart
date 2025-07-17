@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ssg_smart2/data/model/body/sales_order.dart';
 import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
@@ -235,6 +237,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
 
   Future<void>  _onClickAddButton() async {
+    //uriCheck();
 
     _customerFieldError = false;
     _warehouseFieldError = false;
@@ -461,6 +464,16 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     });
 
   }
+
+
+  /*Future<void> uriCheck() async{
+    final client = HttpClient();
+    final request = await client.getUrl(Uri.parse('https://smartapp.ssgil.com/'));
+    request.headers.forEach((name, values) {
+      print('$name: $values');
+    });
+    print('User-Agent: ${request.headers.value(HttpHeaders.userAgentHeader)}');
+  }*/
 
 
   @override

@@ -83,6 +83,7 @@ class Images {
   static const String sales_sammary = 'assets/images/sales_summary_48.png';
   static const String item_pending = 'assets/images/pending_100.png';
   static const String delivery_info = 'assets/images/delivery_48.png';
+  static const String cust_bal = 'assets/images/cust_bal.png';
   static const String va_bank_list = 'assets/images/bank-list.png';
   static const String cust_target_achivement = 'assets/images/cust_target_achivement.png';
   static const String sales_module = 'assets/images/icons8-sales-64.png';

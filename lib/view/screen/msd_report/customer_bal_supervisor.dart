@@ -20,25 +20,29 @@ import '../../../utill/dimensions.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_auto_complete.dart';
+import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class VaBankList extends StatefulWidget {
+class CustBalForSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const VaBankList({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const CustBalForSupervisor({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<VaBankList> createState() => _VaBankListState();
+  State<CustBalForSupervisor> createState() => _CustBalForSupervisorState();
 }
 
-class _VaBankListState extends State<VaBankList> {
+class _CustBalForSupervisorState extends State<CustBalForSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
       ScaffoldMessengerState>();
 
   bool _showResult = false;
 
   UserInfoModel? userInfoModel;
+  DropDownModel? selectedSPListForSupervisor;
+  DropDownModel? selectedCustomerListForSupervisor;
+  bool isSpCustListFieldError = false;
 
 
 
@@ -77,7 +81,7 @@ class _VaBankListState extends State<VaBankList> {
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     //provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
-    //Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
     //provider.fetchAitEssentails('100002083','101');
 
     setState(() {});
@@ -97,7 +101,7 @@ class _VaBankListState extends State<VaBankList> {
       body: Column(
         children: [
           CustomAppBar(
-              title: 'VA Bank Account List',
+              title: 'Customer Balance',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -107,6 +111,82 @@ class _VaBankListState extends State<VaBankList> {
               }),
 
           Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
+                    // 🔹 First Dropdown (Report Type)
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    Row(
+                      children: [
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Salesperson List', mandatoryText: '', textStyle: titilliumRegular),
+                      ],
+                    ),
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Salesperson',
+                      dropdownItems: salesOrderProvider.SpListForSupervisor,
+                      value: selectedSPListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSPListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Customer List', mandatoryText: '*', textStyle: titilliumRegular),
+                      ],
+                    ),
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Customer',
+                      dropdownItems: salesOrderProvider.CustListForSupervisor,
+                      value: selectedCustomerListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCustomerListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          /*Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
 
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
@@ -183,7 +263,7 @@ class _VaBankListState extends State<VaBankList> {
                                    provider.salesOrder.customerName = customer.customerName;
                                    _selectedCustomer = customer;
                                    _custId = _selectedCustomer?.customerId ?? '';
-                                   /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
+                                   *//*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*//*
                                    break;
                                  }
                                }
@@ -198,7 +278,7 @@ class _VaBankListState extends State<VaBankList> {
                );
 
             },
-          ),
+          ),*/
           // Date Inputs
           Padding(
             padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
@@ -223,10 +303,13 @@ class _VaBankListState extends State<VaBankList> {
                 UserInfoModel? userInfoModel = Provider
                     .of<UserProvider>(context, listen: false)
                     .userInfoModel;
-                provider.fetchVaBankList(
+                provider.fetchCustomerBalSupervisor(
 
-                    userInfoModel!.salesRepId!,
-                   _selectedCustomer?.accountNumber ?? ''
+                    userInfoModel!.userName!,
+                   //_selectedCustomer?.accountNumber ?? ''
+                  selectedCustomerListForSupervisor?.code??'',
+                  selectedSPListForSupervisor?.code??'',
+                  userInfoModel!.orgId!,
                   //'100002083',
                 );
                 setState(() {
@@ -244,7 +327,7 @@ class _VaBankListState extends State<VaBankList> {
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return Center(child: CircularProgressIndicator());
-                    } else if (provider.vaBankList.isEmpty) {
+                    } else if (provider.custBalSupervisor.isEmpty) {
                       // return Center(child: Text('No records found'));
                       return NoInternetOrDataScreen(isNoInternet: false);
                     } else {
@@ -256,19 +339,22 @@ class _VaBankListState extends State<VaBankList> {
                                 child: DataTable(
                                   columnSpacing: 10, // Reduce spacing if needed
                                   columns: [
+                                    DataColumn(label: Text('Account', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
                                     DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('VA Account', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Balance', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
                                     //DataColumn(label: Text('Freight', softWrap: true,style: TextStyle(
                                         //fontWeight: FontWeight.bold))),
                                     //DataColumn(label: Text('UOM', softWrap: true,style: TextStyle(
                                         //fontWeight: FontWeight.bold))),
                                   ],
-                                  rows: provider.vaBankList.map((record) => DataRow(
+                                  rows: provider.custBalSupervisor.map((record) => DataRow(
                                     cells: [
+                                      DataCell(Container(width: 80, child: Text(record.cust_account ?? '', softWrap: true))),
                                       DataCell(Container(width: 200, child: Text(record.customer_name ?? '', softWrap: true))),
-                                      DataCell(Container(width: 200, child: Text(record.va_bank_list ?? '', softWrap: true))),
+                                      DataCell(Container(width: 100, child: Text(record.balance ?? '', softWrap: true))),
                                       //DataCell(Container(width: 70, child: Text(record.freight ?? '', softWrap: true))),
                                       //DataCell(Container(width: 70, child: Text(record.uom ?? '', softWrap: true))),
                                     ],

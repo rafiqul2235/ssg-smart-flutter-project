@@ -5,6 +5,7 @@ class DropDownModel {
   int? id;
   String? code;
   String? name;
+  String? account;
   String? nameBl;/* Bengali Text*/
   String? description;
   String? type;
@@ -15,13 +16,14 @@ class DropDownModel {
 
   // DropDownModel(this.id, this.code, this.name);
 
-  DropDownModel({this.id, this.code, this.name, this.nameBl, this.description,
+  DropDownModel({this.id, this.code, this.name,this.account, this.nameBl, this.description,
       this.type, this.category, this.address, this.salesSection});
 
   DropDownModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return;
     code = json[''];
     name = json[''];
+    account = json[''];
   }
   DropDownModel.fromJsonForLeaveType(Map<String, dynamic>? json) {
     if (json == null) return;
@@ -51,6 +53,7 @@ class DropDownModel {
     if (json == null) return;
     name = json['CUSTOMER_NAME'];
     code = json['CUSTOMER_ID'];
+    account = json['CUST_ACC'];
   }
 
   DropDownModel.fromJsonMasterKey(Map<String, dynamic>? json) {
@@ -99,6 +102,6 @@ class DropDownModel {
 
   @override
   String toString() {
-    return 'DropDownModel{id: $id, code: $code, name: $name, nameBl: $nameBl, description: $description}';
+    return 'DropDownModel{id: $id, code: $code, name: $name,$code, account: $account, nameBl: $nameBl, description: $description}';
   }
 }

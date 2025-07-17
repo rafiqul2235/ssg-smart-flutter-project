@@ -4,21 +4,22 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
-  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
-  //  static const String BASE_URL = 'http://10.25.4.120/'; //production
+   //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+    //static const String BASE_URL = 'http://10.25.4.120/'; //production
 
-  //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
    //static const String BASE_URL = 'http://10.25.4.120/'; //production
   //static const String BASE_URL = 'http://192.168.7.98/'; //test
 
-   static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
+   //static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
+  //static const String BASE_URL = 'https://smartappdev.ssgil.com/';  //development server
 
   //static const String BASE_URL = 'http://10.0.2.2/';
 
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
 
-  static const int APP_VERSION_CODE = 16;
-  static const String APP_VERSION_NAME = '2.0.4';
+  static const int APP_VERSION_CODE = 17;
+  static const String APP_VERSION_NAME = '2.0.5';
   static const double GEO_FENCING_DISTANCE = 100; // in meter
   static const LocationAccuracy Location_Accuracy = LocationAccuracy.best;
   static const int BATTARY_SERIAL_NO_SIZE = 10;
@@ -58,9 +59,11 @@ class AppConstants {
   static const String SALES_SUMMARY_SUPER_DATA = 'supervisor_summary_report';
   static const String ITEM_WISE_PENDING_DATA = 'item_wise_pending_sp';
   static const String VA_BANK_LIST_DATA = 'va_bank_account_list';
+  static const String CUSTOMER_BAL_SUPERVISOR = 'customer_bal_supervisor';
   static const String SUP_ITEM_WISE_PENDING_DATA = 'item_wise_pending_supervisor';
   static const String CUST_TARGET_VS_ACHIV_DATA = 'target_vs_achivement';
   static const String BALANCE_CONFIRMATION_DATA = 'cust_balance_confirmation';
+  static const String BALANCE_CONFIRMATION_DATA_SUPERVISOR = 'cust_balance_confirmation_supervisor';
   static const String LEAVE_APPLY = 'leave_save';
   static const String DUPLICATE_LEAVE = 'duplicate-leaveCheck';
   static const String SINGLE_OCCASION_LEAVE = 'check_singleOccasionLeave';

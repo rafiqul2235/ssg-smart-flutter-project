@@ -1,4 +1,3 @@
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,27 +19,32 @@ import '../../../utill/dimensions.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_auto_complete.dart';
+import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
 class SupervisorItemWisePending extends StatefulWidget {
   final bool isBackButtonExist;
-  const SupervisorItemWisePending({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const SupervisorItemWisePending({Key? key, this.isBackButtonExist = true})
+      : super(key: key);
 
   @override
-  State<SupervisorItemWisePending> createState() => _SupervisorItemWisePendingState();
+  State<SupervisorItemWisePending> createState() =>
+      _SupervisorItemWisePendingState();
 }
 
 class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
-      ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   bool _showResult = false;
 
   UserInfoModel? userInfoModel;
 
-
+  DropDownModel? selectedSPListForSupervisor;
+  DropDownModel? selectedCustomerListForSupervisor;
+  bool isSpCustListFieldError = false;
 
   List<DropDownModel> _customersDropDown = [];
   DropDownModel? _selectedCustomerDropDown;
@@ -73,25 +77,23 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
 
   _intData() async {
     // Provider.of<UserProvider>(context, listen: false).resetLoading();
-    userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    userInfoModel =
+        Provider.of<UserProvider>(context, listen: false).userInfoModel;
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     //provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
-    Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
+    Provider.of<SalesOrderProvider>(context, listen: false)
+        .getCollectionInformation(context);
     //provider.fetchAitEssentails('100002083','101');
 
     setState(() {});
   }
 
-
   @override
   Widget build(BuildContext context) {
-   // final provider = context.watch<SalesOrderProvider>();
+    // final provider = context.watch<SalesOrderProvider>();
     //final customers = provider.customersList;
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       key: _scaffoldKey,
       body: Column(
@@ -102,11 +104,11 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
               icon: Icons.home,
               onActionPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (
-                        BuildContext context) => const DashBoardScreen()));
+                    builder: (BuildContext context) =>
+                        const DashBoardScreen()));
               }),
 
-          Consumer<SalesOrderProvider>(
+          /*Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
 
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
@@ -116,10 +118,98 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
                         code: element.customerId,
                         name: element.customerName
                     )));
-              }
+              }*/
 
-
+          Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
               return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
+                    // 🔹 First Dropdown (Report Type)
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    Row(
+                      children: [
+                        Icon(Icons.streetview,
+                            color: ColorResources.getPrimary(context),
+                            size: 20),
+                        const SizedBox(
+                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(
+                            text: 'Salesperson List',
+                            mandatoryText: '',
+                            textStyle: titilliumRegular),
+                      ],
+                    ),
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Salesperson',
+                      dropdownItems: salesOrderProvider.SpListForSupervisor,
+                      value: selectedSPListForSupervisor,
+                      buttonBorderColor:
+                          isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSPListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.streetview,
+                            color: ColorResources.getPrimary(context),
+                            size: 20),
+                        const SizedBox(
+                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(
+                            text: 'Customer List',
+                            mandatoryText: '*',
+                            textStyle: titilliumRegular),
+                      ],
+                    ),
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Customer',
+                      dropdownItems: salesOrderProvider.CustListForSupervisor,
+                      value: selectedCustomerListForSupervisor,
+                      buttonBorderColor:
+                          isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCustomerListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          /* return Container(
                  margin: const EdgeInsets.only(
                    top: Dimensions.MARGIN_SIZE_SMALL,
                    left: Dimensions.MARGIN_SIZE_DEFAULT,
@@ -183,7 +273,7 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
                                    provider.salesOrder.customerName = customer.customerName;
                                    _selectedCustomer = customer;
                                    _custId = _selectedCustomer?.customerId ?? '';
-                                   /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
+                                   */ /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/ /*
                                    break;
                                  }
                                }
@@ -195,10 +285,8 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
                      ),
                    ],
                  ),
-               );
+               );*/
 
-            },
-          ),
           // Date Inputs
           Padding(
             padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
@@ -218,19 +306,19 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
             ),
             child: CustomButton(
               onTap: () {
-                final provider = Provider.of<SalesOrderProvider>(
-                    context, listen: false);
-                UserInfoModel? userInfoModel = Provider
-                    .of<UserProvider>(context, listen: false)
-                    .userInfoModel;
+                final provider =
+                    Provider.of<SalesOrderProvider>(context, listen: false);
+                UserInfoModel? userInfoModel =
+                    Provider.of<UserProvider>(context, listen: false)
+                        .userInfoModel;
                 provider.fetchSupervisorItemWisePending(
                     userInfoModel!.userName!,
-                    '',
-                    ''
+                  selectedSPListForSupervisor?.code??'',
+                  selectedCustomerListForSupervisor?.code??''
                     //userInfoModel!.salesRepId!,
-                  // _selectedCustomer?.customerId ?? ''
-                  //'100002083',
-                );
+                    // _selectedCustomer?.customerId ?? ''
+                    //'100002083',
+                    );
                 setState(() {
                   _showResult = true;
                 });
@@ -254,32 +342,59 @@ class _SupervisorItemWisePendingState extends State<SupervisorItemWisePending> {
                         child: Column(
                           children: [
                             SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
+                                scrollDirection: Axis.horizontal,
                                 child: DataTable(
                                   columnSpacing: 10, // Reduce spacing if needed
                                   columns: [
-                                    DataColumn(label: Text('Item Name', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Pending Qty', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Freight', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('UOM', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('Item Name',
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('Pending Qty',
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('Freight',
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                    DataColumn(
+                                        label: Text('UOM',
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
                                   ],
-                                  rows: provider.itemWisePending.map((record) => DataRow(
-                                    cells: [
-                                      DataCell(Container(width: 130, child: Text(record.item_name ?? '', softWrap: true))),
-                                      DataCell(Container(width: 80, child: Text(record.pending_qty ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.freight ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.uom ?? '', softWrap: true))),
-                                    ],
-                                  )).toList(),
-                                )
-                            )
+                                  rows: provider.itemWisePending
+                                      .map((record) => DataRow(
+                                            cells: [
+                                              DataCell(Container(
+                                                  width: 130,
+                                                  child: Text(
+                                                      record.item_name ?? '',
+                                                      softWrap: true))),
+                                              DataCell(Container(
+                                                  width: 80,
+                                                  child: Text(
+                                                      record.pending_qty ?? '',
+                                                      softWrap: true))),
+                                              DataCell(Container(
+                                                  width: 70,
+                                                  child: Text(
+                                                      record.freight ?? '',
+                                                      softWrap: true))),
+                                              DataCell(Container(
+                                                  width: 70,
+                                                  child: Text(record.uom ?? '',
+                                                      softWrap: true))),
+                                            ],
+                                          ))
+                                      .toList(),
+                                ))
                           ],
                         ),
-
                       );
                     }
                   },

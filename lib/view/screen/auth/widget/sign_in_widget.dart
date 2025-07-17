@@ -140,13 +140,13 @@ class _SignInWidgetState extends State<SignInWidget> {
               });
             }
             // Remember password            
-            if ( _rememberMe ) {
+            /*if ( _rememberMe ) {
               await _secureStorage.write(key: 'username', value: _user);
               await _secureStorage.write(key: 'password', value: _password);
             } else {
               await _secureStorage.delete(key: 'username');
               await _secureStorage.delete(key: 'password');
-            }
+            }*/
 
 
           } else {
@@ -238,7 +238,7 @@ class _SignInWidgetState extends State<SignInWidget> {
               )),
 
           // for remember and forgetpassword
-          Container(
+          /*Container(
             margin: const EdgeInsets.only(left: Dimensions.MARGIN_SIZE_SMALL, right: Dimensions.MARGIN_SIZE_SMALL),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -262,7 +262,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                 ),
               ],
             ),
-          ),
+          ),*/
 
           // for signin button
           Container(

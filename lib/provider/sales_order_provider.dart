@@ -11,6 +11,7 @@ import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
 import 'package:ssg_smart2/data/model/response/salesorder/item_price.dart';
 import 'package:ssg_smart2/view/screen/msd_report/balance_confirmation_model.dart';
+import 'package:ssg_smart2/view/screen/msd_report/cust_bal_supervisor_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/cust_target_vsAchiv_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/item_wise_pending_model.dart';
@@ -132,6 +133,9 @@ class SalesOrderProvider with ChangeNotifier {
 
   List<VaBankListModel> _vaBankList = [];
   List<VaBankListModel> get vaBankList => _vaBankList;
+
+  List<CustBalSupervisorModel> _custBalSupervisor = [];
+  List<CustBalSupervisorModel> get custBalSupervisor => _custBalSupervisor;
 
   List<CustTargetVsAchivModel> _custTargetAchive = [];
   List<CustTargetVsAchivModel> get custTargetAchive => _custTargetAchive;
@@ -885,6 +889,22 @@ class SalesOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchCustomerBalSupervisor(userName,custId,salesrepId,orgId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      print('saleId: $salesrepId and custId: $custId');
+      _custBalSupervisor = await salesOrderRepo.fetchCustBalSupervisorRep(userName,custId,salesrepId,orgId);
+    } catch (e) {
+      print('Error fetching: $e');
+      _custBalSupervisor = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> fetchSupervisorItemWisePending(user_name,salesrepId, custId) async {
     _isLoading = true;
     notifyListeners();
@@ -949,6 +969,23 @@ class SalesOrderProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> fetchBalanceConfirmationSupervisor(userName,salesrepId, custId,formMonth,toMonth) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      //print('saleId: $salesrepId and custId: $custId');
+      _balanceConf = await salesOrderRepo.fetchBalanceConfirmationRepSupervisor(userName,salesrepId,custId,formMonth,toMonth);
+    } catch (e) {
+      print('Error fetching: $e');
+      _balanceConf = [];
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
 
 
   Future<void> fetchDeliveryInfoData(String salesrep_id, String trip_number) async {

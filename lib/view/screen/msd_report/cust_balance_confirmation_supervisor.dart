@@ -17,33 +17,28 @@ import '../../../provider/user_provider.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
-import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_auto_complete.dart';
-import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/mandatory_text.dart';
-import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class SupervisorCustTargetVsAchiv extends StatefulWidget {
+class CustBalanceConfirmationSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const SupervisorCustTargetVsAchiv({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const CustBalanceConfirmationSupervisor({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<SupervisorCustTargetVsAchiv> createState() => _SupervisorCustTargetVsAchivState();
+  State<CustBalanceConfirmationSupervisor> createState() => _CustBalanceConfirmationSupervisorState();
 }
 
-class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchiv> {
+class _CustBalanceConfirmationSupervisorState extends State<CustBalanceConfirmationSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
       ScaffoldMessengerState>();
 
   bool _showResult = false;
 
   UserInfoModel? userInfoModel;
-  DropDownModel? selectedCustomerListForSupervisor;
-  bool isSpCustListFieldError = false;
 
 
 
@@ -52,9 +47,10 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
   TextEditingController? _customerController;
   String _custId = '';
   Customer? _selectedCustomer;
+  String outputFormat='';
 
   List<String> _preiodList = [
-    'Select Period Name',
+    'Select Month Name',
     'Jul-24',
     'Jan-25',
     'Feb-25',
@@ -75,7 +71,8 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
     'May-26',
     'Jun-26',
   ];
-  String? _selectedPreiodList;
+  String? _selectedPreiodListFrom;
+  String? _selectedPreiodListTo;
 
   bool _customerFieldError = false;
   List<CustomerDetails> _filteredCustomers = [];
@@ -106,12 +103,40 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     //provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
-    //Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
     //provider.fetchAitEssentails('100002083','101');
 
     setState(() {});
   }
 
+
+  String? convertDateFormatFrom(String startDate) {
+    try {
+      // Parse the input date
+      DateFormat inputFormat = DateFormat("MMM-yy", "en_US");
+      DateTime date = inputFormat.parse(startDate);
+      // Format the date to the desired output format
+      DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+      return outputFormat.format(date);
+    } catch (e) {
+      print("Error parsing date: \$e");
+      return null; // Handle parsing error as needed
+    }
+  }
+
+  String? convertDateFormatTo(String startDate) {
+    try {
+      // Parse the input date
+      DateFormat inputFormat = DateFormat("MMM-yy", "en_US");
+      DateTime date = inputFormat.parse(startDate);
+      // Format the date to the desired output format
+      DateFormat outputFormat = DateFormat("yyyy-MM-dd");
+      return outputFormat.format(date);
+    } catch (e) {
+      print("Error parsing date: \$e");
+      return null; // Handle parsing error as needed
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +151,7 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Customer Target vs Achievement',
+              title: 'Balance Confirmation Page',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -134,7 +159,8 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                     builder: (
                         BuildContext context) => const DashBoardScreen()));
               }),
-          Consumer<AttendanceProvider>(
+
+          /*Consumer<AttendanceProvider>(
             builder: (context, attendanceProvider, child) {
               return Container(
                 margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
@@ -147,7 +173,7 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                             size: 20),
                         const SizedBox(
                             width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Period Name',
+                        MandatoryText(text: 'From Month',
                             mandatoryText: '*',
                             textStyle: titilliumRegular),
                       ],
@@ -161,20 +187,20 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                       dropdownStyleData: DropdownStyleData(
                         width: width - 40,
                       ),
-                      hint: Text('Select Period Type'),
+                      hint: Text('Select From Month'),
                       items: _preiodList
                           .map((type) => DropdownMenuItem<String>
                         (
-                        value: type == 'Select Period Name' ? null : type,
+                        value: type == 'Select From Month' ? null : type,
                         child: Text(type),
                       )
 
                       )
                           .toList(),
-                      value: _selectedPreiodList,
+                      value: _selectedPreiodListFrom,
                       onChanged: (value) {
                         setState(() {
-                          _selectedPreiodList = value;
+                          _selectedPreiodListFrom = value;
                         });
                       },
                     ),
@@ -183,35 +209,47 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
               );
             },
           ),
-
-          Consumer<SalesOrderProvider>(
-            builder: (context, salesOrderProvider, child) {
+          Consumer<AttendanceProvider>(
+            builder: (context, attendanceProvider, child) {
               return Container(
                 margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
-                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Customer List', mandatoryText: '*', textStyle: titilliumRegular),
+                        Icon(Icons.streetview,
+                            color: ColorResources.getPrimary(context),
+                            size: 20),
+                        const SizedBox(
+                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'To Month',
+                            mandatoryText: '*',
+                            textStyle: titilliumRegular),
                       ],
                     ),
-
                     const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                    CustomDropdownButton(
-                      buttonHeight: 45,
-                      buttonWidth: double.infinity,
-                      dropdownWidth: MediaQuery.of(context).size.width - 40,
-                      hint: 'Select Customer',
-                      dropdownItems: salesOrderProvider.CustListForSupervisor,
-                      value: selectedCustomerListForSupervisor,
-                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                    DropdownButton2<String>(
+                      buttonStyleData: ButtonStyleData(
+                        height: 45,
+                        width: double.infinity,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: width - 40,
+                      ),
+                      hint: Text('To Month'),
+                      items: _preiodList
+                          .map((type) => DropdownMenuItem<String>
+                        (
+                        value: type == 'Select To Month' ? null : type,
+                        child: Text(type),
+                      )
+
+                      )
+                          .toList(),
+                      value: _selectedPreiodListTo,
                       onChanged: (value) {
                         setState(() {
-                          selectedCustomerListForSupervisor = value;
-                          // Reset result visibility when selection changes
-                          _showResult = false;
+                          _selectedPreiodListTo= value;
                         });
                       },
                     ),
@@ -219,8 +257,9 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                 ),
               );
             },
-          ),
-          /*Consumer<SalesOrderProvider>(
+          ),*/
+
+          Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
 
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
@@ -257,7 +296,7 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                          MandatoryText(
                            text: 'Customer',
                            textStyle: titilliumRegular,
-                           mandatoryText: '',
+                           mandatoryText: '*',
                          ),
                        ],
                      ),
@@ -297,7 +336,7 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                                    provider.salesOrder.customerName = customer.customerName;
                                    _selectedCustomer = customer;
                                    _custId = _selectedCustomer?.customerId ?? '';
-                                   *//*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*//*
+                                   /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
                                    break;
                                  }
                                }
@@ -312,14 +351,132 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
                );
 
             },
-          ),*/
+          ),
           // Date Inputs
+          const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
           Padding(
             padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // Start Date
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 5.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.date_range,
+                                color: ColorResources.getPrimary(context),
+                                size: 20),
+                            const SizedBox(width: Dimensions
+                                .MARGIN_SIZE_EXTRA_SMALL),
+                            MandatoryText(text: 'From Month',
+                                mandatoryText: '*',
+                                textStyle: titilliumRegular),
+                          ],
+                        ),
+
+                        Consumer<AttendanceProvider>(
+                          builder: (context, attendanceProvider, child) {
+                            return Container(
+                              margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                              child: Column(
+                                children: [
+                                  DropdownButton2<String>(
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 45,
+                                      width: double.infinity,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      width: width - 40,
+                                    ),
+                                    hint: Text('Select From Month'),
+                                    items: _preiodList
+                                        .map((type) => DropdownMenuItem<String>
+                                      (
+                                      value: type == 'Select From Month' ? null : type,
+                                      child: Text(type),
+                                    )
+
+                                    )
+                                        .toList(),
+                                    value: _selectedPreiodListFrom,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedPreiodListFrom = value;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                    ],
+                    ),
+                  ),
+                ),
                 SizedBox(width: 10),
+                // End Date
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 5.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.date_range,
+                                color: ColorResources.getPrimary(context),
+                                size: 20),
+                            const SizedBox(width: Dimensions
+                                .MARGIN_SIZE_EXTRA_SMALL),
+                            MandatoryText(text: 'To Month',
+                                mandatoryText: '*',
+                                textStyle: titilliumRegular),
+                          ],
+                        ),
+                        Consumer<AttendanceProvider>(
+                          builder: (context, attendanceProvider, child) {
+                            return Container(
+                              margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                              child: Column(
+                                children: [
+                                  DropdownButton2<String>(
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 45,
+                                      width: double.infinity,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      width: width - 40,
+                                    ),
+                                    hint: Text('Select To Month'),
+                                    items: _preiodList
+                                        .map((type) => DropdownMenuItem<String>
+                                      (
+                                      value: type == 'Select To Month' ? null : type,
+                                      child: Text(type),
+                                    )
+
+                                    )
+                                        .toList(),
+                                    value: _selectedPreiodListTo,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedPreiodListTo= value;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -332,25 +489,28 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
             ),
             child: CustomButton(
               onTap: () {
-                /*if(_selectedCustomer == null){
-                  _showErrorDialog("Select Customer name");
-                  return;
-                }*/
+                String? startDate = convertDateFormatFrom(_selectedPreiodListFrom??'');
+                String? endDate = convertDateFormatFrom(_selectedPreiodListTo??'');
+                print('fromD:$startDate');
+                print('toD:$endDate');
+                //outputFormat = convertDateFormat('Dce-23')!;
                 final provider = Provider.of<SalesOrderProvider>(
                     context, listen: false);
                 UserInfoModel? userInfoModel = Provider
                     .of<UserProvider>(context, listen: false)
                     .userInfoModel;
-                provider.fetchTargetVsAchivData(
+                provider.fetchBalanceConfirmationSupervisor(
+                  '549',
+                    '100002083',
+                    '3138',
+                    //userInfoModel!.salesRepId!,
+                   //_selectedCustomer?.customerId ?? '',
+                    startDate,
+                    endDate
 
-                    userInfoModel!.orgId!,
-                    _selectedPreiodList ?? '',
-                   // '3098'
-                  selectedCustomerListForSupervisor?.account??'',
-                  //'101',
-                  // 'Jul-24',
-                   //'3098'
-                   //_selectedCustomer?.accountNumber ?? ''
+
+                    //'2024-12-01',
+                    //'2024-12-31'
                   //'100002083',
                 );
                 setState(() {
@@ -363,95 +523,53 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
           Visibility(
             visible: _showResult,
             child: Expanded(
-
               child: SingleChildScrollView(
                 child: Consumer<SalesOrderProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return Center(child: CircularProgressIndicator());
-                    } else if (provider.custTargetAchive.isEmpty) {
+                    } else if (provider.balanceConf.isEmpty) {
                       // return Center(child: Text('No records found'));
                       return NoInternetOrDataScreen(isNoInternet: false);
                     } else {
-
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            Center(child: Text("Delivery Basis Achievement", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-
                                 child: DataTable(
                                   columnSpacing: 10, // Reduce spacing if needed
                                   columns: [
-                                    DataColumn(label: Text('Preoid', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Target', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Month', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Delivered', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Openning Balance', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Achievement', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Rec. Amount', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('Adj. Amount', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('SO Issued\n (Bag)', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('Delivered\n (Bag)', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('Undelivered\n (Bag)', softWrap: true,style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                                    DataColumn(label: Text('Closing B/L', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
                                   ],
-                                  rows: provider.custTargetAchive.map((record) => DataRow(
+                                  rows: provider.balanceConf.map((record) => DataRow(
                                     cells: [
-                                      DataCell(Container(width: 70, child: Text(record.period ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.target ?? '', softWrap: true))),
+                                      DataCell(Container(width: 130, child: Text(record.customer ?? '', softWrap: true))),
+                                      DataCell(Container(width: 80, child: Text(record.month ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.opennig_bal ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.rec_amount ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.adj_amount ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.so_issue ?? '', softWrap: true))),
                                       DataCell(Container(width: 70, child: Text(record.delivered ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.acchive ?? '', softWrap: true))),
-                                    ],
-                                  )).toList(),
-                                )
-                            )
-                          ],
-                        ),
-
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          ),
-          Visibility(
-            visible: _showResult,
-            child: Expanded(
-
-              child: SingleChildScrollView(
-                child: Consumer<SalesOrderProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (provider.custTargetAchive.isEmpty) {
-                      // return Center(child: Text('No records found'));
-                      return NoInternetOrDataScreen(isNoInternet: false);
-                    } else {
-
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Center(child: Text("Sales Order Basis Achievement", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
-                            SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-
-                                child: DataTable(
-                                  columnSpacing: 10, // Reduce spacing if needed
-                                  columns: [
-                                    DataColumn(label: Text('Preoid', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Target', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('SO Qty', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Achievement', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                  ],
-                                  rows: provider.custTargetAchive.map((record) => DataRow(
-                                    cells: [
-                                      DataCell(Container(width: 70, child: Text(record.period ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.target ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.so_qty ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.so_acchive ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.undelivered ?? '', softWrap: true))),
+                                      DataCell(Container(width: 70, child: Text(record.closing_bal ?? '', softWrap: true))),
                                     ],
                                   )).toList(),
                                 )
@@ -469,17 +587,5 @@ class _SupervisorCustTargetVsAchivState extends State<SupervisorCustTargetVsAchi
         ],
       ),
     );
-  }
-  void _showErrorDialog(String message) {
-    showAnimatedDialog(
-        context,
-        MyDialog(
-          icon: Icons.error,
-          title: 'Error',
-          description: message,
-          rotateAngle: 0,
-          positionButtonTxt: 'Ok',
-        ),
-        dismissible: false);
   }
 }

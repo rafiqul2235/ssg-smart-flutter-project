@@ -12,6 +12,7 @@ import 'package:ssg_smart2/view/screen/msd_report/notification_summary_model.dar
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary_model.dart';
 import 'package:ssg_smart2/view/screen/msd_report/va_bank_list_model.dart';
 
+import '../../view/screen/msd_report/cust_bal_supervisor_model.dart';
 import '../../view/screen/salesOrder/sales_data_model.dart';
 import '../model/body/collection.dart';
 import '../model/body/sales_order.dart';
@@ -487,7 +488,7 @@ class SalesOrderRepo {
         AppConstants.VA_BANK_LIST_DATA,
         data: {
           'salesrep_id': salesrepId,
-          'customer_account': custId,
+          'customer_account': custId,  //
         },
       );
       print("va bank list Repo response $response");
@@ -497,6 +498,36 @@ class SalesOrderRepo {
             responseData['va_account_list'] != null) {
           return (responseData['va_account_list'] as List)
               .map((json) => VaBankListModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<CustBalSupervisorModel>> fetchCustBalSupervisorRep(String userName,String custId,String salesrepId,String orgId) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.CUSTOMER_BAL_SUPERVISOR,
+        data: {
+          'user_name': userName,
+          'customer_id': custId,
+          'salesrep_id': salesrepId,
+          'org_id': orgId,
+        },
+      );
+      print("Cust Bal Repo response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['va_account_list'] != null) {
+          return (responseData['va_account_list'] as List)
+              .map((json) => CustBalSupervisorModel.fromJson(json))
               .toList();
         } else {
           throw Exception('Failed to load data');
@@ -602,6 +633,37 @@ class SalesOrderRepo {
       final response = await dioClient.postWithFormData(
         AppConstants.BALANCE_CONFIRMATION_DATA,
         data: {
+          'emp_id': salesrepId,
+          'customer_id': custId,
+          'fromDate': fromMonth,
+          'toDate': toMonth
+        },
+      );
+      print("balance confirmation response $response");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData['success'] == 1 &&
+            responseData['cust_balance_con'] != null) {
+          return (responseData['cust_balance_con'] as List)
+              .map((json) => BalanceConfirmationModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Failed to load data');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
+  }
+
+  Future<List<BalanceConfirmationModel>> fetchBalanceConfirmationRepSupervisor(String userName,String salesrepId,String custId,fromMonth,toMonth) async {
+    try {
+      final response = await dioClient.postWithFormData(
+        AppConstants.BALANCE_CONFIRMATION_DATA_SUPERVISOR,
+        data: {
+          'user_name': userName,
           'emp_id': salesrepId,
           'customer_id': custId,
           'fromDate': fromMonth,

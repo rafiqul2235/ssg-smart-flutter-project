@@ -51,7 +51,7 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
 
     return Column(
       children: [
-        TitleCardBar(title: 'Stock Report (Self)',isBorder: false, navigateTo: SampleReportListScreen()),
+        TitleCardBar(title: 'Important',isBorder: false, navigateTo: SampleReportListScreen()),
 
       ],
     );
@@ -77,7 +77,7 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
           children: [
             //Header
             CustomAppBar(
-                title: getTranslated('Report', context),
+                title: getTranslated('Notice Board', context),
                 isBackButtonExist: widget.isBackButtonExist,
                 icon: Icons.home, onActionPressed:(){
                   Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
