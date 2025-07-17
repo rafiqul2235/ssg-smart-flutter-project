@@ -150,8 +150,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           type: BottomNavigationBarType.fixed,
           items: [
             _barItem(Images.home_image, getTranslated('home', context), 0,0),
-           /* _barItem(Images.ic_dashboard, getTranslated('Dashboard', context), 1,0),*/
             _barItem(Images.ic_dashboard, getTranslated('Notice', context), 1,0),
+           /* _barItem(Images.ic_dashboard, getTranslated('Dashboard', context), 1,0),
+            _barItem(Images.ic_dashboard, getTranslated('Report', context), 1,0),*/
             _barItem(Images.message_image, getTranslated('Message', context), 2,0),
             _barItem(Images.more_image, getTranslated('more', context), 3,0),
           ],

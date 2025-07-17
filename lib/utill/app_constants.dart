@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
+
    //static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
     //static const String BASE_URL = 'http://10.25.4.120/'; //production
 
@@ -15,7 +16,6 @@ class AppConstants {
   //static const String BASE_URL = 'https://smartappdev.ssgil.com/';  //development server
 
   //static const String BASE_URL = 'http://10.0.2.2/';
-
   //static const String BASE_URL = 'http://172.29.10.231/'; // local host
 
   static const int APP_VERSION_CODE = 17;
@@ -97,6 +97,7 @@ class AppConstants {
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
   // R&D project
   // static const String ATTACHMENT_PROJECT = 'attachment_project';
+
   // static const String FETCH_ATTACHMENT = 'fetch_attachment';
   static const String AIT_AUTOMATION = 'ait_automation';
   static const String AIT_VIEW = 'fetch_ait_info';

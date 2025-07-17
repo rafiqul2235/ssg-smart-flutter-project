@@ -55,6 +55,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   // Form state variables
   CustomerDetails? _selectedCustomer;
   List<CustomerDetails> _filteredCustomers = [];
+  late List<FinancialYear> financialYears;
   String? _selectedFinancialYear;
   bool _isLoading = false;
 
@@ -69,6 +70,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     _setupCommaFormatting(_invoiceAmountController);
     _setupCommaFormatting(_baseAmountController);
     _setupCommaFormatting(_aitAmountController);
+    print('fn-year(initSt): ${_selectedFinancialYear}');
   }
   void _setupCommaFormatting(TextEditingController controller) {
     controller.addListener((){
@@ -105,10 +107,15 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
+    // final provider = context.watch<AttachmentProvider>();
     provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    financialYears = provider.financialYearsList;
 
-    setState(() {});
+    setState(() {
+      _selectedFinancialYear = financialYears.isNotEmpty ? financialYears.first.description : null;
+    });
   }
+
 
   // Number formatter for currency
   final _currencyFormatter = NumberFormat("#,##0.00", "en_US");
@@ -245,7 +252,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('File is too large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
+              content: Text('File is large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
               backgroundColor: Colors.red,
             ),
           );
@@ -359,6 +366,8 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
 
   // Form submission
   Future<void> _submitForm() async {
+    print('fn-year(submitForm): $_selectedFinancialYear');
+
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
@@ -471,10 +480,12 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<AttachmentProvider>();
     final customers = provider.customersList;
-    final financialYears = provider.financialYearsList;
-    if (widget.editAitDetail == null && financialYears.isNotEmpty){
-      _selectedFinancialYear = financialYears[0].description;
-    }
+    // final financialYears = provider.financialYearsList;
+    // print('fn-year(build): $_selectedFinancialYear');
+    // if (widget.editAitDetail == null && financialYears.isNotEmpty){
+    //   _selectedFinancialYear = financialYears[0].description;
+    //   print('fn-year(buildIn): $_selectedFinancialYear');
+    // }
 
     return Scaffold(
       appBar: AppBar(
