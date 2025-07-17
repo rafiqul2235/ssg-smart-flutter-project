@@ -252,7 +252,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         if (secureFile.size > FileSecurityHelper.MAX_FILE_SIZE) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('File is too large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
+              content: Text('File is large. Maximum size allowed is ${(FileSecurityHelper.MAX_FILE_SIZE / (1024 * 1024)).toStringAsFixed(1)}MB'),
               backgroundColor: Colors.red,
             ),
           );
