@@ -385,7 +385,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
         'financialYear': _selectedFinancialYear,
         'invoiceType': !_isExcludedVat ? 'General' : 'Excluding VAT',
         'invoiceAmount' : NumberFormatterUtil.unformat(_invoiceAmountController.text),
-        'baseAmount': _baseAmountController.text,
+        'baseAmount': NumberFormatterUtil.unformat(_baseAmountController.text),
         'aitAmount' : NumberFormatterUtil.unformat(_aitAmountController.text),
         'tax' : _taxController.text,
         'difference' : _differenceController.text,
