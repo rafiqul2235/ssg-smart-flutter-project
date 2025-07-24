@@ -55,7 +55,7 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider(create: (context) => di.sl<SplashProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<AuthProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<UserProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<UserProvider>()..loadUser()),
       ChangeNotifierProvider(create: (context) => di.sl<UserDashboardProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ReportProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ThemeProvider>()),

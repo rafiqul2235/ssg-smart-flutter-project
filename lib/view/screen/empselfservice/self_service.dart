@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/provider/user_provider.dart';
+import 'package:ssg_smart2/utill/user_data_storage.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/loan_approval_history.dart';
 import 'package:ssg_smart2/view/screen/empselfservice/widget/top_menu.dart';
 import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
@@ -43,6 +44,7 @@ class _SelfServiceState extends State<SelfService> {
 
   _getMenuList(){
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+    print("userinfo(emp): $userInfoModel");
     _menuList = [];
     _menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Attendance', navigateTo: AttendanceSheetPage(),));
     _menuList.add(TopMenuItem(image: Images.leave, menuName: 'Chuti', navigateTo: LeaveApplicationScreen(),));
@@ -62,6 +64,7 @@ class _SelfServiceState extends State<SelfService> {
 
   @override
   Widget build(BuildContext context) {
+    print('Shareprefernce data: ${UserDataStorage.getUserInfo()}');
     Provider.of<UserProvider>(context,listen: false).getApplicationList(context);
     return Scaffold(
       body: Column(
