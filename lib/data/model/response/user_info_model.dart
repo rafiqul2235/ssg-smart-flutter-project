@@ -59,8 +59,8 @@ class UserInfoModel {
       userName: json['USER_NAME'],
       authCode: json['AUTH_CODE'],
       orgs: orgList,
-      orgId: orgList.first.id,
-      orgName: orgList.first.name,
+      orgId: json['ORG_ID'] ?? (orgList.isNotEmpty ? orgList.first.id : null),
+      orgName: json['ORG_NAME'] ?? (orgList.isNotEmpty ? orgList.first.name : null),
       totalOrgs: json['TOTAL_ORGS']
     );
   }

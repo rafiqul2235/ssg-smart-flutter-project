@@ -72,7 +72,9 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> setUser(UserInfoModel userInfo) async {
+    print("userInfo(setUser): $userInfo");
     _userInfoModel = userInfo;
+    print("userInfoModel(setUser): $_userInfoModel");
     await UserDataStorage.saveUserInfo(userInfo);
     notifyListeners();
   }

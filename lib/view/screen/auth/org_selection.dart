@@ -24,9 +24,16 @@ class OrganizationSelectionScreen extends StatelessWidget {
               // Update selected organization
               userInfo.orgId = org.id;
               userInfo.orgName = org.name;
-
+              print("Selected Org: $org");
               await userProvider.setUser(userInfo); // This now updates SharedPreferences too
               await userProvider.loadUser();
+
+              final userProvider2 = Provider.of<UserProvider>(context, listen: false);
+              final userInfo2 = userProvider2.userInfoModel;
+
+              print('organization2: $userInfo2');
+
+
 
               Navigator.pushAndRemoveUntil(
                 context,
