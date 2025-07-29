@@ -41,8 +41,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   late TextEditingController _challanDateController = TextEditingController();
-  late TextEditingController _invoiceAmountController =
-  TextEditingController();
+  late TextEditingController _invoiceAmountController = TextEditingController();
   late TextEditingController _baseAmountController = TextEditingController();
   late TextEditingController _aitAmountController = TextEditingController();
   late TextEditingController _taxController = TextEditingController();
@@ -58,9 +57,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   late List<FinancialYear> financialYears;
   String? _selectedFinancialYear;
   bool _isLoading = false;
-
-
-
 
   @override
   void initState() {

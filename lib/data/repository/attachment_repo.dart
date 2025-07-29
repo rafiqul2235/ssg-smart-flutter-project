@@ -194,6 +194,7 @@ class AttachmentRepo {
 
 Future<AitResponse> fetchAitDetails(String headerId) async {
     try {
+      print('ait-header(repo):$headerId');
       final response = await dioClient.postWithFormData(
         AppConstants.AIT_DETAILS,
         data: {
@@ -206,12 +207,12 @@ Future<AitResponse> fetchAitDetails(String headerId) async {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = response.data;
 
-        if (data['success'] == 1) {
+        // if (data['success'] == 1) {
           return AitResponse.fromJson(data);
-        }else {
-          print("API returned success = 0");
-          throw Exception("API returned success = 0");
-        }
+        // }else {
+        //   print("API returned success = 0");
+        //   throw Exception("API returned success = 0");
+        // }
       }else {
         throw Exception("Failed to fetch AIT data. Status code: ${response.statusCode}");
       }

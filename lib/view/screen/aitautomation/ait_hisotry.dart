@@ -68,8 +68,10 @@ class _AitHistoryState extends State<AitHistory> {
                   itemCount: provider.aitData.length,
                   itemBuilder: (BuildContext context, int index) {
                     final aitData = provider.aitData[index];
+                    print('ait-data: $aitData');
                     return InkWell(
                       onTap: () {
+                        print('selected ait: ${aitData.headerId}');
                         Navigator.push(
                             context,
                             MaterialPageRoute(

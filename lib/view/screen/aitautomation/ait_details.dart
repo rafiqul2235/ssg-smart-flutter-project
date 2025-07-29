@@ -48,6 +48,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    print('received ait: ${widget.headerId}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AttachmentProvider>(context, listen: false)
           .fetchAitDetails(widget.headerId);
@@ -165,6 +166,8 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                   }
                   final aitDetails = aitProvider.aitDetails;
                   final approverList = aitProvider.approverList;
+
+                  print('aitdetails(ait-details): $aitDetails');
 
                   downloadUrl = aitDetails?.downloadUrl;
                   // Check if the list is empty
