@@ -54,7 +54,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   // Form state variables
   CustomerDetails? _selectedCustomer;
   List<CustomerDetails> _filteredCustomers = [];
-  late List<FinancialYear> financialYears;
+  List<FinancialYear> financialYears = [];
   String? _selectedFinancialYear;
   bool _isLoading = false;
 
@@ -62,12 +62,12 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   void initState() {
     super.initState();
     _addOldAit();
-    _intData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _intData());
     _setupCommaFormatting(_invoiceAmountController);
     _setupCommaFormatting(_baseAmountController);
     _setupCommaFormatting(_aitAmountController);
-    print('fn-year(initSt): ${_selectedFinancialYear}');
   }
+
   void _setupCommaFormatting(TextEditingController controller) {
     controller.addListener((){
       final text = controller.text;
@@ -101,17 +101,16 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   _intData() async {
     // Provider.of<UserProvider>(context, listen: false).resetLoading();
     userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-    print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     // final provider = context.watch<AttachmentProvider>();
-    provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    await provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
     financialYears = provider.financialYearsList;
-
-    setState(() {
-      _selectedFinancialYear = financialYears.isNotEmpty ? financialYears.first.description : null;
-    });
+    if(mounted) {
+      setState(() {
+        _selectedFinancialYear = financialYears.isNotEmpty ? financialYears.first.description : null;
+      });
+    }
   }
-
 
   // Number formatter for currency
   final _currencyFormatter = NumberFormat("#,##0.00", "en_US");
