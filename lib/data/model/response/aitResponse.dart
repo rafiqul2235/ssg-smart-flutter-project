@@ -3,7 +3,7 @@ import 'package:ssg_smart2/data/model/body/approver.dart';
 
 class AitResponse {
   final int success;
-  final String? msg;
+  final List<dynamic> msg;
   final AitDetail? aitDetails;
   final List<ApproverDetail> approverList;
   final Map<String, dynamic> post;
@@ -21,11 +21,7 @@ class AitResponse {
   factory AitResponse.fromJson(Map<String, dynamic> json) {
     return AitResponse(
       success: json['success'] ?? 0,
-      msg: json['msg'] is String
-          ? json['msg']
-          : (json['msg'] is List && json['msg'].isNotEmpty)
-            ? json['msg'][0].toString()
-            : null,
+      msg: json['msg'] ?? [],
       aitDetails: AitDetail.fromJson(json['ait_details']),
       approverList: (json['approver_list'] as List?)
           ?.map((e) => ApproverDetail.fromJson(e))
