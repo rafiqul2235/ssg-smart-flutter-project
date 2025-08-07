@@ -95,7 +95,9 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     _taxController = TextEditingController(text: widget.editAitDetail?.tax ?? '');
     _differenceController = TextEditingController(text: widget.editAitDetail?.difference ?? '');
     _remarksController = TextEditingController(text: widget.editAitDetail?.remarks ?? '');
-
+    if (!widget.editAitDetail!.invoiceType.contains("General")) {
+      _isExcludedVat = true;
+    }
   }
 
   _intData() async {
@@ -107,7 +109,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     financialYears = provider.financialYearsList;
     if(mounted) {
       setState(() {
-        _selectedFinancialYear = financialYears.isNotEmpty ? financialYears.first.description : null;
+        _selectedFinancialYear = ((_selectedFinancialYear?.isEmpty?? true)) ? financialYears.first.description : _selectedFinancialYear;
       });
     }
   }
@@ -672,8 +674,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                         _isExcludedVat = value!;
                         if (!_isExcludedVat) {
                           _calculatedBaseAmount();
-                        }else {
-                          _baseAmountController.clear();
                         }
                       });
                     },
