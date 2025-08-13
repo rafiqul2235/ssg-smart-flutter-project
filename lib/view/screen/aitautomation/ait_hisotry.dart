@@ -28,9 +28,18 @@ class _AitHistoryState extends State<AitHistory> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-      Provider.of<AttachmentProvider>(context, listen: false).fetchAitInfo(userInfoModel!.employeeNumber!);
+      _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    try {
+      userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+      final provider = Provider.of<AttachmentProvider>(context, listen: false);
+      await provider.fetchAitInfo(userInfoModel!.employeeNumber!);
+    } catch(e) {
+      print("Error loading AIT data: $e");
+    }
   }
 
   @override
@@ -68,14 +77,23 @@ class _AitHistoryState extends State<AitHistory> {
                   itemCount: provider.aitData.length,
                   itemBuilder: (BuildContext context, int index) {
                     final aitData = provider.aitData[index];
+                    print('ait-data: $aitData');
                     return InkWell(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final provider = Provider.of<AttachmentProvider>(context, listen: false);
+                        await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AitDetailsScreen(headerId: aitData.headerId,showApprovalSection: false,)
                             )
                         );
+                        print('Returned from AitDetailsScreen, checking if mounted: $mounted'); // Debug log
+
+                        if(mounted) {
+                          print('Refreshing AIT data for employee: ${userInfoModel!.employeeNumber!}'); // Debug log
+                          await _loadData();
+                          print('AIT data refresh completed'); // Debug log
+                        }
                       },
                       child: Card.outlined(
                         color: Colors.orange[50],

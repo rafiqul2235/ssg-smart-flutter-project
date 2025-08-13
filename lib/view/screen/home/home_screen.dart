@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/approval/approval_main.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
@@ -35,6 +37,7 @@ import '../pdf/pdf_list_screen.dart';
 import '../profile/profile_screen.dart';
 import '../report/report_dashboard_screen.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../salesOrder/rsm_sales_approval_screen.dart';
 import '../salesOrder/sales_order_screen.dart';
@@ -162,11 +165,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Column(
               children: [
-                Padding(
-                  padding:
-                  EdgeInsets.only(top: Dimensions.PADDING_SIZE_LARGE),
-                  child: BannersView(),
-                ),
+                (!kIsWeb && !Platform.isWindows)
+                  ? Padding(
+                      padding:
+                      EdgeInsets.only(top: Dimensions.PADDING_SIZE_LARGE),
+                      child: BannersView(),
+                    )
+                  : SizedBox.shrink(),
                 SizedBox(height: 6),
                 Expanded(
                   child:Consumer<UserProvider>(

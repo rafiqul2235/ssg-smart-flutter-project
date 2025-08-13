@@ -41,8 +41,7 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   late TextEditingController _challanDateController = TextEditingController();
-  late TextEditingController _invoiceAmountController =
-  TextEditingController();
+  late TextEditingController _invoiceAmountController = TextEditingController();
   late TextEditingController _baseAmountController = TextEditingController();
   late TextEditingController _aitAmountController = TextEditingController();
   late TextEditingController _taxController = TextEditingController();
@@ -55,23 +54,20 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
   // Form state variables
   CustomerDetails? _selectedCustomer;
   List<CustomerDetails> _filteredCustomers = [];
-  late List<FinancialYear> financialYears;
+  List<FinancialYear> financialYears = [];
   String? _selectedFinancialYear;
   bool _isLoading = false;
-
-
-
 
   @override
   void initState() {
     super.initState();
     _addOldAit();
-    _intData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _intData());
     _setupCommaFormatting(_invoiceAmountController);
     _setupCommaFormatting(_baseAmountController);
     _setupCommaFormatting(_aitAmountController);
-    print('fn-year(initSt): ${_selectedFinancialYear}');
   }
+
   void _setupCommaFormatting(TextEditingController controller) {
     controller.addListener((){
       final text = controller.text;
@@ -99,23 +95,24 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
     _taxController = TextEditingController(text: widget.editAitDetail?.tax ?? '');
     _differenceController = TextEditingController(text: widget.editAitDetail?.difference ?? '');
     _remarksController = TextEditingController(text: widget.editAitDetail?.remarks ?? '');
-
+    if (!widget.editAitDetail!.invoiceType.contains("General")) {
+      _isExcludedVat = true;
+    }
   }
 
   _intData() async {
     // Provider.of<UserProvider>(context, listen: false).resetLoading();
     userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
-    print("userinfo: ${userInfoModel}");
     final provider = Provider.of<AttachmentProvider>(context, listen: false);
     // final provider = context.watch<AttachmentProvider>();
-    provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
+    await provider.fetchAitEssentails(userInfoModel!.orgId!, userInfoModel!.salesRepId!);
     financialYears = provider.financialYearsList;
-
-    setState(() {
-      _selectedFinancialYear = financialYears.isNotEmpty ? financialYears.first.description : null;
-    });
+    if(mounted) {
+      setState(() {
+        _selectedFinancialYear = ((_selectedFinancialYear?.isEmpty?? true)) ? financialYears.first.description : _selectedFinancialYear;
+      });
+    }
   }
-
 
   // Number formatter for currency
   final _currencyFormatter = NumberFormat("#,##0.00", "en_US");
@@ -677,8 +674,6 @@ class _AITAutomationScreenState extends State<AITAutomationScreen> {
                         _isExcludedVat = value!;
                         if (!_isExcludedVat) {
                           _calculatedBaseAmount();
-                        }else {
-                          _baseAmountController.clear();
                         }
                       });
                     },

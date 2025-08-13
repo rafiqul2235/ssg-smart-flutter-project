@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +47,7 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    print('received ait: ${widget.headerId}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AttachmentProvider>(context, listen: false)
           .fetchAitDetails(widget.headerId);
@@ -165,6 +165,8 @@ class _AitDetailsScreenState extends State<AitDetailsScreen> {
                   }
                   final aitDetails = aitProvider.aitDetails;
                   final approverList = aitProvider.approverList;
+
+                  print('aitdetails(ait-details): $aitDetails');
 
                   downloadUrl = aitDetails?.downloadUrl;
                   // Check if the list is empty
