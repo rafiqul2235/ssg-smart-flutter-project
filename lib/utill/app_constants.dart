@@ -4,10 +4,10 @@ import 'package:geolocator/geolocator.dart';
 class AppConstants {
   static const String APP_NAME = 'SMART';
 
-  static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
+  // static const String BASE_URL = 'https://smartapp.ssgil.com/'; // live
   //  static const String BASE_URL = 'http://10.25.4.120/'; //production
 
-  // static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
+  static const String BASE_URL = 'http://10.27.1.177/api/'; //oracle cloud test
   // static const String BASE_URL = 'http://10.0.2.2/'; //android local ip
   // static const String BASE_URL = 'http://192.168.1.102/'; //HOME IP
   // static const String BASE_URL = 'http://172.29.10.250/api/'; // Ofiice IP
@@ -77,16 +77,13 @@ class AppConstants {
   static const String NEW_COLLECTION_SUBMIT = 'flutter-new-collection';
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
 
-  // R&D project
-  // static const String ATTACHMENT_PROJECT = 'attachment_project';
-
-  // static const String FETCH_ATTACHMENT = 'fetch_attachment';
-  static const String AIT_AUTOMATION = 'ait_automation';
+  // Customer AIT project
+  static const String AIT_AUTOMATION = 'ait_automation_new'; // changed from ait_automation
   static const String AIT_VIEW = 'fetch_ait_info';
   static const String AIT_DETAILS = 'fetch_ait_details';
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
-  static const String UPDATE_AIT = 'ait_automation_update';
+  static const String UPDATE_AIT = 'update_ait_automation_new'; // changed from update_ait_automation
 
   //MO project
   static const String MO_LIST = 'mo_list';
