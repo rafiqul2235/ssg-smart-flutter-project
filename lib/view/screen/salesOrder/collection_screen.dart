@@ -24,6 +24,7 @@ import '../../../data/model/body/collection.dart';
 import '../../../data/model/dropdown_model.dart';
 import '../../../data/model/response/salesorder/customer.dart';
 import '../../../provider/auth_provider.dart';
+import '../../../utill/number_formatter.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/button/custom_button_with_icon.dart';
@@ -103,6 +104,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
     _amountController = TextEditingController();
     _depositNoController = TextEditingController();
     _intData();
+    _setupCommaFormatting(_amountController!);
   }
 
   void _intData() async {
@@ -113,6 +115,19 @@ class _CollectionScreenState extends State<CollectionScreen> {
     //_depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCollectionInformation(context);
     _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
+  }
+
+  void _setupCommaFormatting(TextEditingController controller) {
+    controller.addListener((){
+      final text = controller.text;
+      final formatted = NumberFormatterUtil.format(text);
+      if (text != formatted) {
+        controller.value = TextEditingValue(
+            text: formatted,
+            selection: TextSelection.collapsed(offset: formatted.length)
+        );
+      }
+    });
   }
 
   void currentDateTime() {
@@ -184,10 +199,10 @@ class _CollectionScreenState extends State<CollectionScreen> {
     collection.instrument = _instrumentNoController?.text??'';
     collection.remarks = _remarksController?.text??'';
     collection.depositNo = _depositNoController?.text??'';
-    collection.collAmount = _amountController?.text??'0';
-    collection.billToSiteId = _selectedCustomer?.billToSiteId;
-    collection.billToSiteAddress = _selectedCustomer?.billToAddress;
-    collection.custAmount = _amountController?.text??'0';
+    collection.collAmount = NumberFormatterUtil.unformat(_amountController?.text??'0');
+    collection.billToSiteId = _selectedCustomer?.billToSiteId??'';
+    collection.billToSiteAddress = _selectedCustomer?.billToAddress??'';
+    collection.custAmount = NumberFormatterUtil.unformat(_amountController?.text??'0');
 
     developer.log(collection.toJson().toString());
 
@@ -328,7 +343,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                 // for Customer
                 Container(
                   margin: const EdgeInsets.only(
-                    top: Dimensions.MARGIN_SIZE_SMALL,
+                    //top: Dimensions.MARGIN_SIZE_DEFAULT,
                     left: Dimensions.MARGIN_SIZE_DEFAULT,
                     right: Dimensions.MARGIN_SIZE_DEFAULT,
                   ),
@@ -584,8 +599,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
                             color: ColorResources.getPrimary(context),
                             size: 20,
                           ),
-                          const SizedBox(
-                              width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                          const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
                             text: 'Instrument No *',
                             textStyle: titilliumRegular,
@@ -743,54 +757,49 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     ],
                   ),
                 ),
-              ]);
-            },
-          ),
-        ),
+                Container(
 
-        // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: !Provider.of<SalesOrderProvider>(context).isLoading
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text('Clear'),
-                        onPressed: null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _onClickSubmit();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.MARGIN_SIZE_SMALL,
+                      vertical: Dimensions.MARGIN_SIZE_SMALL),
+                  child: !Provider.of<SalesOrderProvider>(context).isLoading
+                      ? Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          child: Text('Clear'),
+                          onPressed: null,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.black,
+                            side: BorderSide(color: Colors.grey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
                       ),
 
-                    ),
-                    SizedBox(width: 16),
-                    /*Expanded(
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            _onClickSubmit();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+
+                      ),
+                      SizedBox(width: 16),
+                      /*Expanded(
                       child: ElevatedButton(
                         child: Text(
                           'Balance',
@@ -808,13 +817,20 @@ class _CollectionScreenState extends State<CollectionScreen> {
                       ),
 
                     ),*/
-                  ],
+                    ],
+                  )
+                      : Center(
+                      child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor))),
                 )
-              : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-        ) //:const SizedBox.shrink(),
+              ]);
+            },
+          ),
+        ),
+
+        // for Submit Button
+       //:const SizedBox.shrink(),
       ]),
     );
   }

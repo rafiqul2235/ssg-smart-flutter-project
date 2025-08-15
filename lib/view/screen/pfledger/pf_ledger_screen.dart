@@ -205,6 +205,7 @@ class _PFLedgerPageState extends State<PFLedgerPage> {
                                   /* Header Row */
                                     columns: const [
                                       DataColumn(label: Text('Period',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0))),
+                                      //DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(fontWeight: FontWeight.bold))),
                                       DataColumn(label: Text('Con. Employee',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0))),
                                       DataColumn(label: Text('Con. Employer',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0))),
                                       DataColumn(label: Text('Con. Total',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0))),
@@ -250,7 +251,7 @@ class _PFLedgerPageState extends State<PFLedgerPage> {
               child: Center(child: Text('${pfLedgerModel?.period_name}',style: titilliumRegular)),
             ),
           ),
-
+         // DataCell(Container(width: 130, child: Text(record.cust_name ?? '', softWrap: true))),
           DataCell(
             Padding(
               padding: const EdgeInsets.only(top: 1.0,left: 1.0,right: 1.0,bottom: 1.0),

@@ -20,19 +20,20 @@ import '../../../utill/dimensions.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_auto_complete.dart';
+import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class SalesSummary extends StatefulWidget {
+class SalesSummaryForSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const SalesSummary({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const SalesSummaryForSupervisor({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<SalesSummary> createState() => _SalesSummaryState();
+  State<SalesSummaryForSupervisor> createState() => _SalesSummaryForSupervisorState();
 }
 
-class _SalesSummaryState extends State<SalesSummary> {
+class _SalesSummaryForSupervisorState extends State<SalesSummaryForSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
       ScaffoldMessengerState>();
 
@@ -40,6 +41,9 @@ class _SalesSummaryState extends State<SalesSummary> {
 
   UserInfoModel? userInfoModel;
 
+  DropDownModel? selectedSPListForSupervisor;
+  DropDownModel? selectedCustomerListForSupervisor;
+  bool isSpCustListFieldError = false;
   List<DropDownModel> _customersDropDown = [];
   DropDownModel? _selectedCustomerDropDown;
   TextEditingController? _customerController;
@@ -59,6 +63,9 @@ class _SalesSummaryState extends State<SalesSummary> {
   void initState() {
     super.initState();
     _intData();
+
+    Provider.of<SalesOrderProvider>(context, listen: false).getSalespersonForSupervisor(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerForSupervisor(context);
 
     DateTime now = DateTime.now();
     _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
@@ -97,7 +104,7 @@ class _SalesSummaryState extends State<SalesSummary> {
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Sales Summary Page',
+              title: 'Supervisor Sales Summary Page',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -107,89 +114,74 @@ class _SalesSummaryState extends State<SalesSummary> {
               }),
           // Attendance Type Dropdown
           Consumer<SalesOrderProvider>(
-            builder: (context, attendanceProvider, child) {
-              if (_customersDropDown == null || _customersDropDown.isEmpty) {
-                _customersDropDown = [];
-                provider.customerList.forEach((element) =>
-                    _customersDropDown.add(DropDownModel(
-                        code: element.customerId,
-                        name: element.customerName
-                    )));
-              }
-
+            builder: (context, salesOrderProvider, child) {
               return Container(
-                margin: const EdgeInsets.only(
-                  top: Dimensions.MARGIN_SIZE_SMALL,
-                  left: Dimensions.MARGIN_SIZE_DEFAULT,
-                  right: Dimensions.MARGIN_SIZE_DEFAULT,
-                ),
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                 child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start, // Aligns content to the start
                   children: [
-                    // Row for Label and Icon
+                    // 🔹 First Dropdown (Report Type)
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.person,
-                          color: ColorResources.getPrimary(context),
-                          size: 20,
-                        ),
-                        const SizedBox(
-                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(
-                          text: 'Customer',
-                          textStyle: titilliumRegular,
-                          mandatoryText: '*',
-                        ),
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Salesperson List', mandatoryText: '', textStyle: titilliumRegular),
                       ],
                     ),
-                    const SizedBox(
-                        height: Dimensions
-                            .MARGIN_SIZE_SMALL), // Spacing between rows
-                    // Row for Dropdown Field
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Salesperson',
+                      dropdownItems: salesOrderProvider.SpListForSupervisor,
+                      value: selectedSPListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSPListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: CustomAutoComplete(
-                            dropdownItems: _customersDropDown,
-                            hint: 'Select Customer Name',
-                            value: _customerController != null
-                                ? _customerController!.text
-                                : '',
-                            icon: const Icon(Icons.search),
-                            height: 35,
-                            width: width,
-                            dropdownHeight: 300,
-                            dropdownWidth: width - 40,
-                            borderColor: _customerFieldError?Colors.red:Colors.transparent,
-                            onReturnTextController: (textController) =>
-                            _customerController = textController,
-                            onClearPressed: () {
-                              setState(() {
-                                _selectedCustomer = null;
-                                _custId = '';
-                              });
-                            },
-                            onChanged: (value) {
-                              FocusScope.of(context).requestFocus(FocusNode());
-
-                              for (Customer customer in provider.customerList) {
-                                if (customer.customerId == value.code) {
-                                  provider.salesOrder.customerId = customer.customerId;
-                                  provider.salesOrder.customerName = customer.customerName;
-                                  _selectedCustomer = customer;
-                                  _custId = _selectedCustomer?.customerId ?? '';
-                                  /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
-                                  break;
-                                }
-                              }
-                              setState(() {});
-                            },
-                          ),
-                        ),
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Customer List', mandatoryText: '*', textStyle: titilliumRegular),
                       ],
+                    ),
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Customer',
+                      dropdownItems: salesOrderProvider.CustListForSupervisor,
+                      value: selectedCustomerListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCustomerListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -281,15 +273,18 @@ class _SalesSummaryState extends State<SalesSummary> {
                 UserInfoModel? userInfoModel = Provider
                     .of<UserProvider>(context, listen: false)
                     .userInfoModel;
-                provider.fetchSaleSummary(
+                provider.fetchSaleSummaryForSuper(
 
                   /*'100002083',
                     '3138',
                     '2024-01-01',
                     '2024-01-30'*/
-                    userInfoModel!.salesRepId!,
+                    userInfoModel!.userName!,
+                    selectedSPListForSupervisor?.code??'',
+                    selectedCustomerListForSupervisor?.code??'',
+                    //userInfoModel!.salesRepId!,
                     //_selectedCustomer!.customerId ?? '',
-                    _selectedCustomer?.customerId ?? '',
+                    //_selectedCustomer?.customerId ?? '',
                     _startDateController.text,
                     _endDateController.text
                 );

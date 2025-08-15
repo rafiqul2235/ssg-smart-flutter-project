@@ -82,10 +82,9 @@ class _ApprovalMoveOrderScreenState extends State<ApprovalMoveOrderScreen> {
           if (moProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          // // Check for error state
-          // else if (moProvider.error != null && moProvider.error!.isNotEmpty) {
-          //   return _buildErrorWidget(moProvider.error!);
-          // }
+          else if (moProvider.error != null && moProvider.error!.isNotEmpty) {
+            return _buildErrorWidget(moProvider.error!);
+          }
           // Check for empty data
           else if (moProvider.moList.isEmpty) {
             return NoInternetOrDataScreen(isNoInternet: false);

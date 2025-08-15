@@ -24,15 +24,15 @@ import '../../basewidget/mandatory_text.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class CustBalanceConfirmation extends StatefulWidget {
+class CustBalanceConfirmationSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const CustBalanceConfirmation({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const CustBalanceConfirmationSupervisor({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<CustBalanceConfirmation> createState() => _CustBalanceConfirmationState();
+  State<CustBalanceConfirmationSupervisor> createState() => _CustBalanceConfirmationSupervisorState();
 }
 
-class _CustBalanceConfirmationState extends State<CustBalanceConfirmation> {
+class _CustBalanceConfirmationSupervisorState extends State<CustBalanceConfirmationSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
       ScaffoldMessengerState>();
 
@@ -499,9 +499,12 @@ class _CustBalanceConfirmationState extends State<CustBalanceConfirmation> {
                 UserInfoModel? userInfoModel = Provider
                     .of<UserProvider>(context, listen: false)
                     .userInfoModel;
-                provider.fetchBalanceConfirmation(
-                    userInfoModel!.salesRepId!,
-                   _selectedCustomer?.customerId ?? '',
+                provider.fetchBalanceConfirmationSupervisor(
+                  '549',
+                    '100002083',
+                    '3138',
+                    //userInfoModel!.salesRepId!,
+                   //_selectedCustomer?.customerId ?? '',
                     startDate,
                     endDate
 

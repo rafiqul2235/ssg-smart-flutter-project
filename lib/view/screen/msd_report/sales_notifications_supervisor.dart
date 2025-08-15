@@ -30,21 +30,24 @@ import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../../basewidget/textfield/custom_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class SalesNotifications extends StatefulWidget {
+class SalesNotificationsSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
 
-  const SalesNotifications({Key? key, this.isBackButtonExist = true})
+  const SalesNotificationsSupervisor({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<SalesNotifications> createState() => _SalesNotificationsState();
+  State<SalesNotificationsSupervisor> createState() => _SalesNotificationsSupervisorState();
 }
 
-class _SalesNotificationsState extends State<SalesNotifications> {
+class _SalesNotificationsSupervisorState extends State<SalesNotificationsSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
 
   DropDownModel? selectedSpCustList;
+
+  DropDownModel? selectedSPListForSupervisor;
+  DropDownModel? selectedCustomerListForSupervisor;
   bool isSpCustListFieldError = false;
 
   List<CustomerDetails> _filteredCustomers = [];
@@ -56,6 +59,7 @@ class _SalesNotificationsState extends State<SalesNotifications> {
 
   List<String> _reportTypes = [
     'Collection',
+    'Collection(VA)',
     'Sales',
     'Delivery Request',
     'Pending SO',
@@ -88,6 +92,9 @@ class _SalesNotificationsState extends State<SalesNotifications> {
     _intData();
 
     //Provider.of<SalesOrderProvider>(context, listen: false).getSpCustList(context);
+
+    Provider.of<SalesOrderProvider>(context, listen: false).getSalespersonForSupervisor(context);
+    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerForSupervisor(context);
 
     DateTime now = DateTime.now();
     _endDateController.text = DateFormat('dd-MM-yyyy').format(now);
@@ -123,7 +130,7 @@ class _SalesNotificationsState extends State<SalesNotifications> {
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Sales Report Page',
+              title: 'Supervisor Sales Report Page',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -138,8 +145,6 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                 margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                 child: Column(
                   children: [
-                    // 🔹 First Dropdown (Report Type)
-                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                     Row(
                       children: [
                         Icon(Icons.streetview,
@@ -179,101 +184,83 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                       },
                     ),
 
-                    const SizedBox(height: 10),
 
                     Consumer<SalesOrderProvider>(
-                      builder: (context, provider, child) {
-
-                        if (_customersDropDown == null || _customersDropDown.isEmpty) {
-                          _customersDropDown = [];
-                          provider.customerList.forEach((element) =>
-                              _customersDropDown.add(DropDownModel(
-                                  code: element.customerId,
-                                  name: element.customerName
-                              )));
-                        }
-
-
+                      builder: (context, salesOrderProvider, child) {
                         return Container(
-                          margin: const EdgeInsets.only(
-                            //top: Dimensions.MARGIN_SIZE_SMALL,
-                            //: Dimensions.MARGIN_SIZE_DEFAULT,
-                            //right: Dimensions.MARGIN_SIZE_DEFAULT,
-                          ),
+                          margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                           child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start, // Aligns content to the start
                             children: [
-                              // Row for Label and Icon
+                              // 🔹 First Dropdown (Report Type)
+                              const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    Icons.person,
-                                    color: ColorResources.getPrimary(context),
-                                    size: 20,
-                                  ),
-                                  const SizedBox(
-                                      width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                                  MandatoryText(
-                                    text: 'Customer',
-                                    textStyle: titilliumRegular,
-                                    mandatoryText: '*',
-                                  ),
+                                  Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                                  const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                  MandatoryText(text: 'Salesperson List', mandatoryText: '', textStyle: titilliumRegular),
                                 ],
                               ),
-                             /* const SizedBox(
-                                  height: Dimensions
-                                      .MARGIN_SIZE_SMALL),*/ // Spacing between rows
-                              // Row for Dropdown Field
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomAutoComplete(
-                                      dropdownItems: _customersDropDown,
-                                      hint: 'Select Customer Name',
-                                      value: _customerController != null
-                                          ? _customerController!.text
-                                          : '',
-                                      icon: const Icon(Icons.search),
-                                      height: 35,
-                                      width: width,
-                                      dropdownHeight: 300,
-                                      dropdownWidth: width - 40,
-                                      borderColor: _customerFieldError?Colors.red:Colors.transparent,
-                                      onReturnTextController: (textController) =>
-                                      _customerController = textController,
-                                      onClearPressed: () {
-                                        setState(() {
-                                          _selectedCustomer = null;
-                                          _custId = '';
-                                        });
-                                      },
-                                      onChanged: (value) {
-                                        FocusScope.of(context).requestFocus(FocusNode());
 
-                                        for (Customer customer in provider.customerList) {
-                                          if (customer.customerId == value.code) {
-                                            provider.salesOrder.customerId = customer.customerId;
-                                            provider.salesOrder.customerName = customer.customerName;
-                                            _selectedCustomer = customer;
-                                            _custId = _selectedCustomer?.customerId ?? '';
-                                            /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
-                                            break;
-                                          }
-                                        }
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                              CustomDropdownButton(
+                                buttonHeight: 45,
+                                buttonWidth: double.infinity,
+                                dropdownWidth: MediaQuery.of(context).size.width - 40,
+                                hint: 'Select Salesperson',
+                                dropdownItems: salesOrderProvider.SpListForSupervisor,
+                                value: selectedSPListForSupervisor,
+                                buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedSPListForSupervisor = value;
+                                    // Reset result visibility when selection changes
+                                    _showResult = false;
+                                  });
+                                },
                               ),
                             ],
                           ),
                         );
-
                       },
                     ),
+
+                    Consumer<SalesOrderProvider>(
+                      builder: (context, salesOrderProvider, child) {
+                        return Container(
+                          margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                                  const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                                  MandatoryText(text: 'Customer List', mandatoryText: '*', textStyle: titilliumRegular),
+                                ],
+                              ),
+
+                              const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                              CustomDropdownButton(
+                                buttonHeight: 45,
+                                buttonWidth: double.infinity,
+                                dropdownWidth: MediaQuery.of(context).size.width - 40,
+                                hint: 'Select Customer',
+                                dropdownItems: salesOrderProvider.CustListForSupervisor,
+                                value: selectedCustomerListForSupervisor,
+                                buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedCustomerListForSupervisor = value;
+                                    // Reset result visibility when selection changes
+                                    _showResult = false;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+
                   ],
                 ),
               );
@@ -386,23 +373,30 @@ class _SalesNotificationsState extends State<SalesNotifications> {
                     final provider = Provider.of<SalesOrderProvider>(context, listen: false);
                     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context, listen: false).userInfoModel;
 
-
                 // Clear previous data before fetching new data
                 provider.clearSalesOrder();
                 //notifiCaSummary = notifiSummary!.summary!;
 
-                await provider.fetchSalesNotification(
-                    userInfoModel!.salesRepId!,
+                await provider.fetchSalesNotificationSupervisor(
+                    userInfoModel!.userName!,
+                    selectedSPListForSupervisor?.code??'',
+                    selectedCustomerListForSupervisor?.code??'',
+                    //userInfoModel!.salesRepId!,
                     //'3138',
-                    _selectedCustomer?.customerId ?? '',
+                    //_selectedCustomer?.customerId ?? '',
+                    userInfoModel!.orgId!,
                     //selectedSpCustList!.code ?? '',
                     _startDateController.text,
                     _endDateController.text,
                     _selectedReportType ?? '');
-                await provider.fetchSalesNotiSummary(
-                    userInfoModel!.salesRepId!,
+                await provider.fetchSalesNotiSummarySupervisor(
+                    userInfoModel!.userName!,
+                    selectedSPListForSupervisor?.code??'',
+                    selectedCustomerListForSupervisor?.code??'',
+                    //userInfoModel!.salesRepId!,
                     //'3138',
-                    _selectedCustomer?.customerId ?? '',
+                    //_selectedCustomer?.customerId ?? '',
+                    userInfoModel!.orgId!,
                     //selectedSpCustList!.code ?? '',
                     _startDateController.text,
                     _endDateController.text,

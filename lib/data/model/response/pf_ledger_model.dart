@@ -23,7 +23,8 @@ class PfLedgerModel {
     con_employee = json['CONTRIBUTION_OWN']??'0';
     con_employer = json['CONTRIBUTION_EMPLOYER']??'0';
     con_total = json['CON_TOTAL']??'0';
-    //pro_employee = int.parse(json['PROFIT_OWN']??'0');
+    pro_employee = json['PROFIT_OWN']??'0';
+   // pro_employee = int.parse(json['PROFIT_OWN']??'0');
     pro_employer = json['PROFIT_EMPLOYER']??'0';
     pro_total = json['PROF_TOTAL']??'0';
     con_with_prof = json['CON_PROFIT_TOTAL']??'0';

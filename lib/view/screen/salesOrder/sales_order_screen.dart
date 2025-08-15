@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ssg_smart2/data/model/body/sales_order.dart';
 import 'package:ssg_smart2/data/model/response/available_cust_balance.dart';
 import 'package:ssg_smart2/data/model/response/customer_balance.dart';
@@ -103,6 +105,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
 
   String _orgName = '';
+  String _orgId ='';
   String _userId= '';
   String _warehouseId = '';
   String _custId = '';
@@ -113,10 +116,14 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
   String  _primaryShipTo = '';
   String  _salesPersonId = '';
   int _itemId = 0;
+  double custVal= 0;
+  double grantTotal=0;
   String formattedDate = '';
   String customerBal ='';
   int itemPriceInt = 0;
   double totalPriceInt = 0;
+  String custAvailableBal = '';
+
 
   String _vehicleType ='';
   String _vehicleCate ='';
@@ -138,6 +145,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     Provider.of<SalesOrderProvider>(context, listen: false).clearData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
+    _orgId = Provider.of<AuthProvider>(context, listen: false).getOrgId();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
@@ -169,6 +177,20 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     // _showErrorDialog("Rafiqul");
     _showCustBalDialog('$customerBal');
     return;
+  }
+
+  Future<void> getCustAvailableBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustAvailBalance(context, '$_custId');
+    // _availableBalanceModel = salesProvider.availableCustBal;
+    _availableBalanceModel = salesProvider.availCustBalance;
+
+    print('available balance(screen): ${_availableBalanceModel?.customerBalance}');
+    custVal= double.parse(_availableBalanceModel!.customerBalance);
+   // custAvailableBal= _availableBalanceModel!.customerBalance??'';
+     print("customer available Balance showing : ${custVal}");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
   }
 
   Future<void> _onClickItemPrice(int itemId, String siteId) async {
@@ -215,11 +237,15 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
 
 
   Future<void>  _onClickAddButton() async {
+    //uriCheck();
 
     _customerFieldError = false;
     _warehouseFieldError = false;
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
+
+    getCustAvailableBal();
+    //grantTotal = Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice();
 
     if (_selectedCustomer == null) {
       _customerFieldError = true;
@@ -227,11 +253,11 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       return;
     }
    print('warehouseId: $_warehouseId');
-    if (_warehouseId == null || _warehouseId.isEmpty ) {
+    /*if (_warehouseId == null || _warehouseId.isEmpty ) {
       _warehouseFieldError = true;
       _showMessage('Select Warehouse',true);
       return;
-    }
+    }*/
 
     if(_freightTerms == null || _freightTerms.isEmpty){
       _showErrorDialog("Select Freight Terms");
@@ -239,13 +265,13 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     }
 
     FocusScope.of(context).requestFocus(FocusNode());
-
     showAnimatedDialog(
       context,
       //GuestDialog(),
       AddSalesOrderItemDialog(),
       dismissible: false,
     );
+
   /*
 
     ItemDetail? itemDetail = ItemDetail();
@@ -293,6 +319,10 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
 
+    grantTotal= Provider.of<SalesOrderProvider>(context, listen: false).getCalculatedTotalPrice();
+    print("balance restriction :${custVal}'-'${grantTotal}'-'${_orgId}");
+    double orderDiffBal = custVal - grantTotal;
+
     if (_selectedCustomer == null) {
       _customerFieldError = true;
       _showMessage('Select Customer!',true);
@@ -309,6 +339,17 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Select Freight Terms");
       return;
     }
+
+    if(custVal<grantTotal && _orgId=='401'){
+      _showErrorDialog("Insufficient Balance for the Sales Order\n\n"
+          "   Customer B/L   : $custVal\n"
+          "Order Total B/L : $grantTotal\n"
+          "  Difference B/L   : $orderDiffBal");
+      return;
+    }
+
+
+
 
 
     /*ItemDetail? itemDetail = ItemDetail();
@@ -346,6 +387,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
       _showErrorDialog("Please add item");
       return;
     }
+
+
 
 
     var isSubmit = await showAnimatedDialog(context, MyDialog(
@@ -421,6 +464,16 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     });
 
   }
+
+
+  /*Future<void> uriCheck() async{
+    final client = HttpClient();
+    final request = await client.getUrl(Uri.parse('https://smartapp.ssgil.com/'));
+    request.headers.forEach((name, values) {
+      print('$name: $values');
+    });
+    print('User-Agent: ${request.headers.value(HttpHeaders.userAgentHeader)}');
+  }*/
 
 
   @override
@@ -651,7 +704,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
+                                    //Provider.of<SalesOrderProvider>(context, listen: false).getItemName(context, _warehouseId);
                                     Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = _selectedCustomer?.freightTerms ?? '';
+
                                     _selectedWareHouse = null;
                                     break;
                                   }
@@ -700,6 +755,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               hintText: 'Enter Customer PO Number',
                               borderColor: Colors.black12,
                               textInputType: TextInputType.text,
+                              maxLength: 50,
                               readOnly: false,
                               textInputAction: TextInputAction.done,
                             ),
@@ -913,7 +969,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                             left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
                         child: Text('-Order Details- ',
                             style: titilliumBold.copyWith(
-                                color: Colors.purple, fontSize: 18)),
+                                color: Colors.purple, fontSize: 16)),
                       ),
                     ),
                   ],
@@ -945,6 +1001,93 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           ]
                         ]),
                   ),
+                ),
+                Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                        vertical: Dimensions.MARGIN_SIZE_SMALL),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.purple.withOpacity(0.2),
+                          padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
+                          width: double.infinity,
+                          child: RichText(
+                            text: TextSpan(
+                              //text: 'Grant Total -- ',
+                              style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        !Provider.of<SalesOrderProvider>(context).isLoading
+                            ? Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                child: Text('Clear'),
+                                onPressed: null,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  side: BorderSide(color: Colors.grey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickSubmit();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Balance',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickCustBal();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                          ],
+                        )
+                            : Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).primaryColor))),
+                      ],
+                    )
+
                 )
               ]);
             },
@@ -952,93 +1095,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         ),
 
         // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.purple.withOpacity(0.2),
-                padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
-                width: double.infinity,
-                child: RichText(
-                  text: TextSpan(
-                    //text: 'Grant Total -- ',
-                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    children: <TextSpan>[
-                      TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
-                    ],
-                  ),
-                ),
-              ),
-              !Provider.of<SalesOrderProvider>(context).isLoading
-                  ? Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      child: Text('Clear'),
-                      onPressed: null,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickSubmit();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Balance',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickCustBal();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                ],
-              )
-                  : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-            ],
-          )
-
-        ) //:const SizedBox.shrink(),
+         //:const SizedBox.shrink(),
       ]),
     );
   }

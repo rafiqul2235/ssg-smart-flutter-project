@@ -8,8 +8,10 @@ import 'package:ssg_smart2/view/screen/home/dashboard_screen.dart';
 import 'package:ssg_smart2/view/screen/msd_report/cust_balance_confirmation.dart';
 import 'package:ssg_smart2/view/screen/msd_report/cust_target_vs_achiv.dart';
 import 'package:ssg_smart2/view/screen/msd_report/delivery_info_screen.dart';
+import 'package:ssg_smart2/view/screen/msd_report/sales_notifications_supervisor.dart';
 import 'package:ssg_smart2/view/screen/msd_report/sales_summary.dart';
-import 'package:ssg_smart2/view/screen/msd_report/va_bank_list.dart';
+import 'package:ssg_smart2/view/screen/msd_report/sales_summary_for_supervisor.dart';
+import 'package:ssg_smart2/view/screen/msd_report/supervisor_cust_target_vs_achiv.dart';
 import 'package:ssg_smart2/view/screen/payslip/pay_slip.dart';
 import 'package:ssg_smart2/view/screen/pfledger/pf_ledger_screen.dart';
 import 'package:ssg_smart2/view/screen/pfloan/pf_loan.dart';
@@ -26,20 +28,24 @@ import '../../basewidget/custom_app_bar.dart';
 import '../attendence/attendance_sheet_screen.dart';
 import '../home/web_view_screen.dart';
 import '../leave/leave_application_screen.dart';
+import '../msd_report/cust_balance_confirmation_supervisor.dart';
+import '../msd_report/customer_bal_supervisor.dart';
 import '../msd_report/item_wise_pending.dart';
 import '../msd_report/sales_notifications.dart';
+import '../msd_report/supervisor_delivery_info_screen.dart';
+import '../msd_report/supervisor_item_wise_pending.dart';
 
 
-class MsdSalesReport extends StatefulWidget {
+class MsdSalesReportSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const MsdSalesReport({Key? key, this.isBackButtonExist = true})
+  const MsdSalesReportSupervisor({Key? key, this.isBackButtonExist = true})
       : super(key: key);
 
   @override
-  State<MsdSalesReport> createState() => _MsdSalesReportState();
+  State<MsdSalesReportSupervisor> createState() => _MsdSalesReportSupervisorState();
 }
 
-class _MsdSalesReportState extends State<MsdSalesReport> {
+class _MsdSalesReportSupervisorState extends State<MsdSalesReportSupervisor> {
 
   late List<TopMenuItem> _menuList;
 
@@ -54,14 +60,16 @@ class _MsdSalesReportState extends State<MsdSalesReport> {
     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
     _menuList = [];
     //_menuList.add(TopMenuItem(image: Images.attendance, menuName: 'Notification', navigateTo: MsdNotificationScreen(),));
-    _menuList.add(TopMenuItem(image: Images.notification_sales, menuName: 'Notification', navigateTo: SalesNotifications(),));
+    _menuList.add(TopMenuItem(image: Images.notification_sales, menuName: 'Notification', navigateTo: SalesNotificationsSupervisor(),));
     //MsdNotificationScreen
-    _menuList.add(TopMenuItem(image: Images.sales_sammary, menuName: 'Sales Summary', navigateTo: SalesSummary(),));
-    _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: CustBalanceConfirmation(),));
-    _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: CustTargetVsAchiv()));
-    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: ItemWisePending(),));
-    _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: DeliveryInfoScreen(),));
-    _menuList.add(TopMenuItem(image: Images.va_bank_list, menuName: 'VA Bank List', navigateTo: VaBankList(),));
+    _menuList.add(TopMenuItem(image: Images.sales_sammary, menuName: 'Sales Summary', navigateTo: SalesSummaryForSupervisor(),));
+
+    _menuList.add(TopMenuItem(image: Images.pay_slip, menuName: 'Balanc Conf.', navigateTo: CustBalanceConfirmationSupervisor(),));
+    _menuList.add(TopMenuItem(image: Images.cust_target_achivement, menuName: 'Target vs Achievement', navigateTo: SupervisorCustTargetVsAchiv()));
+    _menuList.add(TopMenuItem(image: Images.item_pending, menuName: 'ItemWPending', navigateTo: SupervisorItemWisePending(),));
+    _menuList.add(TopMenuItem(image: Images.delivery_info, menuName: 'Delivery Info', navigateTo: SupervisorDeliveryInfoScreen(),));
+    _menuList.add(TopMenuItem(image: Images.cust_bal, menuName: 'Customer Balance', navigateTo: CustBalForSupervisor(),));
+
   }
 
   @override

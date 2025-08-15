@@ -145,14 +145,12 @@ class _MoveOrderDetailState extends State<MoveOrderDetail> {
         );
         // Get employee number from user provider
         String employeeNumber = userProvider.userInfoModel?.employeeNumber ?? '';
-
         // Reset provider state and fetch fresh data
         provider.resetState();
         await provider.fetchMoList(employeeNumber);
 
         // Navigate back with result to indicate refresh is needed
         Navigator.pop(context, true);
-        
       } else {
         // Show error dialog
         showDialog(

@@ -56,6 +56,7 @@ class _UserMoveOrderScreenState extends State<UserMoveOrderScreen> {
     await provider.fetchMoList(employeeNumber);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

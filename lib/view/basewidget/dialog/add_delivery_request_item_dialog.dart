@@ -298,9 +298,10 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                           Padding(
                             padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
                             child: CustomDropdownButton(
-                              buttonHeight: 45,
+                              buttonHeight: 50,
                               buttonWidth: double.infinity,
                               dropdownWidth: 250,
+                              itemHeight: 70,
                               hint: 'Select SO Number',
                               hintColor: Colors.black87,
                               dropdownItems: Provider.of<SalesOrderProvider>(context,listen: true).pendingSoDropDown,
@@ -601,13 +602,13 @@ class _AddDeliveryRequestItemDialogState extends State<AddDeliveryRequestItemDia
                           ),
                           //const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                           CustomTextField(
-                            height: 50,
+                            height: 100,
                             textInputType: TextInputType.text,
                             focusNode: _deliverySiteDetailsFocus,
                             borderColor: Colors.transparent,
                             textInputAction: TextInputAction.done,
                             hintText: 'Delivery Site Details',
-                            maxLine: 2,
+                            maxLine: 4,
                             controller: _deliverySiteDetailsController,
                           ),
                         ],

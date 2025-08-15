@@ -103,47 +103,41 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  // Future<void> showFlutterNotification(RemoteMessage message) async {
-  //   RemoteNotification? notification = message.notification;
-  //   AndroidNotification? android = message.notification?.android;
-  //   if (notification != null && android != null && !kIsWeb) {
-  //     flutterLocalNotificationsPlugin.show(
-  //       notification.hashCode,
-  //       notification.title,
-  //       notification.body,
-  //       NotificationDetails(
-  //         android: AndroidNotificationDetails(
-  //           channel.id,
-  //           channel.name,
-  //           channelDescription: channel.description,
-  //           icon: '@drawable/ic_launcher', //notification_icon
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
-
-  // void init() async {
-  //   const AndroidInitializationSettings initializationSettingsAndroid =
-  //+   AndroidInitializationSettings('@drawable/ic_launcher');
-  //
-  //   const DarwinInitializationSettings initializationSettingsDarwin =
-  //   DarwinInitializationSettings(
-  //     requestAlertPermission: true,
-  //     requestBadgePermission: true,
-  //     requestSoundPermission: true,
-  //   );
-  //
-  //   const InitializationSettings initializationSettings = InitializationSettings(
-  //     android: initializationSettingsAndroid,
-  //     iOS: initializationSettingsDarwin,
-  //   );
-  //
-  //   await flutterLocalNotificationsPlugin.initialize(
-  //     initializationSettings,
-  //     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-  //   );
-  // }
+  /*Future<void> showFlutterNotification(RemoteMessage message) async {
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    if (notification != null && android != null && !kIsWeb) {
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+            icon: '@drawable/ic_launcher', //notification_icon
+          ),
+        ),
+      );
+    }
+  }
+  void init() async{
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@drawable/ic_launcher');
+    final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) {
+          if (payload != null) {
+            debugPrint('notification payload: $payload');
+          }
+        });
+    final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsDarwin);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+  }*/
 
   // void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
   //   //when user click on notification this method call

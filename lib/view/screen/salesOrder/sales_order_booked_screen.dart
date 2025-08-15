@@ -103,6 +103,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
 
 
   String _orgName = '';
+  String _orgId ='';
   String _userId= '';
   String _createdBy= '';
   String _warehouseId = '';
@@ -114,6 +115,8 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
   String  _primaryShipTo = '';
   String  _salesPersonId = '';
   int _itemId = 0;
+  double custVal= 0;
+  double grantTotal=0;
   String formattedDate = '';
   String customerBal ='';
   int itemPriceInt = 0;
@@ -140,6 +143,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     Provider.of<SalesOrderProvider>(context, listen: false).clearData();
     Provider.of<SalesOrderProvider>(context, listen: false).clearSalesOrderItem();
     _orgName = Provider.of<AuthProvider>(context, listen: false).getOrgName();
+    _orgId = Provider.of<AuthProvider>(context, listen: false).getOrgId();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
@@ -172,6 +176,20 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     // _showErrorDialog("Rafiqul");
     _showCustBalDialog('$customerBal');
     return;
+  }
+
+  Future<void> getCustAvailableBal() async {
+    final salesProvider = Provider.of<SalesOrderProvider>(context, listen: false);
+    await salesProvider.getCustAvailBalance(context, '$_custId');
+    // _availableBalanceModel = salesProvider.availableCustBal;
+    _availableBalanceModel = salesProvider.availCustBalance;
+
+    print('available balance(screen): ${_availableBalanceModel?.customerBalance}');
+    custVal= double.parse(_availableBalanceModel!.customerBalance);
+    // custAvailableBal= _availableBalanceModel!.customerBalance??'';
+    print("customer available Balance showing : ${custVal}");
+
+    //print("Sales data: $CustomerBalanceModel()!.customerBalance");
   }
 
   Future<void> _onClickItemPrice(int itemId, String siteId) async {
@@ -223,6 +241,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     _warehouseFieldError = false;
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
+    getCustAvailableBal();
 
     if (_selectedCustomer == null) {
       _customerFieldError = true;
@@ -296,6 +315,10 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     _freightTermsFieldError = false;
     _orderDateFieldError = false;
 
+    grantTotal= Provider.of<SalesOrderProvider>(context, listen: false).getCalculatedTotalPrice();
+    print("balance restriction :${custVal}'-'${grantTotal}'-'${_orgId}");
+    double orderDiffBal = custVal - grantTotal;
+
     if (_selectedCustomer == null) {
       _customerFieldError = true;
       _showMessage('Select Customer!',true);
@@ -312,9 +335,16 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
       _showErrorDialog("Select Freight Terms");
       return;
     }
+    if(custVal<grantTotal && _orgId=='401'){
+      _showErrorDialog("Insufficient Balance for the Sales Order\n\n"
+          "   Customer B/L   : $custVal\n"
+          "Order Total B/L : $grantTotal\n"
+          "  Difference B/L   : $orderDiffBal");
+      return;
+    }
 
 
-    orderTotal= Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice() as String;
+    //orderTotal= Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice() as String;
 
 
     /*ItemDetail? itemDetail = ItemDetail();
@@ -386,7 +416,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
     salesInfoModel.warehouseId = _warehouseId;
     salesInfoModel.warehouseName = _selectedWareHouse?.name;
     salesInfoModel.customerPoNumber = _cusPONoController?.text;
-    salesInfoModel.orderTotal = orderTotal;
+    salesInfoModel.orderTotal = grantTotal;
     //Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()
 
    // developer.log(salesInfoModel.toJson().toString());
@@ -954,6 +984,93 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
                           ]
                         ]),
                   ),
+                ),
+                Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: Dimensions.MARGIN_SIZE_LARGE,
+                        vertical: Dimensions.MARGIN_SIZE_SMALL),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Colors.purple.withOpacity(0.2),
+                          padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
+                          width: double.infinity,
+                          child: RichText(
+                            text: TextSpan(
+                              //text: 'Grant Total -- ',
+                              style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                              children: <TextSpan>[
+                                TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        !Provider.of<SalesOrderProvider>(context).isLoading
+                            ? Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                child: Text('Clear'),
+                                onPressed: null,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  side: BorderSide(color: Colors.grey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickSubmit();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton(
+                                child: Text(
+                                  'Balance',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () async {
+                                  _onClickCustBal();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                          ],
+                        )
+                            : Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).primaryColor))),
+                      ],
+                    )
+
                 )
               ]);
             },
@@ -961,93 +1078,7 @@ class _SalesOrderBookedScreenState extends State<SalesOrderBookedScreen> {
         ),
 
         // for Submit Button
-        Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: Dimensions.MARGIN_SIZE_LARGE,
-              vertical: Dimensions.MARGIN_SIZE_SMALL),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.purple.withOpacity(0.2),
-                padding: EdgeInsets.only(top: 5, bottom: 5,left: 100,right: 5),
-                width: double.infinity,
-                child: RichText(
-                  text: TextSpan(
-                    //text: 'Grant Total -- ',
-                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    children: <TextSpan>[
-                      TextSpan(text: 'Total Qty : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalQty()}', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: ',  Grant Total : ${Provider.of<SalesOrderProvider>(context, listen: true).getCalculatedTotalPrice()}'),
-                    ],
-                  ),
-                ),
-              ),
-              !Provider.of<SalesOrderProvider>(context).isLoading
-                  ? Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      child: Text('Clear'),
-                      onPressed: null,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        side: BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickSubmit();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      child: Text(
-                        'Balance',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () async {
-                        _onClickCustBal();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-
-                  ),
-                ],
-              )
-                  : Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor))),
-            ],
-          )
-
-        ) //:const SizedBox.shrink(),
+       //:const SizedBox.shrink(),
       ]),
     );
   }

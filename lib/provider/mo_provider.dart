@@ -26,8 +26,6 @@ class MoveOrderProvider with ChangeNotifier {
   bool get isSuccess => _isSuccess;
   String? get error => _error;
 
-
-  // ADD THIS METHOD
   void resetState() {
     _isLoading = false;
     _isSuccess = false;

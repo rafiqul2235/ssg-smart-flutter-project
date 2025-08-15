@@ -17,30 +17,32 @@ import '../../../provider/user_provider.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/custom_themes.dart';
 import '../../../utill/dimensions.dart';
-import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/button/custom_button.dart';
 import '../../basewidget/custom_app_bar.dart';
 import '../../basewidget/custom_auto_complete.dart';
+import '../../basewidget/custom_dropdown_button.dart';
 import '../../basewidget/mandatory_text.dart';
-import '../../basewidget/my_dialog.dart';
 import '../../basewidget/textfield/custom_date_time_textfield.dart';
 import '../home/dashboard_screen.dart';
 
-class CustTargetVsAchiv extends StatefulWidget {
+class CustBalForSupervisor extends StatefulWidget {
   final bool isBackButtonExist;
-  const CustTargetVsAchiv({Key? key, this.isBackButtonExist = true}) : super(key: key);
+  const CustBalForSupervisor({Key? key, this.isBackButtonExist = true}) : super(key: key);
 
   @override
-  State<CustTargetVsAchiv> createState() => _CustTargetVsAchivState();
+  State<CustBalForSupervisor> createState() => _CustBalForSupervisorState();
 }
 
-class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
+class _CustBalForSupervisorState extends State<CustBalForSupervisor> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<
       ScaffoldMessengerState>();
 
   bool _showResult = false;
 
   UserInfoModel? userInfoModel;
+  DropDownModel? selectedSPListForSupervisor;
+  DropDownModel? selectedCustomerListForSupervisor;
+  bool isSpCustListFieldError = false;
 
 
 
@@ -49,30 +51,6 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
   TextEditingController? _customerController;
   String _custId = '';
   Customer? _selectedCustomer;
-
-  List<String> _preiodList = [
-    'Select Period Name',
-    'Jul-24',
-    'Jan-25',
-    'Feb-25',
-    'Mar-25',
-    'Apr-25',
-    'May-25',
-    'Jun-25',
-    'Jul-25',
-    'Aug-25',
-    'Sep-25',
-    'Oct-25',
-    'Nov-25',
-    'Dec-25',
-    'Jan-26',
-    'Feb-26',
-    'Mar-26',
-    'Apr-26',
-    'May-26',
-    'Jun-26',
-  ];
-  String? _selectedPreiodList;
 
   bool _customerFieldError = false;
   List<CustomerDetails> _filteredCustomers = [];
@@ -123,7 +101,7 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
       body: Column(
         children: [
           CustomAppBar(
-              title: 'Customer Target vs Achievement',
+              title: 'Customer Balance',
               isBackButtonExist: widget.isBackButtonExist,
               icon: Icons.home,
               onActionPressed: () {
@@ -131,47 +109,37 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
                     builder: (
                         BuildContext context) => const DashBoardScreen()));
               }),
-          Consumer<AttendanceProvider>(
-            builder: (context, attendanceProvider, child) {
+
+          Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
               return Container(
                 margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                 child: Column(
                   children: [
+                    // 🔹 First Dropdown (Report Type)
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
                     Row(
                       children: [
-                        Icon(Icons.streetview,
-                            color: ColorResources.getPrimary(context),
-                            size: 20),
-                        const SizedBox(
-                            width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
-                        MandatoryText(text: 'Period Name',
-                            mandatoryText: '*',
-                            textStyle: titilliumRegular),
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Salesperson List', mandatoryText: '', textStyle: titilliumRegular),
                       ],
                     ),
-                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
-                    DropdownButton2<String>(
-                      buttonStyleData: ButtonStyleData(
-                        height: 45,
-                        width: double.infinity,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        width: width - 40,
-                      ),
-                      hint: Text('Select Period Type'),
-                      items: _preiodList
-                          .map((type) => DropdownMenuItem<String>
-                        (
-                        value: type == 'Select Period Name' ? null : type,
-                        child: Text(type),
-                      )
 
-                      )
-                          .toList(),
-                      value: _selectedPreiodList,
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Salesperson',
+                      dropdownItems: salesOrderProvider.SpListForSupervisor,
+                      value: selectedSPListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
                       onChanged: (value) {
                         setState(() {
-                          _selectedPreiodList = value;
+                          selectedSPListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
                         });
                       },
                     ),
@@ -182,6 +150,43 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
           ),
 
           Consumer<SalesOrderProvider>(
+            builder: (context, salesOrderProvider, child) {
+              return Container(
+                margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.streetview, color: ColorResources.getPrimary(context), size: 20),
+                        const SizedBox(width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
+                        MandatoryText(text: 'Customer List', mandatoryText: '*', textStyle: titilliumRegular),
+                      ],
+                    ),
+
+                    const SizedBox(height: Dimensions.MARGIN_SIZE_SMALL),
+                    CustomDropdownButton(
+                      buttonHeight: 45,
+                      buttonWidth: double.infinity,
+                      dropdownWidth: MediaQuery.of(context).size.width - 40,
+                      hint: 'Select Customer',
+                      dropdownItems: salesOrderProvider.CustListForSupervisor,
+                      value: selectedCustomerListForSupervisor,
+                      buttonBorderColor: isSpCustListFieldError ? Colors.red : Colors.black12,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCustomerListForSupervisor = value;
+                          // Reset result visibility when selection changes
+                          _showResult = false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          /*Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
 
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
@@ -258,7 +263,7 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
                                    provider.salesOrder.customerName = customer.customerName;
                                    _selectedCustomer = customer;
                                    _custId = _selectedCustomer?.customerId ?? '';
-                                   /*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*/
+                                   *//*Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);*//*
                                    break;
                                  }
                                }
@@ -273,7 +278,7 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
                );
 
             },
-          ),
+          ),*/
           // Date Inputs
           Padding(
             padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
@@ -293,22 +298,18 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
             ),
             child: CustomButton(
               onTap: () {
-                if(_selectedCustomer == null){
-                  _showErrorDialog("Select Customer name");
-                  return;
-                }
                 final provider = Provider.of<SalesOrderProvider>(
                     context, listen: false);
                 UserInfoModel? userInfoModel = Provider
                     .of<UserProvider>(context, listen: false)
                     .userInfoModel;
-                provider.fetchTargetVsAchivData(
+                provider.fetchCustomerBalSupervisor(
 
-                    userInfoModel!.orgId!,
-                    _selectedPreiodList ?? '',
-                   //'Jul-24',
-                   //'3098'
-                   _selectedCustomer?.accountNumber ?? ''
+                    userInfoModel!.userName!,
+                   //_selectedCustomer?.accountNumber ?? ''
+                  selectedCustomerListForSupervisor?.code??'',
+                  selectedSPListForSupervisor?.code??'',
+                  userInfoModel!.orgId!,
                   //'100002083',
                 );
                 setState(() {
@@ -321,95 +322,41 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
           Visibility(
             visible: _showResult,
             child: Expanded(
-
               child: SingleChildScrollView(
                 child: Consumer<SalesOrderProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return Center(child: CircularProgressIndicator());
-                    } else if (provider.custTargetAchive.isEmpty) {
+                    } else if (provider.custBalSupervisor.isEmpty) {
                       // return Center(child: Text('No records found'));
                       return NoInternetOrDataScreen(isNoInternet: false);
                     } else {
-
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            Center(child: Text("Delivery Basis Achievement", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-
                                 child: DataTable(
                                   columnSpacing: 10, // Reduce spacing if needed
                                   columns: [
-                                    DataColumn(label: Text('Preoid', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Account', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Target', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Customer Name', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Delivered', softWrap: true,style: TextStyle(
+                                    DataColumn(label: Text('Balance', softWrap: true,style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Achievement', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
+                                    //DataColumn(label: Text('Freight', softWrap: true,style: TextStyle(
+                                        //fontWeight: FontWeight.bold))),
+                                    //DataColumn(label: Text('UOM', softWrap: true,style: TextStyle(
+                                        //fontWeight: FontWeight.bold))),
                                   ],
-                                  rows: provider.custTargetAchive.map((record) => DataRow(
+                                  rows: provider.custBalSupervisor.map((record) => DataRow(
                                     cells: [
-                                      DataCell(Container(width: 70, child: Text(record.period ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.target ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.delivered ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.acchive ?? '', softWrap: true))),
-                                    ],
-                                  )).toList(),
-                                )
-                            )
-                          ],
-                        ),
-
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          ),
-          Visibility(
-            visible: _showResult,
-            child: Expanded(
-
-              child: SingleChildScrollView(
-                child: Consumer<SalesOrderProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (provider.custTargetAchive.isEmpty) {
-                      // return Center(child: Text('No records found'));
-                      return NoInternetOrDataScreen(isNoInternet: false);
-                    } else {
-
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Center(child: Text("Sales Order Basis Achievement", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
-                            SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-
-                                child: DataTable(
-                                  columnSpacing: 10, // Reduce spacing if needed
-                                  columns: [
-                                    DataColumn(label: Text('Preoid', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Target', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('SO Qty', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                    DataColumn(label: Text('Achievement', softWrap: true,style: TextStyle(
-                                        fontWeight: FontWeight.bold))),
-                                  ],
-                                  rows: provider.custTargetAchive.map((record) => DataRow(
-                                    cells: [
-                                      DataCell(Container(width: 70, child: Text(record.period ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.target ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.so_qty ?? '', softWrap: true))),
-                                      DataCell(Container(width: 70, child: Text(record.so_acchive ?? '', softWrap: true))),
+                                      DataCell(Container(width: 80, child: Text(record.cust_account ?? '', softWrap: true))),
+                                      DataCell(Container(width: 200, child: Text(record.customer_name ?? '', softWrap: true))),
+                                      DataCell(Container(width: 100, child: Text(record.balance ?? '', softWrap: true))),
+                                      //DataCell(Container(width: 70, child: Text(record.freight ?? '', softWrap: true))),
+                                      //DataCell(Container(width: 70, child: Text(record.uom ?? '', softWrap: true))),
                                     ],
                                   )).toList(),
                                 )
@@ -427,17 +374,5 @@ class _CustTargetVsAchivState extends State<CustTargetVsAchiv> {
         ],
       ),
     );
-  }
-  void _showErrorDialog(String message) {
-    showAnimatedDialog(
-        context,
-        MyDialog(
-          icon: Icons.error,
-          title: 'Error',
-          description: message,
-          rotateAngle: 0,
-          positionButtonTxt: 'Ok',
-        ),
-        dismissible: false);
   }
 }
