@@ -77,17 +77,13 @@ class AppConstants {
   static const String NEW_COLLECTION_SUBMIT = 'flutter-new-collection';
   static const String DELIVERY_RREQUEST_SUBMIT = 'flutter-delivery-request';
 
-  // R&D project
-  // static const String ATTACHMENT_PROJECT = 'attachment_project';
-
-  // static const String FETCH_ATTACHMENT = 'fetch_attachment';
-  static const String AIT_AUTOMATION = 'ait_automation';
+  // AIT project
+  static const String AIT_AUTOMATION = 'ait_automation_new';
   static const String AIT_VIEW = 'fetch_ait_info';
   static const String AIT_DETAILS = 'fetch_ait_details';
   static const String AIT_ESSENTIAL = 'ait_essential';
   static const String CHECK_CHALLAN = 'check_challan_number';
-  // static const String UPDATE_AIT = 'ait_automation_update';
-  static const String UPDATE_AIT = 'update_ait_automation';
+  static const String UPDATE_AIT = 'update_ait_automation_new';
 
   //MO project
   static const String MO_LIST = 'mo_list';
