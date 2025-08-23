@@ -9,7 +9,10 @@ class OrderItem {
         this.itemUOM = ""});
 
   OrderItem.fromJson(Map<String, dynamic> json) {
-    itemId = json['ITEM_ID']??0;
+    try {
+      itemId = int.parse(json['ITEM_ID']??'0');
+    }catch(e){};
+
     itemName = json['ITEM_NAME']??'';
     itemUOM = json['ITEM_UOM']??'';
   }

@@ -38,6 +38,9 @@ class CustomAutoComplete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    print(' CustomAutoComplete  ${dropdownItems.length}');
+
     return Container(
       padding: EdgeInsets.all(0.0),
       height: height??45,

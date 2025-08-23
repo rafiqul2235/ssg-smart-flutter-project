@@ -25,6 +25,7 @@ import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report_supervisor.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/sales_order_booked_screen.dart';
 import '../../../data/model/response/user_menu.dart';
+import '../../../provider/sales_order_provider.dart';
 import '../../../utill/app_constants.dart';
 import '../approval/approval_screen.dart';
 import '../auth/reset_password_screen.dart';
@@ -67,12 +68,15 @@ class _HomeScreenState extends State<HomeScreen> {
   _initData() async {
      await Provider.of<UserProvider>(context, listen: false).getUserInfoFromSharedPref();
      Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
+     Provider.of<SalesOrderProvider>(context, listen: false).clearCustomerData();
      setState(() {
        userId = Provider.of<AuthProvider>(context, listen: false).getEmpId();
        orgId = Provider.of<AuthProvider>(context, listen: false).getOrgName();
      });
 
-     print('empId: $userId');
+     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+
+    // print('empId: $userId');
   }
 
   @override

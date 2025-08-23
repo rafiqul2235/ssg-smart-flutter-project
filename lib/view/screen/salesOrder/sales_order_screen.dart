@@ -51,6 +51,7 @@ class SalesOrderScreen extends StatefulWidget {
 }
 
 class _SalesOrderScreenState extends State<SalesOrderScreen> {
+
   TextEditingController? _customerController;
   TextEditingController? _warehouseController;
   TextEditingController? _shipToSiteController;
@@ -148,8 +149,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
     _orgId = Provider.of<AuthProvider>(context, listen: false).getOrgId();
     _orgNameController?.text = _orgName ?? '';
     _depositDateController?.text = formattedDate ?? '';
-    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
     _userId = Provider.of<AuthProvider>(context, listen: false).getUserId();
+    Provider.of<SalesOrderProvider>(context, listen: false).getCustomerAndItemListAndOthers(context);
+
   }
 
   void currentDateTime() {
@@ -496,11 +498,19 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
         Expanded(
           child: Consumer<SalesOrderProvider>(
             builder: (context, provider, child) {
+
+              print('_customersDropDown ${_customersDropDown.length}');
               if (_customersDropDown == null || _customersDropDown.isEmpty) {
                 _customersDropDown = [];
                 provider.customerList.forEach((element) =>
                     _customersDropDown.add(DropDownModel(
                         code: element.customerId, name: element.customerName)));
+
+                print('_customersDropDown in ${_customersDropDown.length}');
+
+                /*setState(() {
+
+                });*/
               }
 
               if (_itemsDropDown == null || _itemsDropDown.isEmpty) {
@@ -550,6 +560,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         description: element.salesPersonId
                     )));
              // }
+
+              print('_customersDropDown end ${_customersDropDown.length}');
 
               return ListView(children: [
                 provider.isLoading
@@ -647,6 +659,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                   ? _customerController!.text
                                   : '',
                               icon: const Icon(Icons.search),
+                              readyOnly: false,
                               height: 45,
                               width: width,
                               dropdownHeight: 300,
@@ -655,6 +668,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               onReturnTextController: (textController) =>
                                   _customerController = textController,
                               onClearPressed: () {
+                                print('onClearPressed ');
                                 setState(() {
 
                                   if(_shipToSiteController!=null) {
@@ -677,6 +691,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                               },
                               onChanged: (value) {
                                 FocusScope.of(context).requestFocus(FocusNode());
+
+                                print('_customersDropDown  onChanged ${_customersDropDown.length}');
 
                                 //_selectedShipToLocation = null;
                                 _shipToLocationDropDown = [];
@@ -704,7 +720,8 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                                     Provider.of<SalesOrderProvider>(context, listen: false).getCustomerShipToLocation(context, _custId);
                                     _warehouseId = _selectedCustomer?.warehouseId ?? '';
                                     _freightTerms =  _selectedCustomer?.freightTerms ?? '';
-                                    //Provider.of<SalesOrderProvider>(context, listen: false).getItemName(context, _warehouseId);
+
+                                    Provider.of<SalesOrderProvider>(context, listen: false).getItemName(context, _warehouseId);
                                     Provider.of<SalesOrderProvider>(context, listen: false).selectedFreightTerms = _selectedCustomer?.freightTerms ?? '';
 
                                     _selectedWareHouse = null;
@@ -739,7 +756,7 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                           const SizedBox(
                               width: Dimensions.MARGIN_SIZE_EXTRA_SMALL),
                           MandatoryText(
-                            text: 'Customer PO Number',
+                            text: 'Customer PO Number ',
                             textStyle: titilliumRegular,
                             //mandatoryText: '*',
                           ),
@@ -814,8 +831,9 @@ class _SalesOrderScreenState extends State<SalesOrderScreen> {
                         onReturnTextController: (textController) =>
                             _warehouseController = textController,
                         onChanged: (value) {
+                          _warehouseId = value.code??'0';
+                          Provider.of<SalesOrderProvider>(context, listen: false).getItemName(context, _warehouseId);
                           setState(() {
-                            _warehouseId = value.code??'0';
                             _selectedWareHouse = value;
                           });
                         },
