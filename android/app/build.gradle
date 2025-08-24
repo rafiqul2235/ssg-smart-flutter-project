@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sevenringscement.ssg_smart2"  // Replace with your package ID
-        minSdk = 23 // change from flutter.minSdkVersion
+        minSdkVersion flutter.minSdkVersion // change from flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

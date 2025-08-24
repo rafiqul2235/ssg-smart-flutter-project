@@ -200,9 +200,13 @@ class SalesOrderProvider with ChangeNotifier {
   ItemDetail get itemDetails => _itemDetails ?? ItemDetail();
  */
 
+  Future<void> clearCustomerData() async{
+     _customerList = [];
+  }
+
   Future<void> clearData() async{
     _salesOrder = SalesOrder();
-    _customerList = [];
+   // _customerList = [];
     // _pendingSoList = [];
     _orderTypeList = [];
     _warehouseList = [];
@@ -318,10 +322,11 @@ class SalesOrderProvider with ChangeNotifier {
   Future<void> getCustomerAndItemListAndOthers(BuildContext context) async {
     //showLoading();
     try{
+
       String orgId =  Provider.of<AuthProvider>(context, listen: false).getOrgId();
       String salesPersonId =  Provider.of<AuthProvider>(context, listen: false).getSalesPersonId();
 
-      print('orgId $orgId, salesPersonId $salesPersonId');
+      //print('orgId $orgId, salesPersonId $salesPersonId');
 
       ApiResponse apiResponse = await salesOrderRepo.getCustomerAndItemListAndOthers(orgId,salesPersonId);
 
@@ -333,9 +338,13 @@ class SalesOrderProvider with ChangeNotifier {
         _vehicleTypeList = [];
         _freightTermsList = [];
         _itemList = [];
+
         if(apiResponse.response?.data['customers'] != null){
           apiResponse.response?.data['customers'].forEach((element) => _customerList?.add(Customer.fromJson(element)));
         }
+
+       // notifyListeners();
+
        /* if(apiResponse.response?.data['pending_so'] != null){
           apiResponse.response?.data['pending_so'].forEach((element) => _pendingSoList?.add(PendingSO.fromJson(element)));
         }*/
@@ -380,7 +389,9 @@ class SalesOrderProvider with ChangeNotifier {
           _pendingSoList?.forEach((element) => _pendingSoDropDown.add(DropDownModel(code: element.orderNumber,nameBl:element.uom,name: element.mainPartyName! +" " +element.orderNumber!)));
         }
         */
-        notifyListeners();
+
+        //notifyListeners();
+
       }else{
         ApiChecker.checkApi(context, apiResponse);
       }
@@ -388,8 +399,10 @@ class SalesOrderProvider with ChangeNotifier {
     }catch(e){
       print("error: $e");
      // hideLoading();
+    }finally {
+      notifyListeners();
     }
-   // hideLoading();
+    //hideLoading();
     return null;
   }
 
@@ -558,7 +571,6 @@ class SalesOrderProvider with ChangeNotifier {
         if(apiResponse.response?.data['items'] != null){
           apiResponse.response?.data['items'].forEach((element) => _itemList.add(OrderItem.fromJson(element)));
         }
-        print('_itemlist ${_itemList.length}');
 
         _itemsDropDown = [];
         if(_itemList !=null && _itemList.isNotEmpty) {
