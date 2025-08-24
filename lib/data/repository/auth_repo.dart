@@ -22,6 +22,7 @@ class AuthRepo {
         AppConstants.LOGIN_URI,
         data: loginBody.toLoginBodyJson(),
       );
+      print('login response:$response');
       return ApiResponse.withSuccess(response);
     } catch (e) {
       print('Auth Repo login ${e}');

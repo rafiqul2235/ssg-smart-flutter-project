@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/view/screen/aitautomation/ait_automation.dart';
 import 'package:ssg_smart2/view/screen/approval/approval_main.dart';
 import 'package:ssg_smart2/view/screen/home/widget/banners_view.dart';
@@ -59,17 +60,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    super.initState();
+    Provider.of<UserProvider>(context, listen: false).getUserInfoFromSharedPref();
     _initData();
     version = '0.001';
-    super.initState();
   }
 
   _initData() async {
      await Provider.of<UserProvider>(context, listen: false).getUserInfoFromSharedPref();
-     Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
+     await Provider.of<UserProvider>(context, listen: false).getUserMenu(context);
+     await Provider.of<UserProvider>(context, listen: false).getEmployeeInfo(context);
+     UserInfoModel? userInfoModel = Provider.of<UserProvider>(context,listen: false).userInfoModel;
+     print('UserInfo(home): $userInfoModel');
      setState(() {
-       userId = Provider.of<AuthProvider>(context, listen: false).getEmpId();
-       orgId = Provider.of<AuthProvider>(context, listen: false).getOrgName();
+       userId = userInfoModel!.employeeId!;
+       orgId = userInfoModel.orgName!;
      });
 
      print('empId: $userId');

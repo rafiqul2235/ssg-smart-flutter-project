@@ -9,6 +9,7 @@ import 'package:ssg_smart2/data/model/response/user_info_model.dart';
 import 'package:ssg_smart2/data/repository/user_repo.dart';
 import 'package:ssg_smart2/helper/api_checker.dart';
 import 'package:http/http.dart' as http;
+import 'package:ssg_smart2/utill/user_data_storage.dart';
 import '../data/model/response/app_update_info.dart';
 import '../data/model/response/self_service.dart';
 import '../data/model/response/user_menu.dart';
@@ -65,13 +66,30 @@ class UserProvider extends ChangeNotifier {
     _isLoading = false;
   }
 
+  Future<void> loadUser() async {
+    _userInfoModel = await UserDataStorage.getUserInfo();
+    notifyListeners();
+  }
+
+  Future<void> setUser(UserInfoModel userInfo) async {
+    print("userInfo(setUser): $userInfo");
+    _userInfoModel = userInfo;
+    print("userInfoModel(setUser): $_userInfoModel");
+    await UserDataStorage.saveUserInfo(userInfo);
+    notifyListeners();
+  }
+
   Future<void> getUserInfoFromSharedPref({bool reload = false}) async {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
       String? strUserData = prefs.getString(AppConstants.USER_DATA);
       print('Data  $strUserData');
-      _userInfoModel =  UserInfoModel.fromJson(jsonDecode(strUserData??''));
+      if ( strUserData != null && strUserData.isNotEmpty) {
+        _userInfoModel =  UserInfoModel.fromJson(jsonDecode(strUserData??''));
+        notifyListeners();
+      }
+
     }catch(e){
       print("getUserData error ");
       print(e.toString());
@@ -79,11 +97,11 @@ class UserProvider extends ChangeNotifier {
 
   }
 
- void getUserMenu(BuildContext context) async {
+ Future<void> getUserMenu(BuildContext context) async {
 
-   AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
-
-   ApiResponse apiResponse = await userRepo.getUserMenu(authProvider.getUserId(), authProvider.getOrgId());
+   // AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
+   final userInfo = Provider.of<UserProvider>(context, listen: false).userInfoModel;
+   ApiResponse apiResponse = await userRepo.getUserMenu(userInfo!.userId!, userInfo!.orgId!);
 
    if(apiResponse.response != null && apiResponse.response?.statusCode == 200){
      /*developer.log(
@@ -118,19 +136,14 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> getEmployeeInfo(BuildContext context) async {
 
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    /*String? department =  Provider.of<UserProvider>(context, listen: false).userInfoModel?.department;*/
-
-    ApiResponse apiResponse = await userRepo.getEmployeeInfo(empId);
-
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userInfo = userProvider.userInfoModel;
+    ApiResponse apiResponse = await userRepo.getEmployeeInfo(userInfo!.employeeId!);
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
-
       _userInfoModel?.fromJsonAdditionalInfo(_userInfoModel!, apiResponse.response?.data['emp_info'][0]);
-
     } else {
       ApiChecker.checkApi(context, apiResponse);
     }
-
   }
 
 

@@ -72,6 +72,7 @@ class Images {
   static const String placeholder = 'assets/images/placeholder.jpg';
   static const String about_us = 'assets/images/about_us.png';
   static const String reset_password = 'assets/images/icon_reset_password.png';
+  static const String change_org = 'assets/images/icons8-organization-96.png';
   static const String contact_us = 'assets/images/contact_us.png';
   static const String login = 'assets/images/login.png';
   static const String maintenance = 'assets/images/maintenance.png';

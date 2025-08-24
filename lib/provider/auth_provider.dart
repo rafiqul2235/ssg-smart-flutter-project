@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ssg_smart2/data/model/body/login_model.dart';
 import 'package:ssg_smart2/data/model/response/base/api_response.dart';
 import 'package:ssg_smart2/data/model/response/base/error_response.dart';
 import 'package:ssg_smart2/data/model/response/response_model.dart';
 import 'package:ssg_smart2/data/repository/auth_repo.dart';
+import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/user_data_storage.dart';
 import '../data/model/response/user_info_model.dart';
 import 'dart:developer' as developer;
@@ -78,25 +80,14 @@ class AuthProvider with ChangeNotifier {
 
     showLoading();
 
-       developer.log(
-        'log me for error',
-        name: 'User_Menu',
-        error: loginBody.toLoginBodyJson()
-    );
-
-
     ApiResponse apiResponse = await authRepo.login(loginBody);
 
 
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
 
       Map map = apiResponse.response?.data;
+      print('map data: $map');
 
-      developer.log(
-          'log me for error',
-          name: 'User_Menu',
-          error: map.toString()
-      );
 
      // print(map.toString());
 
@@ -104,15 +95,9 @@ class AuthProvider with ChangeNotifier {
         String token = map['user']['AUTH_CODE'];
         UserInfoModel userInfoModel = UserInfoModel.fromJson(map['user']);
 
-        developer.log(
-            'log me for error',
-            name: 'User_Menu',
-            error: userInfoModel.toString()
-        );
-        print("Userinfo from auth_provider: $userInfoModel");
-        authRepo.saveUserToken(token);
-        await authRepo.saveUserData(userInfoModel);
-        await UserDataStorage.saveUserInfo(userInfoModel);
+        // Save using provider
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.setUser(userInfoModel);
 
         callback(true, token);
 

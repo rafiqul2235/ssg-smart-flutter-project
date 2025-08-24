@@ -16,6 +16,7 @@ class UserInfoModel {
   String? password;
   String? changePasswordFlag;
   String? authCode;
+  List<Org> orgs = [];
   int? totalOrgs;
 
   String? payrollId;
@@ -40,39 +41,29 @@ class UserInfoModel {
       this.password = '',
       this.changePasswordFlag = '',
       this.authCode ='',
+      this.orgs = const [],
       this.totalOrgs = 0,
  });
 
-  UserInfoModel.fromJson(Map<String, dynamic> json) {
-    if(json == null) return;
-
-    userId = json['USER_ID'];
-    salesRepId = json['SALESREP_ID'];
-    salesPersonName = json['SALES_PERSON_NAME'];
-    //employeeId = json['EMPLOYEE_ID'];
-    employeeName = json['EMPLOYEE_NAME'];
-    userName = json['USER_NAME'];
-    authCode = json['AUTH_CODE'];
-    changePasswordFlag = json['CHANGE_PASSW_FLG'];
-
-    employeeId = userName;
-
-    try {
-      orgId = json['ORGS'][0]['id'];
-    }catch(e){
-      orgId = json['ORG_ID'];
-    }
-
-    try {
-      orgName = json['ORGS'][0]['name'];
-    }catch(e){
-      orgName = json['ORG_NAME'];
-    }
-
-    totalOrgs = json['TOTAL_ORGS'];
-
+  factory UserInfoModel.fromJson(Map<String, dynamic> json) {
+    final orgList = (json['ORGS'] as List)
+        .map((orgJson) => Org.fromJson(orgJson))
+        .toList();
+    return UserInfoModel(
+      userId: json['USER_ID'],
+      salesRepId: json['SALESREP_ID'],
+      salesPersonName: json['SALES_PERSON_NAME'],
+      employeeId: json['USER_NAME'],
+      employeeName: json['EMPLOYEE_NAME'],
+      changePasswordFlag: json['CHANGE_PASSW_FLG'],
+      userName: json['USER_NAME'],
+      authCode: json['AUTH_CODE'],
+      orgs: orgList,
+      orgId: json['ORG_ID'] ?? (orgList.isNotEmpty ? orgList.first.id : null),
+      orgName: json['ORG_NAME'] ?? (orgList.isNotEmpty ? orgList.first.name : null),
+      totalOrgs: json['TOTAL_ORGS']
+    );
   }
-
 
   void fromJsonAdditionalInfo(UserInfoModel infoModel, Map<String, dynamic>? json) {
     if(json == null) return;
@@ -90,21 +81,20 @@ class UserInfoModel {
 
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> json = <String, dynamic> {};
-     json['USER_ID'] = userId;
-     json['SALESREP_ID'] = salesRepId;
-     json['SALES_PERSON_NAME'] = salesPersonName;
-     json['EMPLOYEE_ID'] = employeeId;
-     json['EMPLOYEE_NAME'] = employeeName;
-     json['USER_NAME'] = userName;
-     json['CHANGE_PASSW_FLG'] = changePasswordFlag;
-     json['AUTH_CODE'] = authCode;
-     json['ORG_ID'] = orgId;
-     json['ORG_NAME'] = orgName;
-     json['TOTAL_ORGS'] = totalOrgs;
-    return json;
-  }
+  Map<String, dynamic> toJson() => {
+    'USER_ID': userId,
+    'SALESREP_ID': salesRepId,
+    'SALES_PERSON_NAME': salesPersonName,
+    'EMPLOYEE_ID': employeeId,
+    'EMPLOYEE_NAME': employeeName,
+    'USER_NAME': userName,
+    'CHANGE_PASSW_FLG': changePasswordFlag,
+    'AUTH_CODE': authCode,
+    'ORGS': orgs.map((org) => org.toJson()).toList(),
+    'ORG_ID': orgId,
+    'ORG_NAME': orgName,
+    'TOTAL_ORGS': totalOrgs,
+  };
 
   Map<String, dynamic> toLoginBodyJson() {
     final Map<String, dynamic> json = <String, dynamic> {};
@@ -115,6 +105,29 @@ class UserInfoModel {
 
   @override
   String toString() {
-    return 'UserInfoModel{firstName: $firstName, lastName: $lastName, email: $email, mobileNo: $mobileNo, photoUrl: $photoUrl, orgId: $orgId, orgName: $orgName, userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, changePasswordFlug: $changePasswordFlag, authCode: $authCode, totalOrgs: $totalOrgs, payrollId: $payrollId, payrollName: $payrollName, workLocation: $workLocation, personId: $personId, employeeNumber: $employeeNumber, employmentCategory: $employmentCategory, fullName: $fullName, designation: $designation, department: $department}';
+    return 'UserInfoModel{firstName: $firstName, lastName: $lastName, email: $email, mobileNo: $mobileNo, photoUrl: $photoUrl, orgId: $orgId, orgName: $orgName, userId: $userId, salesRepId: $salesRepId, salesPersonName: $salesPersonName, employeeId: $employeeId, employeeName: $employeeName, userName: $userName, password: $password, changePasswordFlag: $changePasswordFlag, authCode: $authCode, orgs: $orgs, totalOrgs: $totalOrgs, payrollId: $payrollId, payrollName: $payrollName, workLocation: $workLocation, personId: $personId, employeeNumber: $employeeNumber, employmentCategory: $employmentCategory, fullName: $fullName, designation: $designation, department: $department}';
+  }
+}
+
+
+class Org {
+  final String id;
+  final String name;
+  Org({required this.id, required this.name});
+  
+  factory Org.fromJson(Map<String, dynamic> json) {
+    return Org(id: json['id'], name: json['name']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Org{id: $id, name: $name}';
   }
 }

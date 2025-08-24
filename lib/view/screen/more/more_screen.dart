@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ssg_smart2/view/basewidget/custom_loader.dart';
 import 'package:ssg_smart2/view/screen/auth/change_password_screen.dart';
+import 'package:ssg_smart2/view/screen/auth/org_selection.dart';
 import 'package:ssg_smart2/view/screen/home/home_screen.dart';
 import 'package:ssg_smart2/view/screen/more/widget/currency_dialog.dart';
 import 'package:flutter/material.dart';
@@ -195,11 +196,17 @@ class _MoreScreenState extends State<MoreScreen> {
                         title: getTranslated('choose_language', context),
                         onTap: () { showAnimatedDialog(context, CurrencyDialog(isCurrency: false));},
                       ),
+                      TitleButton(
+                          image: Images.change_org,
+                          title: getTranslated('change_org', context),
+                          navigateTo: OrganizationSelectionScreen()
+                      ),
 
                       TitleButton(
                           image: Images.reset_password,
                           title: getTranslated('change_password', context),
-                          navigateTo: ChangePasswordScreen()),
+                          navigateTo: ChangePasswordScreen()
+                      ),
 
                       TitleButton2(
                         image: Images.ic_refresh_stock,

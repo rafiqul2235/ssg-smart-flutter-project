@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ssg_smart2/data/model/body/login_model.dart';
@@ -14,6 +15,7 @@ import 'package:ssg_smart2/view/basewidget/textfield/custom_textfield.dart';
 import 'package:ssg_smart2/view/screen/auth/change_password_screen.dart';
 import 'package:ssg_smart2/view/screen/auth/forget_password_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/screen/auth/org_selection.dart';
 import '../../../../data/model/response/user_info_model.dart';
 import '../../../../data/repository/auth_repo.dart';
 import '../../../basewidget/animated_custom_dialog.dart';
@@ -116,16 +118,16 @@ class _SignInWidgetState extends State<SignInWidget> {
 
        // var loginControlerObj = AuthProvider(AuthRepo(Dio(),Share));
 
+        print('login body: $loginBody');
+
         Provider.of<AuthProvider>(context,listen: false).login(context, loginBody!, (bool isSuccess,String message) async {
 
           if (isSuccess) {
 
-            //Call User Menu API
-            Provider.of<UserProvider>(context,listen: false).getUserMenu(context);
-
             UserInfoModel? userInfo = await UserDataStorage.getUserInfo();
             print("Storage Data: $userInfo");
             print("chagne password flag: ${userInfo?.changePasswordFlag}");
+
 
             int changePasswordFlag = int.tryParse(userInfo?.changePasswordFlag??'')?? 1;
 
@@ -133,6 +135,10 @@ class _SignInWidgetState extends State<SignInWidget> {
             if (changePasswordFlag == 0){
               print("enter into if");
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) =>  ChangePasswordScreen()), (route) => false);
+            }else if(userInfo!.totalOrgs! > 1) {
+              print('Select your Org');
+              print('org:${userInfo.orgs}');
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => OrganizationSelectionScreen(isBackButtonExist: true,)), (route) => false);
             }else{
               print("enter into else");
               Timer(const Duration(seconds: 1), () {

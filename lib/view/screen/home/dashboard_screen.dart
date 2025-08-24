@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/helper/network_info.dart';
@@ -8,7 +9,9 @@ import 'package:ssg_smart2/utill/images.dart';
 import 'package:ssg_smart2/view/screen/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:ssg_smart2/view/screen/salesOrder/msd_sales_report.dart';
+import '../../../data/model/response/user_info_model.dart';
 import '../../../provider/auth_provider.dart';
+import '../../../utill/user_data_storage.dart';
 import '../../basewidget/animated_custom_dialog.dart';
 import '../../basewidget/my_dialog.dart';
 import '../apkdownload/apk_download_screen.dart';
@@ -38,10 +41,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   int todayVisitCount = 0;
   bool isFirstTime = true;
 
+  UserInfoModel? userInfoModel;
+
   @override
   void initState() {
     super.initState();
     NetworkInfo.checkConnectivity(context);
+    loadInfo();
 
     String userGroup = Provider.of<AuthProvider>(context, listen: false).userGroup!;
     if(userGroup == 'CET') {
@@ -114,9 +120,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
      });*/
   }
 
+
+  void loadInfo() async {
+    //Call User Menu API
+    await Provider.of<UserProvider>(context,listen: false).getUserMenu(context);
+    UserInfoModel? data = await UserDataStorage.getUserInfo();
+    setState(() {
+      userInfoModel = data;
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
-
+    print('Shareprefernce data: ${userInfoModel}');
    // _updateVisitBadge();
 
     if(isFirstTime) {
