@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ssg_smart2/view/basewidget/custom_app_bar.dart';
 import '../../../provider/user_provider.dart';
 import '../home/dashboard_screen.dart';
 
+class OrganizationSelectionScreen extends StatefulWidget {
+  final bool isBackButtonExist;
+  const OrganizationSelectionScreen({Key? key, this.isBackButtonExist = true}): super(key:key);
+  @override
+  _OrganizationSelectionScreenState createState() => _OrganizationSelectionScreenState();
+}
 
-class OrganizationSelectionScreen extends StatelessWidget {
+class _OrganizationSelectionScreenState extends State<OrganizationSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -13,7 +20,10 @@ class OrganizationSelectionScreen extends StatelessWidget {
     print('organization: $userInfo');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Select Organization')),
+      appBar: CustomAppBar(
+          title: 'Select Organization',
+          isBackButtonExist: widget.isBackButtonExist,
+      ),
       body: ListView.builder(
         itemCount: userInfo?.orgs.length ?? 0,
         itemBuilder: (context, index) {
@@ -32,8 +42,6 @@ class OrganizationSelectionScreen extends StatelessWidget {
               final userInfo2 = userProvider2.userInfoModel;
 
               print('organization2: $userInfo2');
-
-
 
               Navigator.pushAndRemoveUntil(
                 context,

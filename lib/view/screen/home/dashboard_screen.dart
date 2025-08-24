@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:ssg_smart2/provider/user_provider.dart';
 import 'package:ssg_smart2/utill/color_resources.dart';
 import 'package:flutter/material.dart';
 import 'package:ssg_smart2/helper/network_info.dart';
@@ -121,6 +122,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
 
   void loadInfo() async {
+    //Call User Menu API
+    await Provider.of<UserProvider>(context,listen: false).getUserMenu(context);
     UserInfoModel? data = await UserDataStorage.getUserInfo();
     setState(() {
       userInfoModel = data;

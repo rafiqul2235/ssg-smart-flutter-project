@@ -97,7 +97,7 @@ class UserProvider extends ChangeNotifier {
 
   }
 
- void getUserMenu(BuildContext context) async {
+ Future<void> getUserMenu(BuildContext context) async {
 
    // AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
    final userInfo = Provider.of<UserProvider>(context, listen: false).userInfoModel;
@@ -136,9 +136,9 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> getEmployeeInfo(BuildContext context) async {
 
-    String empId =  Provider.of<AuthProvider>(context, listen: false).getEmpId();
-    /*String? department =  Provider.of<UserProvider>(context, listen: false).userInfoModel?.department;*/
-    ApiResponse apiResponse = await userRepo.getEmployeeInfo(empId);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userInfo = userProvider.userInfoModel;
+    ApiResponse apiResponse = await userRepo.getEmployeeInfo(userInfo!.employeeId!);
     if (apiResponse.response != null && apiResponse.response?.statusCode == 200) {
       _userInfoModel?.fromJsonAdditionalInfo(_userInfoModel!, apiResponse.response?.data['emp_info'][0]);
     } else {

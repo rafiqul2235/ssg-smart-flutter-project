@@ -124,9 +124,6 @@ class _SignInWidgetState extends State<SignInWidget> {
 
           if (isSuccess) {
 
-            //Call User Menu API
-            Provider.of<UserProvider>(context,listen: false).getUserMenu(context);
-
             UserInfoModel? userInfo = await UserDataStorage.getUserInfo();
             print("Storage Data: $userInfo");
             print("chagne password flag: ${userInfo?.changePasswordFlag}");
@@ -141,7 +138,7 @@ class _SignInWidgetState extends State<SignInWidget> {
             }else if(userInfo!.totalOrgs! > 1) {
               print('Select your Org');
               print('org:${userInfo.orgs}');
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => OrganizationSelectionScreen()), (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => OrganizationSelectionScreen(isBackButtonExist: true,)), (route) => false);
             }else{
               print("enter into else");
               Timer(const Duration(seconds: 1), () {
